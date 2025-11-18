@@ -240,15 +240,16 @@ require_once './views/components/sidebar.php';
 <!-- ==================== JAVASCRIPT VẼ BIỂU ĐỒ (đặt trước </body>) ==================== -->
 <script>
   // BIỂU ĐỒ DOANH THU 6 THÁNG (Line Chart)
+  const data = [45, 52, 48, 55, 50, 67]
   new Chart(document.getElementById('revenueChart'), {
     type: 'line',
     data: {
       labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'],
       datasets: [{
         label: 'Doanh thu (triệu đồng)',
-        data: [45, 52, 48, 55, 50, 67], // giữ nguyên hoặc thay bằng biến PHP
-        borderColor: '#FF571A', // Cam đậm mạnh – cực nổi bật
-        backgroundColor: 'rgba(255, 87, 26, 0.15)', // Cam nhạt trong suốt (đẹp lung linh)
+        data: data,
+        borderColor: '#FF571A',
+        backgroundColor: 'rgba(255, 87, 26, 0.15)',
         tension: 0.4,
         fill: true,
         pointBackgroundColor: '#FF571A',
@@ -268,13 +269,14 @@ require_once './views/components/sidebar.php';
       },
       scales: {
         y: {
-          beginAtZero: true
+          beginAtZero: true,
+          suggestedMax: Math.max(...data) * 1.1
         }
       }
     }
   });
 
-  const data = [12, 28, 18, 5]
+
   // BIỂU ĐỒ TRẠNG THÁI BOOKING (Bar Chart)
   new Chart(document.getElementById('bookingStatusChart'), {
     type: 'bar',
@@ -282,12 +284,12 @@ require_once './views/components/sidebar.php';
       labels: ['Chờ xử lý', 'Đã cọc', 'Hoàn thành', 'Đã hủy'],
       datasets: [{
         label: 'Số lượng',
-        data: data, // giữ nguyên biến data của bạn (PHP truyền vào)
+        data: data,
         backgroundColor: [
-          '#FF8C42', // Chờ xử lý → cam nhạt tươi (dễ nhìn)
-          '#FF571A', // Đã cọc     → cam đậm mạnh (nổi bật nhất)
-          '#FF9F1C', // Hoàn thành → cam vàng tươi (tích cực)
-          '#FF6B35' // Đã hủy     → cam đỏ nhẹ (cảnh báo vừa đủ)
+          '#FF8C42',
+          '#FF571A',
+          '#FF9F1C',
+          '#FF6B35'
         ],
         borderColor: '#ffffff',
         borderWidth: 3,
@@ -310,7 +312,7 @@ require_once './views/components/sidebar.php';
       scales: {
         y: {
           beginAtZero: true,
-          suggestedMax: Math.max(...data) * 1.25
+          suggestedMax: Math.max(...data) * 0.5
         }
       }
     }

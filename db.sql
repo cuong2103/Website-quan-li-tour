@@ -1,0 +1,345 @@
+## 🗃️ Full Database Schema SQL Script
+
+-- Tạo các bảng chính (Entities)
+
+CREATE TABLE `roles` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(100),
+  `description` text,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `users` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `fullname` varchar(255),
+  `email` varchar(100),
+  `phone` varchar(20),
+  `avatar` varchar(500),
+  `role_id` int,
+  `status` boolean DEFAULT true,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `categories` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(100),
+  `description` text,
+  `parent_id` int,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `countries` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `category_id` int,
+  `name` varchar(100),
+  `description` text,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `destinations` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `country_id` int,
+  `name` varchar(255),
+  `address` varchar(500),
+  `description` text,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `destination_images` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `destination_id` int,
+  `image_url` varchar(500),
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `service_types` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(100),
+  `description` text,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `suppliers` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(255),
+  `email` varchar(100),
+  `phone` varchar(20),
+  `destination_id` int,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `services` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `service_type_id` int,
+  `supplier_id` int,
+  `name` varchar(255),
+  `type` varchar(50),
+  `description` text,
+  `price` decimal(12,2),
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `tours` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(255),
+  `introduction` text,
+  `adult_price` decimal(12,2),
+  `child_price` decimal(12,2),
+  `base_price` decimal(12,2),
+  `status` varchar(20) DEFAULT 'active',
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `tour_services` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `tour_id` int,
+  `service_id` int,
+  `description` text,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `itineraries` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `tour_id` int,
+  `destination_id` int,
+  `description` text,
+  `order_number` int,
+  `arrival_time` time,
+  `departure_time` time,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `policies` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `content` text,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `tour_policies` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `policy_id` int,
+  `tour_id` int,
+  `description` text,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `customers` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(255),
+  `email` varchar(100),
+  `phone` varchar(20),
+  `address` varchar(500),
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+-- Tạo các bảng giao dịch (Transactions)
+
+CREATE TABLE `bookings` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `tour_id` int,
+  `adult_count` int,
+  `child_count` int,
+  `total_amount` decimal(12,2),
+  `deposit_amount` decimal(12,2),
+  `remaining_amount` decimal(12,2),
+  `status` tinyint DEFAULT 1,
+  `special_requests` text,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `booking_customers` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `booking_id` int,
+  `customer_id` int,
+  `is_representative` boolean DEFAULT false,
+  `notes` text,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `payments` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `booking_id` int,
+  `payment_method` varchar(50),
+  `amount` decimal(12,2),
+  `type` varchar(50),
+  `status` varchar(20) DEFAULT 'pending',
+  `notes` text,
+  `payment_date` timestamp DEFAULT (now()),
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `customer_contracts` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `booking_id` int,
+  `contract_name` varchar(255),
+  `signing_date` timestamp,
+  `effective_date` timestamp,
+  `expiry_date` timestamp,
+  `signer_id` int,
+  `customer_id` int,
+  `status` varchar(50),
+  `file_content` text,
+  `notes` text,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
+CREATE TABLE `tour_assignments` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `booking_id` int,
+  `guide_id` int,
+  `start_date` date,
+  `end_date` date,
+  `status` tinyint DEFAULT 1,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now())
+  `updated_at` timestamp
+);
+
+CREATE TABLE `customer_checkins` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `tour_assignment_id` int,
+  `customer_id` int,
+  `notes` text,
+  `image_url` varchar(500),
+  `checkin_time` timestamp,
+  `location` varchar(255),
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now())
+  `updated_at` timestamp
+);
+
+CREATE TABLE `journals` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `tour_assignment_id` int,
+  `date` date,
+  `content` text,
+  `type` varchar(50),
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now())
+  `updated_at` timestamp
+);
+
+CREATE TABLE `journal_images` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `journal_id` int,
+  `image_url` varchar(500),
+  `description` text,
+  `created_by` int,
+  `created_at` timestamp DEFAULT (now())
+  `updated_at` timestamp
+);
+
+CREATE TABLE `notifications` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `user_id` int,
+  `title` varchar(255),
+  `message` text,
+  `is_read` boolean DEFAULT false,
+  `read_at` timestamp,
+  `created_by` int, 
+  `created_at` timestamp DEFAULT (now())
+  `updated_at` timestamp
+);
+
+---
+
+-- Tạo Khóa ngoại (Foreign Keys) để thiết lập các mối quan hệ
+
+-- Bảng `users`
+ALTER TABLE `users` ADD FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`);
+
+-- Bảng `countries`
+ALTER TABLE `countries` ADD FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`);
+
+-- Bảng `destinations`
+ALTER TABLE `destinations` ADD FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`);
+
+-- Bảng `destination_images`
+ALTER TABLE `destination_images` ADD FOREIGN KEY (`destination_id`) REFERENCES `destinations` (`id`);
+
+-- Bảng `suppliers`
+ALTER TABLE `suppliers` ADD FOREIGN KEY (`destination_id`) REFERENCES `destinations` (`id`);
+
+-- Bảng `services`
+ALTER TABLE `services` ADD FOREIGN KEY (`service_type_id`) REFERENCES `service_types` (`id`);
+ALTER TABLE `services` ADD FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`);
+
+-- Bảng `tour_services` (M:N giữa Tour và Service)
+ALTER TABLE `tour_services` ADD FOREIGN KEY (`tour_id`) REFERENCES `tours` (`id`);
+ALTER TABLE `tour_services` ADD FOREIGN KEY (`service_id`) REFERENCES `services` (`id`);
+
+-- Bảng `itineraries`
+ALTER TABLE `itineraries` ADD FOREIGN KEY (`tour_id`) REFERENCES `tours` (`id`);
+ALTER TABLE `itineraries` ADD FOREIGN KEY (`destination_id`) REFERENCES `destinations` (`id`);
+
+-- Bảng `tour_policies` (M:N giữa Tour và Policy)
+ALTER TABLE `tour_policies` ADD FOREIGN KEY (`policy_id`) REFERENCES `policies` (`id`);
+ALTER TABLE `tour_policies` ADD FOREIGN KEY (`tour_id`) REFERENCES `tours` (`id`);
+
+-- Bảng `bookings`
+ALTER TABLE `bookings` ADD FOREIGN KEY (`tour_id`) REFERENCES `tours` (`id`);
+
+-- Bảng `booking_customers` (M:N giữa Booking và Customer)
+ALTER TABLE `booking_customers` ADD FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`);
+ALTER TABLE `booking_customers` ADD FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`);
+
+-- Bảng `payments`
+ALTER TABLE `payments` ADD FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`);
+
+-- Bảng `customer_contracts`
+ALTER TABLE `customer_contracts` ADD FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`);
+ALTER TABLE `customer_contracts` ADD FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`);
+
+-- Bảng `tour_assignments`
+ALTER TABLE `tour_assignments` ADD FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`);
+ALTER TABLE `tour_assignments` ADD FOREIGN KEY (`guide_id`) REFERENCES `users` (`id`); -- guide_id là user_id
+
+-- Bảng `journals`
+ALTER TABLE `journals` ADD FOREIGN KEY (`tour_assignment_id`) REFERENCES `tour_assignments` (`id`);
+
+-- Bảng `journal_images`
+ALTER TABLE `journal_images` ADD FOREIGN KEY (`journal_id`) REFERENCES `journals` (`id`);
+
+-- Bảng `customer_checkins`
+ALTER TABLE `customer_checkins` ADD FOREIGN KEY (`tour_assignment_id`) REFERENCES `tour_assignments` (`id`);
+ALTER TABLE `customer_checkins` ADD FOREIGN KEY (`customer_id`) REFERENCES `customers` (`id`);
+
+-- Bảng `notifications`
+ALTER TABLE `notifications` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
