@@ -228,7 +228,7 @@ CREATE TABLE `tour_assignments` (
   `end_date` date,
   `status` tinyint DEFAULT 1,
   `created_by` int,
-  `created_at` timestamp DEFAULT (now())
+  `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp
 );
 
@@ -241,7 +241,7 @@ CREATE TABLE `customer_checkins` (
   `checkin_time` timestamp,
   `location` varchar(255),
   `created_by` int,
-  `created_at` timestamp DEFAULT (now())
+  `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp
 );
 
@@ -252,7 +252,7 @@ CREATE TABLE `journals` (
   `content` text,
   `type` varchar(50),
   `created_by` int,
-  `created_at` timestamp DEFAULT (now())
+  `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp
 );
 
@@ -262,7 +262,7 @@ CREATE TABLE `journal_images` (
   `image_url` varchar(500),
   `description` text,
   `created_by` int,
-  `created_at` timestamp DEFAULT (now())
+  `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp
 );
 
@@ -274,11 +274,10 @@ CREATE TABLE `notifications` (
   `is_read` boolean DEFAULT false,
   `read_at` timestamp,
   `created_by` int, 
-  `created_at` timestamp DEFAULT (now())
+  `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp
 );
 
----
 
 -- Tạo Khóa ngoại (Foreign Keys) để thiết lập các mối quan hệ
 
