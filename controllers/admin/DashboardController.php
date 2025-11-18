@@ -1,15 +1,16 @@
 <?php
 class DashboardController
 {
-  // public $dashboardController;
+  public $useModel;
 
-  // public function __construct()
-  // {
-  //   $this->dashboardController = new DashboardController();
-  // }
+  public function __construct()
+  {
+    $this->useModel = new UserModel();
+  }
   public function Dashboard()
   {
-
+    $user = $this->useModel->getAll();
+    // dd($user);
     require_once './views/admin/dashboard.php';
   }
 }
