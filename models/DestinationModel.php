@@ -7,7 +7,7 @@ class DestinationModel{
        $this->conn = connectDB();
     }
 
-    public function index(){
+    public function getAll(){
         try{
             $sql = "SELECT d.*, c.name AS country_name
                 FROM destinations d

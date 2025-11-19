@@ -8,8 +8,8 @@ class DestinationController {
     }
 
     public function index(){
-        $listDestination = $this->modelDestination->index();
+        $listDestination = $this->modelDestination->getAll();
 
-        require_once './views/admin/destination.php';
+        require_once './views/admin/destination/index.php';
     }
 }
