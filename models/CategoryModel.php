@@ -19,8 +19,8 @@ class CategoryModel
 
   public function create($name, $parent_id, $created_by)
   {
-    $sql = "INSERT INTO categories (name, parent_id, description, created_by)
-                VALUES (?, ?, ?, ?)";
+    $sql = "INSERT INTO categories (name, parent_id, created_by)
+                VALUES (?, ?, ?)";
     $stmt = $this->conn->prepare($sql);
     return $stmt->execute([
       $name,
