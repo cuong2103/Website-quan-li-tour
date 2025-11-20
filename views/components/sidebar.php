@@ -91,7 +91,7 @@
       <div class="submenu pl-12 space-y-1 overflow-hidden transition-all duration-300 max-h-0">
         <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Địa điểm</a>
         <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Chính sách</a>
-        <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Loại Dịch vụ</a>
+        <a href="<?= BASE_URL ?>?act=service-type" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Loại Dịch vụ</a>
         <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Dịch vụ</a>
       </div>
     </div>
