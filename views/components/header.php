@@ -10,9 +10,15 @@
 </head>
 
 <body class="h-full bg-gray-50 flex">
+  <!-- Container để show alert -->
+
+
   <!-- Main content (giữ nguyên header như trước) -->
   <div class="flex-1 ml-64 flex flex-col">
     <header class="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-64 right-0 z-40">
+      <div id="alert-message"
+        class="fixed top-5 right-5 bg-red-500 text-white px-4 py-2 rounded shadow-lg opacity-0 transition-opacity duration-500">
+      </div>
       <div class="px-6 py-7 flex items-center justify-between">
         <div class="flex-1 max-w-2xl">
           <div class="relative">
