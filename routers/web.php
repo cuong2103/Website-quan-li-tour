@@ -1,5 +1,10 @@
 <?php
+session_start();
 $act = $_GET['act'] ?? '/';
+
+if($act !== 'login-admin'  && $act !== 'check-login-admin' && $act !== 'logout-admin'  ){
+  checkLoginAdmin();
+}
 
 match ($act) {
   // Admin Dashboard
@@ -34,4 +39,11 @@ match ($act) {
   'destination-delete-image' => (new DestinationController())->deleteImage(),
   // Xem chi tiết
   'destination-detail' => (new DestinationController())->detail(),
+
+
+
+  // Auth admin
+  'login-admin' => (new AuthController()) ->formLogin(),
+  'check-login-admin' => (new AuthController()) ->login(),
+  'logout-admin' => (new AuthController())->logout(),
 };

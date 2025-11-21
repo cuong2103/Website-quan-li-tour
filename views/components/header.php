@@ -1,3 +1,11 @@
+<?php
+$user = $_SESSION['admin'] ?? null;
+
+$fullname = $user['fullname'] ?? 'User';
+$role = ($user['role_id'] ?? 0) == 1 ? 'Admin' : 'Hướng dẫn viên';
+$avatar = strtoupper(mb_substr($fullname, 0, 1));
+?>
+
 <!DOCTYPE html>
 <html lang="vi" class="h-full">
 
@@ -39,12 +47,15 @@
             <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
           </button>
           <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">N</div>
+            <div class="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
+              <?= $avatar ?>
+            </div>
             <div>
-              <p class="text-sm font-medium text-gray-900">Nguyễn Văn A</p>
-              <p class="text-xs text-gray-500">Admin</p>
+              <p class="text-sm font-medium text-gray-900"><?= htmlspecialchars($fullname) ?></p>
+              <p class="text-xs text-gray-500"><?= $role ?></p>
             </div>
           </div>
+
         </div>
       </div>
 
