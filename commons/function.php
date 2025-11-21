@@ -53,3 +53,27 @@ function dd($data)
     echo '</pre>';
     die();
 }
+
+//Xóa session sau khi load trang
+function deleteSessionError(){
+    if (isset($_SESSION['flash'])) {
+        unset($_SESSION['flash']);
+        unset($_SESSION['error']);
+    }
+}
+
+// Hàm check login 
+function checkLoginAdmin(){
+    if(!isset($_SESSION['admin'])){
+        header("Location: " . BASE_URL . '?act=login-admin');
+        exit();
+    }
+}
+
+function checkLoginGuide(){
+    if(!isset($_SESSION['guide'])){
+        header("Location: " . BASE_URL . '?act=login-guide');
+    }
+}
+
+

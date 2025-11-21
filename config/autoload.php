@@ -2,6 +2,7 @@
 spl_autoload_register(function ($className) {
   // Danh sách các thư mục chứa class
   $paths = [
+    './controllers/',
     './controllers/admin/',
     './controllers/guide/',
     './models/',

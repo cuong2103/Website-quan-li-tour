@@ -8,12 +8,42 @@ class UserModel
     //goị kết nối từ common
   }
 
-  // Viết truy vấn danh sách sản phẩm 
   public function getAll()
   {
-    $sql = "SELECT * FROM users LIMIT 5";
+    $sql = "SELECT * FROM users";
     $stmt = $this->conn->prepare($sql);
     $stmt->execute();
     return $stmt->fetchAll();
   }
+
+  public function loginByEmail($email){
+    $sql = "SELECT * FROM users WHERE email = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$email]);
+    return $stmt->fetch();
+  }
+
+  public function checkLogin($email, $password) {
+    $sql = "SELECT * FROM users WHERE email = :email";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute(['email' => $email]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        return "Không tìm thấy email trong DB";
+    }
+
+    // TẠM THỜI so sánh trực tiếp chưa mã hoá password
+    if ($password !== $user['password']) {
+        return "Sai mật khẩu";
+    }
+
+    // Kiểm tra status
+    if ($user['status'] != 1) {
+        return "Tài khoản đang bị khóa";
+    }
+
+    return $user;
+}
+
 }
