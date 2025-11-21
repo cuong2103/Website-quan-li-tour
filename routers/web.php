@@ -1,9 +1,28 @@
 <?php
+session_start();
 $act = $_GET['act'] ?? '/';
+
+if($act !== 'login-admin'  && $act !== 'check-login-admin' && $act !== 'logout-admin'  ){
+  checkLoginAdmin();
+}
 
 match ($act) {
   // Admin Dashboard
   '/' => (new DashboardController())->Dashboard(),
+
+  'suppliers' => (new SupplierController())->index(),
+  'supplier-edit' => (new SupplierController())->edit(),
+  'supplier-create' => (new SupplierController())->create(),
+  'supplier-update' => (new SupplierController())->update(),
+  'supplier-detail' => (new SupplierController())->detail(),
+  'supplier-delete' => (new SupplierController())->delete(),
+
+  'service-type' => (new ServiceTypeController())->index(),
+  'store' => (new ServiceTypeController())->store(),
+  'detail' => (new ServiceTypeController())->detail($_GET["id"]),
+  'delete' => (new ServiceTypeController())->delete($_GET["id"]),
+  'edit' => (new ServiceTypeController())->edit($_GET["id"]),
+  'update' => (new ServiceTypeController())->update(),
 
   // Categories
   "categories" => (new CategoryController())->index(),
@@ -27,4 +46,11 @@ match ($act) {
   'destination-delete-image' => (new DestinationController())->deleteImage(),
   // Xem chi tiết
   'destination-detail' => (new DestinationController())->detail(),
+
+
+
+  // Auth admin
+  'login-admin' => (new AuthController()) ->formLogin(),
+  'check-login-admin' => (new AuthController()) ->login(),
+  'logout-admin' => (new AuthController())->logout(),
 };

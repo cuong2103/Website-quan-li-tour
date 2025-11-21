@@ -93,6 +93,7 @@
         
         hover:bg-gray-100 rounded">Địa điểm</a>
         <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Chính sách</a>
+        <a href="<?= BASE_URL ?>?act=service-type" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Loại Dịch vụ</a>
         <a href="<?= BASE_URL ?>?act=categories" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Danh mục</a>
         <a href="" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Loại Dịch vụ</a>
         <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Dịch vụ</a>
@@ -108,7 +109,7 @@
     </a>
 
     <!-- Nhà cung cấp -->
-    <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
+    <a href="<?php echo BASE_URL . '?act=suppliers'; ?>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
       <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h-4m-6 0H5a2 2 0 00-2 2v0a2 2 0 002 2h14a2 2 0 002-2v0a2 2 0 00-2-2z" />
@@ -145,7 +146,7 @@
 
   <!-- Đăng xuất -->
   <div class="border-t border-gray-200 px-4 py-4">
-    <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition">
+    <a href="<?= BASE_URL . '?act=logout-admin' ?>" class="flex items-center px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition">
       <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
       </svg>
