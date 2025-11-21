@@ -18,7 +18,7 @@ class SupplierModel
     // lấy danh sách điểm đến
     public function getDestinations()
     {
-        $sql = "SELECT * FROM destinations ORDER BY name ASC";
+        $sql = "SELECT * FROM suppliers JOIN destinations ON suppliers.destination_id = destinations.id ORDER BY destinations.name ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
@@ -26,10 +26,16 @@ class SupplierModel
     // lấy 1 nhà cung cấp theo id
     public function getByID($id)
     {
-        $sql = "SELECT * FROM suppliers WHERE id = :id";
+        $sql = "SELECT suppliers.*, 
+                   COUNT(services.id) AS total_services
+            FROM suppliers
+            LEFT JOIN services 
+                ON services.supplier_id = suppliers.id
+            WHERE suppliers.id = :id
+            GROUP BY suppliers.id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":id", $id);
-        $stmt->execute();
+        $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     //Thêm nhà cung cấp

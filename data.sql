@@ -7,12 +7,12 @@ INSERT INTO `roles` (`name`, `description`, `created_by`) VALUES
 ('Sales Staff', 'Nhân viên bán hàng/đặt tour', 1),
 ('Content Editor', 'Biên tập nội dung tour', 1);
 
--- 2. Bảng `users` (Người dùng) - Dùng ID từ 1 đến 4 là người tạo (created_by)
-INSERT INTO `users` (`fullname`, `email`, `phone`, `role_id`, `created_by`) VALUES
-('Nguyễn Văn A', 'admin@example.com', '0901112222', 1, 1), -- ID 1: Administrator
-('Lê Thị B', 'guide.b@example.com', '0902223333', 2, 1), -- ID 2: Tour Guide
-('Phạm Văn C', 'sales.c@example.com', '0903334444', 3, 1), -- ID 3: Sales Staff
-('Trần Thị D', 'editor.d@example.com', '0904445555', 4, 1); -- ID 4: Content Editor
+-- 2. Bảng `users` (Người dùng) - ĐÃ THÊM PASSWORD (NOT NULL)
+INSERT INTO `users` (`fullname`, `password`, `email`, `phone`, `role_id`, `created_by`) VALUES
+('Nguyễn Văn A', '$2y$10$abcdefghijklmnopqrstuvwxyz123456', 'admin@example.com', '0901112222', 1, 1), -- ID 1: Administrator
+('Lê Thị B', '$2y$10$bcdefghijklmnopqrstuvwxyz1234567', 'guide.b@example.com', '0902223333', 2, 1), -- ID 2: Tour Guide
+('Phạm Văn C', '$2y$10$cdefghijklmnopqrstuvwxyz12345678', 'sales.c@example.com', '0903334444', 3, 1), -- ID 3: Sales Staff
+('Trần Thị D', '$2y$10$defghijklmnopqrstuvwxyz123456789', 'editor.d@example.com', '0904445555', 4, 1); -- ID 4: Content Editor
 
 -- 3. Bảng `categories` (Danh mục Tour)
 INSERT INTO `categories` (`name`, `description`, `created_by`) VALUES

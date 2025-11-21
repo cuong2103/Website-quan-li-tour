@@ -57,7 +57,7 @@ require_once "./views/components/sidebar.php";
     </div>
 
     <!-- Nút quay lại -->
-    <a href="?act=supplier-list"
+    <a href="?act=suppliers"
         class="inline-block mt-6 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
         Quay lại
     </a>

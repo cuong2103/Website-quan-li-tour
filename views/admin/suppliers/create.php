@@ -15,7 +15,7 @@ require_once "./views/components/sidebar.php";
             </p>
         <?php endif; ?>
 
-        <form action="" method="POST" class="space-y-5">
+        <form action="?act=supplier-create" method="POST" class="space-y-5">
 
             <!-- Tên -->
             <div>
