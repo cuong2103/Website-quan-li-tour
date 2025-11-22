@@ -18,7 +18,8 @@ match ($act) {
   'service-detail' => (new ServiceController()) -> detail($_GET["id"]),
   'service-create' => (new ServiceController()) -> create(),
   // 'service-store' => (new ServiceController()) -> store(),
-  // 'service-delete' => (new ServiceController()) -> delete(),
+  'service-delete' => (new ServiceController()) -> delete($_GET["id"]),
+  'service-edit' => (new ServiceController()) -> edit($_GET['id']),
 
 
   // Categories
