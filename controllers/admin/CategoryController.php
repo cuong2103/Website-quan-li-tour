@@ -19,8 +19,7 @@ class CategoryController
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $name = trim($_POST['name']);
       $parent_id = ($_POST['parent_id'] == "" ? null : $_POST['parent_id']);
-      dd($_SESSION);
-      $created_by = $_SESSION;
+      $created_by = $_SESSION['user']['id'];
       $this->categoryModel->create($name, $parent_id, $created_by);
       $categories = $this->categoryModel->getAll();
       $tree = buildTree($categories);
