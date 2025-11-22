@@ -13,5 +13,4 @@ class DashboardController
     // dd($user);
     require_once './views/admin/dashboard.php';
   }
-  
 }
