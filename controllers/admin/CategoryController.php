@@ -19,7 +19,7 @@ class CategoryController
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $name = trim($_POST['name']);
       $parent_id = ($_POST['parent_id'] == "" ? null : $_POST['parent_id']);
-      $created_by = 1;
+      $created_by = $_SESSION['user']['id'];
       $this->categoryModel->create($name, $parent_id, $created_by);
       $categories = $this->categoryModel->getAll();
       $tree = buildTree($categories);
@@ -54,7 +54,7 @@ class CategoryController
     $children = $this->categoryModel->hasChildren($id);
     if ($children) {
       $categories = $this->categoryModel->getAll();
-      $message = "Không thể xoá vì danh mục này đang là danh mục cha của danh mục khác!";
+      Message::set("error", "không thể xóa cha");
       $tree = buildTree($categories);
       require_once './views/admin/categories/index.php';
       exit;

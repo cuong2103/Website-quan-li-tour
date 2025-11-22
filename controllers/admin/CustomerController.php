@@ -71,7 +71,6 @@ class CustomerController
     public function update()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            dd($_SESSION);
             $id = $_GET['id'];
             $name = trim($_POST['name']);
             $email = trim($_POST['email']);
