@@ -24,7 +24,7 @@ class AuthController
 
             if (is_array($user)) {
                 // Login thành công
-                $_SESSION['admin'] = $user; // Lưu toàn bộ user
+                $_SESSION["user"] = $user; // Lưu toàn bộ user
                 header("Location: " . BASE_URL);
                 exit;
             } else {
@@ -40,8 +40,8 @@ class AuthController
     // Đăng xuất
     public function logout()
     {
-        if (isset($_SESSION['admin'])) {
-            unset($_SESSION['admin']);
+        if (isset($_SESSION)) {
+            unset($_SESSION);
             header('Location:' . BASE_URL . '?act=login-admin');
         }
     }

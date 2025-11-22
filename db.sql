@@ -80,6 +80,7 @@ CREATE TABLE `suppliers` (
   `email` varchar(100),
   `phone` varchar(20),
   `destination_id` int,
+  `status` boolean DEFAULT true,
   `created_by` int,
   `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp
@@ -90,7 +91,6 @@ CREATE TABLE `services` (
   `service_type_id` int,
   `supplier_id` int,
   `name` varchar(255),
-  `type` varchar(50),
   `description` text,
   `price` decimal(12,0),
   `created_by` int,

@@ -64,7 +64,7 @@ function deleteSessionError(){
 
 // Hàm check login 
 function checkLoginAdmin(){
-    if(!isset($_SESSION['admin'])){
+    if(!isset($_SESSION['user'])){
         header("Location: " . BASE_URL . '?act=login-admin');
         exit();
     }
