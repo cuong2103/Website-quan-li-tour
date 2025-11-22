@@ -1,5 +1,5 @@
 <?php
-$user = $_SESSION['admin'] ?? null;
+$user = $_SESSION['user'] ?? null;
 
 $fullname = $user['fullname'] ?? 'User';
 $role = ($user['role_id'] ?? 0) == 1 ? 'Admin' : 'Hướng dẫn viên';
@@ -15,6 +15,7 @@ $avatar = strtoupper(mb_substr($fullname, 0, 1));
   <title>Tour Manager - Admin Panel</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="<?= BASE_URL ?>assets/common.js"></script>
+
 </head>
 
 <body class="h-full bg-gray-50 flex">
