@@ -5,7 +5,7 @@
 
     <h2 class="text-2xl font-semibold mb-4">Sửa Loại Dịch vụ</h2>
 
-    <form action="index.php?act=update" method="POST" class="bg-white p-6 rounded-xl shadow-md">
+    <form action="index.php?act=service-type-update" method="POST" class="bg-white p-6 rounded-xl shadow-md">
 
         <input type="hidden" name="id" value="<?= $serviceType['id'] ?>">
 

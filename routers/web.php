@@ -5,12 +5,21 @@ match ($act) {
   // Admin Dashboard
   '/' => (new DashboardController())->Dashboard(),
 
+  // Service_type
   'service-type' => (new ServiceTypeController()) -> index(),
-  'store' => (new ServiceTypeController()) -> store(),
-  'detail' => (new ServiceTypeController()) -> detail($_GET["id"]),
-  'delete' => (new ServiceTypeController()) -> delete($_GET["id"]),
-  'edit' => (new ServiceTypeController()) -> edit($_GET["id"]),
-  'update' => (new ServiceTypeController()) -> update(),
+  'service-type-store' => (new ServiceTypeController()) -> store(),
+  'service-type-detail' => (new ServiceTypeController()) -> detail($_GET["id"]),
+  'service-type-delete' => (new ServiceTypeController()) -> delete($_GET["id"]),
+  'service-type-edit' => (new ServiceTypeController()) -> edit($_GET["id"]),
+  'service-type-update' => (new ServiceTypeController()) -> update(),
+
+  // Service
+  'service' => (new ServiceController()) -> index(),
+  'service-detail' => (new ServiceController()) -> detail($_GET["id"]),
+  'service-create' => (new ServiceController()) -> create(),
+  // 'service-store' => (new ServiceController()) -> store(),
+  // 'service-delete' => (new ServiceController()) -> delete(),
+
 
   // Categories
   "categories" => (new CategoryController())->index(),
