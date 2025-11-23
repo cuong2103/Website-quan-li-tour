@@ -53,8 +53,6 @@ class ServiceTypeController
 
         header("Location: index.php?act=service-type");
     }
-
-    
 }
 
 
