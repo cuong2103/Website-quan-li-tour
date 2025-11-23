@@ -62,4 +62,14 @@ match ($act) {
   'customer-detail' => (new CustomerController())->detail(),
   'customer-edit' => (new CustomerController())->edit(),
   'customer-delete' => (new CustomerController())->delete(),
+
+
+  // bookings
+  'bookings' => (new BookingController())->index(),
+  'booking-create' => (new BookingController())->create(),
+  'booking-store' => (new BookingController())->store(),
+  'booking-edit' => (new BookingController())->edit(),
+  'booking-update' => (new BookingController())->update(),
+  'booking-delete' => (new BookingController())->delete(),
+  'booking-detail' => (new BookingController())->detail(),
 };
