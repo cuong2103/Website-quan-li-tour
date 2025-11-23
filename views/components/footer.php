@@ -35,6 +35,10 @@
           toast.classList.remove('opacity-0', 'translate-x-8');
           toast.classList.add('opacity-100', 'translate-x-0');
         }, 10);
+        setTimeout(() => {
+          toast.classList.remove('opacity-100', 'translate-x-0');
+          toast.classList.add('opacity-0', 'translate-x-8');
+        }, 4800);
 
         // Thanh progress countdown
         progress.style.transition = "width 5s linear";
@@ -86,6 +90,10 @@
         toast.classList.remove('opacity-0', 'translate-x-8');
         toast.classList.add('opacity-100', 'translate-x-0');
       }, 10);
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-x-0');
+        toast.classList.add('opacity-0', 'translate-x-8');
+      }, 4800);
 
       // Animate thanh countdown 5s
       progress.style.transition = "width 5s linear";

@@ -23,6 +23,9 @@ require_once './views/components/sidebar.php';
             <input type="text" name="name" value="<?= $category["name"] ?>"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Ví dụ: Du lịch Trong nước, Châu Âu, Châu Á...">
+            <?php if (!empty($errors['name'])): ?>
+              <div class="text-red-500"><?= $errors['name'][0] ?></div>
+            <?php endif; ?>
           </div>
 
           <!-- Danh mục cha -->
