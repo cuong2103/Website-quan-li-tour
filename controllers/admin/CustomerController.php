@@ -33,7 +33,8 @@ class CustomerController
     {
         $id = $_GET['id'];
         $this->model->delete($id);
-        header("location: ?act=customers");
+        redirect("customers");
+        Message::set("success", "Xóa thành công!");
         die();
     }
     public function edit()
@@ -61,7 +62,8 @@ class CustomerController
                 $passport = trim($_POST['passport']);
                 $gender = trim($_POST['gender']);
                 $this->model->create($name, $email, $phone, $address, $created_by, $passport, $gender);
-                header("location: ?act=customers");
+                Message::set("success", "Thêm thành công!");
+                redirect("customers");
                 die();
             }
         } else {
@@ -88,7 +90,8 @@ class CustomerController
                 $passport = trim($_POST['passport']);
                 $gender = trim($_POST['gender']);
                 $this->model->update($id, $name, $email, $phone, $address, $created_by, $gender, $passport);
-                header("location: ?act=customers");
+                Message::set("success", "Cập nhật thành công!");
+                redirect("customers");
                 die();
             }
         }

@@ -45,11 +45,6 @@ require_once './views/components/sidebar.php';
             <input type="text" name="gender" class="border w-full p-2 rounded-lg" required>
         </div>
 
-
-
-
-
-
         <!-- Nút -->
         <div class="flex gap-3 mt-6">
             <button type="submit" class="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
