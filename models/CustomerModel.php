@@ -7,7 +7,7 @@ class CustomerModel
         $this->conn = connectDB();
     }
     // lấy toàn bộ roles
-    public function getALL()
+    public function getAll()
     {
         $sql = "SELECT * FROM customers ORDER BY id DESC";
         $stmt = $this->conn->prepare($sql);

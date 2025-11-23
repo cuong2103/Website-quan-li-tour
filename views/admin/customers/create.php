@@ -7,7 +7,7 @@ require_once './views/components/sidebar.php';
 
     <h1 class="text-2xl font-bold mb-6">Thêm khách hàng mới</h1>
 
-    <form action="<?= BASE_URL . '?act=customers' ?>"
+    <form action="<?= BASE_URL . '?act=customer-create' ?>"
         method="POST"
         enctype="multipart/form-data"
         class="bg-white p-6 rounded-lg shadow">
@@ -52,8 +52,8 @@ require_once './views/components/sidebar.php';
 
         <!-- Nút -->
         <div class="flex gap-3 mt-6">
-            <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                Thêm
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Thêm mới
             </button>
             <a href="<?= BASE_URL . '?act=customers' ?>" class="px-6 py-2 border rounded-lg hover:bg-gray-50">
                 Hủy
