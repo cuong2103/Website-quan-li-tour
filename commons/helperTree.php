@@ -42,9 +42,9 @@ function renderOption($tree, $level = '', $id = null)
 {
   foreach ($tree as $cat) {
     $tab = '' . $level;
-    echo '<option value="' . $cat['id'] . '"' . ($cat['id'] == $id ? "selected " : "") . '>' . $tab  . $cat['name']  . '</option>';
-    if (!empty($cat['children']) && strlen($tab) < 9) {
-      renderOption($cat['children'], $tab . "─");
+    echo '<option value="' . $cat['id'] . '"' . ($cat['id'] == $id ? "selected " : "") . '>' . $tab . "└─ " . $cat['name']  . '</option>';
+    if (!empty($cat['children']) && strlen($tab) < 60) {
+      renderOption($cat['children'], $tab . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
     }
   }
 }
