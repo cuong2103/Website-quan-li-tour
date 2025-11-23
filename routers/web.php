@@ -10,6 +10,8 @@ match ($act) {
   // Admin Dashboard
   '/' => (new DashboardController())->Dashboard(),
 
+  'tours' => (new TourController())->index(),
+
   'suppliers' => (new SupplierController())->index(),
   'supplier-edit' => (new SupplierController())->edit(),
   'supplier-create' => (new SupplierController())->create(),
