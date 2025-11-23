@@ -45,7 +45,7 @@
         <i class="w-4 h-4" data-lucide="chevron-down"></i>
       </button>
       <div class="submenu pl-12 space-y-1 overflow-hidden transition-all duration-300 max-h-0">
-        <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Danh sách Tour</a>
+        <a href="<?= BASE_URL ?>?act=tours" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Danh sách Tour</a>
         <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Lịch khởi hành</a>
       </div>
     </div>
