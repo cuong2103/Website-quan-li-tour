@@ -35,7 +35,7 @@ require_once './views/components/sidebar.php';
             <select name="parent_id"
               class="w-full px-3 py-2  border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="">-- Là Danh mục gốc --</option>
-              <?php renderOption($tree); ?>
+              <?php renderOption($tree, "", $_POST["parent_id"]); ?>
             </select>
             <p class="text-xs text-gray-500 mt-1">Để trống nếu đây là danh mục gốc</p>
           </div>

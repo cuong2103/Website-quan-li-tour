@@ -68,16 +68,19 @@ class CustomerModel
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    public function filter($name = '', $email = '')
+    public function filter($search = '',)
     {
         try {
             $sql = "SELECT * FROM customers WHERE 1";
             $params = [];
 
-            // Chỉ lọc theo tên
-            if (!empty($name)) {
-                $sql .= " AND name LIKE :name";
-                $params['name'] = "%" . $name . "%";
+            // Lọc theo tên và email
+            if (!empty($search)) {
+                $sql .= " AND name LIKE :name OR email LIKE :email OR phone LIKE :phone OR address LIKE :address";
+                $params['name'] = "%" . $search . "%";
+                $params['email'] = "%" . $search . "%";
+                $params['phone'] = "%$search%";
+                $params['address'] = "%$search%";
             }
 
             // Sắp xếp mới nhất

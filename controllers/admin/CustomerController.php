@@ -10,13 +10,13 @@ class CustomerController
     public function index()
     {
         // Lấy dữ liệu filter từ URL
-        $name = $_GET['name'] ?? '';
+        $search = $_GET['search'] ?? '';
         // $email = $_GET['email'] ?? '';
 
 
         // Gọi model để lọc
         $listCustomers = $this->model->filter(
-            $name,
+            $search,
             // $email
         );
 
