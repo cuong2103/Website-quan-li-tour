@@ -52,7 +52,7 @@ require_once './views/components/sidebar.php';
 
         <!-- Nút -->
         <div class="flex gap-3 mt-6">
-            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button type="submit" class="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
                 Thêm mới
             </button>
             <a href="<?= BASE_URL . '?act=customers' ?>" class="px-6 py-2 border rounded-lg hover:bg-gray-50">

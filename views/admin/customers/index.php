@@ -64,20 +64,20 @@ require_once "./views/components/sidebar.php";
                             <td class="px-4 py-3"><?= $cus['address'] ?></td>
                             <td class="px-4 py-3"><?= $cus['gender'] ?></td>
                             <td class="px-4 py-3"><?= $cus['passport'] ?></td>
-                            <td class="px-4 py-3 text-center flex items-center gap-3 justify-center">
+                            <td class="px-4 py-3 text-center">
 
                                 <!-- Xem -->
-                                <a href="?act=customer-edit&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-blue-600">
+                                <a href="?act=customer-edit&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-blue-600 mx-1 inline-block">
                                     <i class="w-4 h-4" data-lucide="square-pen"></i>
                                 </a>
 
                                 <!-- Sửa -->
-                                <a href="?act=customer-detail&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-green-600">
+                                <a href="?act=customer-detail&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-blue-600 mx-1 inline-block">
                                     <i class="w-4 h-4" data-lucide="eye"></i>
                                 </a>
 
                                 <!-- Xóa -->
-                                <a href="?act=customer-delete&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-red-600">
+                                <a href="?act=customer-delete&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-blue-600 mx-1 inline-block">
                                     <i class="w-4 h-4" data-lucide="trash-2"></i>
                                 </a>
 

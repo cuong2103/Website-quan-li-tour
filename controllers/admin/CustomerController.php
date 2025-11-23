@@ -77,8 +77,8 @@ class CustomerController
             $phone = trim($_POST['phone']);
             $address = trim($_POST['address']);
             $created_by = $_SESSION['user']['id'];
-            $passport = trim($_POST['passport']);
             $gender = trim($_POST['gender']);
+            $passport = trim($_POST['passport']);
 
             if (empty($name) || empty($email) || empty($phone) || empty($address)) {
                 $err = " Vui lòng nhập đầy đủ thông tin";
@@ -87,7 +87,7 @@ class CustomerController
             } else {
                 $passport = trim($_POST['passport']);
                 $gender = trim($_POST['gender']);
-                $this->model->update($id, $name, $email, $phone, $address, $created_by, $passport, $gender);
+                $this->model->update($id, $name, $email, $phone, $address, $created_by, $gender, $passport);
                 header("location: ?act=customers");
                 die();
             }
