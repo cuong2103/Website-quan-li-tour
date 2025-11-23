@@ -55,7 +55,8 @@ function dd($data)
 }
 
 //Xóa session sau khi load trang
-function deleteSessionError(){
+function deleteSessionError()
+{
     if (isset($_SESSION['flash'])) {
         unset($_SESSION['flash']);
         unset($_SESSION['error']);
@@ -63,17 +64,57 @@ function deleteSessionError(){
 }
 
 // Hàm check login 
-function checkLoginAdmin(){
-    if(!isset($_SESSION['user'])){
+function checkLoginAdmin()
+{
+    if (!isset($_SESSION['user']["role_id"])) {
         header("Location: " . BASE_URL . '?act=login-admin');
         exit();
     }
 }
 
-function checkLoginGuide(){
-    if(!isset($_SESSION['guide'])){
+function checkLoginGuide()
+{
+    if (!isset($_SESSION['user']["role_id"])) {
         header("Location: " . BASE_URL . '?act=login-guide');
     }
 }
 
 
+function validate($data, $rules)
+{
+    $errors = [];
+
+    foreach ($rules as $field => $ruleString) {
+        $rulesArray = explode('|', $ruleString);
+
+        foreach ($rulesArray as $rule) {
+            if ($rule === 'required') {
+                if (!isset($data[$field]) || trim($data[$field]) === '') {
+                    $errors[$field][] = "Trường $field là bắt buộc.";
+                }
+            } elseif ($rule === 'email') {
+                if (isset($data[$field]) && !filter_var($data[$field], FILTER_VALIDATE_EMAIL)) {
+                    $errors[$field][] = "Trường $field phải là email hợp lệ.";
+                }
+            } elseif (strpos($rule, 'min:') === 0) {
+                $min = (int)explode(':', $rule)[1];
+                if (isset($data[$field]) && strlen($data[$field]) < $min) {
+                    $errors[$field][] = "Trường $field phải có ít nhất $min ký tự.";
+                }
+            } elseif (strpos($rule, 'max:') === 0) {
+                $max = (int)explode(':', $rule)[1];
+                if (isset($data[$field]) && strlen($data[$field]) > $max) {
+                    $errors[$field][] = "Trường $field không được vượt quá $max ký tự.";
+                }
+            }
+        }
+    }
+
+    return $errors;
+}
+
+function redirect($act)
+{
+    header("Location: " . BASE_URL . "?act=" . $act);
+    exit();
+}

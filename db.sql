@@ -100,6 +100,7 @@ CREATE TABLE `services` (
 
 CREATE TABLE `tours` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
+  `category_id` int,
   `name` varchar(255),
   `introduction` text,
   `adult_price` decimal(12,0),
@@ -158,6 +159,8 @@ CREATE TABLE `customers` (
   `email` varchar(100),
   `phone` varchar(20),
   `address` varchar(500),
+  `passport` varchar(50),
+  `gender` enum('male', 'female', 'other'),
   `created_by` int,
   `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp
@@ -173,6 +176,8 @@ CREATE TABLE `bookings` (
   `total_amount` decimal(12,0),
   `deposit_amount` decimal(12,0),
   `remaining_amount` decimal(12,0),
+  `start_date` date,
+  `end_date` date,
   `status` tinyint DEFAULT 1,
   `special_requests` text,
   `created_by` int,
