@@ -7,7 +7,7 @@ require_once './views/components/sidebar.php';
     <!-- Tiêu đề trang -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-2xl font-semibold">Quản lý Dịch vụ</h2>
+            <h2 class="text-2xl font-semibold">Quản lý Dịch Vụ</h2>
             <p class="text-gray-500 text-sm">Quản lý các dịch vụ cung cấp cho tour</p>
         </div>
         <button onclick="window.location.href='?act=service-create'" 
@@ -21,22 +21,42 @@ require_once './views/components/sidebar.php';
 
     <!-- Bộ lọc -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
-        <div class="flex flex-wrap items-center gap-4">
-            <div class="flex-1 min-w-64">
-                <input type="text" placeholder="Tìm theo tên dịch vụ..." 
-                       class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
-            </div>
-            <select class="flex-1 border rounded-lg px-4 py-2 text-sm">
-                <option>Tất cả loại</option>
-            </select>
-            <select class="border flex-1 rounded-lg px-4 py-2 text-sm">
-                <option>Tất cả NCC</option>
-            </select>
-            <select class="border flex-1 rounded-lg px-4 py-2 text-sm">
-                <option>Tất cả</option>
-            </select>
+    <form action="" method="GET" class="flex flex-wrap items-center gap-4">
+        <input type="hidden" name="act" value="service">
+
+        <!-- Tìm theo tên dịch vụ -->
+        <div class="flex-1 min-w-64">
+            <input type="text" name="keyword" placeholder="Tìm theo tên dịch vụ..." 
+                   value="<?= $_GET['keyword'] ?? '' ?>" 
+                   class="w-full border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
         </div>
-    </div>
+
+        <!-- Loại dịch vụ -->
+        <select name="service_type_id" class="flex-1 border rounded-lg px-4 py-2 text-sm">
+            <option value="">Tất cả loại</option>
+            <?php foreach($serviceTypes as $type): ?>
+                <option value="<?= $type['id'] ?>" <?= (isset($_GET['service_type_id']) && $_GET['service_type_id']==$type['id']) ? 'selected' : '' ?>>
+                    <?= $type['name'] ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+
+        <!-- Nhà cung cấp -->
+        <select name="supplier_id" class="flex-1 border rounded-lg px-4 py-2 text-sm">
+            <option value="">Tất cả NCC</option>
+            <?php foreach($suppliers as $supplier): ?>
+                <option value="<?= $supplier['id'] ?>" <?= (isset($_GET['supplier_id']) && $_GET['supplier_id']==$supplier['id']) ? 'selected' : '' ?>>
+                    <?= $supplier['name'] ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+            Lọc
+        </button>
+    </form>
+</div>
+
 
     <!-- Bảng danh sách dịch vụ -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">

@@ -228,11 +228,11 @@ class DestinationModel
     }
 
     // LỌC ĐỊA ĐIỂM
-// ==============================
-public function filter($name = '', $country_id = '', $created_from = '', $created_to = '')
-{
-    try {
-        $sql = "
+    // ==============================
+    public function filter($name = '', $country_id = '', $created_from = '', $created_to = '')
+    {
+        try {
+            $sql = "
             SELECT 
                 d.*, 
                 c.name AS country_name,
@@ -255,44 +255,42 @@ public function filter($name = '', $country_id = '', $created_from = '', $create
             WHERE 1
         ";
 
-        $params = [];
+            $params = [];
 
-        // Lọc theo tên
-        if (!empty($name)) {
-            $sql .= " AND d.name LIKE :name";
-            $params['name'] = "%" . $name . "%";
+            // Lọc theo tên
+            if (!empty($name)) {
+                $sql .= " AND d.name LIKE :name";
+                $params['name'] = "%" . $name . "%";
+            }
+
+            // Lọc theo country_id
+            if (!empty($country_id)) {
+                $sql .= " AND d.country_id = :country_id";
+                $params['country_id'] = $country_id;
+            }
+
+            // Lọc theo ngày tạo từ
+            if (!empty($created_from)) {
+                $sql .= " AND d.created_at >= :from";
+                $params['from'] = $created_from . " 00:00:00";
+            }
+
+            // Lọc theo ngày tạo đến
+            if (!empty($created_to)) {
+                $sql .= " AND d.created_at <= :to";
+                $params['to'] = $created_to . " 23:59:59";
+            }
+
+            // Sắp xếp mới nhất
+            $sql .= " ORDER BY d.id DESC";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($params);
+
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            die("Lỗi: " . $e->getMessage());
         }
-
-        // Lọc theo country_id
-        if (!empty($country_id)) {
-            $sql .= " AND d.country_id = :country_id";
-            $params['country_id'] = $country_id;
-        }
-
-        // Lọc theo ngày tạo từ
-        if (!empty($created_from)) {
-            $sql .= " AND d.created_at >= :from";
-            $params['from'] = $created_from . " 00:00:00";
-        }
-
-        // Lọc theo ngày tạo đến
-        if (!empty($created_to)) {
-            $sql .= " AND d.created_at <= :to";
-            $params['to'] = $created_to . " 23:59:59";
-        }
-
-        // Sắp xếp mới nhất
-        $sql .= " ORDER BY d.id DESC";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute($params);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    } catch (Exception $e) {
-        die("Lỗi: " . $e->getMessage());
     }
-}
-
-    
 }

@@ -71,6 +71,7 @@ require_once './views/components/sidebar.php';
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-lg font-medium text-gray-900">Cấu trúc Danh mục (10)</h2>
+
         </div>
 
         <div class="border border-gray-200 rounded-lg p-2 h-[30rem] overflow-y-auto">

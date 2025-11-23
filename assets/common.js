@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  lucide.createIcons();
   const toggles = document.querySelectorAll(".menu-toggle");
 
   toggles.forEach((toggle) => {

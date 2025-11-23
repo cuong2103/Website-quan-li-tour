@@ -10,7 +10,7 @@
     </div>
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 max-w-4xl">
-        <form action="?act=service-store" method="POST" enctype="multipart/form-data">
+        <form action="?act=service-store" method="POST">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Tên dịch vụ -->
                 <div>
@@ -29,43 +29,33 @@
                 <!-- Loại dịch vụ -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Loại dịch vụ *</label>
-                    <select name="service_type_name" required 
+                    <select name="service_type_id" required 
                             class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
                         <option value="">-- Chọn loại --</option>
-                        <option value="Khách sạn">Khách sạn</option>
-                        <option value="Vận chuyển">Vận chuyển</option>
-                        <option value="Ăn uống">Ăn uống</option>
-                        <option value="Hoạt động & Vui chơi">Hoạt động & Vui chơi</option>
+                        <?php foreach($serviceTypes as $type): ?>
+                            <option value="<?= $type['id'] ?>"><?= $type['name'] ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
                 <!-- Nhà cung cấp -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tên nhà cung cấp *</label>
-                    <input type="text" name="supplier_name" required 
-                           class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nhà cung cấp *</label>
+                    <select name="supplier_id" required 
+                            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                        <option value="">-- Chọn nhà cung cấp --</option>
+                        <?php foreach($suppliers as $supplier): ?>
+                            <option value="<?= $supplier['id'] ?>"><?= $supplier['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
-                <!-- Email NCC -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email nhà cung cấp</label>
-                    <input type="email" name="supplier_email" 
-                           class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                <!-- Mô tả -->
+                <div class="md:col-span-2 mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả dịch vụ</label>
+                    <textarea name="description" rows="4" 
+                              class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none"></textarea>
                 </div>
-
-                <!-- Số điện thoại NCC -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Số điện thoại NCC</label>
-                    <input type="text" name="supplier_phone" 
-                           class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                </div>
-            </div>
-
-            <!-- Mô tả -->
-            <div class="mt-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả dịch vụ</label>
-                <textarea name="description" rows="4" 
-                          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none"></textarea>
             </div>
 
             <!-- Nút hành động -->

@@ -20,9 +20,10 @@ require_once './views/components/sidebar.php';
         </div>
     <?php endif; ?>
 
-    <form action="?act=service-edit&id=<?= $service['id'] ?>" method="POST" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        
-        <div class="mb-4">
+    <form action="?act=service-update" method="POST" method="POST" class="bg-white shadow-md rounded px-10 pt-10 ml-54 mt-20 p-18">
+        <input type="hidden" name="id" value="<?= $service['id'] ?>">
+
+        <div class="mb-4 ">
             <label for="name" class="block text-gray-700 font-bold mb-2">Tên dịch vụ:</label>
             <input type="text" name="name" id="name" value="<?= $service['name'] ?>" required
                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
@@ -43,7 +44,7 @@ require_once './views/components/sidebar.php';
                     <option value="<?= $type['id'] ?>" <?= $type['id'] == $service['service_type_id'] ? 'selected' : '' ?>>
                         <?= $type['name'] ?>
                     </option>
-                <?php endforeach; ?>
+                <?php endforeach; ?> 
             </select>
         </div>
 
