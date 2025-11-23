@@ -23,6 +23,7 @@ class CategoryController
       $this->categoryModel->create($name, $parent_id, $created_by);
       $categories = $this->categoryModel->getAll();
       $tree = buildTree($categories);
+      Message::set("success", "Thêm thành công!");
       require_once './views/admin/categories/index.php';
       exit;
     }
@@ -44,6 +45,7 @@ class CategoryController
       $name = trim($_POST['name']);
       $parent_id = ($_POST['parent_id'] == "" ? null : $_POST['parent_id']);
       $this->categoryModel->update($name, $parent_id, $id);
+      Message::set("success", "Cập nhật thành công!");
       header("Location:" . BASE_URL . "?act=categories");
       exit;
     }
@@ -59,6 +61,7 @@ class CategoryController
       require_once './views/admin/categories/index.php';
       exit;
     }
+    Message::set("success", "Xóa thành công rồi nhé");
     $this->categoryModel->delete($id);
     header("Location:" . BASE_URL . "?act=categories");
   }

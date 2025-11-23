@@ -55,7 +55,8 @@ function dd($data)
 }
 
 //Xóa session sau khi load trang
-function deleteSessionError(){
+function deleteSessionError()
+{
     if (isset($_SESSION['flash'])) {
         unset($_SESSION['flash']);
         unset($_SESSION['error']);
@@ -63,17 +64,18 @@ function deleteSessionError(){
 }
 
 // Hàm check login 
-function checkLoginAdmin(){
-    if(!isset($_SESSION['user'])){
+function checkLoginAdmin()
+{
+    dd($_SESSION['user']);
+    if (!isset($_SESSION['user']["role_id"])) {
         header("Location: " . BASE_URL . '?act=login-admin');
         exit();
     }
 }
 
-function checkLoginGuide(){
-    if(!isset($_SESSION['guide'])){
+function checkLoginGuide()
+{
+    if (!isset($_SESSION['user']["role_id"])) {
         header("Location: " . BASE_URL . '?act=login-guide');
     }
 }
-
-
