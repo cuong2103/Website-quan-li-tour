@@ -22,7 +22,7 @@ require_once "./views/components/sidebar.php";
             <input type="hidden" name="act" value="customers">
 
             <input
-                type="text" name="name"
+                type="text" name="search" placeholder="Search..." value="<?= $_GET["search"] ?? "" ?>"
                 placeholder="Tìm kiếm khách hàng..."
                 class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
 

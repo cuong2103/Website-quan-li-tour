@@ -17,16 +17,28 @@ class CategoryController
   public function store()
   {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-      $name = trim($_POST['name']);
-      $parent_id = ($_POST['parent_id'] == "" ? null : $_POST['parent_id']);
-      $created_by = $_SESSION['user']['id'];
-      $this->categoryModel->create($name, $parent_id, $created_by);
-      $categories = $this->categoryModel->getAll();
-      $tree = buildTree($categories);
-      require_once './views/admin/categories/index.php';
-      exit;
+      $data = [
+        'name' => trim($_POST['name']),
+        'parent_id' => ($_POST['parent_id'] == "" ? null : $_POST['parent_id']),
+        'created_by' => $_SESSION['user']['id'],
+      ];
+
+      $rules = [
+        'name' => 'required|min:3|max:50',
+      ];
+      $errors = validate($data, $rules);
+      if (!empty($errors)) {
+        $categories = $this->categoryModel->getAll();
+        $tree = buildTree($categories);
+        require_once './views/admin/categories/index.php';
+        exit;
+      } else {
+        $this->categoryModel->create($data);
+        Message::set("success", "Thêm thành công!");
+        redirect("categories");
+        exit;
+      }
     }
-    header("Location:" . BASE_URL . "?act=categories");
   }
   public function edit()
   {
@@ -43,23 +55,58 @@ class CategoryController
       $id = $_GET['id'];
       $name = trim($_POST['name']);
       $parent_id = ($_POST['parent_id'] == "" ? null : $_POST['parent_id']);
-      $this->categoryModel->update($name, $parent_id, $id);
-      header("Location:" . BASE_URL . "?act=categories");
-      exit;
+
+      $data = [
+        'name' => $name,
+        'parent_id' => $parent_id,
+      ];
+
+      $rules = [
+        'name' => 'required|min:3|max:50',
+      ];
+
+      $errors = validate($data, $rules);
+      if (!empty($errors)) {
+        // Keep submitted values in $category so edit view shows them
+        $category = [
+          'id' => $id,
+          'name' => $name,
+          'parent_id' => $parent_id,
+        ];
+        $categories = $this->categoryModel->getAll();
+        $tree = buildTree($categories);
+        require_once './views/admin/categories/edit.php';
+        exit;
+      } else {
+        $this->categoryModel->update($name, $parent_id, $id);
+        Message::set("success", "Cập nhật thành công!");
+        redirect("categories");
+        exit;
+      }
     }
   }
   public function delete()
   {
+    if (!isset($_GET['id'])) {
+      redirect('categories');
+      exit;
+    }
     $id = $_GET['id'];
-    $children = $this->categoryModel->hasChildren($id);
-    if ($children) {
-      $categories = $this->categoryModel->getAll();
-      Message::set("error", "không thể xóa cha");
-      $tree = buildTree($categories);
-      require_once './views/admin/categories/index.php';
+    $category = $this->categoryModel->getById($id);
+    if (!$category) {
+      Message::set("error", "Danh mục không tồn tại");
+      redirect("categories");
+      exit;
+    }
+
+    if ($this->categoryModel->hasChildren($id)) {
+      Message::set("error", "Không thể xóa danh mục cha!");
+      redirect("categories");
       exit;
     }
     $this->categoryModel->delete($id);
-    header("Location:" . BASE_URL . "?act=categories");
+    Message::set("success", "Xóa thành công!");
+    redirect("categories");
+    exit;
   }
 }

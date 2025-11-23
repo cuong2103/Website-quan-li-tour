@@ -158,6 +158,8 @@ CREATE TABLE `customers` (
   `email` varchar(100),
   `phone` varchar(20),
   `address` varchar(500),
+  `passport` varchar(50),
+  `gender` enum('male', 'female', 'other'),
   `created_by` int,
   `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp

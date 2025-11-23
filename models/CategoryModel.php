@@ -17,15 +17,15 @@ class CategoryModel
     return $stmt->fetchAll();
   }
 
-  public function create($name, $parent_id, $created_by)
+  public function create($data)
   {
     $sql = "INSERT INTO categories (name, parent_id, created_by)
                 VALUES (?, ?, ?)";
     $stmt = $this->conn->prepare($sql);
     return $stmt->execute([
-      $name,
-      $parent_id,
-      $created_by
+      $data['name'],
+      $data['parent_id'],
+      $data['created_by']
     ]);
   }
   public function getById($id)
