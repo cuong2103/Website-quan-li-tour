@@ -11,6 +11,7 @@ match ($act) {
   '/' => (new DashboardController())->Dashboard(),
 
   'tours' => (new TourController())->index(),
+  'tours-create' => (new TourController())->create(),
 
   'suppliers' => (new SupplierController())->index(),
   'supplier-edit' => (new SupplierController())->edit(),
