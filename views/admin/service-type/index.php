@@ -2,85 +2,73 @@
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
-<div class="p-6">
+
+<main class="container-fluid px-4 py-4">
 
     <!-- Tiêu đề -->
-    <h2 class="text-2xl font-semibold mb-2">Quản lý Loại Dịch vụ</h2>
-    <p class="text-gray-500 mb-6">
-        Quản lý các danh mục dịch vụ như Khách sạn, Vận chuyển, Nhà hàng...
-    </p>
+    <div class="mb-4">
+        <h2 class="fw-bold fs-3 mb-1">Quản lý Loại Dịch vụ</h2>
+        <p class="text-muted mb-0">Quản lý các danh mục dịch vụ như Khách sạn, Vận chuyển, Nhà hàng...</p>
+    </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="row g-4">
 
         <!-- Form thêm loại dịch vụ -->
-        <div class="bg-white rounded-xl shadow p-6">
-            <h3 class="text-lg font-semibold mb-4">Thêm Loại Dịch vụ</h3>
-            <form action="<?= BASE_URL . 'index.php?act=service-type-store'?>" method="POST">
-                <!-- kiểm tra dữ liệu vào post -->
-                <label class="block mb-2 font-medium">Tên loại dịch vụ <span class="text-red-500">*</span></label>
-                <input type="text" name="name" class="w-full border rounded-lg p-2 mb-4"
-                    placeholder="Ví dụ: Khách sạn, Vận chuyển..." />
-
-                <label class="block mb-2 font-medium">Mô tả</label>
-                <textarea name="description" rows="3"
-                    class="w-full border rounded-lg p-2 mb-4"
-                    placeholder="Mô tả chi tiết về loại dịch vụ này..."></textarea>
-
-                <button type="submit" class="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition"> + Lưu</button> 
-            </form>
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Thêm Loại Dịch vụ</h5>
+                    <form action="<?= BASE_URL . 'index.php?act=service-type-store' ?>" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Tên loại dịch vụ <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control" placeholder="Ví dụ: Khách sạn, Vận chuyển..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mô tả</label>
+                            <textarea name="description" rows="3" class="form-control" placeholder="Mô tả chi tiết về loại dịch vụ này..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">+ Lưu</button>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <!-- Danh sách loại dịch vụ -->
-        <div class="bg-white rounded-xl shadow p-6">
-            <h3 class="text-lg font-semibold mb-4">Danh sách hiện có (<?=  count($serviceTypes) ?>)</h3>
-            <div class="space-y-4">
-
-                <!-- ITEM -->
-                 <?php  foreach( $serviceTypes as $serviceType) { ?>
-                <div class="border rounded-lg p-4">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h4 class="font-semibold"><?= $serviceType["name"] ?></h4>
-                            <p class="text-gray-500 text-sm"><?= $serviceType["description"] ?></p>
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Danh sách hiện có (<?= count($serviceTypes) ?>)</h5>
+                    <div class="list-group">
+                        <?php foreach($serviceTypes as $serviceType): ?>
+                        <div class="list-group-item list-group-item-action mb-2 p-3 rounded shadow-sm d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1 fw-semibold"><?= htmlspecialchars($serviceType["name"]) ?></h6>
+                                <p class="mb-0 text-muted small"><?= htmlspecialchars($serviceType["description"]) ?></p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <!-- Xem -->
+                                <a href="index.php?act=service-type-detail&id=<?= $serviceType['id'] ?>" class="btn btn-sm btn-outline-secondary" title="Xem">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <!-- Sửa -->
+                                <a href="index.php?act=service-type-edit&id=<?= $serviceType['id'] ?>" class="btn btn-sm btn-outline-success" title="Sửa">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <!-- Xóa -->
+                                <a href="index.php?act=service-type-delete&id=<?= $serviceType['id'] ?>" onclick="return confirm('Bạn có chắc muốn xóa không?')" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
                         </div>
-                        <div class="flex gap-3 text-gray-600">
-                            <!-- Xem chi tiết -->
-                            <a href="index.php?act=service-type-detail&id=<?= $serviceType['id'] ?>">
-                                <button type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-icon lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg></button>
-                            </a>
-
-                            <!-- Sửa -->
-                            <a href="index.php?act=service-type-edit&id=<?= $serviceType['id'] ?>">
-                                <button type="button" >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-pen-icon lucide-square-pen"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg></button>
-                            </a>
-
-                            <!-- Xóa -->
-                            <a href="index.php?act=service-type-delete&id=<?= $serviceType['id'] ?>" onclick="return confirm('Bạn có chắc muốn xóa không?')">
-                                <button type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
-                            </a>
-                        </div>
-
+                        <?php endforeach; ?>
                     </div>
                 </div>
-            <?php } ; ?>
-
             </div>
         </div>
 
     </div>
 
-</div>
-
-
-
-
-
-
-
-
+</main>
 
 <?php
 require_once './views/components/footer.php';
