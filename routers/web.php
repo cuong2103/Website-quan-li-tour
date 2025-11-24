@@ -10,23 +10,31 @@ match ($act) {
   // Admin Dashboard
   '/' => (new DashboardController())->Dashboard(),
 
+  'tours' => (new TourController())->index(),
+
+  'suppliers' => (new SupplierController())->index(),
+  'supplier-edit' => (new SupplierController())->edit(),
+  'supplier-create' => (new SupplierController())->create(),
+  'supplier-update' => (new SupplierController())->update(),
+  'supplier-detail' => (new SupplierController())->detail(),
+  'supplier-delete' => (new SupplierController())->delete(),
 
   // service-type
-  'service-type' => (new ServiceTypeController()) -> index(),
-  'service-type-store' => (new ServiceTypeController()) -> store(),
-  'service-type-detail' => (new ServiceTypeController()) -> detail($_GET["id"]),
-  'service-type-delete' => (new ServiceTypeController()) -> delete($_GET["id"]),
-  'service-type-edit' => (new ServiceTypeController()) -> edit($_GET["id"]),
-  'service-type-update' => (new ServiceTypeController()) -> update(),
+  'service-type' => (new ServiceTypeController())->index(),
+  'service-type-store' => (new ServiceTypeController())->store(),
+  'service-type-detail' => (new ServiceTypeController())->detail($_GET["id"]),
+  'service-type-delete' => (new ServiceTypeController())->delete($_GET["id"]),
+  'service-type-edit' => (new ServiceTypeController())->edit($_GET["id"]),
+  'service-type-update' => (new ServiceTypeController())->update(),
 
   //service
-  'service' => (new ServiceController()) -> index(),
-  'service-detail' => (new ServiceController()) -> detail($_GET['id']),
-  'service-create' => (new ServiceController()) -> create(),
-  'service-store' => (new ServiceController()) -> store(),
-  'service-edit' => (new ServiceController()) -> edit($_GET['id']),
-  'service-delete' => (new ServiceController()) -> delete($_GET['id']),
-  'service-update' => (new ServiceController()) -> update(),
+  'service' => (new ServiceController())->index(),
+  'service-detail' => (new ServiceController())->detail($_GET['id']),
+  'service-create' => (new ServiceController())->create(),
+  'service-store' => (new ServiceController())->store(),
+  'service-edit' => (new ServiceController())->edit($_GET['id']),
+  'service-delete' => (new ServiceController())->delete($_GET['id']),
+  'service-update' => (new ServiceController())->update(),
 
   // Categories
   "categories" => (new CategoryController())->index(),

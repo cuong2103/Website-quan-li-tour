@@ -40,7 +40,7 @@ require_once './views/components/sidebar.php';
                             <td><?= $b['tour_name'] ?></td>
                             <td><?= $b['start_date'] ?></td>
                             <td><?= $b['end_date'] ?></td>
-                            <td><?= $b['adult_count'] ?> Người lớn, <?= $b['child_count'] ?> Trẻ em</td>
+                            <td><?= $b['adult_count'] ?> NL, <?= $b['child_count'] ?> TE</td>
                             <td><?= number_format($b['total_amount']) ?>đ</td>
                             <td>
                                 <div class="flex gap-0 flex-shrink-0">
