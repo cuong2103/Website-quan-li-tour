@@ -10,6 +10,14 @@ match ($act) {
   // Admin Dashboard
   '/' => (new DashboardController())->Dashboard(),
 
+  'tours' => (new TourController())->index(),
+
+  'suppliers' => (new SupplierController())->index(),
+  'supplier-edit' => (new SupplierController())->edit(),
+  'supplier-create' => (new SupplierController())->create(),
+  'supplier-update' => (new SupplierController())->update(),
+  'supplier-detail' => (new SupplierController())->detail(),
+  'supplier-delete' => (new SupplierController())->delete(),
 
   // service-type
   'service-type' => (new ServiceTypeController()) -> index(),
@@ -27,7 +35,9 @@ match ($act) {
   'service-edit' => (new ServiceController()) -> edit(),
   'service-delete' => (new ServiceController()) -> delete(),
   'service-update' => (new ServiceController()) -> update(),
+  
 
+  
   //user_management
   'user' => (new user_managementController()) -> index(),
 
