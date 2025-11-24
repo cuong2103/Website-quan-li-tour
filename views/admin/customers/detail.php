@@ -37,7 +37,36 @@ require_once "./views/components/sidebar.php";
                 <span class="text-gray-800"><?= $customer['address'] ?></span>
             </div>
 
+            <!-- Giới tính -->
+            <div class="flex items-center gap-4">
+                <label class="w-40 font-medium text-gray-700">Giới tính:</label>
+                <span class="text-gray-800"><?= $customer['gender'] ?></span>
+            </div>
+            <!-- Hộ chiếu -->
+            <div class="flex items-center gap-4">
+                <label class="w-40 font-medium text-gray-700">Hộ chiếu:</label>
+                <span class="text-gray-800"><?= $customer['passport'] ?></span>
+            </div>
+
         </div>
+        <!-- Người tạo -->
+        <div class="flex items-center gap-4">
+            <label class="w-40 font-medium text-gray-700">Người tạo:</label>
+            <span class="text-gray-800"><?= $customer['created_by'] ?></span>
+        </div>
+
+        <!-- Ngày tạo -->
+        <div class="flex items-center gap-4">
+            <label class="w-40 font-medium text-gray-700">Ngày tạo:</label>
+            <span class="text-gray-800"><?= $customer['created_at'] ?></span>
+        </div>
+
+        <!-- Ngày cập nhật -->
+        <div class="flex items-center gap-4">
+            <label class="w-40 font-medium text-gray-700">Cập nhật lần cuối:</label>
+            <span class="text-gray-800"><?= $customer['updated_at'] ?></span>
+        </div>
+
 
         <!-- Nút quay về -->
         <div class="flex justify-end gap-3 pt-6">
