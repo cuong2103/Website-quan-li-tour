@@ -12,4 +12,8 @@ class TourController
     $tours = $this->tourModel->getAll();
     require_once './views/admin/tours/index.php';
   }
+  public function create()
+  {
+    require_once './views/admin/tours/create.php';
+  }
 }
