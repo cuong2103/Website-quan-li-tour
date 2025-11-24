@@ -20,17 +20,4 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
-
-  function showAlert(message, duration = 3000) {
-    const alertBox = document.getElementById("alert-message");
-    alertBox.textContent = message;
-    alertBox.classList.remove("opacity-0"); // hiện alert
-    alertBox.classList.add("opacity-100");
-
-    // tự ẩn sau duration
-    setTimeout(() => {
-      alertBox.classList.remove("opacity-100");
-      alertBox.classList.add("opacity-0");
-    }, duration);
-  }
 });

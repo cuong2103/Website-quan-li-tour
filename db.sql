@@ -92,7 +92,6 @@ CREATE TABLE `services` (
   `supplier_id` int,
   `name` varchar(255),
   `description` text,
-  `price` decimal(12,0),
   `created_by` int,
   `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp
@@ -137,16 +136,17 @@ CREATE TABLE `itineraries` (
 
 CREATE TABLE `policies` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(255),
   `content` text,
   `created_by` int,
   `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp
 );
 
-CREATE TABLE `tour_policies` (
+CREATE TABLE `booking_policies` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `policy_id` int,
-  `tour_id` int,
+  `booking_id` int,
   `description` text,
   `created_by` int,
   `created_at` timestamp DEFAULT (now()),
@@ -315,8 +315,8 @@ ALTER TABLE `itineraries` ADD FOREIGN KEY (`tour_id`) REFERENCES `tours` (`id`);
 ALTER TABLE `itineraries` ADD FOREIGN KEY (`destination_id`) REFERENCES `destinations` (`id`);
 
 -- Bảng `tour_policies` (M:N giữa Tour và Policy)
-ALTER TABLE `tour_policies` ADD FOREIGN KEY (`policy_id`) REFERENCES `policies` (`id`);
-ALTER TABLE `tour_policies` ADD FOREIGN KEY (`tour_id`) REFERENCES `tours` (`id`);
+ALTER TABLE `booking_policies` ADD FOREIGN KEY (`policy_id`) REFERENCES `policies` (`id`);
+ALTER TABLE `booking_policies` ADD FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`);
 
 -- Bảng `bookings`
 ALTER TABLE `bookings` ADD FOREIGN KEY (`tour_id`) REFERENCES `tours` (`id`);
