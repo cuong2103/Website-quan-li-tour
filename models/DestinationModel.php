@@ -293,4 +293,20 @@ class DestinationModel
             die("Lỗi: " . $e->getMessage());
         }
     }
+
+    public function getIdByName($name)
+    {
+        $sql = "SELECT id FROM destinations WHERE name = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$name]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function insertReturnId($name)
+    {
+        $sql = "INSERT INTO destinations (name) VALUES (?)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$name]);
+        return $this->conn->lastInsertId();
+    }
 }
