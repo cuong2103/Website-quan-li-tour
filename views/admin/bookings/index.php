@@ -1,6 +1,28 @@
 <?php
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
+function renderStatusBadge($status)
+{
+    switch ($status) {
+        case 1: // Chờ thanh toán
+            return '<span class="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700">Chờ thanh toán</span>';
+
+        case 2: // Đã cọc
+            return '<span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">Đã cọc</span>';
+
+        case 3: // Đã thanh toán đủ
+            return '<span class="px-3 py-1 text-xs font-medium rounded-full bg-sky-100 text-sky-700">Đã thanh toán đủ</span>';
+
+        case 4: // Đã hủy
+            return '<span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">Đã hủy</span>';
+
+        case 5: // Hoàn thành Tour
+            return '<span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">Hoàn thành Tour</span>';
+
+        default:
+            return '<span class="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">Không rõ</span>';
+    }
+}
 
 ?>
 
@@ -22,13 +44,13 @@ require_once './views/components/sidebar.php';
         <table class="w-full text-left">
             <thead>
                 <tr class="border-b">
-                    <th class="py-3">STT</th>
-                    <th>Tour</th>
-                    <th>Ngày đi</th>
-                    <th>Ngày về</th>
-                    <th>Số lượng</th>
-                    <th>Tổng tiền</th>
-                    <th>Hành động</th>
+                    <th class="py-5">Tour</th>
+                    <th class="py-5">Ngày đi</th>
+                    <th class="py-5">Ngày về</th>
+                    <th class="py-5">Số lượng</th>
+                    <th class="py-5">Tổng tiền</th>
+                    <th class="py-5">Trạng thái</th>
+                    <th class="py-5">Hành động</th>
                 </tr>
             </thead>
 
@@ -36,13 +58,13 @@ require_once './views/components/sidebar.php';
                 <?php if (!empty($bookings)): ?>
                     <?php foreach ($bookings as $b): ?>
                         <tr class="border-b text-sm">
-                            <td class="py-2"><?= $b['id'] ?></td>
-                            <td><?= $b['tour_name'] ?></td>
-                            <td><?= $b['start_date'] ?></td>
-                            <td><?= $b['end_date'] ?></td>
-                            <td><?= $b['adult_count'] ?> NL, <?= $b['child_count'] ?> TE</td>
-                            <td><?= number_format($b['total_amount']) ?>đ</td>
-                            <td>
+                            <td class="py-5"><?= $b['tour_name'] ?></td>
+                            <td class="py-5"><?= $b['start_date'] ?></td>
+                            <td class="py-5"><?= $b['end_date'] ?></td>
+                            <td class="py-5"><?= $b['adult_count'] ?> NL, <?= $b['child_count'] ?> TE</td>
+                            <td class="py-5"><?= number_format($b['total_amount']) ?>đ</td>
+                            <td class="py-5"><?= renderStatusBadge($b['status']); ?></td>
+                            <td class="py-5">
                                 <div class="flex gap-0 flex-shrink-0">
                                     <a href="<?= BASE_URL . '?act=booking-edit&id=' . $b['id']  ?>" class="inline-flex items-center justify-center  disabled:opacity-50 gap-1.5 px-1 "><i class="w-4 h-4" data-lucide="square-pen"></i></a>
                                     <a href="<?= BASE_URL . '?act=booking-detail&id=' . $b['id']  ?>"
