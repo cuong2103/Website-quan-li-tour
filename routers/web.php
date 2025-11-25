@@ -71,4 +71,6 @@ match ($act) {
   'customer-detail' => (new CustomerController())->detail(),
   'customer-edit' => (new CustomerController())->edit(),
   'customer-delete' => (new CustomerController())->delete(),
+
+  default => require_once './views/notFound.php',
 };
