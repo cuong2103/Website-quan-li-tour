@@ -11,7 +11,7 @@ class ServiceTypeController
     public function index()
     {
         $search = $_GET["search"] ?? null;
-        if($search){
+        if ($search) {
             $serviceTypes = $this->serviceTypeModel->search($search);
         } else {
             $serviceTypes = $this->serviceTypeModel->getAll();
@@ -20,14 +20,16 @@ class ServiceTypeController
         require_once './views/admin/service-type/index.php';
     }
     // hiển thị dữ liệu
-    public function detail($id)
+    public function detail()
     {
+        $id = $_GET["id"];
         $serviceType = $this->serviceTypeModel->getDetail($id);
         // dd($serviceType);
         require_once './views/admin/service-type/detail.php';
     }
     // xem chi tiết
-    public function store(){
+    public function store()
+    {
         $name = $_POST["name"];
         $description = $_POST["description"];
         $created_by = 1;
@@ -35,17 +37,22 @@ class ServiceTypeController
         header("Location: index.php?act=service-type");
     }
     // xóa
-    public function delete($id){
+    public function delete()
+    {
+        $id = $_GET["id"];
         $this->serviceTypeModel->delete($id);
         header("Location: index.php?act=service-type");
     }
     //sửa
-    public function edit($id){
+    public function edit()
+    {
+        $id = $_GET["id"];
         $serviceType = $this->serviceTypeModel->getDetail($id);
         require_once './views/admin/service-type/edit.php';
     }
     //update
-    public function update(){
+    public function update()
+    {
         $id = $_POST["id"];
         $name = $_POST["name"];
         $description = $_POST["description"];
@@ -54,6 +61,3 @@ class ServiceTypeController
         header("Location: index.php?act=service-type");
     }
 }
-
-
-?>
