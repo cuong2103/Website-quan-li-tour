@@ -28,18 +28,18 @@ match ($act) {
   // service-type
   'service-type' => (new ServiceTypeController())->index(),
   'service-type-store' => (new ServiceTypeController())->store(),
-  'service-type-detail' => (new ServiceTypeController())->detail($_GET["id"]),
-  'service-type-delete' => (new ServiceTypeController())->delete($_GET["id"]),
-  'service-type-edit' => (new ServiceTypeController())->edit($_GET["id"]),
+  'service-type-detail' => (new ServiceTypeController())->detail(),
+  'service-type-delete' => (new ServiceTypeController())->delete(),
+  'service-type-edit' => (new ServiceTypeController())->edit(),
   'service-type-update' => (new ServiceTypeController())->update(),
 
   //service
   'service' => (new ServiceController())->index(),
-  'service-detail' => (new ServiceController())->detail($_GET['id']),
+  'service-detail' => (new ServiceController())->detail(),
   'service-create' => (new ServiceController())->create(),
   'service-store' => (new ServiceController())->store(),
-  'service-edit' => (new ServiceController())->edit($_GET['id']),
-  'service-delete' => (new ServiceController())->delete($_GET['id']),
+  'service-edit' => (new ServiceController())->edit(),
+  'service-delete' => (new ServiceController())->delete(),
   'service-update' => (new ServiceController())->update(),
 
   // Categories
