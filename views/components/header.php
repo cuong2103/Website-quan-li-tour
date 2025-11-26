@@ -1,8 +1,8 @@
 <?php
-$user = $_SESSION['user'] ?? null;
+$currentUser = $_SESSION['currentUser'] ?? null;
 
-$fullname = $user['fullname'] ?? 'User';
-$role = ($user['role_id'] ?? 0) == 1 ? 'Admin' : 'Hướng dẫn viên';
+$fullname = $currentUser['fullname'] ?? 'User';
+$role = ($currentUser['role_id'] ?? 0) == 1 ? 'Admin' : 'Hướng dẫn viên';
 $avatar = strtoupper(mb_substr($fullname, 0, 1));
 ?>
 
@@ -42,7 +42,7 @@ $avatar = strtoupper(mb_substr($fullname, 0, 1));
         </div>
         <div class="flex items-center space-x-4">
           <button class="relative p-2 text-gray-600 hover:bg-gray-100 rounded-full">
-          <i  data-lucide="bell"></i>
+            <i data-lucide="bell"></i>
             <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
           </button>
           <div class="flex items-center space-x-3">

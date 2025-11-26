@@ -20,16 +20,16 @@ class AuthController
             $email = $_POST['email'];
             $password = $_POST['password'];
             // Kiểm tra đăng nhập
-            $user = $this->userModel->checkLogin($email, $password);
+            $currentUser = $this->userModel->checkLogin($email, $password);
 
-            if (is_array($user)) {
+            if (is_array($currentUser)) {
                 // Login thành công
-                $_SESSION["user"] = $user; // Lưu toàn bộ user
+                $_SESSION["currentUser"] = $currentUser; // Lưu toàn bộ user
                 header("Location: " . BASE_URL);
                 exit;
             } else {
                 // Đăng nhập thất bại
-                $_SESSION['error'] = $user;
+                $_SESSION['error'] = $currentUser;
                 $_SESSION['flash'] = true;
                 header('Location:' . BASE_URL . '?act=login-admin');
                 exit();

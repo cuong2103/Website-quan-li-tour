@@ -4,12 +4,10 @@ document.addEventListener("DOMContentLoaded", function () {
   toggles.forEach((toggle) => {
     toggle.addEventListener("click", function () {
       const submenu = this.nextElementSibling; // phần .submenu ngay sau button
-      const arrow = this.querySelector("svg.arrow"); // mũi tên
-
+      const arrow = this.querySelector(".lucide-chevron-down"); // mũi tên
       // Toggle class active
       this.classList.toggle("text-indigo-700");
       this.classList.toggle("bg-indigo-50");
-
       // Mở/đóng submenu
       if (submenu.style.maxHeight && submenu.style.maxHeight !== "0px") {
         submenu.style.maxHeight = "0px";
@@ -20,17 +18,4 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
-
-  function showAlert(message, duration = 3000) {
-    const alertBox = document.getElementById("alert-message");
-    alertBox.textContent = message;
-    alertBox.classList.remove("opacity-0"); // hiện alert
-    alertBox.classList.add("opacity-100");
-
-    // tự ẩn sau duration
-    setTimeout(() => {
-      alertBox.classList.remove("opacity-100");
-      alertBox.classList.add("opacity-0");
-    }, duration);
-  }
 });

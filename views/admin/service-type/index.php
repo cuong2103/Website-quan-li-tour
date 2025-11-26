@@ -15,7 +15,7 @@ require_once './views/components/sidebar.php';
         <!-- Form thêm loại dịch vụ -->
         <div class="bg-white rounded-xl shadow p-6">
             <h3 class="text-lg font-semibold mb-4">Thêm Loại Dịch vụ</h3>
-            <form action="<?= BASE_URL . 'index.php?act=store'?>" method="POST">
+            <form action="<?= BASE_URL . '?act=service-type-store'?>" method="POST">
                 <!-- kiểm tra dữ liệu vào post -->
                 <label class="block mb-2 font-medium">Tên loại dịch vụ <span class="text-red-500">*</span></label>
                 <input type="text" name="name" class="w-full border rounded-lg p-2 mb-4"
@@ -45,19 +45,19 @@ require_once './views/components/sidebar.php';
                         </div>
                         <div class="flex gap-3 text-gray-600">
                             <!-- Xem chi tiết -->
-                            <a href="index.php?act=detail&id=<?= $serviceType['id'] ?>">
+                            <a href="?act=service-type-detail&id=<?= $serviceType['id'] ?>">
                                 <button type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-icon lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg></button>
                             </a>
 
                             <!-- Sửa -->
-                            <a href="index.php?act=edit&id=<?= $serviceType['id'] ?>">
+                            <a href="?act=service-type-edit&id=<?= $serviceType['id'] ?>">
                                 <button type="button" >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-pen-icon lucide-square-pen"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg></button>
                             </a>
 
                             <!-- Xóa -->
-                            <a href="index.php?act=delete&id=<?= $serviceType['id'] ?>" onclick="return confirm('Bạn có chắc muốn xóa không?')">
+                            <a href="?act=service-type-delete&id=<?= $serviceType['id'] ?>" onclick="return confirm('Bạn có chắc muốn xóa không?')">
                                 <button type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                             </a>
@@ -84,4 +84,3 @@ require_once './views/components/sidebar.php';
 
 <?php
 require_once './views/components/footer.php';
-?>

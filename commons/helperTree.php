@@ -38,13 +38,58 @@ function renderCategory($categories, $level = 0)
   }
 }
 
-function renderOption($tree, $level = '', $id = null)
+// function renderOption($tree, $level = '', $id = null)
+// {
+//   foreach ($tree as $cat) {
+//     $tab = $level;
+//     $prefix = $level === '' ? '' : '→ ';
+//     echo '<option value="' . $cat['id'] . '"' . ($cat['id'] == $id ? "selected " : "") . '>' . $tab . $prefix . $cat['name']  . '</option>';
+//     if (!empty($cat['children']) && strlen($tab) < 60) {
+//       renderOption($cat['children'], $tab . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", $id);
+//     }
+//   }
+// }
+function renderOption($tree, $parentName = '', $id = null)
 {
   foreach ($tree as $cat) {
-    $tab = '' . $level;
-    echo '<option value="' . $cat['id'] . '"' . ($cat['id'] == $id ? "selected " : "") . '>' . $tab  . $cat['name']  . '</option>';
-    if (!empty($cat['children']) && strlen($tab) < 9) {
-      renderOption($cat['children'], $tab . "─");
+
+    // Tạo đường dẫn "cha → con"
+    $fullName = $parentName
+      ? $parentName . " → " . $cat['name']
+      : $cat['name'];
+
+    echo '<option value="' . $cat['id'] . '"'
+      . ($cat['id'] == $id ? "selected " : "")
+      . '>'
+      . $fullName
+      . '</option>';
+
+    // Nếu có children thì đệ quy tiếp
+    if (!empty($cat['children'])) {
+      renderOption($cat['children'], $fullName, $id);
     }
   }
 }
+
+function getChildIds($categories, $id)
+{
+  $ids = [];
+  foreach ($categories as $cat) {
+    if ($cat['id'] == $id) {
+      $ids[] = $cat['id'];
+      if (!empty($cat['children'])) {
+        foreach ($cat['children'] as $child) {
+          $ids = array_merge($ids, getChildIds([$child], $child['id']));
+        }
+      }
+    } elseif (!empty($cat['children'])) {
+      $ids = array_merge($ids, getChildIds($cat['children'], $id));
+    }
+  }
+  return $ids;
+}
+// $selectedId = 3; // Thái Lan
+// $allIds = getChildIds($categoryTree, $selectedId);
+// $idsStr = implode(',', $allIds);
+
+// $sql = "SELECT * FROM tours WHERE category_id IN ($idsStr)";

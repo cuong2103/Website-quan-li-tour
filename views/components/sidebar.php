@@ -45,7 +45,7 @@
         <i class="w-4 h-4" data-lucide="chevron-down"></i>
       </button>
       <div class="submenu pl-12 space-y-1 overflow-hidden transition-all duration-300 max-h-0">
-        <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Danh sách Tour</a>
+        <a href="<?= BASE_URL ?>?act=tours" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Danh sách Tour</a>
         <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Lịch khởi hành</a>
       </div>
     </div>
@@ -71,8 +71,9 @@
         hover:bg-gray-100 rounded">Địa điểm</a>
         <a href="<?= BASE_URL ?>?act=policies" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Chính sách</a>
         <a href="<?= BASE_URL ?>?act=categories" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Danh mục</a>
+        <!-- <a href="" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Loại Dịch vụ</a> -->
+        <a href="<?= BASE_URL ?>?act=service" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Dịch vụ</a>
         <a href="<?= BASE_URL ?>?act=service-type" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Loại Dịch vụ</a>
-        <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Dịch vụ</a>
       </div>
     </div>
 
@@ -89,7 +90,7 @@
     </a>
 
     <!-- Nhân viên -->
-    <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
+    <a href="<?= BASE_URL . '?act=user'?>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
       <i class="mr-3 w-6 h-6" data-lucide="users"></i>
       Nhân viên
     </a>
