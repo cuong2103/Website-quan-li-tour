@@ -62,4 +62,14 @@ match ($act) {
   'customer-detail' => (new CustomerController())->detail(),
   'customer-edit' => (new CustomerController())->edit(),
   'customer-delete' => (new CustomerController())->delete(),
+
+  //policies
+  'policies' => (new PolicyController())->index(),
+
+  'policies-create' => (new PolicyController())->create(),
+  'policies-edit' => (new PolicyController())->edit(),
+  'policies-store' => (new PolicyController())->store(),
+  'policies-update' => (new PolicyController())->update(),
+  'policies-delete' => (new PolicyController())->delete(),
+  'policies-detail' => (new PolicyController())->detail(),
 };

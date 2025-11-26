@@ -37,14 +37,20 @@ class PolicyModel
     }
     public function update($data)
     {
-        $sql = "UPDATE `policies` SET name =:name ,content=:content,`created_by`=:created_by WHERE id = :id";
+        $sql = "UPDATE `policies` 
+            SET name = :name, content = :content, created_by = :created_by 
+            WHERE id = :id";
+
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam("id", $id);
-        $stmt->bindParam("name", $name);
-        $stmt->bindParam("content", $content);
-        $stmt->bindParam("created_by", $created_by);
-        return $stmt->execute();
+
+        return $stmt->execute([
+            ':id' => $data['id'],
+            ':name' => $data['name'],
+            ':content' => $data['content'],
+            ':created_by' => $data['created_by'],
+        ]);
     }
+
     public function detail($id)
     {
         $sql = "SELECT *FROM policies WHERE id = :id";
@@ -58,7 +64,6 @@ class PolicyModel
         $sql = "DELETE FROM policies WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam("id", $id);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->execute();
     }
 }
