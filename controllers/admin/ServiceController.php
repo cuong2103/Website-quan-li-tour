@@ -33,14 +33,14 @@ class ServiceController
         $id = $id ?? $_GET['id'] ?? null;
         if (!$id || !is_numeric($id)) {
             $_SESSION['error'] = "ID không hợp lệ!";
-            header('Location: ?act=service');
+            redirect("service");
             exit;
         }
 
         $service = $this->serviceModel->getDetail((int)$id);
         if (!$service) {
             $_SESSION['error'] = "Dịch vụ không tồn tại!";
-            header('Location: ?act=service');
+            redirect("service");
             exit;
         }
         require_once './views/admin/services/detail.php';
@@ -52,17 +52,17 @@ class ServiceController
         $id = $id ?? $_GET['id'] ?? null;
         if (!$id || !is_numeric($id)) {
             $_SESSION['error'] = "ID không hợp lệ!";
-            header("Location: ?act=service");
+            redirect("service");
             exit;
         }
 
         if ($this->serviceModel->delete($id)) {
-            $_SESSION['success'] = "Xóa dịch vụ thành công!";
+            Message::set("success", "Xóa Dịch Vụ Thành Công!");
         } else {
-            $_SESSION['error'] = "Xóa dịch vụ thất bại!";
+            Message::set("error", "Xóa Dịch Vụ Thất Bại!");
         }
 
-        header("Location: ?act=service");
+        redirect("service");
     }
 
     // Form thêm dịch vụ
@@ -86,18 +86,18 @@ class ServiceController
         ];
 
         if(empty($data['name']) || empty($data['service_type_id']) || empty($data['supplier_id'])){
-            $_SESSION['error'] = "Vui lòng điền đầy đủ thông tin bắt buộc!";
-            header("Location: ?act=service-create");
+            Message::set("error", "Vui lòng điền đủ thông tin!");
+            redirect("service-create");
             exit;
         }
 
         if ($this->serviceModel->create($data)) {
-            $_SESSION['success'] = "Thêm dịch vụ thành công!";
-            header("Location: ?act=service");
+            Message::set("success", "Thêm dịch vụ thành công!");
+            redirect("service");
             exit;
         } else {
-            $_SESSION['error'] = "Thêm dịch vụ thất bại!";
-            header("Location: ?act=service-create");
+            Message::set("error", "Thêm dịch vụ thất bại!");
+            redirect("service-create");
             exit;
         }
     }
@@ -110,7 +110,7 @@ class ServiceController
 
         if (!$service) {
             $_SESSION['error'] = 'Dịch vụ không tồn tại!';
-            header("Location: ?act=service");
+            redirect("service");
             exit();
         }
 
@@ -123,8 +123,8 @@ class ServiceController
     public function update(){
         $id = $_POST['id'] ?? null;
         if(!$id){
-            $_SESSION['error'] = 'ID KO HỢP LỆ';
-            header("Location: ?act=service");
+            Message::set("error", "ID KO HỢP LỆ!");
+            redirect("service");
             exit();
         }
 
@@ -137,12 +137,12 @@ class ServiceController
         ];
 
         if ($this->serviceModel->update($id, $data)) {
-            $_SESSION['success'] = "vào trang cập nhập thành công";
+            Message::set("success", "Cập Nhập Thành Công");
         } else {
-            $_SESSION['error'] = "CẬP NHẬP THẤT BẠI";
+            Message::set("error" , "Cập Nhập Thát Bại");
         }
 
-        header("Location: ?act=service");
+        redirect("service");
         exit();
         }
 

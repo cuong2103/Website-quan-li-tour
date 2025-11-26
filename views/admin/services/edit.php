@@ -63,7 +63,7 @@ require_once './views/components/sidebar.php';
 
         <div class="mb-6">
             <label for="price" class="block text-gray-700 font-bold mb-2">Giá:</label>
-            <input type="number" name="price" id="price" value="<?= $service['price'] ?>" required
+            <input type="number" name="price" id="price" value="<?= rtrim(rtrim($service['price'], '0'), '.') ?>"required
                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
         </div>
 

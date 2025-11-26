@@ -42,6 +42,18 @@ match ($act) {
   'service-delete' => (new ServiceController())->delete(),
   'service-update' => (new ServiceController())->update(),
 
+  
+  //user_management
+  'user' => (new user_managementController()) -> index(),
+  'user-getById' => (new user_managementController()) -> detail(),
+  'user-create' => (new user_managementController()) -> create(),
+  'user-edit' => (new user_managementController()) -> edit(),
+  'user-store' => (new user_managementController()) -> store(),
+  'user-update' => (new user_managementController()) -> update(),
+  'user-delete' => (new user_managementController()) -> delete(),
+
+
+  
   // Categories
   "categories" => (new CategoryController())->index(),
   "categories-store" => (new CategoryController())->store(),
