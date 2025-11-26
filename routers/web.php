@@ -81,4 +81,5 @@ match ($act) {
   'booking-update' => (new BookingController())->update(),
   'booking-delete' => (new BookingController())->delete(),
   'booking-detail' => (new BookingController())->detail(),
+  default => require_once './views/notFound.php',
 };
