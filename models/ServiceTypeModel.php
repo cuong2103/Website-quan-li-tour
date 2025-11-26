@@ -15,7 +15,7 @@ class ServiceTypeModel
     return $stmt->fetchAll();
   }
   // xem chi tiết
-  public function getDetail($id)
+  public function getDetail()
   {
     $sql = "SELECT * FROM service_types WHERE id = :id";
     $stmt = $this->conn->prepare($sql);
@@ -36,8 +36,9 @@ class ServiceTypeModel
     return $stmt->execute();
   }
   // xóa
-  public function delete($id)
+  public function delete()
   {
+    $id = $_GET['id'];
     $sql = "DELETE FROM service_types WHERE id = :id";
     $stmt = $this->conn->prepare($sql);
     $stmt->bindParam(":id", $id);

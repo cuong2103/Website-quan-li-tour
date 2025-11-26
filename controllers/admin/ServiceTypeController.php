@@ -22,6 +22,7 @@ class ServiceTypeController
     // hiển thị dữ liệu
     public function detail()
     {
+        $id = $_GET['id'];
         $serviceType = $this->serviceTypeModel->getDetail($id);
         Message::set("success", "Dã Truy Cập Xem Chi Tiết!");
         // dd($serviceType);
@@ -38,18 +39,21 @@ class ServiceTypeController
         header("Location: index.php?act=service-type");
     }
     // xóa
-    public function delete($id){
+    public function delete()
+    {
+        $id = $_GET['id'];
         $this->serviceTypeModel->delete($id);
         Message::set("success", "Xóa loại dịch vụ thành công");
-        redirect("service-type");   
-    } 
+        redirect("service-type");
+    }
 
     //sửa
-    public function edit($id){
+    public function edit()
+    {
+        $id = $_GET['id'];
         $serviceType = $this->serviceTypeModel->getDetail($id);
         Message::set("success", "Truy Cập Sửa Thành Công");
         require_once './views/admin/service-type/edit.php';
-
     }
     //update
     public function update()
