@@ -42,18 +42,18 @@ match ($act) {
   'service-delete' => (new ServiceController())->delete(),
   'service-update' => (new ServiceController())->update(),
 
-  
+
   //user_management
-  'user' => (new user_managementController()) -> index(),
-  'user-getById' => (new user_managementController()) -> detail(),
-  'user-create' => (new user_managementController()) -> create(),
-  'user-edit' => (new user_managementController()) -> edit(),
-  'user-store' => (new user_managementController()) -> store(),
-  'user-update' => (new user_managementController()) -> update(),
-  'user-delete' => (new user_managementController()) -> delete(),
+  'user' => (new user_managementController())->index(),
+  'user-getById' => (new user_managementController())->detail(),
+  'user-create' => (new user_managementController())->create(),
+  'user-edit' => (new user_managementController())->edit(),
+  'user-store' => (new user_managementController())->store(),
+  'user-update' => (new user_managementController())->update(),
+  'user-delete' => (new user_managementController())->delete(),
 
 
-  
+
   // Categories
   "categories" => (new CategoryController())->index(),
   "categories-store" => (new CategoryController())->store(),
@@ -83,6 +83,16 @@ match ($act) {
   'customer-detail' => (new CustomerController())->detail(),
   'customer-edit' => (new CustomerController())->edit(),
   'customer-delete' => (new CustomerController())->delete(),
+
+  //policies
+  'policies' => (new PolicyController())->index(),
+
+  'policies-create' => (new PolicyController())->create(),
+  'policies-edit' => (new PolicyController())->edit(),
+  'policies-store' => (new PolicyController())->store(),
+  'policies-update' => (new PolicyController())->update(),
+  'policies-delete' => (new PolicyController())->delete(),
+  'policies-detail' => (new PolicyController())->detail(),
 
   default => require_once './views/notFound.php',
 };
