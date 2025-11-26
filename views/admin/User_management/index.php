@@ -1,128 +1,110 @@
-<?php 
+<?php
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
 
-<?php 
-require_once './views/components/header.php';
-require_once './views/components/sidebar.php';
-?>
+<main class="mt-28 p-6 min-h-screen bg-gray-50">
+  <!-- Tiêu đề + nút thêm -->
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Quản Lý Người Dùng</h1>
+      <p class="text-sm text-gray-600 mt-1">Danh sách nhân viên và phân quyền</p>
+    </div>
+<!-- nút thêm -->
+    <a href="?act=user-create" 
+       class="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-medium px-5 py-2.5 rounded-lg transition-colors shadow-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      Thêm nhân viên
+    </a>
+  </div>
 
-<main class="container-fluid px-4 py-4">
-
-    <!-- Tiêu đề + nút thêm -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold fs-3 mb-1">Quản lý Dịch vụ</h2>
-            <p class="text-muted mb-0">Quản lý các dịch vụ cung cấp cho tour</p>
-        </div>
-        <a href="?act=service-create" class="btn btn-warning d-flex align-items-center gap-2">
-            <i class="bi bi-plus-lg"></i> Thêm Dịch vụ mới
-        </a>
+  <!-- Card bảng danh sách -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+      <h2 class="text-lg font-semibold text-gray-800">Danh sách nhân viên (<?= count($users) ?>)</h2>
+      <!-- Bạn có thể thêm ô tìm kiếm ở đây sau nếu muốn -->
     </div>
 
-    <!-- Bộ lọc -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <form class="row g-3" method="get">
-                <input type="hidden" name="act" value="service">
-                
-                <div class="col-md-4">
-                    <input type="text" name="keyword" class="form-control" placeholder="Tìm theo tên dịch vụ..." value="<?= $_GET['keyword'] ?? '' ?>">
-                </div>
-                <div class="col-md-3">
-                    <select name="service_type_id" class="form-select">
-                        <option value="">Tất cả loại</option>
-                        <?php foreach($serviceTypes as $type): ?>
-                            <option value="<?= $type['id'] ?>" <?= (isset($_GET['service_type_id']) && $_GET['service_type_id']==$type['id']) ? 'selected' : '' ?>>
-                                <?= $type['name'] ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select name="supplier_id" class="form-select">
-                        <option value="">Tất cả NCC</option>
-                        <?php foreach($suppliers as $supplier): ?>
-                            <option value="<?= $supplier['id'] ?>" <?= (isset($_GET['supplier_id']) && $_GET['supplier_id']==$supplier['id']) ? 'selected' : '' ?>>
-                                <?= $supplier['name'] ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="col-md-2 d-grid">
-                    <button type="submit" class="btn btn-primary">Lọc</button>
-                </div>
-            </form>
-        </div>
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Nhân viên</th>
+            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Email</th>
+            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Số điện thoại</th>
+            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Vai trò</th>
+            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Trạng thái</th>
+            <th class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider px-6 py-4">Hành động</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <?php if(empty($users)): ?>
+            <tr>
+              <td colspan="6" class="text-center py-10 text-gray-500">Chưa có nhân viên nào</td>
+            </tr>
+          <?php else: ?>
+            <?php foreach($users as $user): ?>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-5 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                      <span class="text-blue-600 font-semibold text-lg">
+                        <?= strtoupper(substr($user["fullname"], 0, 1)) ?>
+                      </span>
+                    </div>
+                    <span class="ml-3 font-medium text-gray-900"><?= htmlspecialchars($user["fullname"]) ?></span>
+                  </div>
+                </td>
+                <td class="px-6 py-5 text-gray-700"><?= htmlspecialchars($user["email"]) ?></td>
+                <td class="px-6 py-5 text-gray-700"><?= htmlspecialchars($user["phone"]) ?></td>
+                <td class="px-6 py-5">
+                  <?php if($user["role_id"] == 1): ?>
+                    <span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-pink-100 text-pink-800">
+                      Admin
+                    </span>
+                  <?php else: ?>
+                    <span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                      Hướng dẫn viên
+                    </span>
+                  <?php endif; ?>
+                </td>
+                <td class="px-6 py-5">
+                  <span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                    Hoạt động
+                  </span>
+                </td>
+                <td class="px-6 py-5">
+                  <div class="flex items-center gap-4">
+                    <!-- Xem chi tiết -->
+                    <a href="?act=user-getById&id=<?= $user['id'] ?>" 
+                       class="text-gray-500 hover:text-blue-600 transition-colors" 
+                       title="Xem chi tiết">
+                      <i data-lucide="eye" class="w-5 h-5"></i>
+                    </a>
+                    <!-- Sửa -->
+                    <a href="?act=user-edit&id=<?= $user['id'] ?>" 
+                       class="text-gray-500 hover:text-yellow-600 transition-colors" 
+                       title="Chỉnh sửa">
+                      <i data-lucide="square-pen" class="w-5 h-5"></i>
+                    </a>
+                    <!-- Xóa (có thể thêm confirm sau) -->
+                    <a href="?act=user-delete&id=<?= $user['id'] ?>" 
+                       class="text-gray-500 hover:text-red-600 transition-colors"
+                       onclick="return confirm('Bạn có chắc muốn xóa nhân viên này?')"
+                       title="Xóa">
+                      <i data-lucide="trash-2" class="w-5 h-5"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </tbody>
+      </table>
     </div>
-
-    <!-- Bảng danh sách dịch vụ -->
-    <div class="card shadow-sm">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Tên Dịch vụ</th>
-                        <th>Loại Dịch vụ</th>
-                        <th>Nhà cung cấp</th>
-                        <th>Giá</th>
-                        <th class="text-center">Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach($services as $service): ?>
-                    <tr>
-                        <td>
-                            <div class="fw-semibold"><?= htmlspecialchars($service["name"]) ?></div>
-                            <div class="text-muted small"><?= htmlspecialchars($service["description"]) ?></div>
-                        </td>
-                        <td class="text-center">
-                            <?php 
-                                $typeClass = 'secondary';
-                                if($service["service_type_name"] == 'Khách sạn') $typeClass='primary';
-                                elseif($service["service_type_name"] == 'Vận chuyển') $typeClass='purple';
-                                elseif($service["service_type_name"] == 'Ăn uống') $typeClass='info';
-                            ?>
-                            <span class="badge bg-<?= $typeClass ?>"><?= $service["service_type_name"] ?></span>
-                        </td>
-                        <td class="text-center"><?= $service["supplier_name"] ?></td>
-                        <td class="text-center fw-medium"><?= number_format($service["price"]) ?></td>
-                        <td class="text-center">
-                            <a href="?act=service-detail&id=<?= $service['id'] ?>" class="text-secondary mx-1" data-bs-toggle="tooltip" title="Xem">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a href="?act=service-edit&id=<?= $service['id'] ?>" class="text-success mx-1" data-bs-toggle="tooltip" title="Sửa">
-                                <i class="bi bi-pencil-square"></i>
-                            </a>
-                            <a href="?act=service-delete&id=<?= $service['id'] ?>" class="text-danger mx-1" onclick="return confirm('Bạn có chắc chắn muốn xóa dịch vụ này?')" data-bs-toggle="tooltip" title="Xóa">
-                                <i class="bi bi-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-        <div class="card-footer text-muted">
-            Hiển thị <?= count($services) ?> trong tổng số <?= $totalServices ?? 0 ?> dịch vụ
-        </div>
-    </div>
-
+  </div>
 </main>
 
-<?php 
-require_once './views/components/footer.php';
-?>
-
-<script>
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
-</script>
-
-
-<?php 
-require_once './views/components/footer.php';
-?>
+<?php require_once './views/components/footer.php'; ?>
