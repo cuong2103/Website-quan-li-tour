@@ -17,6 +17,7 @@ class ServiceTypeModel
   // xem chi tiết
   public function getDetail()
   {
+    $id = $_GET['id'];
     $sql = "SELECT * FROM service_types WHERE id = :id";
     $stmt = $this->conn->prepare($sql);
     $stmt->bindParam(":id", $id);
