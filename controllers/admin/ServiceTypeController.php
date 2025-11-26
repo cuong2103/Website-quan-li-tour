@@ -22,6 +22,7 @@ class ServiceTypeController
     // hiển thị dữ liệu
     public function detail()
     {
+        $id = $_GET['id'];
         $serviceType = $this->serviceTypeModel->getDetail($id);
         Message::set("success", "Dã Truy Cập Xem Chi Tiết!");
         // dd($serviceType);
@@ -46,6 +47,7 @@ class ServiceTypeController
 
     //sửa
     public function edit($id){
+        $id = $_GET['id'];
         $serviceType = $this->serviceTypeModel->getDetail($id);
         Message::set("success", "Truy Cập Sửa Thành Công");
         require_once './views/admin/service-type/edit.php';
