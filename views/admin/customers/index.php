@@ -43,8 +43,8 @@ require_once "./views/components/sidebar.php";
                         <th class="px-4 py-3">Email</th>
                         <th class="px-4 py-3">Số điện thoại</th>
                         <th class="px-4 py-3">Địa chỉ</th>
-                        <th class="px-4 py-3">Hộ chiếu</th>
                         <th class="px-4 py-3">Giới tính</th>
+                        <th class="px-4 py-3">Hộ chiếu</th>
                         <th class="px-4 py-3 text-center">Hành động</th>
                     </tr>
                 </thead>
@@ -55,29 +55,29 @@ require_once "./views/components/sidebar.php";
                         <tr class="border-b hover:bg-gray-50">
                             <td class="px-4 py-3 flex items-center gap-3">
                                 <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl font-semibold">
-                                    T
+
                                 </div>
                                 <?= $cus['name'] ?>
                             </td>
                             <td class="px-4 py-3"><?= $cus['email'] ?></td>
                             <td class="px-4 py-3"><?= $cus['phone'] ?></td>
                             <td class="px-4 py-3"><?= $cus['address'] ?></td>
-                            <td class="px-4 py-3"><?= $cus['passport'] ?></td>
                             <td class="px-4 py-3"><?= $cus['gender'] ?></td>
-                            <td class="px-4 py-3 text-center flex items-center gap-3 justify-center">
+                            <td class="px-4 py-3"><?= $cus['passport'] ?></td>
+                            <td class="px-4 py-3 text-center">
 
                                 <!-- Xem -->
-                                <a href="?act=customer-edit&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-blue-600">
+                                <a href="?act=customer-edit&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-blue-600 mx-1 inline-block">
                                     <i class="w-4 h-4" data-lucide="square-pen"></i>
                                 </a>
 
                                 <!-- Sửa -->
-                                <a href="?act=customer-detail&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-green-600">
+                                <a href="?act=customer-detail&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-blue-600 mx-1 inline-block">
                                     <i class="w-4 h-4" data-lucide="eye"></i>
                                 </a>
 
                                 <!-- Xóa -->
-                                <a href="?act=customer-delete&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-red-600">
+                                <a href="?act=customer-delete&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-blue-600 mx-1 inline-block">
                                     <i class="w-4 h-4" data-lucide="trash-2"></i>
                                 </a>
 

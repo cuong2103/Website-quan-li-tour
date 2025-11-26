@@ -58,6 +58,24 @@ require_once "./views/components/sidebar.php";
                     value="<?= $customer['address'] ?>"
                     class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
             </div>
+            <!-- Giới tính -->
+            <div>
+                <label class="block mb-1 text-sm font-medium text-gray-700">Giới tính *</label>
+                <input
+                    type="text"
+                    name="gender"
+                    value="<?= $customer['gender'] ?>"
+                    class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+            <!-- Hộ chiếu -->
+            <div>
+                <label class="block mb-1 text-sm font-medium text-gray-700">Hộ chiếu *</label>
+                <input
+                    type="text"
+                    name="passport"
+                    value="<?= $customer['passport'] ?>"
+                    class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
 
             <!-- Nút -->
             <div class="flex justify-end gap-3 pt-4">

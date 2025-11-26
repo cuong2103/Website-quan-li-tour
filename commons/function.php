@@ -66,7 +66,7 @@ function deleteSessionError()
 // Hàm check login 
 function checkLoginAdmin()
 {
-    if (!isset($_SESSION['user']["role_id"])) {
+    if (!isset($_SESSION['currentUser']["role_id"])) {
         header("Location: " . BASE_URL . '?act=login-admin');
         exit();
     }
@@ -74,7 +74,7 @@ function checkLoginAdmin()
 
 function checkLoginGuide()
 {
-    if (!isset($_SESSION['user']["role_id"])) {
+    if (!isset($_SESSION['currentUser']["role_id"])) {
         header("Location: " . BASE_URL . '?act=login-guide');
     }
 }
@@ -89,22 +89,59 @@ function validate($data, $rules)
 
         foreach ($rulesArray as $rule) {
             if ($rule === 'required') {
-                if (!isset($data[$field]) || trim($data[$field]) === '') {
-                    $errors[$field][] = "Trường $field là bắt buộc.";
+                if (!isset($data[$field])) {
+                    $errors[$field][] = "Trường này bắt buộc phải nhập.";
+                } else {
+                    // nếu là mảng
+                    if (is_array($data[$field])) {
+                        foreach ($data[$field] as $i => $value) {
+                            if (trim((string)$value) === '') {
+                                $errors[$field][$i][] = "Trường này bắt buộc phải nhập.";
+                            }
+                        }
+                    } else {
+                        if (trim($data[$field]) === '') {
+                            $errors[$field][] = "Trường này bắt buộc phải nhập.";
+                        }
+                    }
                 }
             } elseif ($rule === 'email') {
                 if (isset($data[$field]) && !filter_var($data[$field], FILTER_VALIDATE_EMAIL)) {
-                    $errors[$field][] = "Trường $field phải là email hợp lệ.";
+                    $errors[$field][] = "Trường này phải là email hợp lệ.";
                 }
             } elseif (strpos($rule, 'min:') === 0) {
                 $min = (int)explode(':', $rule)[1];
                 if (isset($data[$field]) && strlen($data[$field]) < $min) {
-                    $errors[$field][] = "Trường $field phải có ít nhất $min ký tự.";
+                    $errors[$field][] = "Trường này phải có ít nhất $min ký tự.";
                 }
             } elseif (strpos($rule, 'max:') === 0) {
                 $max = (int)explode(':', $rule)[1];
                 if (isset($data[$field]) && strlen($data[$field]) > $max) {
-                    $errors[$field][] = "Trường $field không được vượt quá $max ký tự.";
+                    $errors[$field][] = "Trường này không được vượt quá $max ký tự.";
+                }
+            } elseif ($rule === 'numeric') {
+                if (isset($data[$field]) && !is_numeric($data[$field])) {
+                    $errors[$field][] = "Trường này phải là số.";
+                }
+            } elseif ($rule === 'array') {
+                if (!isset($data[$field]) || !is_array($data[$field])) {
+                    $errors[$field][] = "Trường này phải là mảng.";
+                }
+            } elseif (substr($rule, 0, 2) === '*') {
+                $subRule = substr($rule, 2); // lấy rule bên trong
+                if (isset($data[$field]) && is_array($data[$field])) {
+                    foreach ($data[$field] as $i => $value) {
+                        if ($subRule === 'required' && trim($value) === '') {
+                            $errors[$field][$i][] = "Trường này bắt buộc phải nhập.";
+                        }
+                        if ($subRule === 'numeric' && !is_numeric($value)) {
+                            $errors[$field][$i][] = "Phần tử $i của này phải là số.";
+                        }
+                    }
+                }
+            } elseif ($rule === 'time') {
+                if (isset($data[$field]) && !preg_match('/^\d{1,2}:\d{2}$/', $data[$field])) {
+                    $errors[$field][] = "Trường $field phải có định dạng giờ HH:MM.";
                 }
             }
         }

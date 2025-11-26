@@ -11,12 +11,12 @@ require_once './views/components/sidebar.php';
       <p class="text-sm text-gray-600 mt-1">Danh sách tất cả các tour</p>
     </div>
 
-    <button class="flex items-center gap-3 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition font-medium">
+    <a href="<?= BASE_URL ?>?act=tours-create" class="flex items-center gap-3 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition font-medium">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
       </svg>
       Tạo Tour mới
-    </button>
+    </a>
   </div>
 
   <!-- Danh sách tour dạng grid -->
@@ -47,16 +47,16 @@ require_once './views/components/sidebar.php';
           </div>
 
           <div class="mt-6 flex gap-2">
-            <button class="flex items-center justify-center gap-2 flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-sm py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow">
+            <a href="<?= BASE_URL ?>?act=tours-edit&id=<?= $tour['id'] ?>" class="flex items-center justify-center gap-2 flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-sm py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow">
               <i data-lucide="square-pen" class="w-4 h-4"></i>
               <span>Sửa</span>
-            </button>
-            <button class="w-11 h-11 bg-gray-100 rounded-lg hover:bg-gray-200 transition flex items-center justify-center">
+            </a>
+            <a href="<?= BASE_URL ?>?act=tours-detail&id=<?= $tour['id'] ?>" class="w-11 h-11 bg-gray-100 rounded-lg hover:bg-gray-200 transition flex items-center justify-center">
               <i class="w-5 h-5" data-lucide="eye"></i>
-            </button>
-            <button class="w-11 h-11 bg-gray-100 rounded-lg hover:bg-gray-200 transition flex items-center justify-center">
+            </a>
+            <a href="<?= BASE_URL ?>?act=tours-delete&id=<?= $tour['id'] ?>" class="w-11 h-11 bg-gray-100 rounded-lg hover:bg-gray-200 transition flex items-center justify-center">
               <i class="w-5 h-5" data-lucide="trash-2"></i>
-            </button>
+            </a>
           </div>
         </div>
       </div>

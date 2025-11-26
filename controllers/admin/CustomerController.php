@@ -33,7 +33,8 @@ class CustomerController
     {
         $id = $_GET['id'];
         $this->model->delete($id);
-        header("location: ?act=customers");
+        redirect("customers");
+        Message::set("success", "Xóa thành công!");
         die();
     }
     public function edit()
@@ -61,7 +62,8 @@ class CustomerController
                 $passport = trim($_POST['passport']);
                 $gender = trim($_POST['gender']);
                 $this->model->create($name, $email, $phone, $address, $created_by, $passport, $gender);
-                header("location: ?act=customers");
+                Message::set("success", "Thêm thành công!");
+                redirect("customers");
                 die();
             }
         } else {
@@ -71,15 +73,14 @@ class CustomerController
     public function update()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            dd($_SESSION);
             $id = $_GET['id'];
             $name = trim($_POST['name']);
             $email = trim($_POST['email']);
             $phone = trim($_POST['phone']);
             $address = trim($_POST['address']);
-            $created_by = $_SESSION['user']['id'];
-            $passport = trim($_POST['passport']);
+            $created_by = $_SESSION['currentUser']['id'];
             $gender = trim($_POST['gender']);
+            $passport = trim($_POST['passport']);
 
             if (empty($name) || empty($email) || empty($phone) || empty($address)) {
                 $err = " Vui lòng nhập đầy đủ thông tin";
@@ -88,8 +89,9 @@ class CustomerController
             } else {
                 $passport = trim($_POST['passport']);
                 $gender = trim($_POST['gender']);
-                $this->model->update($id, $name, $email, $phone, $address, $created_by, $passport, $gender);
-                header("location: ?act=customers");
+                $this->model->update($id, $name, $email, $phone, $address, $created_by, $gender, $passport);
+                Message::set("success", "Cập nhật thành công!");
+                redirect("customers");
                 die();
             }
         }

@@ -7,7 +7,7 @@ class CustomerModel
         $this->conn = connectDB();
     }
     // lấy toàn bộ roles
-    public function getALL()
+    public function getAll()
     {
         $sql = "SELECT * FROM customers ORDER BY id DESC";
         $stmt = $this->conn->prepare($sql);
@@ -26,21 +26,34 @@ class CustomerModel
     // thêm mới khách hàng
     public function create($name, $email, $phone, $address, $created_by, $passport, $gender)
     {
-        $sql = "INSERT INTO customers (`name`, `email`, `phone`, `address`, `created_by`, `passport`, `gender`) VALUES (:name, :email, :phone, :address, :created_by, :passport, :gender)";
+        $sql = "INSERT INTO `customers`
+        ( `name`, `email`, `phone`, `address`, `created_by`, `created_at`, `updated_at`, `gender`, `passport`) 
+        VALUES 
+        (:name, :email, :phone, :address, :created_by, NOW(), NOW(), :gender, :passport)";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":name", $name);
         $stmt->bindParam(":email", $email);
         $stmt->bindParam(":phone", $phone);
         $stmt->bindParam(":address", $address);
         $stmt->bindParam(":created_by", $created_by);
-        $stmt->bindParam(":passport", $passport);
         $stmt->bindParam(":gender", $gender);
+        $stmt->bindParam(":passport", $passport);
         return $stmt->execute();
     }
     // cập nhật khách hàng
-    public function update($id, $name, $email, $phone, $address, $created_by, $passport, $gender)
+    public function update($id, $name, $email, $phone, $address, $created_by, $gender, $passport)
     {
-        $sql = "UPDATE customers SET name = :name, email = :email, phone = :phone, address = :address, created_by = :created_by WHERE id = :id";
+        $sql = "UPDATE customers 
+        SET 
+            name = :name, 
+            email = :email, 
+            phone = :phone, 
+            address = :address, 
+            created_by = :created_by,
+            gender = :gender,
+            passport = :passport,
+            updated_at = NOW()
+        WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":id", $id);
         $stmt->bindParam(":name", $name);
@@ -48,8 +61,8 @@ class CustomerModel
         $stmt->bindParam(":phone", $phone);
         $stmt->bindParam(":address", $address);
         $stmt->bindParam(":created_by", $created_by);
-        $stmt->bindParam(":passport", $passport);
         $stmt->bindParam(":gender", $gender);
+        $stmt->bindParam(":passport", $passport);
         return $stmt->execute();
     }
     // xoá khách hàng

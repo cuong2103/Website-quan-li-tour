@@ -78,7 +78,6 @@
     </div>
 
     <!-- Khách hàng -->
-
     <a href="<?= BASE_URL ?>?act=customers" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
       <i class="mr-3 w-6 h-6" data-lucide="users-round"></i>
       Khách hàng
