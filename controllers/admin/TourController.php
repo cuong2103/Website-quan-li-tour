@@ -42,7 +42,7 @@ class TourController
       'departure_time' => $_POST['departure_time'],
       'description' => $_POST['description'],
       'policy_ids' => $_POST['policy_ids'] ?? [],
-      'created_by' => $_SESSION['user']['id']
+      'created_by' => $_SESSION['currentUser']['id']
     ];
     $rules = [
       'name' => 'required|min:3|max:100',

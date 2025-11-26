@@ -1,7 +1,7 @@
 <?php
-$user = $_SESSION['user'] ?? null;
-$fullname = $user['fullname'] ?? 'User';
-$role = ($user['role_id'] ?? 0) == 1 ? 'Admin' : 'Hướng dẫn viên';
+$currentUser = $_SESSION['currentUser'] ?? null;
+$fullname = $currentUser['fullname'] ?? 'User';
+$role = ($currentUser['role_id'] ?? 0) == 1 ? 'Admin' : 'Hướng dẫn viên';
 $avatar = strtoupper(mb_substr($fullname, 0, 1));
 ?>
 
