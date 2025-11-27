@@ -5,6 +5,8 @@ class BookingController
     public $tourModel;
     public $customerModel;
     public $serviceModel;
+    public $contractModel;
+    public $paymentModel;
 
     public function __construct()
     {
@@ -12,6 +14,8 @@ class BookingController
         $this->tourModel = new TourModel();
         $this->customerModel = new CustomerModel();
         $this->serviceModel = new ServiceModel();
+        $this->contractModel = new ContractModel();
+        $this->paymentModel = new PaymentModel();
     }
 
     // Hiển thị danh sách booking
@@ -169,6 +173,8 @@ class BookingController
         $booking = $this->bookingModel->getById($id);
         $customers = $this->bookingModel->getCustomers($id);
         $bookingServices = $this->bookingModel->getServicesByBooking($id);
+        $bookingContracts = $this->contractModel->getByBookingId($id);
+        $bookingPayments = $this->paymentModel->getAllByBooking($booking['id']);
 
         require_once './views/admin/bookings/detail.php';
     }

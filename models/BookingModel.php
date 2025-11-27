@@ -303,4 +303,5 @@ class BookingModel
         $stmt->execute([$bookingId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
 }

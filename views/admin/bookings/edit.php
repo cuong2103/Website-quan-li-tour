@@ -109,7 +109,7 @@ require_once './views/components/sidebar.php';
         <!-- Danh sách khách hàng -->
         <div>
             <label class="font-semibold text-gray-700">Chọn khách hàng</label>
-            <div class="border rounded-xl p-4 bg-gray-50 max-h-64 overflow-y-auto">
+            <div  id="chon-khach-hang" class="border rounded-xl p-4 bg-gray-50 max-h-64 overflow-y-auto">
 
                 <?php $selectedCustomers = array_column($booking['customers'], 'id'); ?>
 

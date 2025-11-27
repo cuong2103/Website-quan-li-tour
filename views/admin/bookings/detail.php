@@ -64,7 +64,7 @@ require_once './views/components/sidebar.php';
 
             <div>
                 <p class="text-gray-500">Yêu cầu đặc biệt</p>
-                <p class="font-medium">
+                <p class="font-medium break-words">
                     <?= nl2br(htmlspecialchars($booking['special_requests'])) ?>
                 </p>
             </div>
@@ -102,7 +102,7 @@ require_once './views/components/sidebar.php';
 
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-base font-semibold">Danh sách khách hàng</h2>
-                <a href="<?= BASE_URL . '?act=booking-add-customer&id=' . $booking['id'] ?>"
+                <a href="<?= BASE_URL . '?act=booking-edit&id=' . $booking['id'] . '#chonkhachhang' ?>"
                     class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg">
                     Thêm khách hàng
                 </a>
@@ -166,36 +166,170 @@ require_once './views/components/sidebar.php';
 
     <!-- TAB: THANH TOÁN -->
     <?php if ($tab == 'payments'): ?>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-base font-semibold mb-3">Lịch sử thanh toán</h2>
-            <?php if (!empty($booking['payments'])): ?>
-                <?php foreach ($booking['payments'] as $p): ?>
-                    <div class="p-4 border rounded mb-2">
-                        <p>Số tiền: <?= number_format($p['amount'], 0, ',', '.') ?>đ</p>
-                        <p>Ngày: <?= $p['payment_date'] ?></p>
+
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-base font-semibold">Lịch sử thanh toán</h2>
+
+            <a href="<?= BASE_URL ?>?act=payment-create&booking_id=<?= $booking['id'] ?>"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                + Thêm thanh toán
+            </a>
+        </div>
+
+        <?php if (!empty($bookingPayments)): ?>
+
+            <div class="space-y-4">
+                <?php foreach ($bookingPayments as $p): ?>
+
+                    <div class="p-4 border rounded-xl bg-white shadow-sm flex flex-col md:flex-row 
+                md:items-center md:justify-between gap-4 hover:bg-gray-50">
+
+                        <!-- Thông tin thanh toán -->
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-800">
+                                <?= htmlspecialchars($p['payment_method']) ?>
+                                • <?= htmlspecialchars($p['type']) ?>
+                            </p>
+
+                            <p class="text-sm text-gray-700 mt-1">
+                                Số tiền:
+                                <span class="font-semibold text-green-600">
+                                    <?= number_format($p['amount'], 0, ',', '.') ?>đ
+                                </span>
+                            </p>
+
+                            <p class="text-sm text-gray-500">
+                                Ngày thanh toán: <?= date('Y-m-d', strtotime($p['payment_date'])) ?>
+                            </p>
+
+                            <p class="text-sm text-gray-500 mt-1">
+                                Ghi chú: <?= !empty($p['notes']) ? htmlspecialchars($p['notes']) : '—' ?>
+                            </p>
+                        </div>
+
+                        <!-- Badge trạng thái -->
+                        <?php
+                        $statusClass = 'bg-gray-100 text-gray-700';
+                        if ($p['status'] === 'pending') $statusClass = 'bg-yellow-100 text-yellow-700';
+                        elseif ($p['status'] === 'success') $statusClass = 'bg-green-100 text-green-700';
+                        elseif ($p['status'] === 'failed') $statusClass = 'bg-red-100 text-red-700';
+                        elseif ($p['status'] === 'refund') $statusClass = 'bg-blue-100 text-blue-700';
+                        ?>
+                        <span class="px-3 py-1 rounded text-xs <?= $statusClass ?>">
+                            <?= htmlspecialchars($p['status']) ?>
+                        </span>
+
+                        <!-- Nút thao tác -->
+                        <div class="flex items-center gap-2">
+
+                            <a href="<?= BASE_URL ?>?act=payment-edit&id=<?= $p['id'] ?>"
+                                class="inline-flex items-center justify-center gap-1.5 px-1">
+                                <i class="w-4 h-4" data-lucide="square-pen"></i>
+                            </a>
+
+                            <a href="<?= BASE_URL ?>?act=payment-detail&id=<?= $p['id'] ?>"
+                                class="inline-flex items-center justify-center gap-1.5 px-1">
+                                <i class="w-4 h-4" data-lucide="eye"></i>
+                            </a>
+
+                            <a href="<?= BASE_URL ?>?act=payment-delete&id=<?= $p['id'] ?>&booking_id=<?= $booking['id'] ?>"
+                                onclick="return confirm('Bạn có chắc muốn xóa thanh toán này?');"
+                                class="inline-flex items-center justify-center gap-1.5 px-1 text-red-600">
+                                <i class="w-4 h-4" data-lucide="trash-2"></i>
+                            </a>
+                        </div>
+
+                    </div>
+
+                <?php endforeach; ?>
+            </div>
+
+        <?php else: ?>
+            <p class="text-gray-500">Chưa có thanh toán nào.</p>
+        <?php endif; ?>
+
+    <?php endif; ?>
+
+
+
+    <!-- Tab hợp đồng -->
+    <?php if ($tab == 'contracts'): ?>
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-base font-semibold">Hợp đồng của booking</h2>
+            <a href="<?= BASE_URL ?>?act=contract-create&booking_id=<?= $booking['id'] ?>"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                + Tạo hợp đồng
+            </a>
+        </div>
+
+        <?php if (!empty($bookingContracts)): ?>
+            <div class="space-y-4">
+                <?php foreach ($bookingContracts as $c): ?>
+                    <div class="p-4 border rounded mb-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-800"><?= htmlspecialchars($c['contract_name']) ?></p>
+                            <p class="text-sm text-gray-500">
+                                Hiệu lực: <?= !empty($c['effective_date']) ? date('Y-m-d', strtotime($c['effective_date'])) : '—' ?>
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                Hết hạn: <?= !empty($c['expiry_date']) ? date('Y-m-d', strtotime($c['expiry_date'])) : '—' ?>
+                            </p>
+
+
+                            <p class="text-sm text-gray-500 mt-1">
+                                Người ký: <?= !empty($c['signer_id']) ? $c['signer_id'] : '—' ?>
+                                • Khách hàng: <?= !empty($c['customer_id']) ? $c['customer_id'] : '—' ?>
+                            </p>
+
+                            <p class="text-sm text-gray-500 mt-1">
+                                File:
+                                <?php if (!empty($c['file_url'])): ?>
+                                    <a href="<?= htmlspecialchars($c['file_url']) ?>" target="_blank" class="text-blue-600 underline text-sm">
+                                        <?= htmlspecialchars($c['file_name'] ?? 'Tải file') ?>
+                                    </a>
+                                <?php else: ?>
+                                    <span class="text-gray-400">Không có file đính kèm</span>
+                                <?php endif; ?>
+                            </p>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+
+                            <!-- Status badge -->
+                            <?php
+                            $statusClass = 'bg-gray-100 text-gray-700';
+                            if (!empty($c['status'])) {
+                                if ($c['status'] === 'active') $statusClass = 'bg-green-100 text-green-700';
+                                elseif ($c['status'] === 'expired') $statusClass = 'bg-red-100 text-red-700';
+                                elseif ($c['status'] === 'draft') $statusClass = 'bg-yellow-100 text-yellow-700';
+                            }
+                            ?>
+                            <span class="px-2 py-1 rounded text-xs <?= $statusClass ?>"><?= htmlspecialchars($c['status'] ?? '—') ?></span>
+                            <a href="<?= BASE_URL ?>?act=contract-edit&id=<?= $c['id'] ?>"
+                                class="inline-flex items-center justify-center  disabled:opacity-50 gap-1.5 px-1 ">
+                                <i class="w-4 h-4" data-lucide="square-pen"></i>
+                            </a>
+                            <a href="<?= BASE_URL ?>?act=contract-detail&id=<?= $c['id'] ?>"
+                                class="inline-flex items-center justify-center gap-1.5 px-1 has-[>svg]:px-2.5">
+                                <!-- Icon con mắt -->
+                                <i class="w-4 h-4" data-lucide="eye"></i>
+                            </a>
+
+                            <a href="<?= BASE_URL ?>?act=contract-delete&id=<?= $c['id'] ?>"
+                                onclick="return confirm('Bạn có chắc muốn xóa hợp đồng này? Hành động không thể hoàn tác.');"
+                                class="inline-flex items-center justify-center gap-1.5 px-1 has-[&gt;svg]:px-2.5"><span class="text-red-600">
+                                    <i class="w-4 h-4" data-lucide="trash-2"></i></span></a>
+                        </div>
                     </div>
                 <?php endforeach; ?>
-            <?php else: ?>
-                <p class="text-gray-500">Chưa có thanh toán.</p>
-            <?php endif; ?>
-        </div>
+            </div>
+
+        <?php else: ?>
+            <p class="text-gray-500">Chưa có hợp đồng nào.</p>
+        <?php endif; ?>
+
     <?php endif; ?>
 
-
-    <!-- TAB: HỢP ĐỒNG -->
-    <?php if ($tab == 'contracts'): ?>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-base font-semibold mb-3">Hợp đồng tour</h2>
-
-            <?php if (!empty($booking['contract'])): ?>
-                <a href="<?= $booking['contract']['file_url'] ?>" class="text-blue-600 underline">
-                    Tải hợp đồng
-                </a>
-            <?php else: ?>
-                <p class="text-gray-500">Chưa có hợp đồng.</p>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
 
 </main>
 

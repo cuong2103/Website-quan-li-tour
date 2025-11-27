@@ -7,7 +7,7 @@ $avatar = strtoupper(mb_substr($fullname, 0, 1));
 ?>
 
 <!DOCTYPE html>
-<html lang="vi" class="h-full">
+<html lang="vi" class="h-full scroll-smooth">
 
 <head>
   <meta charset="UTF-8">
