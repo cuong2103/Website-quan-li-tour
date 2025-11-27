@@ -20,7 +20,7 @@ class CategoryController
       $data = [
         'name' => trim($_POST['name']),
         'parent_id' => ($_POST['parent_id'] == "" ? null : $_POST['parent_id']),
-        'created_by' => $_SESSION['user']['id'],
+        'created_by' => $_SESSION['currentUser']['id'],
       ];
 
       $rules = [

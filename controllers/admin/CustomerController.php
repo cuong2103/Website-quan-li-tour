@@ -78,7 +78,7 @@ class CustomerController
             $email = trim($_POST['email']);
             $phone = trim($_POST['phone']);
             $address = trim($_POST['address']);
-            $created_by = $_SESSION['user']['id'];
+            $created_by = $_SESSION['currentUser']['id'];
             $gender = trim($_POST['gender']);
             $passport = trim($_POST['passport']);
 

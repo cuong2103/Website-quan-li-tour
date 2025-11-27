@@ -132,7 +132,7 @@ require_once './views/components/sidebar.php';
                    
         <!-- Footer bảng -->
         <div class="px-6 py-4 bg-gray-50 border-t text-sm text-gray-600">
-            Hiển thị 4 trong tổng số 64 dịch vụ
+            Các Dịch Vụ Hiện Có
         </div>
     </div>
 </div>

@@ -22,8 +22,9 @@ class ServiceTypeController
     // hiển thị dữ liệu
     public function detail()
     {
-        $id = $_GET["id"];
+        $id = $_GET['id'];
         $serviceType = $this->serviceTypeModel->getDetail($id);
+        Message::set("success", "Dã Truy Cập Xem Chi Tiết!");
         // dd($serviceType);
         require_once './views/admin/service-type/detail.php';
     }
@@ -34,20 +35,24 @@ class ServiceTypeController
         $description = $_POST["description"];
         $created_by = 1;
         $this->serviceTypeModel->create($name, $description, $created_by);
+        Message::set("success", "Thêm Loại Dịch Vụ Thành Công");
         header("Location: index.php?act=service-type");
     }
     // xóa
     public function delete()
     {
-        $id = $_GET["id"];
+        $id = $_GET['id'];
         $this->serviceTypeModel->delete($id);
-        header("Location: index.php?act=service-type");
+        Message::set("success", "Xóa loại dịch vụ thành công");
+        redirect("service-type");
     }
+
     //sửa
     public function edit()
     {
-        $id = $_GET["id"];
+        $id = $_GET['id'];
         $serviceType = $this->serviceTypeModel->getDetail($id);
+        Message::set("success", "Truy Cập Sửa Thành Công");
         require_once './views/admin/service-type/edit.php';
     }
     //update
@@ -57,7 +62,7 @@ class ServiceTypeController
         $name = $_POST["name"];
         $description = $_POST["description"];
         $this->serviceTypeModel->update($id, $name, $description);
-
-        header("Location: index.php?act=service-type");
+        Message::set("success", "Cập Nhập Thành Công");
+        redirect("service-type");
     }
 }

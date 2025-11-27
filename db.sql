@@ -13,13 +13,13 @@ CREATE TABLE `roles` (
 
 CREATE TABLE `users` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
-  `fullname` varchar(255),
+  `fullname` varchar(255), /
   `password` varchar(255) NOT NULL,
-  `email` varchar(100),
-  `phone` varchar(20),
-  `avatar` varchar(500),
-  `role_id` int,
-  `status` boolean DEFAULT true,
+  `email` varchar(100),/
+  `phone` varchar(20),/
+  `avatar` varchar(500),/
+  `role_id` int,/
+  `status` boolean DEFAULT true,/
   `created_by` int,
   `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp

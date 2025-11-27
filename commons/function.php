@@ -66,7 +66,7 @@ function deleteSessionError()
 // Hàm check login 
 function checkLoginAdmin()
 {
-    if (!isset($_SESSION['user']["role_id"])) {
+    if (!isset($_SESSION['currentUser']["role_id"])) {
         header("Location: " . BASE_URL . '?act=login-admin');
         exit();
     }
@@ -74,7 +74,7 @@ function checkLoginAdmin()
 
 function checkLoginGuide()
 {
-    if (!isset($_SESSION['user']["role_id"])) {
+    if (!isset($_SESSION['currentUser']["role_id"])) {
         header("Location: " . BASE_URL . '?act=login-guide');
     }
 }
