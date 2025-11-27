@@ -49,12 +49,21 @@
 
         <div>
             <label class="block text-sm mb-1">Người ký</label>
-            <input type="number" name="signer_id" value="<?= $contract['signer_id'] ?>" class="border p-2 w-full rounded">
+            <select name="signer_id" class="border p-2 w-full rounded">
+                <option value="<?= $_SESSION['user']['id'] ?>" selected>
+                    <?= $_SESSION['user']['fullname'] ?>
+                </option>
+            </select>
         </div>
 
         <div>
-            <label class="block text-sm mb-1">Khách hàng</label>
-            <input type="number" name="customer_id" value="<?= $contract['customer_id'] ?>" class="border p-2 w-full rounded">
+            <label class="block text-sm mb-1">Khách hàng ký</label>
+            <select name="customer_id" class="border p-2 w-full rounded" required>
+                <option value="">-- Chọn khách hàng --</option>
+                <?php foreach ($bookingCustomers as $c): ?>
+                    <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
 
         <div>
@@ -77,8 +86,8 @@
             <label class="block text-sm mb-1">Trạng thái</label>
             <select name="status" class="border p-2 w-full rounded">
                 <option value="active" <?= $contract['status'] == 'active' ? 'selected' : '' ?>>Đang hiệu lực</option>
+                <option value="inactive" <?= $contract['status'] == 'inactive' ? 'selected' : '' ?>>Chấm dứt</option>
                 <option value="expired" <?= $contract['status'] == 'expired' ? 'selected' : '' ?>>Hết hạn</option>
-                <option value="draft" <?= $contract['status'] == 'draft' ? 'selected' : '' ?>>Nháp</option>
             </select>
         </div>
 

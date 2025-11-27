@@ -130,17 +130,7 @@ class BookingModel
                 $this->addCustomer($id, $custId, $isRep);
             }
 
-            // Xóa dịch vụ cũ
-            $this->deleteServices($id);
-
-            // Thêm dịch vụ mới
-            if (!empty($data['services'])) {
-                foreach ($data['services'] as $serviceId) {
-                    $this->addService($id, $serviceId);
-                }
-            }
-
-            // 🔥 XÓA toàn bộ dịch vụ cũ
+            //XÓA toàn bộ dịch vụ cũ
             $this->deleteServices($id);
 
             // Thêm lại dịch vụ mới
@@ -304,4 +294,30 @@ class BookingModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Hàm lấy tổng tiền đã thanh toán
+    public function getTotalPaid($bookingId)
+    {
+        try {
+            $sql = "SELECT SUM(amount) AS total
+                FROM payments
+                WHERE booking_id = ? AND status = 'success'";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$bookingId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
+        } catch (PDOException $e) {
+            die("Lỗi getTotalPaid(): " . $e->getMessage());
+        }
+    }
+
+    // Hàm cập nhật trạng thái booking
+    public function updateStatus($bookingId, $status)
+    {
+        try {
+            $sql = "UPDATE bookings SET status = ?, updated_at = NOW() WHERE id = ?";
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([$status, $bookingId]);
+        } catch (PDOException $e) {
+            die("Lỗi updateStatus(): " . $e->getMessage());
+        }
+    }
 }

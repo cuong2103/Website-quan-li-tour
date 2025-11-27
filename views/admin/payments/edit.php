@@ -15,17 +15,17 @@ require_once './views/components/sidebar.php';
         <div>
             <label class="text-sm font-medium">Phương thức thanh toán</label>
             <select name="payment_method" class="w-full px-3 py-2 border rounded-lg mt-1">
-                <option value="Cash" <?= $payment['payment_method'] == 'Cash' ? 'selected' : '' ?>>Tiền mặt</option>
-                <option value="BankTransfer" <?= $payment['payment_method'] == 'BankTransfer' ? 'selected' : '' ?>>Chuyển khoản</option>
+                <option value="Tiền mặt" <?= $payment['payment_method'] == 'Cash' ? 'selected' : '' ?>>Tiền mặt</option>
+                <option value="Chuyển khoản" <?= $payment['payment_method'] == 'BankTransfer' ? 'selected' : '' ?>>Chuyển khoản</option>
             </select>
         </div>
 
         <div>
             <label class="text-sm font-medium">Loại thanh toán</label>
             <select name="type" class="w-full px-3 py-2 border rounded-lg mt-1">
-                <option value="Deposit" <?= $payment['type'] == 'Deposit' ? 'selected' : '' ?>>Cọc</option>
-                <option value="Remaining" <?= $payment['type'] == 'Remaining' ? 'selected' : '' ?>>Còn lại</option>
-                <option value="Refund" <?= $payment['type'] == 'Refund' ? 'selected' : '' ?>>Hoàn tiền</option>
+                <option value="Cọc" <?= $payment['type'] == 'Deposit' ? 'selected' : '' ?>>Cọc</option>
+                <option value="Thanh toán hết" <?= $payment['type'] == 'Remaining' ? 'selected' : '' ?>>Còn lại</option>
+                <option value="Hoàn tiền" <?= $payment['type'] == 'Refund' ? 'selected' : '' ?>>Hoàn tiền</option>
             </select>
         </div>
 

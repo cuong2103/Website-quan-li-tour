@@ -4,7 +4,14 @@ require_once './views/components/sidebar.php';
 ?>
 
 <main class="mt-28 px-6 pb-20">
-    <h1 class="text-2xl font-bold mb-6">Chỉnh sửa Booking</h1>
+     <!-- Header Title -->
+     <div class="flex items-center justify-between mb-6">
+        <h1 class="text-xl font-semibold">Cập nhật booking</h1>
+        <a href="<?= BASE_URL . '?act=bookings' ?>"
+            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm">
+            Quay lại
+        </a>
+    </div>
 
     <form action="<?= BASE_URL . '?act=booking-update' ?>" method="POST"
         class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 space-y-6">

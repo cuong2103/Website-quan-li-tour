@@ -45,7 +45,7 @@ class ContractModel
             die("Lỗi getById(): " . $e->getMessage());
         }
     }
-    
+
     public function findById($id)
     {
         try {
@@ -68,6 +68,15 @@ class ContractModel
         }
     }
 
+    public function getCustomers($bookingId)
+    {
+        $sql = "SELECT c.id, c.name FROM booking_customers bc
+                JOIN customers c ON bc.customer_id = c.id
+                WHERE bc.booking_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$bookingId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
 
     // Tạo hợp đồng

@@ -25,7 +25,11 @@
 
         <div>
             <label class="block text-sm mb-1">Người ký</label>
-            <input type="number" name="signer_id" class="border p-2 w-full rounded">
+            <select name="signer_id" class="border p-2 w-full rounded">
+                <option value="<?= $_SESSION['user']['id'] ?>" selected>
+                    <?= $_SESSION['user']['fullname'] ?>
+                </option>
+            </select>
         </div>
 
         <div>
@@ -44,8 +48,23 @@
         </div>
 
         <div>
-            <label class="block text-sm mb-1">Khách hàng</label>
-            <input type="number" name="customer_id" class="border p-2 w-full rounded">
+            <label class="block text-sm mb-1">Khách hàng ký</label>
+            <select name="customer_id" class="border p-2 w-full rounded" required>
+                <option value="">-- Chọn khách hàng --</option>
+                <?php foreach ($bookingCustomers as $c): ?>
+                    <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <!-- Trạng thái -->
+        <div>
+            <label class="block text-sm mb-1">Trạng thái hợp đồng</label>
+            <select name="status" class="border p-2 w-full rounded" required>
+                <option value="active">Đang hiệu lực</option>
+                <option value="inactive">Chấm dứt</option>
+                <option value="expired">Hết hạn</option>
+            </select>
         </div>
 
         <div>

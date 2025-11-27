@@ -3,13 +3,16 @@
 class PaymentController
 {
     private $paymentModel;
+    private $bookingModel;
 
     public function __construct()
     {
         $this->paymentModel = new PaymentModel();
+        $this->bookingModel = new BookingModel(); // cập nhật trạng thái booking
     }
 
-    public function list()
+    // Danh sách thanh toán theo booking
+    public function index()
     {
         $booking_id = $_GET['booking_id'];
         $payments = $this->paymentModel->getAllByBooking($booking_id);
@@ -17,12 +20,14 @@ class PaymentController
         require_once './views/admin/payments/list.php';
     }
 
+    // Form tạo thanh toán
     public function create()
     {
         $booking_id = $_GET['booking_id'];
         require_once './views/admin/payments/create.php';
     }
 
+    // Xử lý tạo thanh toán mới
     public function store()
     {
         $data = [
@@ -31,17 +36,21 @@ class PaymentController
             'amount'         => $_POST['amount'],
             'type'           => $_POST['type'],
             'status'         => $_POST['status'],
-            'notes'          => $_POST['notes'],
-            'payment_date'   => $_POST['payment_date'],
-            'created_by'     => 1 // admin fake
+            'notes'          => $_POST['notes'] ?? null,
+            'payment_date'   => $_POST['payment_date'] ?? date('Y-m-d H:i:s'),
+            'created_by'     => $_SESSION['user']['id'] ?? 1
         ];
 
         $this->paymentModel->store($data);
+
+        // Tự động cập nhật trạng thái booking
+        $this->autoUpdateBookingStatus($data['booking_id']);
 
         header("Location: " . BASE_URL . "?act=booking-detail&id=" . $data['booking_id'] . "&tab=payments");
         exit();
     }
 
+    // Form sửa thanh toán
     public function edit()
     {
         $id = $_GET['id'];
@@ -50,6 +59,7 @@ class PaymentController
         require_once './views/admin/payments/edit.php';
     }
 
+    // Xử lý cập nhật thanh toán
     public function update()
     {
         $id = $_POST['id'];
@@ -58,16 +68,21 @@ class PaymentController
             'amount'         => $_POST['amount'],
             'type'           => $_POST['type'],
             'status'         => $_POST['status'],
-            'notes'          => $_POST['notes'],
-            'payment_date'   => $_POST['payment_date']
+            'notes'          => $_POST['notes'] ?? null,
+            'payment_date'   => $_POST['payment_date'] ?? date('Y-m-d H:i:s')
         ];
 
         $this->paymentModel->update($id, $data);
 
-        header("Location: " . BASE_URL . "?act=payment-detail&id=" . $id);
+        //Lấy booking_id của payment và cập nhật trạng thái booking
+        $payment = $this->paymentModel->findById($id);
+        $this->autoUpdateBookingStatus($payment['booking_id']);
+
+        header("Location: " . BASE_URL . "?act=booking-detail&id=" . $payment['booking_id'] . "&tab=payments");
         exit();
     }
 
+    // Chi tiết thanh toán
     public function detail()
     {
         $id = $_GET['id'];
@@ -76,6 +91,7 @@ class PaymentController
         require_once './views/admin/payments/detail.php';
     }
 
+    // Xoá thanh toán
     public function delete()
     {
         $id = $_GET['id'];
@@ -85,7 +101,29 @@ class PaymentController
 
         $this->paymentModel->destroy($id);
 
+        //Cập nhật lại trạng thái booking
+        $this->autoUpdateBookingStatus($booking_id);
+
         header("Location: " . BASE_URL . "?act=booking-detail&id=$booking_id&tab=payments");
         exit();
+    }
+
+    // Hàm tự động cập nhật trạng thái booking
+    private function autoUpdateBookingStatus($bookingId)
+    {
+        $totalPaid = $this->bookingModel->getTotalPaid($bookingId);
+        $booking = $this->bookingModel->getById($bookingId);
+
+        if (!$booking) return;
+
+        $totalAmount = $booking['total_amount'];
+
+        if ($totalPaid >= $totalAmount) {
+            $this->bookingModel->updateStatus($bookingId, '3'); // 3 = đã thanh toán đủ
+        } elseif ($totalPaid > 0) {
+            $this->bookingModel->updateStatus($bookingId, '2'); // 2 = đã cọc
+        } else {
+            $this->bookingModel->updateStatus($bookingId, '1'); // 1 = chưa thanh toán
+        }
     }
 }

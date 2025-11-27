@@ -2,75 +2,67 @@
 class ContractController
 {
     public $contractModel;
+    public $bookingModel;
 
     public function __construct()
     {
         $this->contractModel = new ContractModel();
+        $this->bookingModel = new BookingModel();
     }
 
-    // Danh sách
-    public function index()
-    {
-        $contracts = $this->contractModel->getAll();
-        require_once "./views/admin/contracts/index.php";
-    }
-
-    // Form tạo
+    // Hiển thị form tạo hợp đồng
     public function create()
     {
-        $booking_id = $_GET['booking_id'] ?? null;
-        require_once "./views/admin/contracts/create.php";
+        $bookingId = $_GET['booking_id'] ?? null;
+        if (!$bookingId) redirect('bookings');
+
+        // Lấy danh sách khách hàng của booking này
+        $bookingCustomers = $this->bookingModel->getCustomers($bookingId);
+
+        require_once './views/admin/contracts/create.php';
     }
 
-    // Lưu mới
+    // Lưu hợp đồng
     public function store()
     {
-        $file_name = null;
-        $file_url = null;
-
-        if (!empty($_FILES['file_upload']['name'])) {
-            $uploadDir = __DIR__ . '/../../uploads/contracts/';
-            if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
-
-            $ext = pathinfo($_FILES['file_upload']['name'], PATHINFO_EXTENSION);
-            $file_name = uniqid() . "." . $ext;
-            $filePath = $uploadDir . $file_name;
-
-            move_uploaded_file($_FILES['file_upload']['tmp_name'], $filePath);
-
-            $file_url = BASE_URL . "uploads/contracts/" . $file_name;
-        }
+        $bookingId = $_POST['booking_id'];
+        $fileUrl = uploadFile($_FILES['file_upload'], '/uploads/contracts/');
 
         $data = [
-            'booking_id'     => $_POST['booking_id'],
+            'booking_id'     => $bookingId,
             'contract_name'  => $_POST['contract_name'],
             'signing_date'   => $_POST['signing_date'],
             'effective_date' => $_POST['effective_date'],
             'expiry_date'    => $_POST['expiry_date'],
-            'signer_id'      => $_POST['signer_id'],
-            'customer_id'    => $_POST['customer_id'],
-            'status'         => 'active',
-            'file_name'      => $file_name,
-            'file_url'       => $file_url,
+            'signer_id'      => $_SESSION['user']['id'], // người ký admin
+            'customer_id'    => $_POST['customer_id'],   // chọn từ booking
+            'status'         => $_POST['status'],
+            'file_name'      => $_FILES['file_upload']['name'],
+            'file_url'       => $fileUrl,
             'notes'          => $_POST['notes'] ?? null
         ];
 
         $this->contractModel->create($data);
-
-        header("Location: " . BASE_URL . "?act=booking-detail&id={$data['booking_id']}&tab=contracts");
-        exit;
+        Message::set('success', 'Tạo hợp đồng thành công!');
+        redirect("booking-detail&id=$bookingId&tab=contracts");
     }
 
-    // Form sửa
+    // Form sửa hợp đồng
     public function edit()
     {
         $id = $_GET['id'] ?? null;
+        if (!$id) redirect('bookings');
+
         $contract = $this->contractModel->getById($id);
+        $bookingId = $contract['booking_id'];
+
+        // Lấy danh sách khách hàng của booking để chọn
+        $bookingCustomers = $this->bookingModel->getCustomers($bookingId);
 
         require "./views/admin/contracts/edit.php";
     }
 
-    // Cập nhật
+    // Xử lý cập nhật hợp đồng
     public function update()
     {
         $id = $_POST['id'];
@@ -80,7 +72,6 @@ class ContractController
         $file_url = $old['file_url'];
 
         if (!empty($_FILES['file_upload']['name'])) {
-
             $uploadDir = __DIR__ . '/../../uploads/contracts/';
             if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
 
@@ -114,33 +105,29 @@ class ContractController
 
         $this->contractModel->update($id, $data);
 
-        header("Location: " . BASE_URL . "?act=booking-detail&id={$old['booking_id']}&tab=contracts");
-        exit;
+        redirect("booking-detail&id={$old['booking_id']}&tab=contracts");
     }
 
+    // Chi tiết hợp đồng
     public function detail()
     {
         $id = $_GET['id'] ?? null;
+        if (!$id) die("Thiếu id hợp đồng");
 
-        if (!$id) {
-            die("Thiếu id hợp đồng");
-        }
-
+        // Lấy hợp đồng kèm tên admin và khách hàng
         $contract = $this->contractModel->findById($id);
+        if (!$contract) die("Không tìm thấy hợp đồng");
 
-        if (!$contract) {
-            die("Không tìm thấy hợp đồng");
-        }
-
+        // Lấy danh sách khách hàng của booking để chọn trong edit (nếu cần)
+        $bookingCustomers = $this->bookingModel->getCustomers($contract['booking_id']);
+        $booking_id = $contract['booking_id'];
         require_once './views/admin/contracts/detail.php';
     }
 
-
-    // Xóa
+    // Xóa hợp đồng
     public function delete()
     {
         $id = $_GET['id'];
-
         $contract = $this->contractModel->getById($id);
 
         // Xóa file vật lý
@@ -151,7 +138,6 @@ class ContractController
 
         $this->contractModel->delete($id);
 
-        header("Location: " . BASE_URL . "?act=booking-detail&id={$contract['booking_id']}&tab=contracts");
-        exit;
+        redirect("booking-detail&id={$contract['booking_id']}&tab=contracts");
     }
 }

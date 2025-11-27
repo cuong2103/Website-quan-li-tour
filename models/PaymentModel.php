@@ -44,7 +44,6 @@ class PaymentModel
                 ':payment_date'   => $data['payment_date'],
                 ':created_by'     => $data['created_by'],
             ]);
-
         } catch (PDOException $e) {
             die("Lỗi PaymentModel::store(): " . $e->getMessage());
         }
@@ -73,7 +72,6 @@ class PaymentModel
                 ':payment_date'   => $data['payment_date'],
                 ':id'             => $id,
             ]);
-
         } catch (PDOException $e) {
             die("Lỗi PaymentModel::update(): " . $e->getMessage());
         }
@@ -85,5 +83,4 @@ class PaymentModel
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute(['id' => $id]);
     }
-
 }

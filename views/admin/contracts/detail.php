@@ -1,7 +1,5 @@
-<?php
-require_once './views/components/header.php';
-require_once './views/components/sidebar.php';
-?>
+<?php require_once './views/components/header.php'; ?>
+<?php require_once './views/components/sidebar.php'; ?>
 
 <main class="mt-28 px-6 pb-20 text-gray-700">
 
@@ -29,9 +27,15 @@ require_once './views/components/sidebar.php';
         </div>
 
         <div>
-            <p class="font-semibold">Khách hàng:</p>
-            <p><?= $contract['customer_name'] ?></p>
+            <p class="font-semibold">Người ký (Admin):</p>
+            <p><?= $_SESSION['user']['fullname'] ?></p>
         </div>
+
+        <div>
+            <p class="font-semibold">Khách hàng ký:</p>
+            <p><?= htmlspecialchars($contract['customer_name'] ?? 'Không xác định') ?></p>
+        </div>
+
 
         <div>
             <p class="font-semibold">Ngày ký:</p>
@@ -56,10 +60,6 @@ require_once './views/components/sidebar.php';
             </span>
         </div>
 
-        <div>
-            <p class="font-semibold">Người ký (ID):</p>
-            <p><?= $contract['signer_id'] ?></p>
-        </div>
 
         <div class="col-span-2">
             <p class="font-semibold">Ghi chú:</p>

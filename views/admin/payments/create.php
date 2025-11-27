@@ -15,17 +15,17 @@ require_once './views/components/sidebar.php';
         <div>
             <label class="text-sm font-medium">Phương thức thanh toán</label>
             <select name="payment_method" class="w-full px-3 py-2 border rounded-lg mt-1">
-                <option value="Cash">Tiền mặt</option>
-                <option value="BankTransfer">Chuyển khoản</option>
+                <option value="Tiền mặt">Tiền mặt</option>
+                <option value="Chuyển khoản">Chuyển khoản</option>
             </select>
         </div>
 
         <div>
             <label class="text-sm font-medium">Loại thanh toán</label>
             <select name="type" class="w-full px-3 py-2 border rounded-lg mt-1">
-                <option value="Deposit">Cọc</option>
-                <option value="Remaining">Còn lại</option>
-                <option value="Refund">Hoàn tiền</option>
+                <option value="Cọc">Cọc</option>
+                <option value="Thanh toán hết">Còn lại</option>
+                <option value="Hoàn tiền">Hoàn tiền</option>
             </select>
         </div>
 

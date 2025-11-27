@@ -92,13 +92,13 @@ match ($act) {
   'contract-detail' => (new ContractController())->detail(),
 
   // payments
-  // 'payments' => (new PaymentController())->index(),
+  'payments' => (new PaymentController())->index(),
   'payment-create' => (new PaymentController())->create(),
   'payment-store' => (new PaymentController())->store(),
   'payment-edit' => (new PaymentController())->edit(),
   'payment-update' => (new PaymentController())->update(),
   'payment-delete' => (new PaymentController())->delete(),
   'payment-detail' => (new PaymentController())->detail(),
-
+  
   default => require_once './views/notFound.php',
 };
