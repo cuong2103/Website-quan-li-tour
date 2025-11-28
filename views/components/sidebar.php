@@ -26,14 +26,12 @@
     </a>
 
     <!-- Quản lý Booking -->
-    <div class="menu-group">
-      <button class="menu-toggle w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
-        <div class="flex items-center">
-          <i class="mr-3 w-6 h-6" data-lucide="clipboard"></i>
-          Quản lý Booking
-        </div>
-      </button>
-    </div>
+    <a href="<?= BASE_URL . '?act=bookings' ?>" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700  hover:bg-gray-100 rounded-lg transition">
+      <div class="flex items-center">
+        <i class="mr-3 w-6 h-6" data-lucide="clipboard"></i>
+        Quản lý Booking
+      </div>
+    </a>
 
     <!-- Quản lý Tour -->
     <div class="menu-group">
@@ -69,7 +67,7 @@
         <a href="<?= BASE_URL . '?act=destination' ?>" class="block px-4 py-2 text-sm text-gray-600 
         
         hover:bg-gray-100 rounded">Địa điểm</a>
-        <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Chính sách</a>
+        <a href="<?= BASE_URL ?>?act=policies" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Chính sách</a>
         <a href="<?= BASE_URL ?>?act=categories" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Danh mục</a>
         <!-- <a href="" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Loại Dịch vụ</a> -->
         <a href="<?= BASE_URL ?>?act=service" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Dịch vụ</a>
