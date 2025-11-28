@@ -38,7 +38,7 @@ class PaymentController
             'status'         => $_POST['status'],
             'notes'          => $_POST['notes'] ?? null,
             'payment_date'   => $_POST['payment_date'] ?? date('Y-m-d H:i:s'),
-            'created_by'     => $_SESSION['user']['id'] ?? 1
+            'created_by'     => $_SESSION['currentUser']['id'] ?? 1
         ];
 
         $this->paymentModel->store($data);

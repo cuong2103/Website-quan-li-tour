@@ -28,7 +28,7 @@
 
         <div>
             <p class="font-semibold">Người ký (Admin):</p>
-            <p><?= $_SESSION['user']['fullname'] ?></p>
+            <p><?= $_SESSION['currentUser']['fullname'] ?></p>
         </div>
 
         <div>

@@ -70,7 +70,7 @@ class BookingController
             'customers' => $_POST['customers'] ?? [],
             'is_representative' => $_POST['is_representative'] ?? null,
             'services' => $_POST['services'] ?? [],
-            'created_by' => $_SESSION['user']['id']
+            'created_by' => $_SESSION['currentUser']['id']
         ];
 
         $bookingId = $this->bookingModel->create($data);

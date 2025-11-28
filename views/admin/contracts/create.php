@@ -26,8 +26,8 @@
         <div>
             <label class="block text-sm mb-1">Người ký</label>
             <select name="signer_id" class="border p-2 w-full rounded">
-                <option value="<?= $_SESSION['user']['id'] ?>" selected>
-                    <?= $_SESSION['user']['fullname'] ?>
+                <option value="<?= $_SESSION['currentUser']['id'] ?>" selected>
+                    <?= $_SESSION['currentUser']['fullname'] ?>
                 </option>
             </select>
         </div>

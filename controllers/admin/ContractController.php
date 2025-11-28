@@ -10,6 +10,13 @@ class ContractController
         $this->bookingModel = new BookingModel();
     }
 
+    // Hiển thị danh sách hợp đồng
+    public function index()
+    {
+        $contracts = $this->contractModel->getAll();
+        require_once './views/admin/contracts/index.php';
+    }
+
     // Hiển thị form tạo hợp đồng
     public function create()
     {
@@ -34,7 +41,7 @@ class ContractController
             'signing_date'   => $_POST['signing_date'],
             'effective_date' => $_POST['effective_date'],
             'expiry_date'    => $_POST['expiry_date'],
-            'signer_id'      => $_SESSION['user']['id'], // người ký admin
+            'signer_id'      => $_SESSION['currentUser']['id'], // người ký admin
             'customer_id'    => $_POST['customer_id'],   // chọn từ booking
             'status'         => $_POST['status'],
             'file_name'      => $_FILES['file_upload']['name'],

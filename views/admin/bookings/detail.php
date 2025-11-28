@@ -299,7 +299,7 @@ require_once './views/components/sidebar.php';
 
                                 <p class="text-sm text-gray-500 flex items-center gap-1">
                                     <i class="w-4 h-4 text-purple-600" data-lucide="pen-tool"></i>
-                                    Người ký: <?= htmlspecialchars($_SESSION['user']['fullname']) ?>
+                                    Người ký: <?= htmlspecialchars($_SESSION['currentUser']['fullname']) ?>
                                 </p>
 
                                 <p class="text-sm">
