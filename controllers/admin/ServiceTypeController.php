@@ -39,14 +39,15 @@ class ServiceTypeController
         header("Location: index.php?act=service-type");
     }
     // xóa
-    public function delete($id){
+    public function delete(){
+        $id = $_GET['id'];
         $this->serviceTypeModel->delete($id);
         Message::set("success", "Xóa loại dịch vụ thành công");
         redirect("service-type");   
     } 
 
     //sửa
-    public function edit($id){
+    public function edit(){
         $id = $_GET['id'];
         $serviceType = $this->serviceTypeModel->getDetail($id);
         Message::set("success", "Truy Cập Sửa Thành Công");
