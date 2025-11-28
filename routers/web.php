@@ -84,6 +84,34 @@ match ($act) {
   'customer-edit' => (new CustomerController())->edit(),
   'customer-delete' => (new CustomerController())->delete(),
 
+
+  // bookings
+  'bookings' => (new BookingController())->index(),
+  'booking-create' => (new BookingController())->create(),
+  'booking-store' => (new BookingController())->store(),
+  'booking-edit' => (new BookingController())->edit(),
+  'booking-update' => (new BookingController())->update(),
+  'booking-delete' => (new BookingController())->delete(),
+  'booking-detail' => (new BookingController())->detail(),
+
+  // contracts
+  'contracts' => (new ContractController())->index(),
+  'contract-create' => (new ContractController())->create(),
+  'contract-store' => (new ContractController())->store(),
+  'contract-edit' => (new ContractController())->edit(),
+  'contract-update' => (new ContractController())->update(),
+  'contract-delete' => (new ContractController())->delete(),
+  'contract-detail' => (new ContractController())->detail(),
+
+  // payments
+  'payments' => (new PaymentController())->index(),
+  'payment-create' => (new PaymentController())->create(),
+  'payment-store' => (new PaymentController())->store(),
+  'payment-edit' => (new PaymentController())->edit(),
+  'payment-update' => (new PaymentController())->update(),
+  'payment-delete' => (new PaymentController())->delete(),
+  'payment-detail' => (new PaymentController())->detail(),
+  
   //policies
   'policies' => (new PolicyController())->index(),
 
