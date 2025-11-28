@@ -49,10 +49,14 @@ require_once './views/components/sidebar.php';
               <tr class="hover:bg-gray-50 transition-colors">
                 <td class="px-6 py-5 whitespace-nowrap">
                   <div class="flex items-center">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <span class="text-blue-600 font-semibold text-lg">
-                        <?= strtoupper(substr($user["fullname"], 0, 1)) ?>
-                      </span>
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      <?php if(!empty($user['avatar'])): ?>
+                        <img src="<?= UPLOADS_URL ?>avatar/<?= $user['avatar'] ?>" alt="Avatar" class="w-full h-full object-cover">
+                      <?php else: ?>
+                        <span class="text-blue-600 font-semibold text-lg">
+                          <?= strtoupper(substr($user["fullname"], 0, 1)) ?>
+                        </span>
+                      <?php endif; ?>
                     </div>
                     <span class="ml-3 font-medium text-gray-900"><?= htmlspecialchars($user["fullname"]) ?></span>
                   </div>

@@ -31,21 +31,30 @@ require_once './views/components/sidebar.php';
       <div class="lg:col-span-1 space-y-6">
 
         <!-- Avatar -->
-        <div class="text-center">
-          <div class="mx-auto w-40 h-40 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 
-                      flex items-center justify-center mb-4">
-            <div class="text-center">
-              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-              </svg>
-              <p class="text-xs text-gray-500 mt-2">Nhấp để tải ảnh</p>
-            </div>
+          <div class="text-center">
+            <?php if(!empty($user['avatar'])): ?>
+              <!-- Nếu đã có avatar (chỉ áp dụng cho edit, create mới thì bỏ) -->
+              <img src="/uploads/avatar/<?= $user['avatar'] ?>" 
+                  class="mx-auto w-40 h-40 rounded-full mb-4 object-cover border border-gray-300" 
+                  alt="Avatar">
+            <?php else: ?>
+              <!-- Khung mặc định -->
+              <div class="mx-auto w-40 h-40 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 
+                          flex items-center justify-center mb-4">
+                <div class="text-center">
+                  <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                  </svg>
+                  <p class="text-xs text-gray-500 mt-2">Ảnh đại diện</p>
+                </div>
+              </div>
+            <?php endif; ?>
+            
+            <!-- Input file -->
+            <input type="file" name="avatar" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg"
+                  accept="">
+            <p class="text-sm text-gray-500 mt-1">Chọn ảnh đại diện (jpg, png,...)</p>
           </div>
-          <input type="file" id="avatar" name="avatar" class="hidden" accept="image/*">
-          <label for="avatar" class="cursor-pointer text-sm text-orange-600 hover:text-orange-700 font-medium">
-            Tải lên ảnh đại diện
-          </label>
-        </div>
 
         <!-- Vai trò -->
         <div>

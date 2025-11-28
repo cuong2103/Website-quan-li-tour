@@ -22,10 +22,14 @@ require_once './views/components/sidebar.php';
     <div class="lg:col-span-1">
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
         <!-- Avatar lớn -->
-        <div class="mx-auto w-32 h-32 rounded-full bg-blue-100 flex items-center justify-center mb-6">
-          <span class="text-5xl font-bold text-blue-600"><?= strtoupper(substr($user['fullname'], 0, 1)) ?></span> 
-          <!-- avt -->
+        <div class="mx-auto w-32 h-32 rounded-full bg-blue-100 flex items-center justify-center mb-6 overflow-hidden">
+          <?php if(!empty($user['avatar'])): ?>
+            <img src="/uploads/avatars/<?= $user['avatar'] ?>" alt="Avatar" class="w-full h-full object-cover">
+          <?php else: ?>
+            <span class="text-5xl font-bold text-blue-600"><?= strtoupper(substr($user['fullname'], 0, 1)) ?></span>
+          <?php endif; ?>
         </div>
+
 
         <h2 class="text-2xl font-bold text-gray-900"><?= $user["fullname"] ?></h2>
         <p class="text-gray-500 mt-1">Mã nhân viên: HDV002</p>
