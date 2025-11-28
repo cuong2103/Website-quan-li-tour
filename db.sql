@@ -141,6 +141,7 @@ CREATE TABLE `policies` (
   `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp
 );
+--name title
 
 CREATE TABLE `tour_policies` (
   `id` int PRIMARY KEY AUTO_INCREMENT,

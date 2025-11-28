@@ -106,6 +106,10 @@ class TourController
   {
     $id = $_GET['id'];
     $tour = $this->tourModel->getById($id);
+    // dd($tour);
+    $itineraries = $this->tourModel->getItinerariesByTourId($id);
+    $policies = $this->tourModel->getPoliciesByTourId($id);
+    // dd($policies);
     require_once './views/admin/tours/detail.php';
   }
 

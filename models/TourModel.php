@@ -41,42 +41,34 @@ class TourModel
   // Lấy tour theo ID
   public function getById($id)
   {
-    $sql = "SELECT 
-    t.id AS tour_id,
-    t.name AS tour_name,
-    t.introduction,
-    t.adult_price,
-    t.child_price,
-    t.status AS tour_status,
-    c.name AS category_name,
-    c.id AS category_id,
-    c.description AS category_description,
-    d.id AS destination_id,
-    d.name AS destination_name,
-    d.address AS destination_address,
-    d.description AS destination_description,
-    di.image_url AS destination_image,
-    i.id AS itinerary_id,
-    i.order_number,
-    i.description AS itinerary_description,
-    i.arrival_time,
-    i.departure_time,
-    p.id AS policy_id,
-    p.name AS policy_name,
-    p.content AS policy_content
-FROM tours t
-LEFT JOIN categories c ON t.category_id = c.id
-LEFT JOIN itineraries i ON t.id = i.tour_id
-LEFT JOIN destinations d ON i.destination_id = d.id
-LEFT JOIN countries co ON d.country_id = co.id
-LEFT JOIN destination_images di ON d.id = di.destination_id
-LEFT JOIN tour_policies tp ON t.id = tp.tour_id
-LEFT JOIN policies p ON tp.policy_id = p.id
-WHERE t.id = :tour_id";
+    $sql = "SELECT t.*, c.name as category_name
+            FROM tours t
+            LEFT JOIN categories c ON t.category_id = c.id
+            WHERE t.id = ?";
+
     $stmt = $this->conn->prepare($sql);
-    $stmt->bindParam(':tour_id', $id);
-    $stmt->execute();
-    return $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->execute([$id]);
+    return $stmt->fetch();
+  }
+
+  public function getItinerariesByTourId($tourId)
+  {
+    $sql = "SELECT * FROM itineraries WHERE tour_id = ? ORDER BY order_number ASC";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$tourId]);
+    return $stmt->fetchAll();
+  }
+
+  public function getPoliciesByTourId($tourId)
+  {
+    $sql = "SELECT p.*
+            FROM policies p
+            INNER JOIN tour_policies tp ON p.id = tp.policy_id
+            WHERE tp.tour_id = ?";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$tourId]);
+    return $stmt->fetchAll();
   }
 
   // Cập nhật tour
@@ -175,11 +167,12 @@ WHERE t.id = :tour_id";
   }
   public function addItinerary($data)
   {
-    $sql = "INSERT INTO itineraries (tour_id, destination_id, arrival_time, departure_time, description) 
-              VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO itineraries (tour_id,order_number, destination_id, arrival_time, departure_time, description) 
+              VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $this->conn->prepare($sql);
     $stmt->execute([
       $data['tour_id'],
+      $data['order_number'],
       $data['destination_id'],
       $data['arrival_time'],
       $data['departure_time'],

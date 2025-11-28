@@ -3,50 +3,50 @@ require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 
 // Dữ liệu mẫu tour (trong thực tế sẽ lấy từ DB)
-$tour = [
-  'name' => 'Hà Giang 4N3Đ - Vòng cung Đông Bắc',
-  'introduction' => 'Hành trình khám phá Hà Giang - mảnh đất địa đầu Tổ quốc với cung đường đèo hiểm trở nhất Việt Nam, cột cờ Lũng Cú, đèo Mã Pí Lèng, sông Nho Quế và những bản làng dân tộc thiểu số còn giữ nguyên nét nguyên sơ...',
-  'category' => 'Miền Bắc • Khám phá • Trekking',
-  'duration' => '4 ngày 3 đêm',
-  'adult_price' => 4850000,
-  'child_price' => 3900000,
-  'status' => 'active',
-  'itineraries' => [
-    [
-      'day' => 1,
-      'destination' => 'Hà Nội - Hà Giang - Quản Bạ - Yên Minh',
-      'arrival_time' => '12:00',
-      'departure_time' => '13:30',
-      'description' => "• 06:00 Xe và hướng dẫn viên đón quý khách tại điểm hẹn nội thành Hà Nội.\n• Di chuyển lên Hà Giang (khoảng 300km).\n• Dừng chân nghỉ ngơi, ăn trưa tại thị trấn Việt Quang.\n• Chiêm ngưỡng cổng trời Quản Bạ, núi Đôi Cô Tiên.\n• Đến Yên Minh nhận phòng homestay, ăn tối và nghỉ ngơi."
-    ],
-    [
-      'day' => 2,
-      'destination' => 'Yên Minh - Phố Cáo - Sủng Là - Đồng Văn',
-      'arrival_time' => '08:00',
-      'departure_time' => '17:00',
-      'description' => "• Tham quan Phố Cáo, làng văn hóa Lùng Tám người H’Mông.\n• Ghé thăm nhà của Pao nổi tiếng qua bộ phim “Chuyện nhà Pao”.\n• Chinh phục đèo 9 khoanh, dốc Thẩm Mã.\n• Đến thị trấn Đồng Văn, dạo phố cổ Đồng Văn về đêm."
-    ],
-    [
-      'day' => 3,
-      'destination' => 'Đồng Văn - Cột cờ Lũng Cú - Đèo Mã Pí Lèng - Du thuyền sông Nho Quế',
-      'arrival_time' => '07:30',
-      'departure_time' => '16:00',
-      'description' => "• Tham quan cột cờ Lũng Cú – điểm cực Bắc Tổ quốc.\n• Chinh phục đèo Mã Pí Lèng – tứ đại đỉnh đèo Việt Nam.\n• Trải nghiệm du thuyền trên sông Nho Quế ngắm hẻm vực Tu Sản.\n• Quay lại Đồng Văn ăn tối."
-    ],
-    [
-      'day' => 4,
-      'destination' => 'Đồng Văn - Hà Giang - Hà Nội',
-      'arrival_time' => '08:00',
-      'departure_time' => '20:00',
-      'description' => "• Tham quan dinh thự họ Vương (nhà Vương).\n• Trả phòng, ăn sáng và khởi hành về Hà Nội.\n• Dừng chân mua đặc sản (hồng, mật ong bạc hà...).\n• Về đến Hà Nội khoảng 20h. Kết thúc chương trình."
-    ]
-  ],
-  'policies' => [
-    ['id' => 1, 'title' => 'Chính sách hủy tour', 'content' => 'Hủy trước 30 ngày: miễn phí. Hủy 15-29 ngày: mất 50% tiền tour. Hủy dưới 15 ngày: mất 100%.'],
-    ['id' => 2, 'title' => 'Chính sách trẻ em', 'content' => 'Trẻ em dưới 5 tuổi: miễn phí (ngủ chung giường với bố mẹ). Từ 5-10 tuổi: 75% giá tour. Từ 11 tuổi trở lên: tính như người lớn.'],
-    ['id' => 3, 'title' => 'Bao gồm', 'content' => 'Xe đời mới, hướng dẫn viên, ăn uống theo chương trình, vé tham quan, bảo hiểm du lịch mức 30.000.000 VNĐ/vụ.']
-  ]
-];
+// $tour = [
+//   'tour_name' => 'Hà Giang 4N3Đ - Vòng cung Đông Bắc',
+//   'introduction' => 'Hành trình khám phá Hà Giang - mảnh đất địa đầu Tổ quốc với cung đường đèo hiểm trở nhất Việt Nam, cột cờ Lũng Cú, đèo Mã Pí Lèng, sông Nho Quế và những bản làng dân tộc thiểu số còn giữ nguyên nét nguyên sơ...',
+//   'category' => 'Miền Bắc • Khám phá • Trekking',
+//   'duration' => '4 ngày 3 đêm',
+//   'adult_price' => 4850000,
+//   'child_price' => 3900000,
+//   'status' => 'active',
+//   'itineraries' => [
+//     [
+//       'day' => 1,
+//       'destination' => 'Hà Nội - Hà Giang - Quản Bạ - Yên Minh',
+//       'arrival_time' => '12:00',
+//       'departure_time' => '13:30',
+//       'description' => "• 06:00 Xe và hướng dẫn viên đón quý khách tại điểm hẹn nội thành Hà Nội.\n• Di chuyển lên Hà Giang (khoảng 300km).\n• Dừng chân nghỉ ngơi, ăn trưa tại thị trấn Việt Quang.\n• Chiêm ngưỡng cổng trời Quản Bạ, núi Đôi Cô Tiên.\n• Đến Yên Minh nhận phòng homestay, ăn tối và nghỉ ngơi."
+//     ],
+//     [
+//       'day' => 2,
+//       'destination' => 'Yên Minh - Phố Cáo - Sủng Là - Đồng Văn',
+//       'arrival_time' => '08:00',
+//       'departure_time' => '17:00',
+//       'description' => "• Tham quan Phố Cáo, làng văn hóa Lùng Tám người H’Mông.\n• Ghé thăm nhà của Pao nổi tiếng qua bộ phim “Chuyện nhà Pao”.\n• Chinh phục đèo 9 khoanh, dốc Thẩm Mã.\n• Đến thị trấn Đồng Văn, dạo phố cổ Đồng Văn về đêm."
+//     ],
+//     [
+//       'day' => 3,
+//       'destination' => 'Đồng Văn - Cột cờ Lũng Cú - Đèo Mã Pí Lèng - Du thuyền sông Nho Quế',
+//       'arrival_time' => '07:30',
+//       'departure_time' => '16:00',
+//       'description' => "• Tham quan cột cờ Lũng Cú – điểm cực Bắc Tổ quốc.\n• Chinh phục đèo Mã Pí Lèng – tứ đại đỉnh đèo Việt Nam.\n• Trải nghiệm du thuyền trên sông Nho Quế ngắm hẻm vực Tu Sản.\n• Quay lại Đồng Văn ăn tối."
+//     ],
+//     [
+//       'day' => 4,
+//       'destination' => 'Đồng Văn - Hà Giang - Hà Nội',
+//       'arrival_time' => '08:00',
+//       'departure_time' => '20:00',
+//       'description' => "• Tham quan dinh thự họ Vương (nhà Vương).\n• Trả phòng, ăn sáng và khởi hành về Hà Nội.\n• Dừng chân mua đặc sản (hồng, mật ong bạc hà...).\n• Về đến Hà Nội khoảng 20h. Kết thúc chương trình."
+//     ]
+//   ],
+//   'policies' => [
+//     ['id' => 1, 'title' => 'Chính sách hủy tour', 'content' => 'Hủy trước 30 ngày: miễn phí. Hủy 15-29 ngày: mất 50% tiền tour. Hủy dưới 15 ngày: mất 100%.'],
+//     ['id' => 2, 'title' => 'Chính sách trẻ em', 'content' => 'Trẻ em dưới 5 tuổi: miễn phí (ngủ chung giường với bố mẹ). Từ 5-10 tuổi: 75% giá tour. Từ 11 tuổi trở lên: tính như người lớn.'],
+//     ['id' => 3, 'title' => 'Bao gồm', 'content' => 'Xe đời mới, hướng dẫn viên, ăn uống theo chương trình, vé tham quan, bảo hiểm du lịch mức 30.000.000 VNĐ/vụ.']
+//   ]
+// ];
 ?>
 
 <main class="pt-28 px-6 bg-gray-50 min-h-screen overflow-y-auto">
@@ -95,11 +95,11 @@ $tour = [
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
-            <p class="text-gray-900"><?= htmlspecialchars($tour['category']) ?></p>
+            <p class="text-gray-900"><?= htmlspecialchars($tour['category_name']) ?></p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian</label>
-            <p class="text-gray-900"><?= $tour['duration'] ?></p>
+            <p class="text-gray-900">$ ngày 3 đêm</p>
           </div>
 
           <div>
@@ -128,10 +128,10 @@ $tour = [
           Lịch trình tour
         </h3>
         <div class="space-y-6">
-          <?php foreach ($tour['itineraries'] as $day): ?>
+          <?php foreach ($itineraries as $day): ?>
             <div class="border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition">
               <div class="flex items-center justify-between mb-4">
-                <h4 class="text-lg font-semibold text-blue-700">Ngày <?= $day['day'] ?></h4>
+                <h4 class="text-lg font-semibold text-blue-700">Ngày <?= $day['order_number'] ?></h4>
                 <span class="text-sm text-gray-500"><?= $day['arrival_time'] ?> → <?= $day['departure_time'] ?></span>
               </div>
               <h5 class="font-medium text-gray-900 mb-3"><?= htmlspecialchars($day['destination']) ?></h5>
@@ -152,7 +152,7 @@ $tour = [
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <?php for ($i = 1; $i <= 8; $i++): ?>
             <div class="bg-gray-200 border-2 border-dashed rounded-xl aspect-w-1 aspect-h-1 overflow-hidden">
-              <img src="https://picsum.photos/400/300?random=<?= $i ?>"
+              <img src="https://picsum.photos/400/300?hagiangvietnam&random=<?= $i ?>"
                 alt="Hà Giang" class="w-full h-full object-cover hover:scale-105 transition">
             </div>
           <?php endfor; ?>
@@ -166,7 +166,7 @@ $tour = [
           Chính sách tour
         </h3>
         <div class="space-y-5">
-          <?php foreach ($tour['policies'] as $policy): ?>
+          <?php foreach ($policies as $policy): ?>
             <div class="flex gap-4 p-5 bg-gray-50 rounded-lg">
               <div class="flex-shrink-0">
                 <div class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
@@ -174,7 +174,7 @@ $tour = [
                 </div>
               </div>
               <div class="flex-1">
-                <h4 class="font-semibold text-gray-900"><?= htmlspecialchars($policy['title']) ?></h4>
+                <h4 class="font-semibold text-gray-900"><?= htmlspecialchars($policy['name']) ?></h4>
                 <p class="text-sm text-gray-600 mt-1"><?= htmlspecialchars($policy['content']) ?></p>
               </div>
             </div>
