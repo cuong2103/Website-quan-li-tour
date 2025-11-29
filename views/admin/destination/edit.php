@@ -14,13 +14,14 @@ require_once './views/components/sidebar.php';
 
         <input type="hidden" name="id" value="<?= $destination['id'] ?>">
 
-        <!-- Quốc gia -->
+        <!-- Danh mục -->
         <div class="mb-4">
-            <label class="block font-medium mb-1">Quốc gia</label>
-            <select name="country_id" class="border rounded-lg w-full p-2">
-                <?php foreach ($countries as $ct): ?>
+            <label class="block font-medium mb-1">Danh mục</label>
+            <select name="category_id" class="border rounded-lg w-full p-2" required>
+                <option value="">-- Chọn danh mục --</option>
+                <?php foreach ($categories as $ct): ?>
                     <option value="<?= $ct['id'] ?>"
-                        <?= $ct['id'] == $destination['country_id'] ? 'selected' : '' ?>>
+                        <?= $ct['id'] == $destination['category_id'] ? 'selected' : '' ?>>
                         <?= htmlspecialchars($ct['name']) ?>
                     </option>
                 <?php endforeach; ?>
@@ -31,14 +32,14 @@ require_once './views/components/sidebar.php';
         <div class="mb-4">
             <label class="block font-medium mb-1">Tên địa điểm</label>
             <input type="text" name="name" class="border w-full p-2 rounded-lg"
-                   value="<?= htmlspecialchars($destination['name']) ?>">
+                   value="<?= htmlspecialchars($destination['name']) ?>" required>
         </div>
 
         <!-- Địa chỉ -->
         <div class="mb-4">
             <label class="block font-medium mb-1">Địa chỉ</label>
             <input type="text" name="address" class="border w-full p-2 rounded-lg"
-                   value="<?= htmlspecialchars($destination['address']) ?>">
+                   value="<?= htmlspecialchars($destination['address']) ?>" required>
         </div>
 
         <!-- Mô tả -->

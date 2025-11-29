@@ -122,5 +122,13 @@ match ($act) {
   'policies-delete' => (new PolicyController())->delete(),
   'policies-detail' => (new PolicyController())->detail(),
 
+  // Tour_Assignments
+  'tour-assignments' => (new TourAssignmentController())->index(),  
+  'tour-assignment-create' => (new TourAssignmentController())->create(),
+  'tour-assignment-store' => (new TourAssignmentController())->store(),
+  'tour-assignment-edit' => (new TourAssignmentController())->edit(),
+  'tour-assignment-update' => (new TourAssignmentController())->update(), 
+  'tour-assignment-delete' => (new TourAssignmentController())->delete(),
+
   default => require_once './views/notFound.php',
 };

@@ -320,4 +320,21 @@ class BookingModel
             die("Lỗi updateStatus(): " . $e->getMessage());
         }
     }
+    // Lọc danh sách booking trong form Thêm phân công
+    public function getBookingsWithoutGuide() {
+        $sql = "
+            SELECT 
+                b.*, 
+                t.name AS tour_name
+            FROM bookings b
+            LEFT JOIN tours t ON t.id = b.tour_id
+            LEFT JOIN tour_assignments ta ON ta.booking_id = b.id
+            WHERE ta.booking_id IS NULL
+            ORDER BY b.id DESC
+        ";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

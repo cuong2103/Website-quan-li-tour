@@ -5,7 +5,7 @@ require_once './views/components/sidebar.php';
 
 <main class="mt-28 px-6 pb-20 overflow-auto scrollbar-hide">
 
-    <!-- Tiêu đề và nút thêm địa điểm -->
+    <!-- Tiêu đề và nút thêm -->
     <div class="flex justify-between items-center mb-6">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Quản lí địa điểm</h1>
@@ -36,15 +36,15 @@ require_once './views/components/sidebar.php';
                 class="w-full border border-gray-300 rounded-lg p-2">
         </div>
 
-        <!-- Quốc gia -->
+        <!-- Danh mục -->
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Quốc gia</label>
-            <select name="country_id"
+            <label class="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
+            <select name="category_id"
                 class="w-full border border-gray-300 rounded-lg p-2">
                 <option value="">-- Tất cả --</option>
-                <?php foreach ($countries as $ct): ?>
+                <?php foreach ($categories as $ct): ?>
                     <option value="<?= $ct['id'] ?>"
-                        <?= (isset($_GET['country_id']) && $_GET['country_id'] == $ct['id']) ? 'selected' : '' ?>>
+                        <?= (isset($_GET['category_id']) && $_GET['category_id'] == $ct['id']) ? 'selected' : '' ?>>
                         <?= htmlspecialchars($ct['name']) ?>
                     </option>
                 <?php endforeach; ?>
@@ -74,16 +74,22 @@ require_once './views/components/sidebar.php';
 
         <?php foreach ($listDestination as $item): ?>
 
+            <?php
+            // Ảnh thumbnail
+            $thumb = $item['image_url'] ?? 'default.jpg';
+            ?>
+
             <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition overflow-hidden">
                 <div class="h-40 w-full overflow-hidden rounded-t-xl">
-                    <img src="<?= UPLOADS_URL . 'destinations_image/' . ($item['thumbnail'] ?? 'default.jpg') ?>" alt="Destination Image" class="w-full h-full object-cover">
+                    <img src="<?= UPLOADS_URL . 'destinations_image/' . ($item['thumbnail'] ?? 'default.jpg') ?>"
+                        alt="Destination Image" class="w-full h-full object-cover">
                 </div>
 
                 <div class="p-5">
                     <div class="flex items-start justify-between">
                         <div>
                             <h2 class="text-lg font-semibold text-gray-900"><?= htmlspecialchars($item['name']) ?></h2>
-                            <p class="text-sm text-gray-500 mt-1">🌍 <?= htmlspecialchars($item['country_name'] ?? 'Không rõ quốc gia') ?></p>
+                            <p class="text-sm text-gray-500 mt-1">📁 <?= htmlspecialchars($item['category_name'] ?? 'Không rõ danh mục') ?></p>
                         </div>
                     </div>
 
@@ -95,18 +101,27 @@ require_once './views/components/sidebar.php';
                         <?= htmlspecialchars($item['address'] ?? 'Không có địa chỉ') ?>
                     </p>
 
-                    <p class="text-gray-500 text-sm mt-3 line-clamp-2"><?= htmlspecialchars(substr($item['description'] ?? 'Không có mô tả', 0, 120)) ?>...</p>
-
-                    <div class="mt-3">
-                        <p class="text-gray-500 text-sm">Số dịch vụ:</p>
-                        <p class="text-lg font-semibold text-gray-900"><?= $item['tour_count'] ?? 0 ?></p>
-                    </div>
+                    <p class="text-gray-500 text-sm mt-3 line-clamp-2">
+                        <?= htmlspecialchars(substr($item['description'] ?? 'Không có mô tả', 0, 120)) ?>...
+                    </p>
 
                     <!-- Hành động -->
                     <div class="flex justify-start items-center mt-5 gap-3 pt-3 border-t">
-                        <a href="<?= BASE_URL . '?act=destination-edit&id=' . $item['id'] ?>" class="flex items-center gap-2 px-3 py-2 border rounded-lg hover:bg-gray-50 text-gray-700 transition shadow-sm hover:shadow-none">Sửa</a>
-                        <a href="<?= BASE_URL . '?act=destination-detail&id=' . $item['id'] ?>" class="flex flex-1 items-center gap-2 px-3 py-2 border rounded-lg hover:bg-gray-50 text-gray-700 transition shadow-sm">Xem chi tiết</a>
-                        <a href="<?= BASE_URL ?>?act=destination-delete&id=<?= $item['id'] ?>" onclick="return confirm('Bạn có chắc muốn xóa địa điểm này không?');" class="flex items-center gap-2 px-3 py-2 border rounded-lg hover:bg-red-50 text-red-600 hover:text-red-700 transition shadow-sm">Xóa</a>
+                        <a href="<?= BASE_URL . '?act=destination-detail&id=' . $item['id'] ?>"
+                            class="flex flex-1 items-center gap-2 px-3 py-1 border rounded-lg hover:bg-gray-50 text-gray-700 transition shadow-sm">
+                            Xem chi tiết
+                        </a>
+                        <a href="<?= BASE_URL . '?act=destination-edit&id=' . $item['id'] ?>"
+                            class="flex items-center gap-2 px-3 py-1 border rounded-lg hover:bg-gray-50 text-gray-700 transition shadow-sm hover:shadow-none">
+                            Sửa
+                        </a>
+
+
+                        <a href="<?= BASE_URL ?>?act=destination-delete&id=<?= $item['id'] ?>"
+                            onclick="return confirm('Bạn có chắc muốn xóa địa điểm này không?');"
+                            class="flex items-center gap-2 px-3 py-2 border rounded-lg hover:bg-red-50 text-red-600 hover:text-red-700 transition shadow-sm">
+                            <i class="w-4 h-4" data-lucide="trash-2"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -116,19 +131,19 @@ require_once './views/components/sidebar.php';
     </div>
 
 </main>
-<!-- Form thay  -->
+
 <script>
     let timer;
     const form = document.querySelector("form");
 
     document.querySelectorAll("form input, form select").forEach(element => {
         element.addEventListener("input", () => {
-            console.log("1");
             clearTimeout(timer);
             timer = setTimeout(() => form.submit(), 600);
         });
     });
 </script>
+
 <?php
 require_once './views/components/footer.php';
 ?>
