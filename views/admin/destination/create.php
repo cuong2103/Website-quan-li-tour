@@ -12,12 +12,12 @@ require_once './views/components/sidebar.php';
           enctype="multipart/form-data"
           class="bg-white p-6 rounded-lg shadow">
 
-        <!-- Quốc gia -->
+        <!-- Danh mục -->
         <div class="mb-4">
-            <label class="block font-medium mb-1">Quốc gia</label>
-            <select name="country_id" class="border rounded-lg w-full p-2" required>
-                <option value="">-- Chọn quốc gia --</option>
-                <?php foreach ($countries as $ct): ?>
+            <label class="block font-medium mb-1">Danh mục</label>
+            <select name="category_id" class="border rounded-lg w-full p-2" required>
+                <option value="">-- Chọn danh mục --</option>
+                <?php foreach ($categories as $ct): ?>
                     <option value="<?= $ct['id'] ?>"><?= htmlspecialchars($ct['name']) ?></option>
                 <?php endforeach; ?>
             </select>
