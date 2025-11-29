@@ -15,10 +15,11 @@ require_once './views/components/sidebar.php';
 
     <div class="bg-white p-6 rounded-lg shadow mb-6 space-y-2">
         <p><strong>Danh mục:</strong> <?= htmlspecialchars($destination['category_name'] ?? 'Chưa có') ?></p>
-        <p><strong>Địa chỉ:</strong> <?= htmlspecialchars($destination['address'] ?? 'Chưa có') ?></p>
+        <p><strong>Các điểm đến:</strong> <?= htmlspecialchars($destination['locations'] ?? 'Chưa có') ?></p>
         <p><strong>Mô tả:</strong> <?= nl2br(htmlspecialchars($destination['description'] ?? 'Chưa có')) ?></p>
-        <p><strong>Người tạo:</strong> <?= htmlspecialchars($destination['created_by'] ?? 'Chưa có') ?></p>
+        <p><strong>Người tạo:</strong> <?= htmlspecialchars($destination['created_by_name'] ?? 'Chưa có') ?></p>
         <p><strong>Ngày tạo:</strong> <?= htmlspecialchars($destination['created_at'] ?? 'Chưa có') ?></p>
+        <p><strong>Ngày sửa gần nhất:</strong> <?= htmlspecialchars($destination['updated_by_name'] ?? 'Chưa có') ?></p>
         <p><strong>Cập nhật lần cuối:</strong> <?= htmlspecialchars($destination['updated_at'] ?? 'Chưa có') ?></p>
     </div>
 
