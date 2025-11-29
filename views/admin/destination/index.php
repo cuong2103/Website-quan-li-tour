@@ -93,14 +93,6 @@ require_once './views/components/sidebar.php';
                         </div>
                     </div>
 
-                    <p class="text-sm text-gray-600 mt-3 flex items-start gap-2">
-                        <svg width="16" height="16" fill="none" stroke="#666">
-                            <path d="M12 10c0 2-4 6-4 6s-4-4-4-6a4 4 0 1 1 8 0Z" />
-                            <circle cx="8" cy="10" r="2" />
-                        </svg>
-                        <?= htmlspecialchars($item['address'] ?? 'Không có địa chỉ') ?>
-                    </p>
-
                     <p class="text-gray-500 text-sm mt-3 line-clamp-2">
                         <?= htmlspecialchars(substr($item['description'] ?? 'Không có mô tả', 0, 120)) ?>...
                     </p>

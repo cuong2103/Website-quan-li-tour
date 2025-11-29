@@ -32,11 +32,11 @@ class DestinationModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // kiểm tra tên địa điểm không trùng
-    public function isDuplicateName($name, $excludeId = null)
+    // kiểm tra tên địa điểm trong cùng danh mục
+    public function isDuplicateNameInCategory($name, $category_id, $excludeId = null)
     {
-        $sql = "SELECT id FROM destinations WHERE LOWER(TRIM(name)) = LOWER(TRIM(?))";
-        $params = [$name];
+        $sql = "SELECT id FROM destinations WHERE LOWER(TRIM(name)) = LOWER(TRIM(?)) AND category_id = ?";
+        $params = [$name, $category_id];
 
         if ($excludeId) {
             $sql .= " AND id != ?";
@@ -51,14 +51,14 @@ class DestinationModel
     // tạo mới
     public function create($data)
     {
-        $sql = "INSERT INTO destinations (category_id, name, address, description, created_by) 
+        $sql = "INSERT INTO destinations (category_id, name, locations, description, created_by) 
                 VALUES (?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([
             $data['category_id'],
             $data['name'],
-            $data['address'],
+            $data['locations'],
             $data['description'],
             $data['created_by']
         ]);
@@ -70,15 +70,16 @@ class DestinationModel
     public function update($id, $data)
     {
         $sql = "UPDATE destinations 
-                SET category_id = ?, name = ?, address = ?, description = ?, updated_at = NOW()
+                SET category_id = ?, name = ?, locations = ?, description = ?, updated_at = NOW() , updated_by = ?  
                 WHERE id = ?";
 
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([
             $data['category_id'],
             $data['name'],
-            $data['address'],
+            $data['locations'],
             $data['description'],
+            $data['updated_by'],
             $id
         ]);
     }
@@ -160,11 +161,15 @@ class DestinationModel
     public function getDetail($id)
     {
         $sql = "
-        SELECT d.*, cg.name AS category_name
+        SELECT d.*, 
+               cg.name AS category_name,
+               u_created.fullname AS created_by_name,
+               u_updated.fullname AS updated_by_name
         FROM destinations d
         LEFT JOIN categories cg ON d.category_id = cg.id
-        WHERE d.id = ?
-    ";
+        LEFT JOIN users u_created ON d.created_by = u_created.id
+        LEFT JOIN users u_updated ON d.updated_by = u_updated.id
+        WHERE d.id = ?";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$id]);
@@ -190,7 +195,7 @@ class DestinationModel
     public function getRelatedTours($destination_id, $limit = 5)
     {
         $limit = (int)$limit; // đảm bảo là số nguyên
-    
+
         $sql = "
             SELECT DISTINCT t.id, t.name, t.tour_code, t.adult_price, t.child_price, t.duration_days, t.introduction, t.created_at, t.updated_at
             FROM tours t
@@ -200,11 +205,11 @@ class DestinationModel
             ORDER BY t.created_at DESC
             LIMIT $limit
         ";
-    
+
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$destination_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }    
+    }
 
     // Lọc
     public function filter($name = '', $category_id = '', $created_from = '', $created_to = '')

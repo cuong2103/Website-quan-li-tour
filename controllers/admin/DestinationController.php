@@ -8,9 +8,7 @@ class DestinationController
         $this->modelDestination = new DestinationModel();
     }
 
-    // ===============================
-    // DANH SÁCH
-    // ===============================
+    // danh sách
     public function index()
     {
         // Lọc
@@ -32,35 +30,53 @@ class DestinationController
         require_once './views/admin/destination/index.php';
     }
 
-    // ===============================
-    // FORM THÊM
-    // ===============================
+    // form thêm
     public function create()
     {
         $categories = $this->modelDestination->getCategories();
         require_once './views/admin/destination/create.php';
     }
 
-    // ===============================
-    // THÊM ĐỊA ĐIỂM
-    // ===============================
+    // thêm địa điểm
     public function store()
     {
         $data = [
             'category_id' => $_POST['category_id'],
             'name' => $_POST['name'],
-            'address' => $_POST['address'],
+            'locations' => $_POST['locations'],
             'description' => $_POST['description'],
-            'created_by' => 1
+            'created_by' => $_SESSION['currentUser']['id'] ?? 1,
         ];
 
-        if ($this->modelDestination->isDuplicateName($data['name'])) {
-            Message::set("success", "Địa điểm này đã tồn tại!");
+        $rules = [
+            'name' => 'required|min:3|max:255',
+            'category_id' => 'required',
+        ];
+
+        $errors = validate($data, $rules);
+
+
+        if ($this->modelDestination->isDuplicateNameInCategory($data['name'], $data['category_id'])) {
+            Message::set("error", "Địa điểm này đã tồn tại trong danh mục đã chọn!");
+            $_SESSION['old'] = $data;
             header('Location: ' . BASE_URL . '?act=destination-create');
             exit();
         }
 
+        if (!empty($errors)) {
+            // Lưu lỗi và dữ liệu cũ vào session để hiển thị lại form
+            $_SESSION['errors'] = $errors;
+            $_SESSION['old'] = $data;
+            header('Location: ' . BASE_URL . '?act=destination-create');
+            exit;
+        }
+
         $destination_id = $this->modelDestination->create($data);
+        if ($destination_id) {
+            Message::set('success', 'Thêm địa điểm thành công!');
+        } else {
+            Message::set('error', 'Thêm địa điểm thất bại!');
+        }
 
         // Upload ảnh
         if (!empty($_FILES['images']['name'][0])) {
@@ -76,13 +92,10 @@ class DestinationController
                 }
             }
         }
-
         header('Location: ' . BASE_URL . '?act=destination');
     }
 
-    // ===============================
-    // FORM SỬA
-    // ===============================
+    // form sửa
     public function edit()
     {
         $id = $_GET['id'];
@@ -93,9 +106,7 @@ class DestinationController
         require_once './views/admin/destination/edit.php';
     }
 
-    // ===============================
-    // CẬP NHẬT
-    // ===============================
+    // cập nhật
     public function update()
     {
         $id = $_POST['id'];
@@ -103,14 +114,42 @@ class DestinationController
         $data = [
             'category_id' => $_POST['category_id'],
             'name' => $_POST['name'],
-            'address' => $_POST['address'],
+            'locations' => $_POST['locations'],
             'description' => $_POST['description'],
-            'updated_by' => 1,
+            'updated_by' => $_SESSION['currentUser']['id'] ?? 1,
             'updated_at' => date('Y-m-d H:i:s')
         ];
 
+        // Validate
+        $rules = [
+            'name' => 'required|min:3|max:255',
+            'category_id' => 'required',
+        ];
 
-        $this->modelDestination->update($id, $data);
+        $errors = validate($data, $rules);
+
+        if ($this->modelDestination->isDuplicateNameInCategory($data['name'], $data['category_id'], $id)) {
+            Message::set("error", "Địa điểm này đã tồn tại trong danh mục đã chọn!");
+            $_SESSION['old'] = $data;
+            header('Location: ' . BASE_URL . '?act=destination-edit&id=' . $id);
+            exit();
+        }
+
+
+        $success = $this->modelDestination->update($id, $data);
+
+        if ($success) {
+            Message::set('success', 'Cập nhật địa điểm thành công!');
+        } else {
+            Message::set('error', 'Cập nhật địa điểm thất bại!');
+        }
+
+        if (!empty($errors)) {
+            $_SESSION['errors'] = $errors;
+            $_SESSION['old'] = $data;
+            header('Location: ' . BASE_URL . '?act=destination-edit&id=' . $id);
+            exit;
+        }
 
         // Upload ảnh mới
         if (!empty($_FILES['images']['name'][0])) {
@@ -130,9 +169,7 @@ class DestinationController
         header('Location: ' . BASE_URL . '?act=destination');
     }
 
-    // ===============================
-    // XÓA ĐỊA ĐIỂM
-    // ===============================
+    // xóa địa điểm
     public function delete()
     {
         if (!isset($_GET['id'])) die('ID không tồn tại');
@@ -148,15 +185,16 @@ class DestinationController
         }
 
         // Xóa destination
-        $this->modelDestination->delete($id);
 
+        if ($this->modelDestination->delete($id)) {
+            Message::set('success', 'Xóa địa điểm thành công!');
+        } else {
+            Message::set('error', 'Xóa địa điểm thất bại!');
+        }
         header('Location: ' . BASE_URL . '?act=destination');
         exit();
     }
-
-    // ===============================
-    // XÓA ẢNH RIÊNG LẺ
-    // ===============================
+    // xóa ảnh riêng lẻ
     public function deleteImage()
     {
         if (!isset($_GET['id'])) die('ID ảnh không tồn tại');
@@ -174,10 +212,7 @@ class DestinationController
         header('Location: ' . BASE_URL . '?act=destination-edit&id=' . $image['destination_id']);
         exit();
     }
-
-    // ===============================
-    // CHI TIẾT
-    // ===============================
+    // chi tiết
     public function detail()
     {
         if (!isset($_GET['id'])) die('ID không tồn tại');
