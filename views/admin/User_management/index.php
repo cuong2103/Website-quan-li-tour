@@ -49,10 +49,14 @@ require_once './views/components/sidebar.php';
               <tr class="hover:bg-gray-50 transition-colors">
                 <td class="px-6 py-5 whitespace-nowrap">
                   <div class="flex items-center">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <span class="text-blue-600 font-semibold text-lg">
-                        <?= strtoupper(substr($user["fullname"], 0, 1)) ?>
-                      </span>
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      <?php if(!empty($user['avatar'])): ?>
+                        <img src="<?= UPLOADS_URL ?>avatar/<?= $user['avatar'] ?>" alt="Avatar" class="w-full h-full object-cover">
+                      <?php else: ?>
+                        <span class="text-blue-600 font-semibold text-lg">
+                          <?= strtoupper(substr($user["fullname"], 0, 1)) ?>
+                        </span>
+                      <?php endif; ?>
                     </div>
                     <span class="ml-3 font-medium text-gray-900"><?= htmlspecialchars($user["fullname"]) ?></span>
                   </div>
@@ -60,7 +64,7 @@ require_once './views/components/sidebar.php';
                 <td class="px-6 py-5 text-gray-700"><?= htmlspecialchars($user["email"]) ?></td>
                 <td class="px-6 py-5 text-gray-700"><?= htmlspecialchars($user["phone"]) ?></td>
                 <td class="px-6 py-5">
-                  <?php if($user["role_id"] == 1): ?>
+                  <?php if($user["roles"] == 'admin'): ?>
                     <span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-pink-100 text-pink-800">
                       Admin
                     </span>
@@ -71,9 +75,13 @@ require_once './views/components/sidebar.php';
                   <?php endif; ?>
                 </td>
                 <td class="px-6 py-5">
-                  <span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                  <?php 
+                  echo $user['status'] == 1 ? '<span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
                     Hoạt động
-                  </span>
+                  </span>' : '<span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                    Tạm dừng
+                  </span>'; 
+                  ?>
                 </td>
                 <td class="px-6 py-5">
                   <div class="flex items-center gap-4">

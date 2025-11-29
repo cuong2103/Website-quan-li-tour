@@ -23,30 +23,38 @@ require_once './views/components/sidebar.php';
   </div>
 
   <!-- Form sửa -->
-  <form action="?act=user-update" method="POST" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+<form action="?act=user-update" method="POST" enctype="multipart/form-data" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
     <input type="hidden" name="id" value="<?= $user['id'] ?>">
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <div class="lg:col-span-1 space-y-6">
         <!-- Avatar hiện tại -->
         <div class="text-center">
-          <div class="mx-auto w-40 h-40 rounded-full bg-blue-100 flex items-center justify-center mb-4 text-6xl font-bold text-blue-600"><?= strtoupper(substr($user['fullname'], 0, 1)) ?>
-        </div>
+          <div class="mx-auto w-40 h-40 rounded-full bg-blue-100 flex items-center justify-center mb-4 text-6xl font-bold text-blue-600">
+            <?php if(!empty($user['avatar'])): ?>
+              <img src="/uploads/avatars/<?= $user['avatar'] ?>" class="w-full h-full object-cover rounded-full">
+            <?php else: ?>
+              <?= strtoupper(substr($user['fullname'], 0, 1)) ?>
+            <?php endif; ?>
+          </div>
           <p class="text-sm text-gray-600">Ảnh đại diện hiện tại</p>
-          <!-- Có thể thêm upload ảnh sau nếu cần -->
-        </div>
+
+  <!-- Upload avatar mới -->
+  <label class="block text-sm font-medium text-gray-700 mt-3">Thay đổi avatar:</label>
+  <input type="file" name="avatar" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
+</div>
 
         <!-- Vai trò -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-3">Vai trò</label>
           <div class="space-y-3">
             <label class="flex items-center gap-3 cursor-pointer">
-              <input type="radio" name="role" value="admin" <?= $user['role_id'] == 1 ? 'checked' : '' ?> class="w-4 h-4 text-orange-600">
+              <input type="radio" name="roles" value="admin" <?= $user['roles'] == 'admin' ? 'checked' : '' ?> class="w-4 h-4 text-orange-600">
               <span class="text-gray-800">Admin</span>
               <span class="ml-auto inline-flex px-3 py-1 text-xs font-medium rounded-full bg-pink-100 text-pink-800">Quyền cao nhất</span>
             </label>
             <label class="flex items-center gap-3 cursor-pointer">
-              <input type="radio" name="role" value="guide" <?= $user['role_id'] == 2 ? 'checked' : '' ?> class="w-4 h-4 text-orange-600">
+              <input type="radio" name="roles" value="guide" <?= $user['roles'] == 'guide' ? 'checked' : '' ?> class="w-4 h-4 text-orange-600">
               <span class="text-gray-800">Hướng dẫn viên</span>
               <span class="ml-auto inline-flex px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Dẫn tour</span>
             </label>
@@ -82,7 +90,7 @@ require_once './views/components/sidebar.php';
             <input type="password" name="password" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" placeholder="••••••••">
           </div>
         </div>
-
+              
         <!-- Thông tin bổ sung (tùy chọn mở rộng sau) -->
         <div class="border-t pt-6">
           <p class="text-sm text-gray-600 mb-4">Các thông tin khác ...</p>
