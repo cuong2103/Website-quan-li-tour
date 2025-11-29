@@ -20,7 +20,7 @@ match ($act) {
 
   'suppliers' => (new SupplierController())->index(),
   'supplier-edit' => (new SupplierController())->edit(),
-  'supplier-create' => (new SupplierController())->create(),
+  'supplier-create' => (new SupplierController())->store(),
   'supplier-update' => (new SupplierController())->update(),
   'supplier-detail' => (new SupplierController())->detail(),
   'supplier-delete' => (new SupplierController())->delete(),
@@ -44,13 +44,13 @@ match ($act) {
 
 
   //user_management
-'user' => (new UserManagementController())->index(),
-'user-getById' => (new UserManagementController())->detail(),
-'user-create' => (new UserManagementController())->create(),
-'user-edit' => (new UserManagementController())->edit(),
-'user-store' => (new UserManagementController())->store(),
-'user-update' => (new UserManagementController())->update(),
-'user-delete' => (new UserManagementController())->delete(),
+  'user' => (new UserManagementController())->index(),
+  'user-getById' => (new UserManagementController())->detail(),
+  'user-create' => (new UserManagementController())->create(),
+  'user-edit' => (new UserManagementController())->edit(),
+  'user-store' => (new UserManagementController())->store(),
+  'user-update' => (new UserManagementController())->update(),
+  'user-delete' => (new UserManagementController())->delete(),
 
 
 
@@ -111,7 +111,7 @@ match ($act) {
   'payment-update' => (new PaymentController())->update(),
   'payment-delete' => (new PaymentController())->delete(),
   'payment-detail' => (new PaymentController())->detail(),
-  
+
   //policies
   'policies' => (new PolicyController())->index(),
 
@@ -123,11 +123,11 @@ match ($act) {
   'policies-detail' => (new PolicyController())->detail(),
 
   // Tour_Assignments
-  'tour-assignments' => (new TourAssignmentController())->index(),  
+  'tour-assignments' => (new TourAssignmentController())->index(),
   'tour-assignment-create' => (new TourAssignmentController())->create(),
   'tour-assignment-store' => (new TourAssignmentController())->store(),
   'tour-assignment-edit' => (new TourAssignmentController())->edit(),
-  'tour-assignment-update' => (new TourAssignmentController())->update(), 
+  'tour-assignment-update' => (new TourAssignmentController())->update(),
   'tour-assignment-delete' => (new TourAssignmentController())->delete(),
 
   default => require_once './views/notFound.php',
