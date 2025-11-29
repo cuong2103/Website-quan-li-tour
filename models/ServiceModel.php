@@ -144,6 +144,13 @@ class ServiceModel
 
         return $stmt->fetchColumn() > 0;
     }
+    public function getBySupplierID($supplierId)
+    {
+        $sql = "SELECT * FROM services WHERE supplier_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$supplierId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function getByServiceType($service_type_id)
     {
@@ -161,7 +168,5 @@ class ServiceModel
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([':service_type_id' => $service_type_id]);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
