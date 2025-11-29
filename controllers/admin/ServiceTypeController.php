@@ -16,7 +16,6 @@ class ServiceTypeController
         } else {
             $serviceTypes = $this->serviceTypeModel->getAll();
         }
-        //  dd($serviceTypes);
         require_once './views/admin/service-type/index.php';
     }
     // hiển thị dữ liệu
@@ -24,8 +23,6 @@ class ServiceTypeController
     {
         $id = $_GET['id'];
         $serviceType = $this->serviceTypeModel->getDetail($id);
-        Message::set("success", "Dã Truy Cập Xem Chi Tiết!");
-        // dd($serviceType);
         require_once './views/admin/service-type/detail.php';
     }
     // xem chi tiết
@@ -33,10 +30,32 @@ class ServiceTypeController
     {
         $name = $_POST["name"];
         $description = $_POST["description"];
-        $created_by = 1;
+
+        // Validate bắt buộc nhập
+        $errors = validate($_POST, [
+            'name' => 'required|min:2|max:100'
+        ]);
+
+        // Nếu để trống
+        if (!empty($errors)) {
+            Message::set("error", "Tên loại dịch vụ không được để trống.");
+            redirect("service-type");
+            return;
+        }
+
+        // Kiểm tra tên trùng
+        if ($this->serviceTypeModel->existsByName($name)) {
+            Message::set("error", "Loại dịch vụ '$name' đã tồn tại. Vui lòng nhập tên khác.");
+            redirect("service-type");
+            return;
+        }
+
+        // Nếu hợp lệ → thêm mới
+        $created_by = $_SESSION['currentUser']['id'] ?? 1;
         $this->serviceTypeModel->create($name, $description, $created_by);
-        Message::set("success", "Thêm Loại Dịch Vụ Thành Công");
-        header("Location: index.php?act=service-type");
+
+        Message::set("success", "Thêm loại dịch vụ thành công.");
+        redirect("service-type");
     }
     // xóa
     public function delete()
@@ -52,7 +71,6 @@ class ServiceTypeController
     {
         $id = $_GET['id'];
         $serviceType = $this->serviceTypeModel->getDetail($id);
-        Message::set("success", "Truy Cập Sửa Thành Công");
         require_once './views/admin/service-type/edit.php';
     }
     //update
@@ -61,7 +79,8 @@ class ServiceTypeController
         $id = $_POST["id"];
         $name = $_POST["name"];
         $description = $_POST["description"];
-        $this->serviceTypeModel->update($id, $name, $description);
+        $updated_by = $_SESSION['currentUser']['id'];
+        $this->serviceTypeModel->update($id, $name, $description, $updated_by);
         Message::set("success", "Cập Nhập Thành Công");
         redirect("service-type");
     }
