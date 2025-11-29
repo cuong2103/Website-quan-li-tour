@@ -2,7 +2,7 @@
 $currentUser = $_SESSION['currentUser'] ?? null;
 
 $fullname = $currentUser['fullname'] ?? 'User';
-$role = ($currentUser['role_id'] ?? 0) == 1 ? 'Admin' : 'Hướng dẫn viên';
+$role = ($currentUser['roles'] == 'admin')  ? 'Admin' : 'Hướng dẫn viên';
 $avatar = strtoupper(mb_substr($fullname, 0, 1));
 ?>
 

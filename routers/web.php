@@ -44,13 +44,13 @@ match ($act) {
 
 
   //user_management
-  'user' => (new user_managementController())->index(),
-  'user-getById' => (new user_managementController())->detail(),
-  'user-create' => (new user_managementController())->create(),
-  'user-edit' => (new user_managementController())->edit(),
-  'user-store' => (new user_managementController())->store(),
-  'user-update' => (new user_managementController())->update(),
-  'user-delete' => (new user_managementController())->delete(),
+'user' => (new UserManagementController())->index(),
+'user-getById' => (new UserManagementController())->detail(),
+'user-create' => (new UserManagementController())->create(),
+'user-edit' => (new UserManagementController())->edit(),
+'user-store' => (new UserManagementController())->store(),
+'user-update' => (new UserManagementController())->update(),
+'user-delete' => (new UserManagementController())->delete(),
 
 
 
@@ -121,6 +121,14 @@ match ($act) {
   'policies-update' => (new PolicyController())->update(),
   'policies-delete' => (new PolicyController())->delete(),
   'policies-detail' => (new PolicyController())->detail(),
+
+  // Tour_Assignments
+  'tour-assignments' => (new TourAssignmentController())->index(),  
+  'tour-assignment-create' => (new TourAssignmentController())->create(),
+  'tour-assignment-store' => (new TourAssignmentController())->store(),
+  'tour-assignment-edit' => (new TourAssignmentController())->edit(),
+  'tour-assignment-update' => (new TourAssignmentController())->update(), 
+  'tour-assignment-delete' => (new TourAssignmentController())->delete(),
 
   default => require_once './views/notFound.php',
 };
