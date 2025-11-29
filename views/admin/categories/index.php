@@ -74,7 +74,7 @@ require_once './views/components/sidebar.php';
     <div class="xl:col-span-1 ">
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-lg font-medium text-gray-900">Cấu trúc Danh mục (10)</h2>
+          <h2 class="text-lg font-medium text-gray-900">Cấu trúc Danh mục (<?= $totalCategories ?>)</h2>
 
         </div>
 
@@ -86,9 +86,7 @@ require_once './views/components/sidebar.php';
         <div class="mt-8 pt-6 border-t border-gray-200">
           <p class="text-sm font-medium text-gray-700 mb-2">Hướng dẫn:</p>
           <ul class="text-sm text-gray-600 space-y-1">
-            <li>• Click để thu gọn/mở rộng</li>
-            <li>• Danh mục đang mở</li>
-            <li>• Danh mục đã đóng</li>
+            <li>• Chỉ xóa được các danh mục không có danh mục con</li>
           </ul>
         </div>
 
