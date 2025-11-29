@@ -49,12 +49,12 @@ require_once './views/components/sidebar.php';
           <label class="block text-sm font-medium text-gray-700 mb-3">Vai trò</label>
           <div class="space-y-3">
             <label class="flex items-center gap-3 cursor-pointer">
-              <input type="radio" name="role" value="admin" <?= $user['role_id'] == 1 ? 'checked' : '' ?> class="w-4 h-4 text-orange-600">
+              <input type="radio" name="roles" value="admin" <?= $user['roles'] == 'admin' ? 'checked' : '' ?> class="w-4 h-4 text-orange-600">
               <span class="text-gray-800">Admin</span>
               <span class="ml-auto inline-flex px-3 py-1 text-xs font-medium rounded-full bg-pink-100 text-pink-800">Quyền cao nhất</span>
             </label>
             <label class="flex items-center gap-3 cursor-pointer">
-              <input type="radio" name="role" value="guide" <?= $user['role_id'] == 2 ? 'checked' : '' ?> class="w-4 h-4 text-orange-600">
+              <input type="radio" name="roles" value="guide" <?= $user['roles'] == 'guide' ? 'checked' : '' ?> class="w-4 h-4 text-orange-600">
               <span class="text-gray-800">Hướng dẫn viên</span>
               <span class="ml-auto inline-flex px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Dẫn tour</span>
             </label>

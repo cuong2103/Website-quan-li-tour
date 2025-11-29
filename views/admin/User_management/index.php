@@ -64,7 +64,7 @@ require_once './views/components/sidebar.php';
                 <td class="px-6 py-5 text-gray-700"><?= htmlspecialchars($user["email"]) ?></td>
                 <td class="px-6 py-5 text-gray-700"><?= htmlspecialchars($user["phone"]) ?></td>
                 <td class="px-6 py-5">
-                  <?php if($user["role_id"] == 1): ?>
+                  <?php if($user["roles"] == 'admin'): ?>
                     <span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-pink-100 text-pink-800">
                       Admin
                     </span>

@@ -29,7 +29,7 @@ class UserModel
     // THÊM USER
     public function create($data)
     {
-        $sql = "INSERT INTO users (fullname, email, phone, password, role_id, status, avatar)
+        $sql = "INSERT INTO users (fullname, email, phone, password, roles, status, avatar)
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($sql);
@@ -38,45 +38,41 @@ class UserModel
             $data['email'],
             $data['phone'],
             $data['password'],
-            $data['role_id'],
+            $data['roles'],
             $data['status'],
             $data['avatar'] ?? null,
         ]);
     }
 
     // UPDATE USER
-        public function update($data, $id)
-    {
-        $fields = [];
-        $params = [];
+       // UserModel.php
+public function update($id, $data)
+{
+    $sql = "UPDATE users 
+        SET 
+            fullname = :fullname, 
+            email = :email, 
+            phone = :phone, 
+            avatar = :avatar, 
+            roles = :roles,
+            status = :status,
+            updated_at = NOW()
+        WHERE id = :id";
 
-        // Các trường chính
-        foreach(['fullname', 'email', 'phone', 'role_id', 'status'] as $field){
-            if(isset($data[$field])){
-                $fields[] = "$field=?";
-                $params[] = $data[$field];
-            }
-        }
+    $stmt = $this->conn->prepare($sql);
 
-        // Password nếu có
-        if(isset($data['password'])){
-            $fields[] = "password=?";
-            $params[] = $data['password'];
-        }
+    return $stmt->execute([
+        ':id' => $id,
+        ':fullname' => $data['fullname'],
+        ':email' => $data['email'],
+        ':phone' => $data['phone'],
+        ':avatar' => $data['avatar'] ?? null,
+        ':roles' => $data['roles'], // phải đúng kiểu trong DB
+        ':status' => $data['status'], // 0 hoặc 1
+    ]);
 
-        // Avatar nếu có
-        if(isset($data['avatar'])){
-            $fields[] = "avatar=?";
-            $params[] = $data['avatar'];
-        }
-
-        $params[] = $id; // id ở cuối
-
-        $sql = "UPDATE users SET ".implode(", ", $fields)." WHERE id=?";
-
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute($params);
-    }
+    
+}
 
 
     // XÓA USER

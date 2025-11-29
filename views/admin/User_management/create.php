@@ -61,12 +61,12 @@ require_once './views/components/sidebar.php';
           <label class="block text-sm font-medium text-gray-700 mb-3">Vai trò</label>
           <div class="space-y-3">
             <label class="flex items-center gap-3 cursor-pointer">
-              <input type="radio" name="role_id" value="1" class="w-4 h-4 text-orange-600 focus:ring-orange-500">
+              <input type="radio" name="roles" value="1" class="w-4 h-4 text-orange-600 focus:ring-orange-500">
               <span class="text-gray-800">Admin</span>
             </label>
 
             <label class="flex items-center gap-3 cursor-pointer">
-              <input type="radio" name="role_id" value="2" checked class="w-4 h-4 text-orange-600 focus:ring-orange-500">
+              <input type="radio" name="roles" value="2" checked class="w-4 h-4 text-orange-600 focus:ring-orange-500">
               <span class="text-gray-800">Hướng dẫn viên</span>
             </label>
           </div>

@@ -24,7 +24,7 @@ require_once './views/components/sidebar.php';
         <!-- Avatar lớn -->
         <div class="mx-auto w-32 h-32 rounded-full bg-blue-100 flex items-center justify-center mb-6 overflow-hidden">
           <?php if(!empty($user['avatar'])): ?>
-            <img src="/uploads/avatars/<?= $user['avatar'] ?>" alt="Avatar" class="w-full h-full object-cover">
+            <img src="/uploads/avatar/<?= $user['avatar'] ?>" alt="Avatar" class="w-full h-full object-cover">
           <?php else: ?>
             <span class="text-5xl font-bold text-blue-600"><?= strtoupper(substr($user['fullname'], 0, 1)) ?></span>
           <?php endif; ?>
@@ -32,11 +32,11 @@ require_once './views/components/sidebar.php';
 
 
         <h2 class="text-2xl font-bold text-gray-900"><?= $user["fullname"] ?></h2>
-        <p class="text-gray-500 mt-1">Mã nhân viên: HDV002</p>
+        <p class="text-gray-500 mt-1">Mã nhân viên: HDV00</p>
 
         <!-- Vai trò -->
         <div class="mt-5">
-          <?= $user["role_id"] == 1 ? '<span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-pink-100 text-pink-800">
+          <?= $user["roles"] == 'admin' ? '<span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-pink-100 text-pink-800">
                 Admin
               </span>' : ' <span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
                 Hướng dẫn viên
@@ -45,9 +45,15 @@ require_once './views/components/sidebar.php';
 
         <!-- Trạng thái -->
         <div class="mt-4">
-          <span class="inline-flex px-4 py-2 text-sm font-medium rounded-full bg-green-100 text-green-800">
-            Hoạt động
-          </span>
+          <td class="px-6 py-5">
+              <?php 
+                  echo $user['status'] == 1 ? '<span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                    Hoạt động
+                  </span>' : '<span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                    Tạm dừng
+                  </span>'; 
+                ?>
+            </td>
         </div>
 
         <!-- Nút hành động -->

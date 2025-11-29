@@ -45,7 +45,7 @@ class UserManagementController {
     $data['fullname'] = $_POST['fullname'] ?? '';
     $data['email']    = $_POST['email'] ?? '';
     $data['phone']    = $_POST['phone'] ?? '';
-    $data['role_id']  = isset($_POST['role_id']) ? (int)$_POST['role_id'] : 2;
+    $data['roles']  = isset($_POST['roles']) ? (int)$_POST['roles'] : 2;
     $data['status']   = isset($_POST['status']) ? (int)$_POST['status'] : 1;
     $data['password'] = !empty($_POST['password'])
                         ? password_hash($_POST['password'], PASSWORD_DEFAULT)
@@ -55,14 +55,13 @@ class UserManagementController {
     $data['address']  = $_POST['address'] ?? null;
     $data['start_date'] = $_POST['start_date'] ?? null;
     $data['certificate'] = $_POST['certificate'] ?? null;
-        // dd($data['avatar']);
     // --- Upload avatar trước khi lưu ---
     if (!empty($_FILES['avatar']['name']) && $_FILES['avatar']['error'] == 0) {
         $avatar = $_FILES['avatar'];
         $extention = pathinfo($avatar['name'], PATHINFO_EXTENSION);
         $filename = uniqid() . "." . $extention;
         $uploadDir = __DIR__ . '/../../uploads/avatar/';
-        dd($uploadDir);
+        // dd($uploadDir);
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
@@ -93,7 +92,7 @@ class UserManagementController {
     $fullname = trim($_POST['fullname']);
     $email = trim($_POST['email']);
     $phone = trim($_POST['phone']);
-    $role_id = $_POST['role'] == 'admin' ? 1 : 2;
+    $roles = $_POST['roles'] ?? 'guide';
     $status = ($_POST['status']);
     // dd($status); 
 
@@ -108,39 +107,38 @@ class UserManagementController {
         'fullname' => $fullname,
         'email' => $email,
         'phone' => $phone,
-        'role_id' => $role_id,
+        'roles' => $roles,
         'status' => $status
     ];
+
+    // Lấy avatar cũ từ DB
+    $currentUser = $this->model->getById($id);
 
     if (!empty($_FILES['avatar']['name']) && $_FILES['avatar']['error'] == 0) {
         $avatar = $_FILES['avatar'];
         $extention = pathinfo($avatar['name'], PATHINFO_EXTENSION);
         $filename = uniqid() . "." . $extention;
         $uploadDir = __DIR__ . '/../../uploads/avatar/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
+        if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
         $uploadPath = $uploadDir . $filename;
         if (move_uploaded_file($avatar['tmp_name'], $uploadPath)) {
-            $data['avatar'] = $filename;
+            $data['avatar'] = $filename; // dùng avatar mới
         }
-    }
-
-    // Nếu có mật khẩu mới thì hash
-    if (!empty($_POST['password'])) {
-        $data['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    }
-
-    $result = $this->model->update($data, $id);
-
-    if($result){
-        Message::set('success', 'Cập nhật thành công');
     } else {
-        Message::set('error', 'Cập nhật thất bại');
+        $data['avatar'] = $currentUser['avatar']; // giữ avatar cũ
     }
 
-    redirect("user");
-}
+
+    $result = $this->model->update($id, $data);
+
+        if($result){
+            Message::set('success', 'Cập nhật thành công');
+        } else {
+            Message::set('error', 'Cập nhật thất bại');
+        }
+
+        redirect("user");
+    }
     public function delete() {
         $id = $_GET['id'] ?? null;
         if ($id) {
