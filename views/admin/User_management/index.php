@@ -75,9 +75,13 @@ require_once './views/components/sidebar.php';
                   <?php endif; ?>
                 </td>
                 <td class="px-6 py-5">
-                  <span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                  <?php 
+                  echo $user['status'] == 1 ? '<span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
                     Hoạt động
-                  </span>
+                  </span>' : '<span class="inline-flex px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                    Tạm dừng
+                  </span>'; 
+                  ?>
                 </td>
                 <td class="px-6 py-5">
                   <div class="flex items-center gap-4">

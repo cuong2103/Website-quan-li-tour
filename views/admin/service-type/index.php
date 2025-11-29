@@ -18,13 +18,13 @@ require_once './views/components/sidebar.php';
             <form action="<?= BASE_URL . '?act=service-type-store'?>" method="POST">
                 <!-- kiểm tra dữ liệu vào post -->
                 <label class="block mb-2 font-medium">Tên loại dịch vụ <span class="text-red-500">*</span></label>
-                <input type="text" name="name" class="w-full border rounded-lg p-2 mb-4"
+                <input type="text" name="name" class="w-full border rounded-lg p-2 mb-4" required='vui lòng nhập đủ thông tin'
                     placeholder="Ví dụ: Khách sạn, Vận chuyển..." />
 
                 <label class="block mb-2 font-medium">Mô tả</label>
                 <textarea name="description" rows="3"
-                    class="w-full border rounded-lg p-2 mb-4"
-                    placeholder="Mô tả chi tiết về loại dịch vụ này..."></textarea>
+                    class="w-full border rounded-lg p-2 mb-4" required='vui lòng nhập đủ thông tin'
+                    placeholder="Mô tả chi tiết về loại dịch vụ này..." ></textarea>
 
                 <button type="submit" class="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition"> + Lưu</button> 
             </form>

@@ -9,6 +9,7 @@ class UserManagementController {
 
     public function index() {
         $users = $this->model->getAll();
+        // dd($users);
         require './views/admin/User_management/index.php';        
     }
 
@@ -93,7 +94,8 @@ class UserManagementController {
     $email = trim($_POST['email']);
     $phone = trim($_POST['phone']);
     $role_id = $_POST['role'] == 'admin' ? 1 : 2;
-    $status = isset($_POST['status']) ? (int)$_POST['status'] : 1; 
+    $status = ($_POST['status']);
+    // dd($status); 
 
     // Check email tồn tại
     if($this->model->emailExists($email, $id)){
