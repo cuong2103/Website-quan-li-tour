@@ -94,12 +94,14 @@
         Nhân viên
       </a>
 
-
       <!-- Thông báo -->
-      <a href="#" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
+      <a href="<?= BASE_URL . '?act=notifications' ?>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
         <i class="mr-3 w-6 h-6" data-lucide="megaphone"></i>
         Quản lí thông báo
       </a>
+
+
+
 
       <!-- Thêm các menu Admin khác ở đây -->
     <?php else: ?>

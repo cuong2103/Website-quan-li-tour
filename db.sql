@@ -288,16 +288,27 @@ CREATE TABLE `journal_images` (
 
 CREATE TABLE `notifications` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
-  `user_id` int,
-  `title` varchar(255),
-  `message` text,
-  `is_read` boolean DEFAULT false,
-  `read_at` timestamp,
-  `created_by` int, 
+  `title` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `type` varchar(50) DEFAULT 'general', -- general, booking, tour, payment, urgent
+  `created_by` int,
   `updated_by` int,
   `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp
 );
+
+CREATE TABLE `notification_recipients` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
+  `notification_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `is_read` boolean DEFAULT false,
+  `read_at` timestamp NULL,
+  `created_by` int,
+  `updated_by` int,
+  `created_at` timestamp DEFAULT (now()),
+  `updated_at` timestamp
+);
+
 
 CREATE TABLE `incurred_expenses`(
   `id` int PRIMARY KEY AUTO_INCREMENT,
@@ -409,3 +420,13 @@ ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 -- Bảng `incurred_expenses`
 ALTER TABLE `incurred_expenses` 
 ADD FOREIGN KEY (`booking_id`) REFERENCES `bookings`(`id`);
+
+-- Bảng `notifications` và `notification_recipients`
+ALTER TABLE `notifications` 
+ADD FOREIGN KEY (`created_by`) REFERENCES `users`(`id`);
+
+ALTER TABLE `notification_recipients` 
+ADD FOREIGN KEY (`notification_id`) REFERENCES `notifications`(`id`) ON DELETE CASCADE;
+
+ALTER TABLE `notification_recipients` 
+ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE;

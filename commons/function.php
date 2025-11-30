@@ -170,6 +170,26 @@ function redirect($act)
     exit();
 }
 
+function timeAgo($datetime)
+{
+    $timestamp = strtotime($datetime);
+    $diff = time() - $timestamp;
+
+    if ($diff < 60) {
+        return 'Vừa xong';
+    } elseif ($diff < 3600) {
+        $mins = floor($diff / 60);
+        return $mins . ' phút trước';
+    } elseif ($diff < 86400) {
+        $hours = floor($diff / 3600);
+        return $hours . ' giờ trước';
+    } elseif ($diff < 604800) {
+        $days = floor($diff / 86400);
+        return $days . ' ngày trước';
+    } else {
+        return date('d/m/Y H:i', $timestamp);
+    }
+}
 // Tính tổng số ngày của tour
 function calculateTotalDays($startDate, $endDate)
 {
