@@ -32,7 +32,7 @@ CREATE TABLE `destinations` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `category_id` int,
   `name` varchar(255),
-  `address` varchar(500),
+  `locations` varchar(500),
   `description` text,
   `created_by` int,
   `updated_by` int,
