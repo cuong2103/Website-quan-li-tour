@@ -64,21 +64,35 @@ function deleteSessionError()
 }
 
 // Hàm check login 
-function checkLoginAdmin()
+function checkLogin()
 {
-    if (!isset($_SESSION['currentUser']["role_id"])) {
-        header("Location: " . BASE_URL . '?act=login-admin');
+    if (!isset($_SESSION['currentUser']["roles"])) {
+        header("Location: " . BASE_URL . '?act=login');
         exit();
     }
 }
 
-function checkLoginGuide()
+
+
+function requireAdmin()
 {
-    if (!isset($_SESSION['currentUser']["role_id"])) {
-        header("Location: " . BASE_URL . '?act=login-guide');
+    // Kiểm tra đang login
+    if (!isset($_SESSION['currentUser'])) {
+        redirect("login");
+    }
+
+    // Kiểm tra trạng thái
+    if ($_SESSION['currentUser']['status'] != 1) {
+        Message::set("error", "Tài khoản đã bị khóa!");
+        session_destroy();
+        redirect("login");
+    }
+
+    if (($_SESSION['currentUser']['roles'] ?? '') !== 'admin') {
+        Message::set("error", "403 - Chỉ Admin được phép truy cập!");
+        redirect("403");
     }
 }
-
 
 function validate($data, $rules)
 {
@@ -154,4 +168,51 @@ function redirect($act)
 {
     header("Location: " . BASE_URL . "?act=" . $act);
     exit();
+}
+
+function timeAgo($datetime)
+{
+    $timestamp = strtotime($datetime);
+    $diff = time() - $timestamp;
+
+    if ($diff < 60) {
+        return 'Vừa xong';
+    } elseif ($diff < 3600) {
+        $mins = floor($diff / 60);
+        return $mins . ' phút trước';
+    } elseif ($diff < 86400) {
+        $hours = floor($diff / 3600);
+        return $hours . ' giờ trước';
+    } elseif ($diff < 604800) {
+        $days = floor($diff / 86400);
+        return $days . ' ngày trước';
+    } else {
+        return date('d/m/Y H:i', $timestamp);
+    }
+}
+// Tính tổng số ngày của tour
+function calculateTotalDays($startDate, $endDate)
+{
+    $start = new DateTime($startDate);
+    $end   = new DateTime($endDate);
+    $end->setTime(0, 0, 0); // đảm bảo tính đúng ngày cuối
+    $start->setTime(0, 0, 0);
+    $diff = $start->diff($end);
+    return $diff->days + 1; // +1 để tính cả ngày đầu và cuối
+}
+
+// Tính ngày hiện tại của tour (từ start_date)
+function getCurrentDay($startDate, $endDate)
+{
+    $today = new DateTime(date('Y-m-d'));
+    $start = new DateTime($startDate);
+    $end   = new DateTime($endDate);
+    $start->setTime(0, 0, 0);
+    $end->setTime(0, 0, 0);
+
+    if ($today < $start) return 0;      // chưa bắt đầu
+    if ($today > $end) return calculateTotalDays($startDate, $endDate); // đã kết thúc
+
+    $diff = $start->diff($today);
+    return $diff->days + 1; // +1 ngày bắt đầu
 }

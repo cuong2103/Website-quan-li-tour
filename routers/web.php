@@ -2,8 +2,8 @@
 session_start();
 $act = $_GET['act'] ?? '/';
 
-if ($act !== 'login-admin'  && $act !== 'check-login-admin' && $act !== 'logout-admin') {
-  checkLoginAdmin();
+if ($act !== 'login'  && $act !== 'check-login' && $act !== 'logout') {
+  checkLogin();
 }
 
 match ($act) {
@@ -20,7 +20,7 @@ match ($act) {
 
   'suppliers' => (new SupplierController())->index(),
   'supplier-edit' => (new SupplierController())->edit(),
-  'supplier-create' => (new SupplierController())->create(),
+  'supplier-create' => (new SupplierController())->store(),
   'supplier-update' => (new SupplierController())->update(),
   'supplier-detail' => (new SupplierController())->detail(),
   'supplier-delete' => (new SupplierController())->delete(),
@@ -44,15 +44,25 @@ match ($act) {
 
 
   //user_management
-  'user' => (new user_managementController())->index(),
-  'user-getById' => (new user_managementController())->detail(),
-  'user-create' => (new user_managementController())->create(),
-  'user-edit' => (new user_managementController())->edit(),
-  'user-store' => (new user_managementController())->store(),
-  'user-update' => (new user_managementController())->update(),
-  'user-delete' => (new user_managementController())->delete(),
+  'user' => (new UserManagementController())->index(),
+  'user-getById' => (new UserManagementController())->detail(),
+  'user-create' => (new UserManagementController())->create(),
+  'user-edit' => (new UserManagementController())->edit(),
+  'user-store' => (new UserManagementController())->store(),
+  'user-update' => (new UserManagementController())->update(),
+  'user-delete' => (new UserManagementController())->delete(),
 
-
+  // Notifications
+  'notifications' => (new NotificationController())->index(),
+  'notification-create' => (new NotificationController())->create(),
+  'notification-store' => (new NotificationController())->store(),
+  'notification-detail' => (new NotificationController())->detail(),
+  'read-notification' => (new NotificationController())->read(),
+  'mark-all-notifications-read' => (new NotificationController())->markAllRead(),
+  'notification-delete' => (new NotificationController())->delete(),
+  'my-notifications' => (new NotificationController())->myNotifications(),
+  'notification-edit' => (new NotificationController())->edit(),
+  'notification-update' => (new NotificationController())->update(),
 
   // Categories
   "categories" => (new CategoryController())->index(),
@@ -72,9 +82,9 @@ match ($act) {
   'destination-detail' => (new DestinationController())->detail(),
 
   // Auth admin
-  'login-admin' => (new AuthController())->formLogin(),
-  'check-login-admin' => (new AuthController())->login(),
-  'logout-admin' => (new AuthController())->logout(),
+  'login' => (new AuthController())->formLogin(),
+  'check-login' => (new AuthController())->login(),
+  'logout' => (new AuthController())->logout(),
 
   //customers
   'customers' => (new CustomerController())->index(),
@@ -83,6 +93,34 @@ match ($act) {
   'customer-detail' => (new CustomerController())->detail(),
   'customer-edit' => (new CustomerController())->edit(),
   'customer-delete' => (new CustomerController())->delete(),
+
+
+  // bookings
+  'bookings' => (new BookingController())->index(),
+  'booking-create' => (new BookingController())->create(),
+  'booking-store' => (new BookingController())->store(),
+  'booking-edit' => (new BookingController())->edit(),
+  'booking-update' => (new BookingController())->update(),
+  'booking-delete' => (new BookingController())->delete(),
+  'booking-detail' => (new BookingController())->detail(),
+
+  // contracts
+  'contracts' => (new ContractController())->index(),
+  'contract-create' => (new ContractController())->create(),
+  'contract-store' => (new ContractController())->store(),
+  'contract-edit' => (new ContractController())->edit(),
+  'contract-update' => (new ContractController())->update(),
+  'contract-delete' => (new ContractController())->delete(),
+  'contract-detail' => (new ContractController())->detail(),
+
+  // payments
+  'payments' => (new PaymentController())->index(),
+  'payment-create' => (new PaymentController())->create(),
+  'payment-store' => (new PaymentController())->store(),
+  'payment-edit' => (new PaymentController())->edit(),
+  'payment-update' => (new PaymentController())->update(),
+  'payment-delete' => (new PaymentController())->delete(),
+  'payment-detail' => (new PaymentController())->detail(),
 
   //policies
   'policies' => (new PolicyController())->index(),
@@ -94,5 +132,20 @@ match ($act) {
   'policies-delete' => (new PolicyController())->delete(),
   'policies-detail' => (new PolicyController())->detail(),
 
+  // Tour_Assignments
+  'tour-assignments' => (new TourAssignmentController())->index(),
+  'tour-assignment-create' => (new TourAssignmentController())->create(),
+  'tour-assignment-store' => (new TourAssignmentController())->store(),
+  'tour-assignment-edit' => (new TourAssignmentController())->edit(),
+  'tour-assignment-update' => (new TourAssignmentController())->update(),
+  'tour-assignment-delete' => (new TourAssignmentController())->delete(),
+
+  // 
+  'my-schedule' => (new MyScheduleController())->index(),
+  // Guide tour_Assignments
+  'guide-tour-assignments' => (new GuideTourAssignmentController())->index(),
+  'guide-tour-assignments-detail' => (new GuideTourAssignmentController())->detail(),
+
+  '403' => require_once './views/forbidden.php',
   default => require_once './views/notFound.php',
 };

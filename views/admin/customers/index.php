@@ -32,61 +32,60 @@ require_once "./views/components/sidebar.php";
     <!-- Bảng danh sách khách hàng -->
     <div class="bg-white shadow-sm rounded-lg p-4">
         <h2 class="text-lg font-medium text-gray-700 mb-4">
-            Danh sách khách hàng (5)
+            Danh sách khách hàng (<?= count($listCustomers) ?>)
         </h2>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm">
-                <thead>
-                    <tr class="text-gray-600 bg-gray-100 border-b">
-                        <th class="px-4 py-3">Khách hàng</th>
-                        <th class="px-4 py-3">Email</th>
-                        <th class="px-4 py-3">Số điện thoại</th>
-                        <th class="px-4 py-3">Địa chỉ</th>
-                        <th class="px-4 py-3">Giới tính</th>
-                        <th class="px-4 py-3">Hộ chiếu</th>
-                        <th class="px-4 py-3 text-center">Hành động</th>
-                    </tr>
-                </thead>
+            <div class="overflow-x-auto">
+    <table class="w-full text-left text-sm">
+        <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Khách hàng</th>
+                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
+                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Số điện thoại</th>
+                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Địa chỉ</th>
+                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Giới tính</th>
+                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Hộ chiếu</th>
+                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase text-center">Hành động</th>
+            </tr>
+        </thead>
 
-                <tbody class="text-gray-700">
-                    <?php foreach ($listCustomers as $cus): ?>
-                        <!-- 1 hàng -->
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="px-4 py-3 flex items-center gap-3">
-                                <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl font-semibold">
+        <tbody class="divide-y divide-gray-200">
+            <?php foreach ($listCustomers as $cus): ?>
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl font-semibold">
+                            <?= strtoupper(substr($cus['name'],0,1)) ?>
+                        </div>
+                        <div class="truncate max-w-xs"><?= $cus['name'] ?></div>
+                    </td>
+                    <td class="px-6 py-4 truncate max-w-xs"><?= $cus['email'] ?></td>
+                    <td class="px-6 py-4"><?= $cus['phone'] ?></td>
+                    <td class="px-6 py-4 truncate max-w-xs"><?= $cus['address'] ?></td>
+                    <td class="px-6 py-4"><?= $cus['gender'] ?></td>
+                    <td class="px-6 py-4"><?= $cus['passport'] ?></td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <!-- Sửa -->
+                            <a href="?act=customer-edit&id=<?= $cus['id'] ?>" class="text-indigo-600 hover:text-indigo-900">
+                                <i class="w-5 h-5" data-lucide="square-pen"></i>
+                            </a>
+                            <!-- Xem -->
+                            <a href="?act=customer-detail&id=<?= $cus['id'] ?>" class="text-indigo-600 hover:text-indigo-900">
+                                <i class="w-5 h-5" data-lucide="eye"></i>
+                            </a>
+                            <!-- Xóa -->
+                            <a href="?act=customer-delete&id=<?= $cus['id'] ?>" onclick="return confirm('Bạn có chắc muốn xóa khách hàng này?')" class="text-red-600 hover:text-red-900">
+                                <i class="w-5 h-5" data-lucide="trash-2"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
 
-                                </div>
-                                <?= $cus['name'] ?>
-                            </td>
-                            <td class="px-4 py-3"><?= $cus['email'] ?></td>
-                            <td class="px-4 py-3"><?= $cus['phone'] ?></td>
-                            <td class="px-4 py-3"><?= $cus['address'] ?></td>
-                            <td class="px-4 py-3"><?= $cus['gender'] ?></td>
-                            <td class="px-4 py-3"><?= $cus['passport'] ?></td>
-                            <td class="px-4 py-3 text-center">
-
-                                <!-- Xem -->
-                                <a href="?act=customer-edit&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-blue-600 mx-1 inline-block">
-                                    <i class="w-4 h-4" data-lucide="square-pen"></i>
-                                </a>
-
-                                <!-- Sửa -->
-                                <a href="?act=customer-detail&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-blue-600 mx-1 inline-block">
-                                    <i class="w-4 h-4" data-lucide="eye"></i>
-                                </a>
-
-                                <!-- Xóa -->
-                                <a href="?act=customer-delete&id=<?= $cus['id'] ?>" class="text-gray-600 hover:text-blue-600 mx-1 inline-block">
-                                    <i class="w-4 h-4" data-lucide="trash-2"></i>
-                                </a>
-
-                            </td>
-                        </tr>
-
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
         </div>
     </div>
     <script>

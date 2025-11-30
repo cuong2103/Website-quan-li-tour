@@ -8,110 +8,129 @@ class ServiceController
 
     public function __construct()
     {
+        requireAdmin();
         $this->serviceModel = new ServiceModel();
         $this->supplierModel = new SupplierModel();
         $this->serviceTypeModel = new ServiceTypeModel();
     }
 
-    // Danh sách dịch vụ
     public function index()
     {
         $keyword = $_GET['keyword'] ?? '';
-        $service_type_id = $_GET['service_type_id'] ?? '';
-        $supplier_id = $_GET['supplier_id'] ?? '';
+        $type = $_GET['service_type_id'] ?? '';
+        $supplier = $_GET['supplier_id'] ?? '';
 
-
-        $services = $this->serviceModel->getAll($keyword,$service_type_id,$supplier_id);
+        $services = $this->serviceModel->getAll($keyword, $type, $supplier);
         $serviceTypes = $this->serviceTypeModel->getAll();
-        $suppliers = $this->supplierModel->getALL();
+        $suppliers = $this->supplierModel->getAll();
+
         require_once './views/admin/services/index.php';
     }
 
-    // Chi tiết dịch vụ
     public function detail($id = null)
     {
-        $id = $id ?? $_GET['id'] ?? null;
-        if (!$id || !is_numeric($id)) {
-            $_SESSION['error'] = "ID không hợp lệ!";
+        $id = $id ?? $_GET['id'] ?? 0;
+
+        if (!is_numeric($id) || $id <= 0) {
+            Message::set("error", "ID không hợp lệ!");
             redirect("service");
             exit;
         }
 
-        $service = $this->serviceModel->getDetail((int)$id);
+        $service = $this->serviceModel->getDetail($id);
+
         if (!$service) {
-            $_SESSION['error'] = "Dịch vụ không tồn tại!";
+            Message::set("error", "Dịch vụ không tồn tại!");
             redirect("service");
             exit;
         }
+
         require_once './views/admin/services/detail.php';
     }
 
-    // Xóa dịch vụ
     public function delete($id = null)
     {
-        $id = $id ?? $_GET['id'] ?? null;
-        if (!$id || !is_numeric($id)) {
-            $_SESSION['error'] = "ID không hợp lệ!";
+        $id = $id ?? $_GET['id'] ?? 0;
+
+        if (!is_numeric($id) || $id <= 0) {
+            Message::set("error", "ID không hợp lệ!");
             redirect("service");
             exit;
         }
 
         if ($this->serviceModel->delete($id)) {
-            Message::set("success", "Xóa Dịch Vụ Thành Công!");
+            Message::set("success", "Xóa dịch vụ thành công!");
         } else {
-            Message::set("error", "Xóa Dịch Vụ Thất Bại!");
+            Message::set("error", "Xóa dịch vụ thất bại!");
         }
 
         redirect("service");
     }
 
-    // Form thêm dịch vụ
     public function create()
     {
         $serviceTypes = $this->serviceTypeModel->getAll();
         $suppliers = $this->supplierModel->getAll();
+
         require_once './views/admin/services/create.php';
     }
 
-    // Xử lý thêm dịch vụ
     public function store()
     {
         $data = [
-            'name' => $_POST['name'] ?? '',
-            'description' => $_POST['description'] ?? '',
-            'service_type_id' => $_POST['service_type_id'] ?? null,
-            'supplier_id' => $_POST['supplier_id'] ?? null,
-            'price' => $_POST['price'] ?? 0,
-            'created_by' => $_SESSION['admin_id'] ?? 1,
+            'name' => $_POST['name'],
+            'description' => $_POST['description'],
+            'service_type_id' => $_POST['service_type_id'],
+            'supplier_id' => $_POST['supplier_id'],
+            'estimated_price' => $_POST['estimated_price'] ?? 0,
+            'created_by' => $_SESSION['admin_id'] ?? 1
         ];
 
-        if(empty($data['name']) || empty($data['service_type_id']) || empty($data['supplier_id'])){
-            Message::set("error", "Vui lòng điền đủ thông tin!");
+        // RULES
+        $rules = [
+            'name' => 'required|min:3|max:100',
+            'service_type_id' => 'required|numeric',
+            'supplier_id' => 'required|numeric',
+            'estimated_price' => 'required|numeric'
+        ];
+
+        // VALIDATE
+        $errors = validate($data, $rules);
+
+        if (!empty($errors)) {
+            $_SESSION['errors'] = $errors;
+            $_SESSION['old'] = $data;
+
             redirect("service-create");
             exit;
         }
+
+        // Kiểm tra trùng
+        if ($this->serviceModel->isDuplicate($data['name'], $data['service_type_id'], $data['supplier_id'])) {
+            Message::set("error", "Dịch vụ này đã tồn tại!");
+            header('Location: ' . BASE_URL . '?act=service-create');
+            exit();
+        }
+
 
         if ($this->serviceModel->create($data)) {
             Message::set("success", "Thêm dịch vụ thành công!");
             redirect("service");
-            exit;
         } else {
             Message::set("error", "Thêm dịch vụ thất bại!");
             redirect("service-create");
-            exit;
         }
     }
 
-    //sửa
     public function edit($id = null)
     {
-        $id = $id ?? ($_GET['id'] ?? 0);
+        $id = $id ?? $_GET['id'] ?? 0;
+
         $service = $this->serviceModel->getDetail($id);
 
         if (!$service) {
-            $_SESSION['error'] = 'Dịch vụ không tồn tại!';
+            Message::set("error", "Dịch vụ không tồn tại!");
             redirect("service");
-            exit();
         }
 
         $serviceTypes = $this->serviceTypeModel->getAll();
@@ -120,12 +139,13 @@ class ServiceController
         require_once './views/admin/services/edit.php';
     }
 
-    public function update(){
-        $id = $_POST['id'] ?? null;
-        if(!$id){
-            Message::set("error", "ID KO HỢP LỆ!");
+    public function update()
+    {
+        $id = $_POST['id'] ?? 0;
+
+        if ($id <= 0) {
+            Message::set("error", "ID không hợp lệ!");
             redirect("service");
-            exit();
         }
 
         $data = [
@@ -133,17 +153,42 @@ class ServiceController
             'description' => $_POST['description'],
             'service_type_id' => $_POST['service_type_id'],
             'supplier_id' => $_POST['supplier_id'],
-            'price' => $_POST['price'],
+            'estimated_price' => $_POST['estimated_price']
         ];
 
+        // RULES
+        $rules = [
+            'name' => 'required|min:3|max:100',
+            'service_type_id' => 'required|numeric',
+            'supplier_id' => 'required|numeric',
+            'estimated_price' => 'required|numeric'
+        ];
+
+        // VALIDATE
+        $errors = validate($data, $rules);
+
+        if (!empty($errors)) {
+            $_SESSION['errors'] = $errors;
+            $_SESSION['old'] = $data;
+
+            redirect("service-edit&id=" . $id);
+            exit;
+        }
+
+        // Kiểm tra trùng
+        if ($this->serviceModel->isDuplicate($data['name'], $data['service_type_id'], $data['supplier_id'], $id)) {
+            Message::set("error", "Dịch vụ này đã tồn tại!");
+            header('Location: ' . BASE_URL . '?act=service-edit&id=' . $id);
+            exit();
+        }
+
+
         if ($this->serviceModel->update($id, $data)) {
-            Message::set("success", "Cập Nhập Thành Công");
+            Message::set("success", "Cập nhật dịch vụ thành công!");
         } else {
-            Message::set("error" , "Cập Nhập Thát Bại");
+            Message::set("error", "Cập nhật thất bại!");
         }
 
         redirect("service");
-        exit();
-        }
-
+    }
 }

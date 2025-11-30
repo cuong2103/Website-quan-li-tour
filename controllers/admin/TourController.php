@@ -8,6 +8,7 @@ class TourController
 
   public function __construct()
   {
+    requireAdmin();
     $this->tourModel = new TourModel();
     $this->policyModel = new PolicyModel();
     $this->categoryModel = new CategoryModel();

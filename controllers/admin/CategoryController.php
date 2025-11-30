@@ -5,6 +5,7 @@ class CategoryController
 
   public function __construct()
   {
+    requireAdmin();
     $this->categoryModel = new CategoryModel();
   }
 
@@ -12,6 +13,7 @@ class CategoryController
   {
     $categories = $this->categoryModel->getAll();
     $tree = buildTree($categories);
+    $totalCategories = $this->categoryModel->getTotalCategories();
     require_once './views/admin/categories/index.php';
   }
   public function store()
@@ -46,6 +48,8 @@ class CategoryController
     $category = $this->categoryModel->getById($id);
     $categories = $this->categoryModel->getAll();
     $tree = buildTree($categories);
+    $totalCategories = $this->categoryModel->getTotalCategories();
+
     require_once './views/admin/categories/edit.php';
   }
 

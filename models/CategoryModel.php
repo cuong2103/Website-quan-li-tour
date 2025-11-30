@@ -17,6 +17,15 @@ class CategoryModel
     return $stmt->fetchAll();
   }
 
+  public function getTotalCategories()
+  {
+    $sql = "SELECT COUNT(*) as total_categories FROM categories";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total_categories'] ?? 0;
+  }
+
   public function create($data)
   {
     $sql = "INSERT INTO categories (name, parent_id, created_by)
