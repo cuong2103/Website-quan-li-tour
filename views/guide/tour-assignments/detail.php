@@ -1,0 +1,145 @@
+<?php
+require './views/components/header.php';
+require './views/components/sidebar.php';
+
+$tabs = [
+    'customers' => ['label' => 'Danh sách khách hàng', 'icon' => 'users'],
+    'itinerary' => ['label' => 'Lịch trình chi tiết', 'icon' => 'map'],
+    'info'      => ['label' => 'Thông tin & Yêu cầu', 'icon' => 'info'],
+    'services'  => ['label' => 'Dịch vụ kèm theo', 'icon' => 'package']
+];
+?>
+
+<main class="mt-28 px-6 pb-20 text-gray-700">
+
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Chi tiết Tour: <?= htmlspecialchars($assignment['tour_name']) ?></h1>
+        <a href="<?= BASE_URL . '?act=guide-tour-assignments' ?>"
+            class="flex items-center gap-2 bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-black text-sm">
+            <i data-lucide="arrow-left"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="bg-white border shadow-md rounded-xl p-6 mb-8">
+        <div class="grid grid-cols-5 gap-6 text-sm">
+            <div>
+                <div class="text-gray-500 text-sm">Ngày khởi hành</div>
+                <div class="font-semibold text-lg"><?= date('Y-m-d', strtotime($assignment['start_date'])) ?></div>
+            </div>
+            <div>
+                <div class="text-gray-500 text-sm">Ngày kết thúc</div>
+                <div class="font-semibold text-lg"><?= date('Y-m-d', strtotime($assignment['end_date'])) ?></div>
+            </div>
+            <div>
+                <div class="text-gray-500 text-sm">Số lượng khách</div>
+                <div class="font-semibold text-lg flex items-center gap-1">
+                    <i data-lucide="users" class="w-4"></i>
+                    <?= htmlspecialchars($assignment['total_customers'] ?? 0) ?> người
+                </div>
+            </div>
+            <div>
+                <div class="text-gray-500 text-sm">Trạng thái</div>
+                <span class="px-3 py-1 text-xs rounded-full <?= $assignment['status_color'] ?>">
+                    <?= htmlspecialchars($assignment['status_text']) ?>
+                </span>
+            </div>
+            <div>
+                <div class="text-gray-500 text-sm">Mã Booking</div>
+                <div class="font-semibold text-lg"><?= htmlspecialchars($assignment['booking_code']) ?></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- tabs -->
+    <div class="flex gap-3 border-b mb-4 pb-2">
+        <?php foreach ($tabs as $key => $t): ?>
+            <a href="<?= BASE_URL . '?act=guide-tour-assignments-detail&id=' . $assignment['id'] . '&tab=' . $key ?>"
+                class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg
+               <?= $tab === $key ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-200' ?>">
+                <i data-lucide="<?= $t['icon'] ?>" class="w-4 h-4"></i>
+                <?= $t['label'] ?>
+            </a>
+        <?php endforeach; ?>
+    </div>
+
+    <!-- tab customers -->
+    <?php if ($tab === 'customers'): ?>
+        <div class="bg-white border shadow rounded-xl p-5">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-3 text-left">STT</th>
+                        <th class="p-3 text-left">Tên khách hàng</th>
+                        <th class="p-3 text-left">Số điện thoại</th>
+                        <th class="p-3 text-left">Email</th>
+                        <th class="p-3 text-left">Ghi chú</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($customers as $i => $c): ?>
+                        <tr class="border-t">
+                            <td class="p-3"><?= $i + 1 ?></td>
+                            <td class="p-3"><?= htmlspecialchars($c['name']) ?></td>
+                            <td class="p-3"><?= htmlspecialchars($c['phone']) ?></td>
+                            <td class="p-3"><?= htmlspecialchars($c['email']) ?></td>
+                            <td class="p-3"><?= htmlspecialchars($c['notes'] ?? '-') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+
+    <!-- tab itinerary -->
+    <?php if ($tab === 'itinerary'): ?>
+        <div class="bg-white border shadow rounded-xl p-5">
+            <?php if (!empty($itinerary_days)): ?>
+                <?php foreach ($itinerary_days as $day => $items): ?>
+                    <h3 class="font-semibold text-lg mb-3">Ngày <?= $day ?></h3>
+                    <div class="border-l ml-2 pl-4 space-y-4">
+                        <?php foreach ($items as $row): ?>
+                            <div>
+                                <div class="font-medium"><?= htmlspecialchars($row['destination_name']) ?></div>
+                                <div class="text-xs text-gray-500"><?= $row['arrival_time'] ?> → <?= $row['departure_time'] ?></div>
+                                <div class="text-sm mt-1"><?= htmlspecialchars($row['description']) ?></div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <hr class="my-4">
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="text-gray-500">Chưa có lịch trình chi tiết.</p>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
+    <!-- tab info -->
+    <?php if ($tab === 'info'): ?>
+        <div class="bg-white border shadow rounded-xl p-5">
+            <h3 class="font-semibold text-lg mb-3">Yêu cầu đặc biệt</h3>
+            <p class="text-sm text-gray-700 mb-6">
+                <?= htmlspecialchars($assignment['special_requests'] ?? 'Không có yêu cầu đặc biệt.') ?>
+            </p>
+        </div>
+    <?php endif; ?>
+
+    <!-- tab services -->
+    <?php if ($tab === 'services'): ?>
+        <div class="bg-white border shadow rounded-xl p-5">
+            <?php if (!empty($services)): ?>
+                <ul class="list-disc ml-5 text-sm text-gray-700">
+                    <?php foreach ($services as $s): ?>
+                        <li><?= htmlspecialchars($s['service_name']) ?>
+                            <?php if (!empty($s['quantity'])): ?> (Số lượng: <?= $s['quantity'] ?>)<?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <p class="text-gray-500">Chưa có dịch vụ kèm theo.</p>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
+</main>
+
+<?php require './views/components/footer.php'; ?>

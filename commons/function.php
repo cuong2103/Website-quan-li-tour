@@ -169,3 +169,30 @@ function redirect($act)
     header("Location: " . BASE_URL . "?act=" . $act);
     exit();
 }
+
+// Tính tổng số ngày của tour
+function calculateTotalDays($startDate, $endDate)
+{
+    $start = new DateTime($startDate);
+    $end   = new DateTime($endDate);
+    $end->setTime(0, 0, 0); // đảm bảo tính đúng ngày cuối
+    $start->setTime(0, 0, 0);
+    $diff = $start->diff($end);
+    return $diff->days + 1; // +1 để tính cả ngày đầu và cuối
+}
+
+// Tính ngày hiện tại của tour (từ start_date)
+function getCurrentDay($startDate, $endDate)
+{
+    $today = new DateTime(date('Y-m-d'));
+    $start = new DateTime($startDate);
+    $end   = new DateTime($endDate);
+    $start->setTime(0, 0, 0);
+    $end->setTime(0, 0, 0);
+
+    if ($today < $start) return 0;      // chưa bắt đầu
+    if ($today > $end) return calculateTotalDays($startDate, $endDate); // đã kết thúc
+
+    $diff = $start->diff($today);
+    return $diff->days + 1; // +1 ngày bắt đầu
+}

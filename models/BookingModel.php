@@ -240,21 +240,31 @@ class BookingModel
         }
     }
 
-    // Quản lí dịch vụ
     public function getServices($bookingId)
     {
         try {
-            $sql = "SELECT bs.*, s.name
-                    FROM booking_services bs
-                    JOIN services s ON s.id = bs.service_id
-                    WHERE bs.booking_id = ?";
+            // Lấy tour_id trước
+            $sqlTour = "SELECT tour_id FROM bookings WHERE id = ?";
+            $stmtTour = $this->conn->prepare($sqlTour);
+            $stmtTour->execute([$bookingId]);
+            $tour = $stmtTour->fetch(PDO::FETCH_ASSOC);
+            if (!$tour) return [];
+
+            $tourId = $tour['tour_id'];
+
+            // Lấy dịch vụ theo tour_id
+            $sql = "SELECT bs.*, s.name AS service_name
+                FROM booking_services bs
+                JOIN services s ON s.id = bs.service_id
+                WHERE bs.tour_id = ?";
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$bookingId]);
+            $stmt->execute([$tourId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             die("Lỗi getServices(): " . $e->getMessage());
         }
     }
+
 
     // Thêm dịch vụ
     public function addService($bookingId, $serviceId)
@@ -321,7 +331,8 @@ class BookingModel
         }
     }
     // Lọc danh sách booking trong form Thêm phân công
-    public function getBookingsWithoutGuide() {
+    public function getBookingsWithoutGuide()
+    {
         $sql = "
             SELECT 
                 b.*, 
@@ -332,9 +343,42 @@ class BookingModel
             WHERE ta.booking_id IS NULL
             ORDER BY b.id DESC
         ";
-        
+
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Lấy booking theo guide_id (dành cho guide)
+    public function getByGuideId($guideId)
+    {
+        $sql = "SELECT b.*, t.name AS tour_name
+                  FROM bookings b
+                  LEFT JOIN tours t ON t.id = b.tour_id
+                  WHERE b.guide_id = :guide_id
+                  ORDER BY b.date ASC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':guide_id', $guideId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Lấy chi tiết assignment + booking + tour
+    public function getBookingDetails($assignmentId)
+    {
+        $sql = "SELECT ta.*, 
+                       b.*, 
+                       t.name AS tour_name,
+                       (b.adult_count + b.child_count) AS total_customers
+                FROM tour_assignments ta
+                JOIN bookings b ON ta.booking_id = b.id
+                JOIN tours t ON b.tour_id = t.id
+                WHERE ta.id = ?";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$assignmentId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
