@@ -1,6 +1,6 @@
 <?php
-require './views/components/header-guide.php';
-require './views/components/sidebar-guide.php';
+require './views/components/header.php';
+require './views/components/sidebar.php';
 
 $tabs = [
     'customers' => ['label' => 'Danh sách khách hàng', 'icon' => 'users'],
@@ -142,4 +142,4 @@ $tabs = [
 
 </main>
 
-<?php require './views/components/footer-guide.php'; ?>
+<?php require './views/components/footer.php'; ?>

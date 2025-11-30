@@ -1,24 +1,24 @@
 <?php
 class MyScheduleController
 {
-    public $scheduleModel;
+    public $bookingModel;
+    public $tourAssignmentModel;
 
     public function __construct()
     {
-        $this->scheduleModel = new MyScheduleModel();
+        $this->bookingModel  = new BookingModel();
+        $this->tourAssignmentModel = new TourAssignmentModel();
     }
 
     //   Trang lịch của guide / admin
     public function index()
     {
-        checkLogin();
-
         $user = $_SESSION['currentUser'];
         $guideId = $user['id'];
         $today = date('Y-m-d');
 
         // 2. Lấy tất cả tour được phân công cho guide
-        $assignments = $this->scheduleModel->getGuideSchedule($guideId);
+        $assignments = $this->tourAssignmentModel->getGuideSchedule($guideId);
 
         $currentTours = [];
         $upcomingTours = [];
@@ -26,9 +26,9 @@ class MyScheduleController
         // 3. Tính tổng ngày và ngày hiện tại của từng tour
         foreach ($assignments as $a) {
             // Tính tổng số ngày tour
-            $a['total_days']   = $this->scheduleModel->calculateTotalDays($a['start_date'], $a['end_date']);
+            $a['total_days']   = calculateTotalDays($a['start_date'], $a['end_date']);
             // Tính ngày hiện tại
-            $a['current_day']  = $this->scheduleModel->getCurrentDay($a['start_date'], $a['end_date']);
+            $a['current_day']  = getCurrentDay($a['start_date'], $a['end_date']);
 
             // 4. Phân loại tour theo ngày
             if ($a['start_date'] <= $today && $a['end_date'] >= $today) {
@@ -45,8 +45,10 @@ class MyScheduleController
         $customers = [];
         if (!empty($currentTours)) {
             $bookingId = $currentTours[0]['booking_id'];
-            $customers = $this->scheduleModel->getCustomersByBooking($bookingId);
+            $customers = $this->bookingModel->getCustomers($bookingId);
         }
+        $role = 'guide'; // biến phân biệt giao diện
+        $userName = $_SESSION['currentUser']['roles'] ?? 'Hướng dẫn viên';
 
         // Truyền dữ liệu sang view
         require_once './views/guide/my_schedule.php';
@@ -55,12 +57,10 @@ class MyScheduleController
     // Trang chi tiết
     public function detail()
     {
-        checkLogin();
-
         $assignmentId = $_GET['id'] ?? 0;
 
         // Lấy thông tin phân công
-        $assignment = $this->scheduleModel->getAssignmentById($assignmentId);
+        $assignment = $this->tourAssignmentModel->getAssignmentById($assignmentId);
 
         if (!$assignment) {
             echo "<p>Không tìm thấy tour được phân công!</p>";
@@ -68,12 +68,12 @@ class MyScheduleController
         }
 
         // Lấy booking và danh sách khách hàng
-        $booking = $this->scheduleModel->getBookingById($assignment['booking_id']);
-        $customers = $this->scheduleModel->getCustomersByBooking($assignment['booking_id']);
+        $booking = $this->bookingModel->getById($assignment['booking_id']);
+        $customers = $this->bookingModel->getCustomers($assignment['booking_id']);
 
         // Tính tiến độ tour
-        $assignment['total_days']  = $this->scheduleModel->calculateTotalDays($assignment['start_date'], $assignment['end_date']);
-        $assignment['current_day'] = $this->scheduleModel->getCurrentDay($assignment['start_date'], $assignment['end_date']);
+        $assignment['total_days']  = calculateTotalDays($assignment['start_date'], $assignment['end_date']);
+        $assignment['current_day'] = getCurrentDay($assignment['start_date'], $assignment['end_date']);
 
         require_once './views/guide/tour_assignments/detail.php';
     }

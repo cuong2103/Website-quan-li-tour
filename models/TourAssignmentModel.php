@@ -184,4 +184,68 @@ class TourAssignmentModel
         $stmt->execute([$assignmentId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // Lấy chi tiết phân công theo ID
+    public function getAssignmentById($assignmentId)
+    {
+        try {
+            $sql = "SELECT 
+             ta.id AS assignment_id,
+             t.id AS tour_id,
+             t.name AS tour_name,
+             t.duration_days,
+             t.introduction,
+             t.adult_price,
+             t.child_price,
+             t.status AS tour_status,
+             b.id AS booking_id,
+             b.booking_code,
+             b.start_date,
+             b.end_date,
+             b.adult_count,
+             b.child_count,
+             b.total_amount,
+             b.deposit_amount,
+             b.remaining_amount,
+             b.special_requests
+             FROM tour_assignments ta
+             JOIN bookings b ON ta.booking_id = b.id
+             JOIN tours t ON b.tour_id = t.id
+             WHERE ta.id = ?";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$assignmentId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die("Lỗi getAssignmentById(): " . $e->getMessage());
+        }
+    }
+
+    // Lấy lịch trình tour của guide    
+    public function getGuideSchedule($guideId)
+    {
+        try {
+            $sql = "SELECT 
+             ta.id AS assignment_id,
+             t.id AS tour_id,
+             t.name AS tour_name,
+             t.duration_days,
+             b.id AS booking_id,
+             b.booking_code,
+             b.start_date,
+             b.end_date,
+             (SELECT COUNT(*) FROM booking_customers bc WHERE bc.booking_id = b.id) AS guest_count
+             FROM tour_assignments ta
+             JOIN bookings b ON ta.booking_id = b.id
+             JOIN tours t ON b.tour_id = t.id
+             WHERE ta.guide_id = ?
+             ORDER BY b.start_date DESC";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$guideId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die("Lỗi getGuideSchedule(): " . $e->getMessage());
+        }
+    }
 }

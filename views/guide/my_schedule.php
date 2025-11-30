@@ -1,6 +1,6 @@
 <?php
-require_once './views/components/header-guide.php';
-require_once './views/components/sidebar-guide.php';
+require_once './views/components/header.php';
+require_once './views/components/sidebar.php';
 ?>
 
 <main class="mt-28 px-6 pb-20 overflow-auto scrollbar-hide space-y-6">
@@ -126,5 +126,5 @@ require_once './views/components/sidebar-guide.php';
 </main>
 
 <?php
-require_once './views/components/footer-guide.php';
+require_once './views/components/footer.php';
 ?>

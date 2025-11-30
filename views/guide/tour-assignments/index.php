@@ -1,6 +1,6 @@
 <?php
-require './views/components/header-guide.php';
-require './views/components/sidebar-guide.php';
+require './views/components/header.php';
+require './views/components/sidebar.php';
 
 // tabs
 $status_tab = $_GET['status'] ?? 'upcoming';
@@ -21,7 +21,7 @@ $tabs = [
     <div class="flex gap-2 mb-6">
         <?php foreach ($tabs as $key => $t): ?>
             <a href="<?= BASE_URL . '?act=guide-tour-assignments&status=' . $key ?>"
-               class="px-4 py-2 rounded-lg text-sm font-medium border
+                class="px-4 py-2 rounded-lg text-sm font-medium border
                <?= $status_tab === $key ? 'bg-gray-200 border-gray-400' : 'bg-white border-gray-200 hover:bg-gray-100' ?>">
                 <?= $t['label'] ?> (<?= $t['count'] ?>)
             </a>
@@ -68,8 +68,8 @@ $tabs = [
                             </td>
                             <td class="p-3 flex gap-2">
                                 <a href="<?= BASE_URL . '?act=guide-tour-assignments-detail&id=' . $a['id'] ?>"
-                                   class="text-blue-600 hover:text-blue-800 flex-1">
-                                   Xem chi tiết
+                                    class="text-blue-600 hover:text-blue-800 flex-1">
+                                    Xem chi tiết
                                 </a>
                             </td>
                         </tr>
@@ -82,4 +82,4 @@ $tabs = [
     </div>
 </main>
 
-<?php require './views/components/footer-guide.php'; ?>
+<?php require './views/components/footer.php'; ?>
