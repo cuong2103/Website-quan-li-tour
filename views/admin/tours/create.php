@@ -111,10 +111,17 @@ $dayCount = !empty($_POST['destination_name']) ? count($_POST['destination_name'
               <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="col-span-2">
                   <label class="block text-sm font-medium text-gray-700 mb-2">Điểm đến</label>
-                  <input type="text" name="destination_name[]" value="<?= htmlspecialchars($_POST['destination_name'][$i] ?? '') ?>" class="destination-input w-full px-4 py-3 border rounded-lg" placeholder="Nhập điểm đến...">
-                  <div class="autocomplete-suggestions bg-white border mt-1 rounded shadow-lg hidden"></div>
-                  <?php if (!empty($errors['destination_name'][$i][0])): ?>
-                    <div class="text-red-500 text-sm mt-1"><?= $errors['destination_name'][$i][0] ?></div>
+                  <select name="destination_id[]" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Chọn điểm đến</option>
+                    <?php foreach ($destinations as $destination): ?>
+                      <option value="<?= $destination['id'] ?>"
+                        <?= (isset($_POST['destination_id'][$i]) && $_POST['destination_id'][$i] == $destination['id']) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($destination['name']) ?>
+                      </option>
+                    <?php endforeach; ?>
+                  </select>
+                  <?php if (!empty($errors['destination_id'][$i])): ?>
+                    <div class="text-red-500 text-sm mt-1"><?= $errors['destination_id'][$i][0] ?></div>
                   <?php endif; ?>
                 </div>
 
@@ -188,6 +195,14 @@ $dayCount = !empty($_POST['destination_name']) ? count($_POST['destination_name'
     // Đếm số ngày hiện có
     let dayCount = document.querySelectorAll('[id^="day-"]').length;
 
+    // Tạo option HTML cho destinations
+    const destinationOptions = `
+      <option value="">Chọn điểm đến</option>
+      <?php foreach ($destinations as $destination): ?>
+        <option value="<?= $destination['id'] ?>"><?= htmlspecialchars($destination['name']) ?></option>
+      <?php endforeach; ?>
+    `;
+
     // Thêm ngày mới
     addDayBtn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -207,29 +222,29 @@ $dayCount = !empty($_POST['destination_name']) ? count($_POST['destination_name'
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div class="col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-2">Điểm đến</label>
-            <input type="text" name="destination_name[]"  class="destination-input w-full px-4 py-3 border rounded-lg" placeholder="Nhập điểm đến...">
-            <div class="autocomplete-suggestions bg-white border mt-1 rounded shadow-lg hidden"></div>
+            <select name="destination_id[]" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              ${destinationOptions}
+            </select>
           </div>
           
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đến</label>
-            <input type="text" name="arrival_time[]"  placeholder="VD: 8:30" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+            <input type="text" name="arrival_time[]" placeholder="VD: 8:30" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
           </div>
           
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đi</label>
-            <input type="text" name="departure_time[]"  placeholder="VD: 17:00" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+            <input type="text" name="departure_time[]" placeholder="VD: 17:00" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
           </div>
         </div>
         
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả hoạt động</label>
-          <textarea rows="3" name="description[]"  placeholder="Mô tả các hoạt động trong ngày..." class="w-full px-4 py-3 border border-gray-300 rounded-lg"></textarea>
+          <textarea rows="3" name="description[]" placeholder="Mô tả các hoạt động trong ngày..." class="w-full px-4 py-3 border border-gray-300 rounded-lg"></textarea>
         </div>
       </div>`;
 
       itinerarySection.insertAdjacentHTML('beforeend', newDayHTML);
-      attachDestinationAutocomplete();
     });
 
     // Xóa ngày với event delegation

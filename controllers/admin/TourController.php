@@ -38,54 +38,46 @@ class TourController
       'adult_price' => $_POST['adult_price'],
       'child_price' => $_POST['child_price'],
       'status' => $_POST['status'],
-      'destination_name' => $_POST['destination_name'] ?? [],
+      'destination_id' => $_POST['destination_id'] ?? [],
       'arrival_time' => $_POST['arrival_time'],
       'departure_time' => $_POST['departure_time'],
       'description' => $_POST['description'],
       'policy_ids' => $_POST['policy_ids'] ?? [],
       'created_by' => $_SESSION['currentUser']['id']
     ];
+
     $rules = [
       'name' => 'required|min:3|max:100',
       'category_id' => 'required',
       'adult_price' => 'required|numeric',
       'child_price' => 'required|numeric',
-      'destination_name' => 'required|array',
-
+      'destination_id' => 'required|array',
       'arrival_time' => 'required|array',
-
       'departure_time' => 'required|array',
-
       'description' => 'required|array',
-
       'policy_ids' => 'required|array',
     ];
 
     $errors = validate($data, $rules);
+
     if (!empty($errors)) {
       $policies = $this->policyModel->getAll();
       $categories = $this->categoryModel->getAll();
+      $destinations = $this->destinationModel->getAll();
       $tree = buildTree($categories);
       require_once './views/admin/tours/create.php';
       exit;
     }
-    $destinationNames = $_POST['destination_name']; // array input từ form
-    $destinationIds = [];
-    foreach ($destinationNames as $name) {
-      $name = trim($name);
-      $destination = $this->destinationModel->getIdByName($name);
-      if ($destination) {
-        $destinationIds[] = $destination['id'];
-      } else {
-        $destinationIds[] = $this->destinationModel->insertReturnId($name);
-      }
-    }
+
     $tourId = $this->tourModel->create($data);
 
+    // Đơn giản hơn vì đã có destination_id sẵn
+    $destinationIds = $_POST['destination_id'];
     $arrival_times = $_POST['arrival_time'];
     $departure_times = $_POST['departure_time'];
     $descriptions = $_POST['description'];
-    for ($i = 0; $i < count($arrival_times); $i++) {
+
+    for ($i = 0; $i < count($destinationIds); $i++) {
       $this->tourModel->addItinerary([
         'tour_id' => $tourId,
         'destination_id' => $destinationIds[$i],
@@ -95,10 +87,12 @@ class TourController
         'description' => $descriptions[$i]
       ]);
     }
+
     $policy_ids = $_POST['policy_ids'];
     foreach ($policy_ids as $policy_id) {
       $this->tourModel->attachPolicy($tourId, $policy_id);
     }
+
     Message::set("success", "Thêm tour thành công!");
     redirect("tours");
   }
@@ -107,10 +101,8 @@ class TourController
   {
     $id = $_GET['id'];
     $tour = $this->tourModel->getById($id);
-    // dd($tour);
     $itineraries = $this->tourModel->getItinerariesByTourId($id);
     $policies = $this->tourModel->getPoliciesByTourId($id);
-    // dd($policies);
     require_once './views/admin/tours/detail.php';
   }
 
@@ -130,6 +122,7 @@ class TourController
 
     $policies = $this->policyModel->getAll();
     $categories = $this->categoryModel->getAll();
+    $destinations = $this->destinationModel->getAll();
     $tree = buildTree($categories);
 
     require_once './views/admin/tours/edit.php';
@@ -146,7 +139,7 @@ class TourController
       'adult_price' => $_POST['adult_price'],
       'child_price' => $_POST['child_price'],
       'status' => $_POST['status'],
-      'destination_name' => $_POST['destination_name'] ?? [],
+      'destination_id' => $_POST['destination_id'] ?? [], // ĐỔI TỪ destination_name
       'arrival_time' => $_POST['arrival_time'] ?? [],
       'departure_time' => $_POST['departure_time'] ?? [],
       'description' => $_POST['description'] ?? [],
@@ -158,7 +151,7 @@ class TourController
       'category_id' => 'required',
       'adult_price' => 'required|numeric',
       'child_price' => 'required|numeric',
-      'destination_name' => 'required|array',
+      'destination_id' => 'required|array', // ĐỔI TỪ destination_name
       'arrival_time' => 'required|array',
       'departure_time' => 'required|array',
       'description' => 'required|array',
@@ -174,25 +167,14 @@ class TourController
       $tourPolicyIds = array_column($tourPolicies, 'id');
       $policies = $this->policyModel->getAll();
       $categories = $this->categoryModel->getAll();
+      $destinations = $this->destinationModel->getAll(); // THÊM DÒNG NÀY
       $tree = buildTree($categories);
       require_once './views/admin/tours/edit.php';
       exit;
     }
 
-    // Xử lý destination names
-    $destinationNames = $_POST['destination_name'];
-    $destinationIds = [];
-
-    foreach ($destinationNames as $name) {
-      $name = trim($name);
-      $destination = $this->destinationModel->getIdByName($name);
-
-      if ($destination) {
-        $destinationIds[] = $destination['id'];
-      } else {
-        $destinationIds[] = $this->destinationModel->insertReturnId($name);
-      }
-    }
+    // Đơn giản hơn vì đã có destination_id sẵn từ select
+    $destinationIds = $_POST['destination_id'];
 
     // Cập nhật tour
     $this->tourModel->update($id, $data);
@@ -205,7 +187,7 @@ class TourController
     $departure_times = $_POST['departure_time'];
     $descriptions = $_POST['description'];
 
-    for ($i = 0; $i < count($arrival_times); $i++) {
+    for ($i = 0; $i < count($destinationIds); $i++) {
       $this->tourModel->addItinerary([
         'tour_id' => $id,
         'destination_id' => $destinationIds[$i],

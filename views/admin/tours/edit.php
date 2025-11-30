@@ -24,7 +24,7 @@ $dayCount = !empty($_POST['destination_name']) ? count($_POST['destination_name'
     </div>
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-10">
-      <form action="?act=tours-update&id=<?= $tour['tour_id'] ?>" method="POST">
+      <form action="?act=tours-update&id=<?= $tourData['id'] ?>" method="POST">
         <!-- 1. Thông tin cơ bản -->
         <div>
           <h3 class="text-lg font-semibold text-gray-900 mb-6">Thông tin cơ bản</h3>
@@ -83,6 +83,7 @@ $dayCount = !empty($_POST['destination_name']) ? count($_POST['destination_name'
         </div>
 
         <!-- 2. Lịch trình tour -->
+        <!-- 2. Lịch trình tour -->
         <div id="itinerary-section">
           <div class="flex items-center justify-between my-6">
             <h3 class="text-lg font-semibold text-gray-900">Lịch trình tour</h3>
@@ -95,10 +96,8 @@ $dayCount = !empty($_POST['destination_name']) ? count($_POST['destination_name'
           </div>
 
           <?php
-          // Nếu có POST data (lỗi validation), dùng POST data
-          // Nếu không, dùng itineraries từ database
-          if (!empty($_POST['destination_name'])) {
-            for ($i = 0; $i < count($_POST['destination_name']); $i++):
+          if (!empty($_POST['destination_id'])) {
+            for ($i = 0; $i < count($_POST['destination_id']); $i++):
               $dayNum = $i + 1;
           ?>
               <div id="day-<?= $dayNum ?>" class="border border-gray-200 rounded-xl <?= $i > 0 ? 'mt-6' : '' ?> p-6 space-y-5">
@@ -116,10 +115,17 @@ $dayCount = !empty($_POST['destination_name']) ? count($_POST['destination_name'
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div class="col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Điểm đến</label>
-                    <input type="text" name="destination_name[]" value="<?= htmlspecialchars($_POST['destination_name'][$i] ?? '') ?>" required class="destination-input w-full px-4 py-3 border rounded-lg" placeholder="Nhập điểm đến...">
-                    <div class="autocomplete-suggestions bg-white border mt-1 rounded shadow-lg hidden"></div>
-                    <?php if (!empty($errors['destination_name'][$i])): ?>
-                      <div class="text-red-500 text-sm mt-1"><?= $errors['destination_name'][$i] ?></div>
+                    <select name="destination_id[]" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                      <option value="">Chọn điểm đến</option>
+                      <?php foreach ($destinations as $destination): ?>
+                        <option value="<?= $destination['id'] ?>"
+                          <?= (isset($_POST['destination_id'][$i]) && $_POST['destination_id'][$i] == $destination['id']) ? 'selected' : '' ?>>
+                          <?= htmlspecialchars($destination['name']) ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
+                    <?php if (!empty($errors['destination_id'][$i])): ?>
+                      <div class="text-red-500 text-sm mt-1"><?= $errors['destination_id'][$i] ?></div>
                     <?php endif; ?>
                   </div>
 
@@ -170,8 +176,15 @@ $dayCount = !empty($_POST['destination_name']) ? count($_POST['destination_name'
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div class="col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Điểm đến</label>
-                    <input type="text" name="destination_name[]" value="<?= htmlspecialchars($itinerary['destination_name'] ?? '') ?>" required class="destination-input w-full px-4 py-3 border rounded-lg" placeholder="Nhập điểm đến...">
-                    <div class="autocomplete-suggestions bg-white border mt-1 rounded shadow-lg hidden"></div>
+                    <select name="destination_id[]" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                      <option value="">Chọn điểm đến</option>
+                      <?php foreach ($destinations as $destination): ?>
+                        <option value="<?= $destination['id'] ?>"
+                          <?= ($itinerary['destination_id'] == $destination['id']) ? 'selected' : '' ?>>
+                          <?= htmlspecialchars($destination['name']) ?>
+                        </option>
+                      <?php endforeach; ?>
+                    </select>
                   </div>
 
                   <div>
@@ -241,6 +254,14 @@ $dayCount = !empty($_POST['destination_name']) ? count($_POST['destination_name'
     // Đếm số ngày hiện có
     let dayCount = document.querySelectorAll('[id^="day-"]').length;
 
+    // Tạo option HTML cho destinations
+    const destinationOptions = `
+      <option value="">Chọn điểm đến</option>
+      <?php foreach ($destinations as $destination): ?>
+        <option value="<?= $destination['id'] ?>"><?= htmlspecialchars($destination['name']) ?></option>
+      <?php endforeach; ?>
+    `;
+
     // Thêm ngày mới
     addDayBtn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -260,8 +281,9 @@ $dayCount = !empty($_POST['destination_name']) ? count($_POST['destination_name'
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div class="col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-2">Điểm đến</label>
-            <input type="text" name="destination_name[]" required class="destination-input w-full px-4 py-3 border rounded-lg" placeholder="Nhập điểm đến...">
-            <div class="autocomplete-suggestions bg-white border mt-1 rounded shadow-lg hidden"></div>
+            <select name="destination_id[]" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              ${destinationOptions}
+            </select>
           </div>
           
           <div>
