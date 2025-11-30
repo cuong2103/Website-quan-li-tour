@@ -8,6 +8,7 @@ class ServiceController
 
     public function __construct()
     {
+        requireAdmin();
         $this->serviceModel = new ServiceModel();
         $this->supplierModel = new SupplierModel();
         $this->serviceTypeModel = new ServiceTypeModel();

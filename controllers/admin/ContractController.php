@@ -6,6 +6,7 @@ class ContractController
 
     public function __construct()
     {
+        requireAdmin();
         $this->contractModel = new ContractModel();
         $this->bookingModel = new BookingModel();
     }

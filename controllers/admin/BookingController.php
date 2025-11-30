@@ -10,6 +10,7 @@ class BookingController
 
     public function __construct()
     {
+        requireAdmin();
         $this->bookingModel = new BookingModel();
         $this->tourModel = new TourModel();
         $this->customerModel = new CustomerModel();
@@ -79,7 +80,7 @@ class BookingController
         Message::set('success', 'Tạo booking thành công.');
         header("Location:" . BASE_URL . '?act=bookings');
     }
-    
+
     // Cập nhật booking
     public function update()
     {
@@ -135,7 +136,7 @@ class BookingController
         Message::set('success', 'Cập nhật booking thành công!');
         header("Location:" . BASE_URL . '?act=bookings');
     }
-    
+
     // Hiển thị form chỉnh sửa booking
     public function edit()
     {
@@ -181,22 +182,20 @@ class BookingController
     }
     // hàm auto cập nhật trạng thái
     private function autoUpdatePaymentStatus($bookingId)
-{
-    $totalPaid = $this->bookingModel->getTotalPaid($bookingId);
-    $booking = $this->bookingModel->getById($bookingId);
+    {
+        $totalPaid = $this->bookingModel->getTotalPaid($bookingId);
+        $booking = $this->bookingModel->getById($bookingId);
 
-    if (!$booking) return;
+        if (!$booking) return;
 
-    $totalAmount = $booking['total_amount'];
+        $totalAmount = $booking['total_amount'];
 
-    if ($totalPaid >= $totalAmount) {
-        $this->bookingModel->updateStatus($bookingId, 'thanh toán đủ'); // 
-    } elseif ($totalPaid > 0) {
-        $this->bookingModel->updateStatus($bookingId, 'thanh toán 1 phần'); // 
-    } else {
-        $this->bookingModel->updateStatus($bookingId, 'chưa thanh toán'); // 
+        if ($totalPaid >= $totalAmount) {
+            $this->bookingModel->updateStatus($bookingId, 'thanh toán đủ'); // 
+        } elseif ($totalPaid > 0) {
+            $this->bookingModel->updateStatus($bookingId, 'thanh toán 1 phần'); // 
+        } else {
+            $this->bookingModel->updateStatus($bookingId, 'chưa thanh toán'); // 
+        }
     }
-}
-
-
 }

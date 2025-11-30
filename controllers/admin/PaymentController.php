@@ -7,6 +7,7 @@ class PaymentController
 
     public function __construct()
     {
+        requireAdmin();
         $this->paymentModel = new PaymentModel();
         $this->bookingModel = new BookingModel(); // cập nhật trạng thái booking
     }

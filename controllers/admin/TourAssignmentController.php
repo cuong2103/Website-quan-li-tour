@@ -7,6 +7,7 @@ class TourAssignmentController
 
     public function __construct()
     {
+        requireAdmin();
         $this->model = new TourAssignmentModel();
         $this->bookingModel = new BookingModel();
         $this->guideModel = new UserModel();

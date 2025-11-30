@@ -5,6 +5,7 @@ class DashboardController
 
   public function __construct()
   {
+    requireAdmin();
     $this->useModel = new UserModel();
   }
   public function Dashboard()

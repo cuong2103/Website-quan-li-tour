@@ -5,6 +5,7 @@ class DestinationController
 
     public function __construct()
     {
+        requireAdmin();
         $this->modelDestination = new DestinationModel();
     }
 

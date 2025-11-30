@@ -4,6 +4,7 @@ class PolicyController
     public $model;
     public function __construct()
     {
+        requireAdmin();
         $this->model = new PolicyModel();
     }
     // list danh sách khách hàng

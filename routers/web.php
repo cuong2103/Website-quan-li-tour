@@ -3,7 +3,7 @@ session_start();
 $act = $_GET['act'] ?? '/';
 
 if ($act !== 'login-admin'  && $act !== 'check-login-admin' && $act !== 'logout-admin') {
-  checkLoginAdmin();
+  checkLogin();
 }
 
 match ($act) {
@@ -130,5 +130,6 @@ match ($act) {
   'tour-assignment-update' => (new TourAssignmentController())->update(),
   'tour-assignment-delete' => (new TourAssignmentController())->delete(),
 
+  '403' => require_once './views/forbidden.php',
   default => require_once './views/notFound.php',
 };

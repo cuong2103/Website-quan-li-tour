@@ -6,6 +6,7 @@ class ServiceTypeController
 
     public function __construct()
     {
+        requireAdmin();
         $this->serviceTypeModel = new ServiceTypeModel();
         $this->serviceModel = new ServiceModel(); // để check services liên quan khi xóa
     }

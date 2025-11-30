@@ -4,6 +4,7 @@ class CustomerController
     public $model;
     public function __construct()
     {
+        requireAdmin();
         $this->model = new CustomerModel();
     }
     //list danh sách khách hàng

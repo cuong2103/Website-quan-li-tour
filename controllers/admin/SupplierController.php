@@ -7,6 +7,7 @@ class SupplierController
     public $serviceModel;
     public function __construct()
     {
+        requireAdmin();
         $this->supplierModel = new SupplierModel();
         $this->destinationModel = new DestinationModel();
         $this->userModel = new UserModel();

@@ -5,6 +5,7 @@ class CategoryController
 
   public function __construct()
   {
+    requireAdmin();
     $this->categoryModel = new CategoryModel();
   }
 

@@ -64,7 +64,7 @@ function deleteSessionError()
 }
 
 // Hàm check login 
-function checkLoginAdmin()
+function checkLogin()
 {
     if (!isset($_SESSION['currentUser']["roles"])) {
         header("Location: " . BASE_URL . '?act=login-admin');
@@ -72,13 +72,15 @@ function checkLoginAdmin()
     }
 }
 
-function checkLoginGuide()
+
+
+function requireAdmin()
 {
-    if (!isset($_SESSION['currentUser']["roles"])) {
-        header("Location: " . BASE_URL . '?act=login-guide');
+    if (($_SESSION['currentUser']['roles'] ?? '') == 'admin') {
+        Message::set("error", "403 - Chỉ Admin được phép truy cập!");
+        redirect("403");
     }
 }
-
 
 function validate($data, $rules)
 {
