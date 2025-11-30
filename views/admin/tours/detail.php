@@ -1,52 +1,6 @@
 <?php
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
-
-// Dữ liệu mẫu tour (trong thực tế sẽ lấy từ DB)
-$tour = [
-  'name' => 'Hà Giang 4N3Đ - Vòng cung Đông Bắc',
-  'introduction' => 'Hành trình khám phá Hà Giang - mảnh đất địa đầu Tổ quốc với cung đường đèo hiểm trở nhất Việt Nam, cột cờ Lũng Cú, đèo Mã Pí Lèng, sông Nho Quế và những bản làng dân tộc thiểu số còn giữ nguyên nét nguyên sơ...',
-  'category' => 'Miền Bắc • Khám phá • Trekking',
-  'duration' => '4 ngày 3 đêm',
-  'adult_price' => 4850000,
-  'child_price' => 3900000,
-  'status' => 'active',
-  'itineraries' => [
-    [
-      'day' => 1,
-      'destination' => 'Hà Nội - Hà Giang - Quản Bạ - Yên Minh',
-      'arrival_time' => '12:00',
-      'departure_time' => '13:30',
-      'description' => "• 06:00 Xe và hướng dẫn viên đón quý khách tại điểm hẹn nội thành Hà Nội.\n• Di chuyển lên Hà Giang (khoảng 300km).\n• Dừng chân nghỉ ngơi, ăn trưa tại thị trấn Việt Quang.\n• Chiêm ngưỡng cổng trời Quản Bạ, núi Đôi Cô Tiên.\n• Đến Yên Minh nhận phòng homestay, ăn tối và nghỉ ngơi."
-    ],
-    [
-      'day' => 2,
-      'destination' => 'Yên Minh - Phố Cáo - Sủng Là - Đồng Văn',
-      'arrival_time' => '08:00',
-      'departure_time' => '17:00',
-      'description' => "• Tham quan Phố Cáo, làng văn hóa Lùng Tám người H’Mông.\n• Ghé thăm nhà của Pao nổi tiếng qua bộ phim “Chuyện nhà Pao”.\n• Chinh phục đèo 9 khoanh, dốc Thẩm Mã.\n• Đến thị trấn Đồng Văn, dạo phố cổ Đồng Văn về đêm."
-    ],
-    [
-      'day' => 3,
-      'destination' => 'Đồng Văn - Cột cờ Lũng Cú - Đèo Mã Pí Lèng - Du thuyền sông Nho Quế',
-      'arrival_time' => '07:30',
-      'departure_time' => '16:00',
-      'description' => "• Tham quan cột cờ Lũng Cú – điểm cực Bắc Tổ quốc.\n• Chinh phục đèo Mã Pí Lèng – tứ đại đỉnh đèo Việt Nam.\n• Trải nghiệm du thuyền trên sông Nho Quế ngắm hẻm vực Tu Sản.\n• Quay lại Đồng Văn ăn tối."
-    ],
-    [
-      'day' => 4,
-      'destination' => 'Đồng Văn - Hà Giang - Hà Nội',
-      'arrival_time' => '08:00',
-      'departure_time' => '20:00',
-      'description' => "• Tham quan dinh thự họ Vương (nhà Vương).\n• Trả phòng, ăn sáng và khởi hành về Hà Nội.\n• Dừng chân mua đặc sản (hồng, mật ong bạc hà...).\n• Về đến Hà Nội khoảng 20h. Kết thúc chương trình."
-    ]
-  ],
-  'policies' => [
-    ['id' => 1, 'title' => 'Chính sách hủy tour', 'content' => 'Hủy trước 30 ngày: miễn phí. Hủy 15-29 ngày: mất 50% tiền tour. Hủy dưới 15 ngày: mất 100%.'],
-    ['id' => 2, 'title' => 'Chính sách trẻ em', 'content' => 'Trẻ em dưới 5 tuổi: miễn phí (ngủ chung giường với bố mẹ). Từ 5-10 tuổi: 75% giá tour. Từ 11 tuổi trở lên: tính như người lớn.'],
-    ['id' => 3, 'title' => 'Bao gồm', 'content' => 'Xe đời mới, hướng dẫn viên, ăn uống theo chương trình, vé tham quan, bảo hiểm du lịch mức 30.000.000 VNĐ/vụ.']
-  ]
-];
 ?>
 
 <main class="pt-28 px-6 bg-gray-50 min-h-screen overflow-y-auto">
@@ -61,16 +15,14 @@ $tour = [
         </button>
         <div>
           <h2 class="text-3xl font-bold text-gray-900">Chi tiết tour</h2>
-          <p class="text-sm text-gray-600">Xem toàn bộ thông tin tour • Mã tour: HG403</p>
+          <p class="text-sm text-gray-600">Xem toàn bộ thông tin tour • Mã tour: <?= htmlspecialchars($tour['tour_code']) ?></p>
         </div>
       </div>
       <div class="flex gap-3">
-        <button class="px-5 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
-          Sao chép tour
-        </button>
-        <button class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <a href="<?= BASE_URL ?>?act=tours-edit&id=<?= $tour['id'] ?>" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+          <i data-lucide="edit" class="w-4 h-4 inline-block mr-2"></i>
           Chỉnh sửa
-        </button>
+        </a>
       </div>
     </div>
 
@@ -94,21 +46,24 @@ $tour = [
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
-            <p class="text-gray-900"><?= htmlspecialchars($tour['category']) ?></p>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian</label>
-            <p class="text-gray-900"><?= $tour['duration'] ?></p>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Mã tour</label>
+            <p class="text-gray-900 font-mono font-semibold"><?= htmlspecialchars($tour['tour_code']) ?></p>
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Giá người lớn</label>
-            <p class="text-xl font-semibold text-green-600"><?= number_format($tour['adult_price']) ?> ₫</p>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
+            <p class="text-gray-900"><?= htmlspecialchars($tour['category_name']) ?></p>
           </div>
+
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Giá trẻ em</label>
-            <p class="text-xl font-semibold text-orange-600"><?= number_format($tour['child_price']) ?> ₫</p>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian</label>
+            <p class="text-gray-900">
+              <?php
+              $days = $tour['duration_days'];
+              $nights = $days > 0 ? $days - 1 : 0;
+              echo "{$days} ngày {$nights} đêm";
+              ?>
+            </p>
           </div>
 
           <div>
@@ -117,6 +72,31 @@ $tour = [
                             <?= $tour['status'] == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
               <?= $tour['status'] == 'active' ? 'Đang hoạt động' : 'Tạm dừng' ?>
             </span>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Giá người lớn</label>
+            <p class="text-xl font-semibold text-green-600"><?= number_format($tour['adult_price'], 0, ',', '.') ?> ₫</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Giá trẻ em</label>
+            <p class="text-xl font-semibold text-orange-600"><?= number_format($tour['child_price'], 0, ',', '.') ?> ₫</p>
+          </div>
+
+          <div class="col-span-2 pt-4 border-t border-gray-200">
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <label class="block text-gray-500 mb-1">Ngày tạo</label>
+                <p class="text-gray-900"><?= date('d/m/Y H:i', strtotime($tour['created_at'])) ?></p>
+              </div>
+              <?php if (!empty($tour['updated_at'])): ?>
+                <div>
+                  <label class="block text-gray-500 mb-1">Cập nhật lần cuối</label>
+                  <p class="text-gray-900"><?= date('d/m/Y H:i', strtotime($tour['updated_at'])) ?></p>
+                </div>
+              <?php endif; ?>
+            </div>
           </div>
         </div>
       </section>
@@ -127,61 +107,103 @@ $tour = [
           <span class="bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
           Lịch trình tour
         </h3>
-        <div class="space-y-6">
-          <?php foreach ($tour['itineraries'] as $day): ?>
-            <div class="border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition">
-              <div class="flex items-center justify-between mb-4">
-                <h4 class="text-lg font-semibold text-blue-700">Ngày <?= $day['day'] ?></h4>
-                <span class="text-sm text-gray-500"><?= $day['arrival_time'] ?> → <?= $day['departure_time'] ?></span>
+        <?php if (!empty($itineraries)): ?>
+          <div class="space-y-6">
+            <?php foreach ($itineraries as $day): ?>
+              <div class="border border-gray-200 rounded-xl p-6 hover:border-blue-300 transition">
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-lg font-semibold text-blue-700">Ngày <?= $day['order_number'] ?></h4>
+                  <span class="text-sm text-gray-500 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <?= date('H:i', strtotime($day['arrival_time'])) ?> → <?= date('H:i', strtotime($day['departure_time'])) ?>
+                  </span>
+                </div>
+                <h5 class="font-medium text-gray-900 mb-3 flex items-center gap-2">
+                  <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                  </svg>
+                  <?= htmlspecialchars($day['destination']) ?>
+                </h5>
+                <div class="text-gray-600 leading-relaxed pl-7">
+                  <?= nl2br(htmlspecialchars($day['description'])) ?>
+                </div>
               </div>
-              <h5 class="font-medium text-gray-900 mb-3"><?= htmlspecialchars($day['destination']) ?></h5>
-              <div class="text-gray-600 whitespace-pre-line leading-relaxed">
-                <?= nl2br(htmlspecialchars($day['description'])) ?>
-              </div>
-            </div>
-          <?php endforeach; ?>
-        </div>
+            <?php endforeach; ?>
+          </div>
+        <?php else: ?>
+          <div class="text-center py-12 text-gray-500">
+            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <p>Chưa có lịch trình nào</p>
+          </div>
+        <?php endif; ?>
       </section>
 
-      <!-- 3. Hình ảnh tour (gallery) -->
+      <!-- 3. Chính sách -->
       <section>
         <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-3">
           <span class="bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
-          Hình ảnh tour
-        </h3>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <?php for ($i = 1; $i <= 8; $i++): ?>
-            <div class="bg-gray-200 border-2 border-dashed rounded-xl aspect-w-1 aspect-h-1 overflow-hidden">
-              <img src="https://picsum.photos/400/300?random=<?= $i ?>"
-                alt="Hà Giang" class="w-full h-full object-cover hover:scale-105 transition">
-            </div>
-          <?php endfor; ?>
-        </div>
-      </section>
-
-      <!-- 4. Chính sách -->
-      <section>
-        <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-3">
-          <span class="bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center text-sm">4</span>
           Chính sách tour
         </h3>
-        <div class="space-y-5">
-          <?php foreach ($tour['policies'] as $policy): ?>
-            <div class="flex gap-4 p-5 bg-gray-50 rounded-lg">
-              <div class="flex-shrink-0">
-                <div class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
-                  i
+        <?php if (!empty($policies)): ?>
+          <div class="space-y-5">
+            <?php foreach ($policies as $policy): ?>
+              <div class="flex gap-4 p-5 bg-gray-50 rounded-lg border border-gray-100 hover:border-gray-200 transition">
+                <div class="flex-shrink-0">
+                  <div class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="flex-1">
+                  <h4 class="font-semibold text-gray-900 mb-1"><?= htmlspecialchars($policy['name']) ?></h4>
+                  <p class="text-sm text-gray-600 leading-relaxed"><?= nl2br(htmlspecialchars($policy['content'])) ?></p>
                 </div>
               </div>
-              <div class="flex-1">
-                <h4 class="font-semibold text-gray-900"><?= htmlspecialchars($policy['title']) ?></h4>
-                <p class="text-sm text-gray-600 mt-1"><?= htmlspecialchars($policy['content']) ?></p>
-              </div>
-            </div>
-          <?php endforeach; ?>
-        </div>
+            <?php endforeach; ?>
+          </div>
+        <?php else: ?>
+          <div class="text-center py-12 text-gray-500">
+            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <p>Chưa có chính sách nào</p>
+          </div>
+        <?php endif; ?>
       </section>
 
+    </div>
+
+    <!-- Action buttons -->
+    <div class="flex justify-between items-center mt-6 pb-8">
+      <button onclick="history.back()" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700">
+        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Quay lại
+      </button>
+
+      <div class="flex gap-3">
+        <a href="<?= BASE_URL ?>?act=tours-delete&id=<?= $tour['id'] ?>"
+          onclick="return confirm('Bạn có chắc chắn muốn xóa tour này?')"
+          class="px-6 py-3 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition font-medium">
+          <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          Xóa tour
+        </a>
+        <a href="<?= BASE_URL ?>?act=tours-edit&id=<?= $tour['id'] ?>"
+          class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+          <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          Chỉnh sửa
+        </a>
+      </div>
     </div>
   </div>
 </main>
