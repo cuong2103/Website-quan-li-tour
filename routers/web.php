@@ -2,7 +2,7 @@
 session_start();
 $act = $_GET['act'] ?? '/';
 
-if ($act !== 'login-admin'  && $act !== 'check-login-admin' && $act !== 'logout-admin') {
+if ($act !== 'login'  && $act !== 'check-login' && $act !== 'logout') {
   checkLogin();
 }
 
@@ -72,9 +72,9 @@ match ($act) {
   'destination-detail' => (new DestinationController())->detail(),
 
   // Auth admin
-  'login-admin' => (new AuthController())->formLogin(),
-  'check-login-admin' => (new AuthController())->login(),
-  'logout-admin' => (new AuthController())->logout(),
+  'login' => (new AuthController())->formLogin(),
+  'check-login' => (new AuthController())->login(),
+  'logout' => (new AuthController())->logout(),
 
   //customers
   'customers' => (new CustomerController())->index(),

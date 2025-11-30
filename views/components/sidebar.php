@@ -103,7 +103,7 @@
 
   <!-- Đăng xuất -->
   <div class="border-t border-gray-200 px-4 py-4">
-    <a href="<?= BASE_URL . '?act=logout-admin' ?>" class="flex items-center px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition">
+    <a href="<?= BASE_URL . '?act=logout' ?>" class="flex items-center px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition">
       <i class="mr-3 w-6 h-6 text-red-500" data-lucide="log-out"></i>
       Đăng xuất
     </a>
