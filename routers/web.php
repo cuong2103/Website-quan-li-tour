@@ -2,7 +2,7 @@
 session_start();
 $act = $_GET['act'] ?? '/';
 
-if ($act !== 'login-admin'  && $act !== 'check-login-admin' && $act !== 'logout-admin') {
+if ($act !== 'login'  && $act !== 'check-login' && $act !== 'logout') {
   checkLogin();
 }
 
@@ -82,9 +82,9 @@ match ($act) {
   'destination-detail' => (new DestinationController())->detail(),
 
   // Auth admin
-  'login-admin' => (new AuthController())->formLogin(),
-  'check-login-admin' => (new AuthController())->login(),
-  'logout-admin' => (new AuthController())->logout(),
+  'login' => (new AuthController())->formLogin(),
+  'check-login' => (new AuthController())->login(),
+  'logout' => (new AuthController())->logout(),
 
   //customers
   'customers' => (new CustomerController())->index(),
@@ -139,6 +139,12 @@ match ($act) {
   'tour-assignment-edit' => (new TourAssignmentController())->edit(),
   'tour-assignment-update' => (new TourAssignmentController())->update(),
   'tour-assignment-delete' => (new TourAssignmentController())->delete(),
+
+  // 
+  'my-schedule' => (new MyScheduleController())->index(),
+  // Guide tour_Assignments
+  'guide-tour-assignments' => (new GuideTourAssignmentController())->index(),
+  'guide-tour-assignments-detail' => (new GuideTourAssignmentController())->detail(),
 
   '403' => require_once './views/forbidden.php',
   default => require_once './views/notFound.php',
