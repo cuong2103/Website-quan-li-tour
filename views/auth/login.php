@@ -20,7 +20,7 @@
             </p>
         <?php endif; ?>
 
-        <form action="<?= BASE_URL . '?act=check-login-admin' ?>" method="POST" class="space-y-4">
+        <form action="<?= BASE_URL . '?act=check-login' ?>" method="POST" class="space-y-4">
 
             <div>
                 <label class="block text-gray-700 font-medium mb-1">Email</label>
