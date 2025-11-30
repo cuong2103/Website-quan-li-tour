@@ -76,7 +76,7 @@ function checkLogin()
 
 function requireAdmin()
 {
-    if (($_SESSION['currentUser']['roles'] ?? '') == 'admin') {
+    if (!($_SESSION['currentUser']['roles'] ?? '') == 'admin') {
         Message::set("error", "403 - Chỉ Admin được phép truy cập!");
         redirect("403");
     }
