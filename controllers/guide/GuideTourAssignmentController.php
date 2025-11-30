@@ -1,11 +1,20 @@
 <?php
 class GuideTourAssignmentController
 {
-    private $assignmentModel;
+    public $assignmentModel;
+    public $bookingModel;
+    public $customerModel;
+    public $serviceModel;
+    public $tourModel;
+
 
     public function __construct()
     {
-        $this->assignmentModel = new GuideTourAssignmentModel();
+        $this->assignmentModel = new TourAssignmentModel();
+        $this->bookingModel = new BookingModel();
+        $this->customerModel = new CustomerModel();
+        $this->serviceModel = new ServiceModel();
+        $this->tourModel = new TourModel();
     }
 
     // danh sách tour của guide
@@ -55,7 +64,7 @@ class GuideTourAssignmentController
             exit;
         }
 
-        $assignment = $this->assignmentModel->getBookingDetails($assignmentId);
+        $assignment = $this->bookingModel->getBookingDetails($assignmentId);
         if (!$assignment) {
             echo "Không tìm thấy phân công tour!";
             exit;
@@ -69,11 +78,11 @@ class GuideTourAssignmentController
         // Lấy dữ liệu theo tab
         switch ($tab) {
             case 'customers':
-                $customers = $this->assignmentModel->getCustomersByBooking($bookingId);
+                $customers = $this->bookingModel->getCustomers($bookingId);
                 break;
 
             case 'services':
-                $services = $this->assignmentModel->getServicesByBooking($bookingId);
+                $services = $this->bookingModel->getServices($bookingId);
                 break;
 
             case 'journals':
@@ -81,7 +90,7 @@ class GuideTourAssignmentController
                 break;
 
             case 'itinerary':
-                $itineraries = $this->assignmentModel->getItinerariesByBooking($bookingId);
+                $itineraries = $this->tourModel->getItineraries($bookingId);
                 if (!empty($itineraries)) {
                     foreach ($itineraries as $item) {
                         $day = $item['order_number'] ?? 1;
@@ -96,7 +105,6 @@ class GuideTourAssignmentController
                 break;
 
             case 'info':
-                $policies = $this->assignmentModel->getPoliciesByBooking($bookingId);
                 break;
         }
 
