@@ -130,8 +130,11 @@ match ($act) {
   'tour-assignment-update' => (new TourAssignmentController())->update(),
   'tour-assignment-delete' => (new TourAssignmentController())->delete(),
 
-  // Hướng dẫn viên
+  // 
   'my-schedule' => (new MyScheduleController())->index(),
+  // Guide tour_Assignments
+  'guide-tour-assignments' => (new GuideTourAssignmentController())->index(),
+  'guide-tour-assignments-detail' => (new GuideTourAssignmentController())->detail(),
 
   '403' => require_once './views/forbidden.php',
   default => require_once './views/notFound.php',
