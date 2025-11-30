@@ -337,4 +337,20 @@ class BookingModel
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+      // Lấy booking theo guide_id (dành cho guide)
+      public function getByGuideId($guideId)
+      {
+          $sql = "SELECT b.*, t.name AS tour_name
+                  FROM bookings b
+                  LEFT JOIN tours t ON t.id = b.tour_id
+                  WHERE b.guide_id = :guide_id
+                  ORDER BY b.date ASC";
+  
+          $stmt = $this->conn->prepare($sql);
+          $stmt->bindParam(':guide_id', $guideId, PDO::PARAM_INT);
+          $stmt->execute();
+  
+          return $stmt->fetchAll(PDO::FETCH_ASSOC);
+      }
 }
