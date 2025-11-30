@@ -52,7 +52,17 @@ match ($act) {
   'user-update' => (new UserManagementController())->update(),
   'user-delete' => (new UserManagementController())->delete(),
 
-
+  // Notifications
+  'notifications' => (new NotificationController())->index(),
+  'notification-create' => (new NotificationController())->create(),
+  'notification-store' => (new NotificationController())->store(),
+  'notification-detail' => (new NotificationController())->detail(),
+  'read-notification' => (new NotificationController())->read(),
+  'mark-all-notifications-read' => (new NotificationController())->markAllRead(),
+  'notification-delete' => (new NotificationController())->delete(),
+  'my-notifications' => (new NotificationController())->myNotifications(),
+  'notification-edit' => (new NotificationController())->edit(),
+  'notification-update' => (new NotificationController())->update(),
 
   // Categories
   "categories" => (new CategoryController())->index(),

@@ -41,9 +41,10 @@ $avatar = strtoupper(mb_substr($fullname, 0, 1));
           </div>
         </div>
         <div class="flex items-center space-x-4">
-          <button class="relative p-2 text-gray-600 hover:bg-gray-100 rounded-full">
+          <button onclick="window.location.href='<?= BASE_URL ?>?act=my-notifications'" class="relative p-2 text-gray-600 hover:bg-gray-100 rounded-full">
             <i data-lucide="bell"></i>
-            <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
+
+
           </button>
           <div class="flex items-center space-x-3">
             <div class="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
