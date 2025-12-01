@@ -107,4 +107,12 @@ class CustomerModel
             die("Error: " . $e->getMessage());
         }
     }
+
+    public function findByEmailOrPhone($email, $phone)
+    {
+        $sql = "SELECT * FROM customers WHERE email = :email OR phone = :phone LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['email' => $email, 'phone' => $phone]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

@@ -103,6 +103,9 @@ match ($act) {
   'booking-update' => (new BookingController())->update(),
   'booking-delete' => (new BookingController())->delete(),
   'booking-detail' => (new BookingController())->detail(),
+  'booking-upload-customers' => (new BookingController())->uploadCustomers(),
+  'booking-add-customer' => (new BookingController())->addCustomer(),
+  'booking-remove-customer' => (new BookingController())->removeCustomer(),
 
   // contracts
   'contracts' => (new ContractController())->index(),
