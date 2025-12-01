@@ -158,6 +158,11 @@ match ($act) {
   'journal-delete' => (new JournalController())->delete(),
   'journal-images-delete' => (new JournalController())->deleteImage(),
   'journal-detail' => (new JournalController())->detail(),
+  // Checkin
+  'checkin' => (new CheckinController())->index(),
+  'checkin-store' => (new CheckinController())->checkin(),
+  'checkin-bulk' => (new CheckinController())->bulkCheckin(),
+  'checkin-delete' => (new CheckinController())->delete(),
   '403' => require_once './views/forbidden.php',
   default => require_once './views/notFound.php',
 };

@@ -22,7 +22,7 @@ unset($_SESSION['errors'], $_SESSION['old']);
             <select name="tour_assignment_id" class="border rounded-lg w-full p-2">
                 <option value="">-- Chọn tour --</option>
                 <?php foreach ($tourAssignments as $ta): ?>
-                    <option value="<?= $ta['id'] ?>">
+                    <option value="<?= $ta['id'] ?>" <?= (isset($selected_tour_id) && $selected_tour_id == $ta['id']) ? 'selected' : '' ?>>
                         <?= htmlspecialchars($ta['tour_name']) ?> - <?= $ta['booking_code'] ?>
                     </option>
                 <?php endforeach; ?>
