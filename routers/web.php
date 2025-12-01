@@ -146,6 +146,15 @@ match ($act) {
   'guide-tour-assignments' => (new GuideTourAssignmentController())->index(),
   'guide-tour-assignments-detail' => (new GuideTourAssignmentController())->detail(),
 
+  // Journal
+  'journal' => (new JournalController())->index(),
+  'journal-create' => (new JournalController())->create(),
+  'journal-store' => (new JournalController())->store(),
+  'journal-edit' => (new JournalController())->edit(),
+  'journal-update' => (new JournalController())->update(),
+  'journal-delete' => (new JournalController())->delete(),
+  'journal-images-delete' => (new JournalController())->deleteImage(),
+  'journal-detail' => (new JournalController())->detail(),
   '403' => require_once './views/forbidden.php',
   default => require_once './views/notFound.php',
 };
