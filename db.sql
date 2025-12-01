@@ -169,6 +169,7 @@ CREATE TABLE `customers` (
   `phone` varchar(20),
   `address` varchar(500),
   `passport` varchar(50),
+  `citizen_id` varchar(20),
   `gender` enum('male', 'female', 'other'),
   `created_by` int,
   `updated_by` int,
