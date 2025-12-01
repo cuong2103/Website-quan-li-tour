@@ -20,13 +20,12 @@ class JournalController
     public function create()
     {
         $guideId = $_SESSION['currentUser']['id'];
-
+        $selected_tour_id = $_GET['tour_assignment_id'] ?? null;
         // Lấy tất cả tour assignment của guide
         $tourAssignments = $this->model->getAssignmentsByGuide($guideId);
-
         // Chỉ giữ những tour chưa hoàn thành
-        $tourAssignments = array_filter($tourAssignments, fn($ta) => $ta['tour_status'] != '1');
-
+        $tourAssignments = array_filter($tourAssignments, fn($ta) => $ta['tour_status'] !== 1);
+        // dd($tourAssignments);
         require './views/guide/journals/create.php';
     }
 

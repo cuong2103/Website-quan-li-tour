@@ -184,6 +184,7 @@ CREATE TABLE `bookings` (
   `booking_code` varchar(20),
   `adult_count` int,
   `child_count` int,
+  `service_amount` decimal(12,0), 
   `total_amount` decimal(12,0),
   `deposit_amount` decimal(12,0),
   `remaining_amount` decimal(12,0),
