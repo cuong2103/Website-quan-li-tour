@@ -1,19 +1,18 @@
 <?php
-class UserManagementController
+class UserController
 {
 
-    public $model;
+    public $userModel;
 
     public function __construct()
     {
         requireAdmin();
-        $this->model = new UserModel();
+        $this->userModel = new UserModel();
     }
 
     public function index()
     {
-        $users = $this->model->getAll();
-        // dd($users);
+        $users = $this->userModel->getAll();
         require './views/admin/User_management/index.php';
     }
 
@@ -22,7 +21,7 @@ class UserManagementController
         $id = $_GET['id'] ?? null;
         if (!$id) redirect("user");
 
-        $user = $this->model->getById($id);
+        $user = $this->userModel->getById($id);
 
         if (!$user) redirect("user");
         require './views/admin/User_management/detail.php';
@@ -30,6 +29,7 @@ class UserManagementController
 
     public function create()
     {
+
         require './views/admin/User_management/create.php';
     }
 
@@ -37,7 +37,7 @@ class UserManagementController
     {
         $id = $_GET['id'];
         if (!$id) redirect("user"); // chuyển về danh sách nếu không có id
-        $user = $this->model->getById($id);
+        $user = $this->userModel->getById($id);
 
         if (!$user) {
             Message::set('error', 'Không tìm thấy nhân viên');
@@ -48,27 +48,27 @@ class UserManagementController
 
     public function store()
     {
-        $data = [];
-        $data['fullname'] = $_POST['fullname'] ?? '';
-        $data['email']    = $_POST['email'] ?? '';
-        $data['phone']    = $_POST['phone'] ?? '';
-        $data['roles']  = isset($_POST['roles']) ? (int)$_POST['roles'] : 2;
-        $data['status']   = isset($_POST['status']) ? (int)$_POST['status'] : 1;
-        $data['password'] = !empty($_POST['password'])
-            ? password_hash($_POST['password'], PASSWORD_DEFAULT)
-            : password_hash('123456', PASSWORD_DEFAULT);
-        $data['birthday'] = $_POST['birthday'] ?? null;
-        $data['gender']   = $_POST['gender'] ?? null;
-        $data['address']  = $_POST['address'] ?? null;
-        $data['start_date'] = $_POST['start_date'] ?? null;
-        $data['certificate'] = $_POST['certificate'] ?? null;
+        $data = [
+            'fullname'    => $_POST['fullname'] ?? '',
+            'email'       => $_POST['email'] ?? '',
+            'phone'       => $_POST['phone'] ?? '',
+            'roles'       => isset($_POST['roles']) ? (int)$_POST['roles'] : 2,
+            'status'      => isset($_POST['status']) ? (int)$_POST['status'] : 1,
+            'password'    => !empty($_POST['password'])
+                ? password_hash($_POST['password'], PASSWORD_DEFAULT)
+                : password_hash('123456', PASSWORD_DEFAULT),
+            'birthday'    => $_POST['birthday'] ?? null,
+            'gender'      => $_POST['gender'] ?? null,
+            'address'     => $_POST['address'] ?? null,
+            'start_date'  => $_POST['start_date'] ?? null,
+            'certificate' => $_POST['certificate'] ?? null,
+        ];
         // --- Upload avatar trước khi lưu ---
         if (!empty($_FILES['avatar']['name']) && $_FILES['avatar']['error'] == 0) {
             $avatar = $_FILES['avatar'];
             $extention = pathinfo($avatar['name'], PATHINFO_EXTENSION);
             $filename = uniqid() . "." . $extention;
             $uploadDir = __DIR__ . '/../../uploads/avatar/';
-            // dd($uploadDir);
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
@@ -78,9 +78,7 @@ class UserManagementController
             }
         }
 
-        // Tạo user mới với avatar
-        $userModel = new UserModel();
-        $result = $userModel->create($data);
+        $result = $this->userModel->create($data);
 
         if ($result) {
             Message::set('success', 'Tạo nhân viên thành công');
@@ -102,10 +100,9 @@ class UserManagementController
         $phone = trim($_POST['phone']);
         $roles = $_POST['roles'] ?? 'guide';
         $status = ($_POST['status']);
-        // dd($status); 
 
         // Check email tồn tại
-        if ($this->model->emailExists($email, $id)) {
+        if ($this->userModel->emailExists($email, $id)) {
             Message::set('error', 'Email đã tồn tại');
             redirect("?act=user-edit&id=$id");
         }
@@ -120,7 +117,7 @@ class UserManagementController
         ];
 
         // Lấy avatar cũ từ DB
-        $currentUser = $this->model->getById($id);
+        $currentUser = $this->userModel->getById($id);
 
         if (!empty($_FILES['avatar']['name']) && $_FILES['avatar']['error'] == 0) {
             $avatar = $_FILES['avatar'];
@@ -137,7 +134,7 @@ class UserManagementController
         }
 
 
-        $result = $this->model->update($id, $data);
+        $result = $this->userModel->update($id, $data);
 
         if ($result) {
             Message::set('success', 'Cập nhật thành công');
@@ -150,10 +147,20 @@ class UserManagementController
     public function delete()
     {
         $id = $_GET['id'] ?? null;
+        if ($id === $_SESSION['currentUser']['id']) {
+            Message::set('error', 'Không thể xóa chính bạn');
+        }
         if ($id) {
-            $userModel = new UserModel();
-            $userModel->delete($id); // gọi model để xóa user theo id
-            header("Location: ?act=user"); // quay về danh sách
+            $result = $this->userModel->delete($id);
+            if ($result === "FOREIGN_KEY_CONSTRAINT") {
+                Message::set('error', 'Không thể xóa nhân viên này vì có dữ liệu liên quan!');
+            } elseif ($result) {
+                Message::set('success', 'Xóa nhân viên thành công!');
+            } else {
+                Message::set('error', 'Xóa nhân viên thất bại!');
+            }
+
+            redirect("user");
             exit;
         } else {
             echo "ID nhân viên không hợp lệ!";

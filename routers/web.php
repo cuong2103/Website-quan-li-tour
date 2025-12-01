@@ -44,13 +44,13 @@ match ($act) {
 
 
   //user_management
-  'user' => (new UserManagementController())->index(),
-  'user-getById' => (new UserManagementController())->detail(),
-  'user-create' => (new UserManagementController())->create(),
-  'user-edit' => (new UserManagementController())->edit(),
-  'user-store' => (new UserManagementController())->store(),
-  'user-update' => (new UserManagementController())->update(),
-  'user-delete' => (new UserManagementController())->delete(),
+  'user' => (new UserController())->index(),
+  'user-getById' => (new UserController())->detail(),
+  'user-create' => (new UserController())->create(),
+  'user-edit' => (new UserController())->edit(),
+  'user-store' => (new UserController())->store(),
+  'user-update' => (new UserController())->update(),
+  'user-delete' => (new UserController())->delete(),
 
   // Notifications
   'notifications' => (new NotificationController())->index(),

@@ -45,10 +45,10 @@ class UserModel
     }
 
     // UPDATE USER
-       // UserModel.php
-public function update($id, $data)
-{
-    $sql = "UPDATE users 
+    // UserModel.php
+    public function update($id, $data)
+    {
+        $sql = "UPDATE users 
         SET 
             fullname = :fullname, 
             email = :email, 
@@ -59,28 +59,33 @@ public function update($id, $data)
             updated_at = NOW()
         WHERE id = :id";
 
-    $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conn->prepare($sql);
 
-    return $stmt->execute([
-        ':id' => $id,
-        ':fullname' => $data['fullname'],
-        ':email' => $data['email'],
-        ':phone' => $data['phone'],
-        ':avatar' => $data['avatar'] ?? null,
-        ':roles' => $data['roles'], // phải đúng kiểu trong DB
-        ':status' => $data['status'], // 0 hoặc 1
-    ]);
-
-    
-}
+        return $stmt->execute([
+            ':id' => $id,
+            ':fullname' => $data['fullname'],
+            ':email' => $data['email'],
+            ':phone' => $data['phone'],
+            ':avatar' => $data['avatar'] ?? null,
+            ':roles' => $data['roles'], // phải đúng kiểu trong DB
+            ':status' => $data['status'], // 0 hoặc 1
+        ]);
+    }
 
 
     // XÓA USER
     public function delete($id)
     {
-        $sql = "DELETE FROM users WHERE id = ?";
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([$id]);
+        try {
+            $sql = "DELETE FROM users WHERE id = ?";
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([$id]);
+        } catch (PDOException $e) {
+            if ($e->getCode() == '23000') {
+                return "FOREIGN_KEY_CONSTRAINT";
+            } else {
+            }
+        }
     }
 
     // CHECK EMAIL TỒN TẠI
