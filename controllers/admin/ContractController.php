@@ -39,7 +39,6 @@ class ContractController
         $data = [
             'booking_id'     => $bookingId,
             'contract_name'  => $_POST['contract_name'],
-            'signing_date'   => $_POST['signing_date'],
             'effective_date' => $_POST['effective_date'],
             'expiry_date'    => $_POST['expiry_date'],
             'signer_id'      => $_SESSION['currentUser']['id'], // người ký admin
@@ -47,7 +46,7 @@ class ContractController
             'status'         => $_POST['status'],
             'file_name'      => $_FILES['file_upload']['name'],
             'file_url'       => $fileUrl,
-            'notes'          => $_POST['notes'] ?? null
+            'created_by'     => $_SESSION['currentUser']['id']
         ];
 
         $this->contractModel->create($data);
@@ -100,7 +99,6 @@ class ContractController
 
         $data = [
             'contract_name'  => $_POST['contract_name'],
-            'signing_date'   => $_POST['signing_date'],
             'effective_date' => $_POST['effective_date'],
             'expiry_date'    => $_POST['expiry_date'],
             'signer_id'      => $_POST['signer_id'],
@@ -108,7 +106,7 @@ class ContractController
             'status'         => $_POST['status'],
             'file_name'      => $file_name,
             'file_url'       => $file_url,
-            'notes'          => $_POST['notes']
+            'updated_by'     => $_SESSION['currentUser']['id']
         ];
 
         $this->contractModel->update($id, $data);

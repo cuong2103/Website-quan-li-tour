@@ -84,15 +84,14 @@ class ContractModel
     {
         try {
             $sql = "INSERT INTO customer_contracts 
-                    (booking_id, contract_name, signing_date, effective_date, expiry_date,
-                     signer_id, customer_id, status, file_name, file_url, notes, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+                    (booking_id, contract_name, effective_date, expiry_date,
+                     signer_id, customer_id, status, file_name, file_url, created_by, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([
                 $data['booking_id'],
                 $data['contract_name'],
-                $data['signing_date'],
                 $data['effective_date'],
                 $data['expiry_date'],
                 $data['signer_id'],
@@ -100,7 +99,7 @@ class ContractModel
                 $data['status'],
                 $data['file_name'],
                 $data['file_url'],
-                $data['notes']
+                $data['created_by']
             ]);
 
             return $this->conn->lastInsertId();
@@ -114,14 +113,13 @@ class ContractModel
     {
         try {
             $sql = "UPDATE customer_contracts 
-                    SET contract_name=?, signing_date=?, effective_date=?, expiry_date=?, 
-                        signer_id=?, customer_id=?, status=?, file_name=?, file_url=?, notes=?, updated_at=NOW()
+                    SET contract_name=?, effective_date=?, expiry_date=?, 
+                        signer_id=?, customer_id=?, status=?, file_name=?, file_url=?, updated_by=?, updated_at=NOW()
                     WHERE id=?";
 
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([
                 $data['contract_name'],
-                $data['signing_date'],
                 $data['effective_date'],
                 $data['expiry_date'],
                 $data['signer_id'],
@@ -129,7 +127,7 @@ class ContractModel
                 $data['status'],
                 $data['file_name'],
                 $data['file_url'],
-                $data['notes'],
+                $data['updated_by'],
                 $id
             ]);
         } catch (PDOException $e) {

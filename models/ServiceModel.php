@@ -48,6 +48,34 @@ class ServiceModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function search($keyword)
+    {
+        try {
+            $sql = "SELECT 
+                    s.*, 
+                    st.name AS service_type_name,
+                    sp.name AS supplier_name,
+                    sp.email AS supplier_email,
+                    sp.phone AS supplier_phone
+                FROM services s
+                LEFT JOIN service_types st ON s.service_type_id = st.id
+                LEFT JOIN suppliers sp ON s.supplier_id = sp.id
+                WHERE s.name LIKE :keyword
+                ORDER BY s.id DESC";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([
+                ':keyword' => "%" . $keyword . "%"
+            ]);
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Lỗi tìm kiếm: " . $e->getMessage();
+            return [];
+        }
+    }
+
+
 
     // Lấy chi tiết dịch vụ
     public function getDetail($id)

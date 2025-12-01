@@ -56,11 +56,12 @@ class BookingModel
     {
         try {
             $sql = "INSERT INTO bookings 
-                (tour_id, start_date, end_date, adult_count, child_count, total_amount, deposit_amount, remaining_amount, status, special_requests, created_by)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                (tour_id, booking_code, start_date, end_date, adult_count, child_count, total_amount, deposit_amount, remaining_amount, status, special_requests, created_by)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([
                 $data['tour_id'],
+                $data['booking_code'],
                 $data['start_date'],
                 $data['end_date'],
                 $data['adult_count'],
@@ -151,7 +152,16 @@ class BookingModel
     {
         $this->conn->beginTransaction();
         try {
-            $this->conn->prepare("DELETE FROM booking_services WHERE booking_id = ?")->execute([$id]);
+            // --- Lấy tour_id của booking trước ---
+            $stmtTour = $this->conn->prepare("SELECT tour_id FROM bookings WHERE id = ?");
+            $stmtTour->execute([$id]);
+            $tour = $stmtTour->fetch(PDO::FETCH_ASSOC);
+            $tourId = $tour['tour_id'] ?? null;
+
+            // Xóa dịch vụ booking (theo tour_id)
+            if ($tourId) {
+                $this->conn->prepare("DELETE FROM booking_services WHERE tour_id = ?")->execute([$tourId]);
+            }
             $this->conn->prepare("DELETE FROM booking_customers WHERE booking_id = ?")->execute([$id]);
             $this->conn->prepare("DELETE FROM customer_contracts WHERE booking_id = ?")->execute([$id]);
             $this->conn->prepare("DELETE FROM payments WHERE booking_id = ?")->execute([$id]);
@@ -269,10 +279,18 @@ class BookingModel
     // Thêm dịch vụ
     public function addService($bookingId, $serviceId)
     {
+        // Lấy tour_id từ booking
+        $stmt = $this->conn->prepare("SELECT tour_id FROM bookings WHERE id = ?");
+        $stmt->execute([$bookingId]);
+        $tour = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$tour) return false;
+
+        $tourId = $tour['tour_id'];
+
         try {
-            $sql = "INSERT INTO booking_services (booking_id, service_id) VALUES (?, ?)";
+            $sql = "INSERT INTO booking_services (tour_id, service_id) VALUES (?, ?)";
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$bookingId, $serviceId]);
+            $stmt->execute([$tourId, $serviceId]);
             return true;
         } catch (PDOException $e) {
             die("Lỗi addService(): " . $e->getMessage());
@@ -283,7 +301,7 @@ class BookingModel
     public function deleteServices($bookingId)
     {
         try {
-            $sql = "DELETE FROM booking_services WHERE booking_id = ?";
+            $sql = "DELETE FROM booking_services WHERE tour_id = ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$bookingId]);
             return true;
@@ -292,13 +310,13 @@ class BookingModel
         }
     }
 
-    // hiễn thị dịch vụ vào detail
     public function getServicesByBooking($bookingId)
     {
-        $sql = "SELECT s.*
-                FROM booking_services bs
-                JOIN services s ON bs.service_id = s.id
-                WHERE bs.booking_id = ?";
+        $sql = "SELECT s.*, bs.quantity, bs.description, bs.current_price, bs.discount
+            FROM booking_services bs
+            JOIN services s ON bs.service_id = s.id
+            JOIN bookings b ON bs.tour_id = b.tour_id
+            WHERE b.id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$bookingId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -380,5 +398,17 @@ class BookingModel
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$assignmentId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    
+    public function removeCustomer($bookingId, $customerId)
+    {
+        try {
+            $sql = "DELETE FROM booking_customers WHERE booking_id = ? AND customer_id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$bookingId, $customerId]);
+        } catch (PDOException $e) {
+            die("Lỗi removeCustomer: " . $e->getMessage());
+        }
     }
 }
