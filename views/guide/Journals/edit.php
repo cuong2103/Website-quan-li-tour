@@ -7,108 +7,182 @@ $old = $_SESSION['old'] ?? $journal; // Nếu không có old, lấy dữ liệu 
 unset($_SESSION['errors'], $_SESSION['old']);
 ?>
 
-<main class="mt-28 px-6 pb-20">
-
-    <h1 class="text-2xl font-bold mb-6">Chỉnh sửa nhật ký</h1>
-
-    <form action="<?= BASE_URL . '?act=journal-update' ?>"
-        method="POST"
-        enctype="multipart/form-data"
-        class="bg-white p-6 rounded-lg shadow">
-
-        <input type="hidden" name="id" value="<?= $journal['id'] ?>">
-
-        <!-- Phân công tour -->
-        <div class="mb-4">
-            <label class="block font-medium mb-1">Phân công tour *</label>
-            <select name="tour_assignment_id" class="border rounded-lg w-full p-2">
-                <option value="">-- Chọn tour --</option>
-                <?php foreach ($tourAssignments as $ta): ?>
-                    <option value="<?= $ta['id'] ?>"
-                        <?= isset($old['tour_assignment_id']) && $old['tour_assignment_id'] == $ta['id'] ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($ta['tour_name']) ?> - <?= $ta['booking_code'] ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-
-            <?php if (!empty($errors['tour_assignment_id'])): ?>
-                <p class="text-red-500 text-sm mt-1"><?= implode(', ', $errors['tour_assignment_id']) ?></p>
-            <?php endif; ?>
+<main class="mt-28 px-6 min-w-7xl mx-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Chỉnh sửa nhật ký</h1>
+            <p class="text-gray-500 mt-1">Cập nhật thông tin hành trình và sự cố</p>
         </div>
+        <a href="<?= BASE_URL . '?act=journal' ?>"
+            class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Quay lại</span>
+        </a>
+    </div>
 
-        <!-- Ngày -->
-        <div class="mb-4">
-            <label class="block font-medium mb-1">Ngày *</label>
-            <input type="date" name="date"
-                value="<?= htmlspecialchars($old['date'] ?? $journal['date']) ?>"
-                class="border w-full p-2 rounded-lg <?= isset($errors['date']) ? 'border-red-500' : '' ?>">
-            <?php if (!empty($errors['date'])): ?>
-                <p class="text-red-500 text-sm mt-1"><?= implode(', ', $errors['date']) ?></p>
-            <?php endif; ?>
-        </div>
+    <!-- Form Card -->
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <form action="<?= BASE_URL . '?act=journal-update' ?>"
+            method="POST"
+            enctype="multipart/form-data"
+            class="p-8">
 
-        <!-- Loại -->
-        <div class="mb-4">
-            <label class="block font-medium mb-1">Loại *</label>
-            <select name="type" class="border rounded-lg w-full p-2 <?= isset($errors['type']) ? 'border-red-500' : '' ?>">
-                <option value="">-- Chọn loại --</option>
-                <option value="daily" <?= ($old['type'] ?? $journal['type']) == 'daily' ? 'selected' : '' ?>>Nhật ký ngày</option>
-                <option value="incident" <?= ($old['type'] ?? $journal['type']) == 'incident' ? 'selected' : '' ?>>Sự cố</option>
-            </select>
-            <?php if (!empty($errors['type'])): ?>
-                <p class="text-red-500 text-sm mt-1"><?= implode(', ', $errors['type']) ?></p>
-            <?php endif; ?>
-        </div>
+            <input type="hidden" name="id" value="<?= $journal['id'] ?>">
 
-        <!-- Nội dung -->
-        <div class="mb-4">
-            <label class="block font-medium mb-1">Nội dung *</label>
-            <textarea name="content" rows="5"
-                class="border w-full p-2 rounded-lg <?= isset($errors['content']) ? 'border-red-500' : '' ?>"><?= htmlspecialchars($old['content'] ?? $journal['content']) ?></textarea>
-            <?php if (!empty($errors['content'])): ?>
-                <p class="text-red-500 text-sm mt-1"><?= implode(', ', $errors['content']) ?></p>
-            <?php endif; ?>
-        </div>
-
-        <!-- Ảnh cũ -->
-        <div class="mb-4">
-            <label class="block font-medium mb-2">Ảnh hiện có</label>
-            <div class="flex flex-wrap gap-4">
-                <?php foreach ($images as $img): ?>
-                    <div class="relative w-32 h-24 group">
-                        <img src="<?= BASE_URL . 'uploads/journals/' . $img['image_url'] ?>?>"
-                            class="w-full h-full object-cover rounded-lg border">
-                        <a href="<?= BASE_URL . '?act=journal-images-delete&id=' . $img['id'] ?>"
-                            onclick="return confirm('Xóa ảnh này?')"
-                            class="absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6 flex items-center justify-center rounded-full opacity-90 hover:bg-red-700">
-                            ×
-                        </a>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Tour assignment -->
+                <div class="col-span-1">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Phân công tour <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <select name="tour_assignment_id"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none bg-white">
+                            <option value="">-- Chọn tour --</option>
+                            <?php foreach ($tourAssignments as $ta): ?>
+                                <option value="<?= $ta['id'] ?>"
+                                    <?= isset($old['tour_assignment_id']) && $old['tour_assignment_id'] == $ta['id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($ta['tour_name']) ?> - <?= $ta['booking_code'] ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-gray-500">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </div>
                     </div>
-                <?php endforeach; ?>
+                    <?php if (!empty($errors['tour_assignment_id'])): ?>
+                        <p class="text-red-500 text-sm mt-1 flex items-center gap-1">
+                            <i data-lucide="alert-circle" class="w-3 h-3"></i>
+                            <?= implode(', ', $errors['tour_assignment_id']) ?>
+                        </p>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Date -->
+                <div class="col-span-1">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Ngày ghi nhận <span class="text-red-500">*</span></label>
+                    <input type="date" name="date"
+                        value="<?= htmlspecialchars($old['date'] ?? $journal['date']) ?>"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all <?= isset($errors['date']) ? 'border-red-500 ring-1 ring-red-500' : '' ?>">
+                    <?php if (!empty($errors['date'])): ?>
+                        <p class="text-red-500 text-sm mt-1 flex items-center gap-1">
+                            <i data-lucide="alert-circle" class="w-3 h-3"></i>
+                            <?= implode(', ', $errors['date']) ?>
+                        </p>
+                    <?php endif; ?>
+                </div>
             </div>
-        </div>
 
-        <!-- Upload ảnh mới -->
-        <div class="mb-4">
-            <label class="block font-medium mb-1">Thêm ảnh mới</label>
-            <input type="file" name="images[]" id="newImages" multiple accept="image/*"
-                class="border p-2 rounded-lg w-full">
-        </div>
+            <!-- Type -->
+            <div class="mb-6">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Loại nhật ký <span class="text-red-500">*</span></label>
+                <div class="grid grid-cols-2 gap-4">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="type" value="daily" class="peer sr-only" <?= ($old['type'] ?? $journal['type']) == 'daily' ? 'checked' : '' ?>>
+                        <div class="p-4 rounded-lg border border-gray-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition-all flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                                <i data-lucide="book-open" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <span class="block font-medium text-gray-900">Nhật ký ngày</span>
+                                <span class="block text-xs text-gray-500">Ghi lại hoạt động hàng ngày</span>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="type" value="incident" class="peer sr-only" <?= ($old['type'] ?? $journal['type']) == 'incident' ? 'checked' : '' ?>>
+                        <div class="p-4 rounded-lg border border-gray-200 peer-checked:border-red-500 peer-checked:bg-red-50 hover:bg-gray-50 transition-all flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center">
+                                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <span class="block font-medium text-gray-900">Sự cố</span>
+                                <span class="block text-xs text-gray-500">Báo cáo vấn đề phát sinh</span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                <?php if (!empty($errors['type'])): ?>
+                    <p class="text-red-500 text-sm mt-1 flex items-center gap-1">
+                        <i data-lucide="alert-circle" class="w-3 h-3"></i>
+                        <?= implode(', ', $errors['type']) ?>
+                    </p>
+                <?php endif; ?>
+            </div>
 
-        <!-- Preview ảnh mới -->
-        <div id="previewNew" class="flex flex-wrap gap-3"></div>
+            <!-- Content -->
+            <div class="mb-8">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Nội dung chi tiết <span class="text-red-500">*</span></label>
+                <textarea name="content" rows="6"
+                    placeholder="Mô tả chi tiết về hoạt động hoặc sự cố..."
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-y <?= isset($errors['content']) ? 'border-red-500 ring-1 ring-red-500' : '' ?>"><?= htmlspecialchars($old['content'] ?? $journal['content']) ?></textarea>
+                <?php if (!empty($errors['content'])): ?>
+                    <p class="text-red-500 text-sm mt-1 flex items-center gap-1">
+                        <i data-lucide="alert-circle" class="w-3 h-3"></i>
+                        <?= implode(', ', $errors['content']) ?>
+                    </p>
+                <?php endif; ?>
+            </div>
 
-        <!-- Nút -->
-        <div class="flex gap-3 mt-6">
-            <button class="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">
-                Cập nhật
-            </button>
-            <a href="<?= BASE_URL . '?act=journal' ?>" class="px-6 py-2 border rounded-lg hover:bg-gray-50">
-                Hủy
-            </a>
-        </div>
+            <!-- Ảnh cũ -->
+            <?php if (!empty($images)): ?>
+                <div class="mb-8">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Hình ảnh hiện có</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        <?php foreach ($images as $img): ?>
+                            <div class="relative group aspect-square rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                                <img src="<?= BASE_URL . 'uploads/journals/' . $img['image_url'] ?>"
+                                    class="w-full h-full object-cover transition-transform group-hover:scale-105">
+                                <a href="<?= BASE_URL . '?act=journal-images-delete&id=' . $img['id'] ?>"
+                                    onclick="return confirm('Xóa ảnh này?')"
+                                    class="absolute top-2 right-2 bg-white/90 text-red-500 w-8 h-8 flex items-center justify-center rounded-full shadow-sm hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
 
-    </form>
+            <!-- Upload ảnh mới -->
+            <div class="mb-8">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Thêm hình ảnh mới</label>
+
+                <div class="relative group">
+                    <input type="file"
+                        name="images[]"
+                        id="newImages"
+                        multiple
+                        accept="image/*"
+                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center group-hover:border-blue-500 group-hover:bg-blue-50 transition-all duration-200">
+                        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                            <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+                        </div>
+                        <p class="text-sm font-medium text-gray-900">Click để tải ảnh lên hoặc kéo thả vào đây</p>
+                        <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF (Tối đa 5MB)</p>
+                    </div>
+                </div>
+
+                <!-- Preview ảnh mới -->
+                <div id="previewNew" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4"></div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-100">
+                <a href="<?= BASE_URL . '?act=journal' ?>"
+                    class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 transition-all">
+                    Hủy bỏ
+                </a>
+                <button type="submit"
+                    class="px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-100 shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    Cập nhật
+                </button>
+            </div>
+
+        </form>
+    </div>
 </main>
 
 <script>
@@ -117,23 +191,28 @@ unset($_SESSION['errors'], $_SESSION['old']);
         preview.innerHTML = "";
 
         let files = Array.from(e.target.files);
+        let dt = new DataTransfer();
+
         files.forEach((file, index) => {
             let reader = new FileReader();
             reader.onload = function(ev) {
                 let wrap = document.createElement("div");
-                wrap.classList.add("relative", "w-28", "h-24");
+                wrap.className = "relative group aspect-square rounded-xl overflow-hidden border border-gray-200 shadow-sm";
 
                 let img = document.createElement("img");
                 img.src = ev.target.result;
-                img.classList.add("w-full", "h-full", "object-cover", "rounded-lg", "border");
+                img.className = "w-full h-full object-cover transition-transform group-hover:scale-105";
 
                 let btn = document.createElement("button");
-                btn.innerText = "×";
+                btn.innerHTML = '<i data-lucide="x" class="w-3 h-3"></i>';
                 btn.type = "button";
-                btn.className = "absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6 flex items-center justify-center rounded-full";
+                btn.className =
+                    "absolute top-2 right-2 bg-white/90 text-red-500 w-6 h-6 flex items-center justify-center rounded-full shadow-sm hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100";
+
                 btn.onclick = function() {
                     wrap.remove();
                     files.splice(index, 1);
+
                     let newDT = new DataTransfer();
                     files.forEach(f => newDT.items.add(f));
                     document.getElementById('newImages').files = newDT.files;
@@ -142,6 +221,10 @@ unset($_SESSION['errors'], $_SESSION['old']);
                 wrap.appendChild(img);
                 wrap.appendChild(btn);
                 preview.appendChild(wrap);
+
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
             };
             reader.readAsDataURL(file);
         });

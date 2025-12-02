@@ -49,20 +49,13 @@ require_once './views/components/sidebar.php';
                     </div>
 
                     <div class="flex justify-between items-center mt-5 gap-3">
-                        <a href="<?= BASE_URL . '?act=checkin&assignment_id=' . $t['assignment_id'] ?>"
-                            class="flex-[2] bg-blue-500 text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-600 items-center justify-center flex gap-1">
-                            <i data-lucide="user-check"></i> Check-in
-                        </a>
+
 
                         <a href="<?= BASE_URL . '?act=guide-tour-assignments-detail&id=' . $t['assignment_id'] ?>"
-                            class="flex-[6] bg-blue-500 text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-600 items-center justify-center flex gap-1">
+                            class="flex-[10] bg-blue-500 text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-600 items-center justify-center flex gap-1">
                             <i data-lucide="eye"></i> Xem chi tiết tour
                         </a>
 
-                        <a href="<?= BASE_URL . '?act=journal-create&tour_assignment_id=' . $t['assignment_id'] ?>"
-                            class="flex-[2] bg-blue-500 text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-600 items-center justify-center flex gap-1">
-                            <i data-lucide="clipboard"></i> Viết nhật ký
-                        </a>
 
                     </div>
                 </div>

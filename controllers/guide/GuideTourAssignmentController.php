@@ -112,6 +112,10 @@ class GuideTourAssignmentController
             case 'checkin':
                 $customers = $this->checkinModel->getCustomersByAssignment($assignmentId);
                 break;
+
+            case 'journals':
+                $journals = $this->assignmentModel->getJournalsByAssignment($assignmentId);
+                break;
         }
 
         // Tính trạng thái tour
