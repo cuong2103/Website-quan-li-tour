@@ -104,6 +104,7 @@ match ($act) {
   'booking-delete' => (new BookingController())->delete(),
   'booking-detail' => (new BookingController())->detail(),
   'booking-upload-customers' => (new BookingController())->uploadCustomers(),
+  // 'booking-export-customers' => (new BookingController())->exportCustomers(),
   'booking-add-customer' => (new BookingController())->addCustomer(),
   'booking-remove-customer' => (new BookingController())->removeCustomer(),
 

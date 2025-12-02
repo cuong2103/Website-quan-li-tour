@@ -85,12 +85,7 @@ class BookingModel
                     $this->addCustomer($bookingId, $customerId, $isRep);
                 }
             }
-            // Lưu dịch vụ
-            if (!empty($data['services'])) {
-                foreach ($data['services'] as $serviceId) {
-                    $this->addService($bookingId, $serviceId);
-                }
-            }
+
 
             return $bookingId;
         } catch (PDOException $e) {
@@ -131,15 +126,7 @@ class BookingModel
                 $this->addCustomer($id, $custId, $isRep);
             }
 
-            //XÓA toàn bộ dịch vụ cũ
-            $this->deleteServices($id);
 
-            // Thêm lại dịch vụ mới
-            if (!empty($data['services'])) {
-                foreach ($data['services'] as $serviceId) {
-                    $this->addService($id, $serviceId);
-                }
-            }
 
             return true;
         } catch (PDOException $e) {
@@ -277,24 +264,25 @@ class BookingModel
 
 
     // Thêm dịch vụ
-    public function addService($bookingId, $serviceId)
+    public function addService($bookingId, $serviceId, $quantity, $currentPrice)
     {
         // Lấy tour_id từ booking
         $stmt = $this->conn->prepare("SELECT tour_id FROM bookings WHERE id = ?");
         $stmt->execute([$bookingId]);
         $tour = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$tour) return false;
-
         $tourId = $tour['tour_id'];
 
-        try {
-            $sql = "INSERT INTO booking_services (tour_id, service_id) VALUES (?, ?)";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$tourId, $serviceId]);
-            return true;
-        } catch (PDOException $e) {
-            die("Lỗi addService(): " . $e->getMessage());
-        }
+        $sql = "INSERT INTO booking_services 
+            (tour_id, service_id, quantity, current_price)
+            VALUES (?, ?, ?, ?)";
+
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            $tourId,
+            $serviceId,
+            $quantity,
+            $currentPrice
+        ]);
     }
 
     // Xóa toàn bộ dịch vụ của một booking
@@ -400,7 +388,7 @@ class BookingModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    
+
     public function removeCustomer($bookingId, $customerId)
     {
         try {

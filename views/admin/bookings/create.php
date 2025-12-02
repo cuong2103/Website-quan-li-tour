@@ -19,8 +19,6 @@ require_once './views/components/sidebar.php';
 
     <!-- FORM -->
     <form method="POST" action="<?= BASE_URL . '?act=booking-store' ?>" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        <!-- LEFT COLUMN (2/3) -->
         <div class="lg:col-span-3 space-y-6">
 
             <!-- Card: Thông tin Tour -->
@@ -236,7 +234,6 @@ require_once './views/components/sidebar.php';
 
     </form>
 
-    <!-- SCRIPT -->
     <script>
         // --- LOGIC TÍNH TIỀN ---
         const tourSelect = document.getElementById("tourSelect");
@@ -284,12 +281,9 @@ require_once './views/components/sidebar.php';
             totalAmountInput.value = grandTotal;
         }
 
-        // Event Listeners cho Tour & Pax
         [tourSelect, adultCount, childCount].forEach(el => {
             el.addEventListener("input", updatePrice);
         });
-
-        // Event Listeners cho Services
         // Cần lắng nghe change ở checkbox và input ở các trường giá/số lượng
         document.querySelectorAll('.service-checkbox').forEach(cb => {
             cb.addEventListener('change', function() {
@@ -307,7 +301,6 @@ require_once './views/components/sidebar.php';
         document.querySelectorAll('input[name^="service_prices"], input[name^="service_quantities"]').forEach(input => {
             input.addEventListener('input', updatePrice);
         });
-
 
         // --- LOGIC TÌM DỊCH VỤ ---
         const searchService = document.getElementById("searchService");
@@ -335,18 +328,6 @@ require_once './views/components/sidebar.php';
                 if (e.key === 'Enter') e.preventDefault();
             });
         });
-
-        // Toggle Service Inputs (This part is now integrated with updatePrice call)
-        // document.querySelectorAll('.service-checkbox').forEach(cb => {
-        //     cb.addEventListener('change', function() {
-        //         const inputsDiv = document.getElementById(`service-inputs-${this.dataset.id}`);
-        //         if (this.checked) {
-        //             inputsDiv.classList.remove('hidden');
-        //         } else {
-        //             inputsDiv.classList.add('hidden');
-        //         }
-        //     });
-        // });
     </script>
 
 </main>

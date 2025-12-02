@@ -52,7 +52,7 @@ class BookingController
     // Xửa lý tạo booking mới
     public function store()
     {
-        // validate dữ liệu
+        // ===== VALIDATE =====
         $rules = [
             'tour_id' => 'required',
             'start_date' => 'required',
@@ -60,14 +60,12 @@ class BookingController
             'adult_count' => 'required',
             'total_amount' => 'required',
             'status' => 'required',
-            // Validate representative info
             'rep_name' => 'required',
             'rep_phone' => 'required',
             'rep_email' => 'required|email'
         ];
 
         $errors = validate($_POST, $rules);
-
         if (!empty($errors)) {
             Message::set('errors', 'Vui lòng kiểm tra lại dữ liệu đã nhập.');
             $_SESSION['old'] = $_POST;
@@ -76,31 +74,23 @@ class BookingController
             exit;
         }
 
-        // Generate booking code: BK + timestamp
+        // ===== CREATE BOOKING =====
         $bookingCode = 'BK-' . time();
 
-        // Handle Representative Customer
-        $repName = $_POST['rep_name'];
-        $repEmail = $_POST['rep_email'];
-        $repPhone = $_POST['rep_phone'];
-        $repAddress = $_POST['rep_address'] ?? '';
-        $repGender = $_POST['rep_gender'] ?? 'other';
-        $repPassport = $_POST['rep_passport'] ?? '';
-
-        // Check if customer exists
-        $customer = $this->customerModel->findByEmailOrPhone($repEmail, $repPhone);
-
+        $customer = $this->customerModel->findByEmailOrPhone($_POST['rep_email'], $_POST['rep_phone']);
         if ($customer) {
             $customerId = $customer['id'];
-            // Optional: Update existing customer info if needed, but usually we respect existing data or ask user.
-            // For now, we use the existing ID.
         } else {
-            // Create new customer
-            $this->customerModel->create($repName, $repEmail, $repPhone, $repAddress, $_SESSION['currentUser']['id'], $repPassport, $repGender);
-            // Get the ID of the newly created customer. 
-            // Since create() returns boolean in the current model, we need to fetch it or update create() to return ID.
-            // Let's fetch it again to be sure.
-            $customer = $this->customerModel->findByEmailOrPhone($repEmail, $repPhone);
+            $this->customerModel->create(
+                $_POST['rep_name'],
+                $_POST['rep_email'],
+                $_POST['rep_phone'],
+                $_POST['rep_address'] ?? '',
+                $_SESSION['currentUser']['id'],
+                $_POST['rep_passport'] ?? '',
+                $_POST['rep_gender'] ?? 'other'
+            );
+            $customer = $this->customerModel->findByEmailOrPhone($_POST['rep_email'], $_POST['rep_phone']);
             $customerId = $customer['id'];
         }
 
@@ -114,9 +104,9 @@ class BookingController
             'total_amount' => $_POST['total_amount'],
             'deposit_amount' => $_POST['deposit_amount'] ?? 0,
             'remaining_amount' => $_POST['remaining_amount'] ?? 0,
-            'status' => $_POST['status'] ?? 1,
+            'status' => $_POST['status'],
             'special_requests' => $_POST['special_requests'] ?? null,
-            'customers' => [$customerId], // Initially only the representative
+            'customers' => [$customerId],
             'is_representative' => $customerId,
             'services' => $_POST['services'] ?? [],
             'created_by' => $_SESSION['currentUser']['id']
@@ -124,9 +114,46 @@ class BookingController
 
         $bookingId = $this->bookingModel->create($data);
 
-        // Thông báo nếu thành công
+        // xử lý lưu dịch vụ
+        if (!empty($_POST['services'])) {
+
+            foreach ($_POST['services'] as $serviceId) {
+
+                // Lấy giá và số lượng từ form
+                $currentPrice = $_POST['service_prices'][$serviceId] ?? 0;
+                $quantity   = $_POST['service_quantities'][$serviceId] ?? 1;
+
+                // Lưu vào DB qua model
+                $this->bookingModel->addService(
+                    $bookingId,
+                    $serviceId,
+                    $quantity,
+                    $currentPrice
+                );
+            }
+        }
+
+        // ===== DONE =====
         Message::set('success', 'Tạo booking thành công.');
         header("Location:" . BASE_URL . '?act=bookings');
+    }
+
+    // Hiển thị form chỉnh sửa booking
+    public function edit()
+    {
+        // lấy id booking
+        $id = $_GET['id'];
+
+
+        $booking = $this->bookingModel->getById($id);
+        $tours = $this->tourModel->getAll();
+        $customers = $this->customerModel->getAll();
+        $services = $this->serviceModel->getAll();
+
+        // Lấy danh sách dịch vụ đã chọn của booking
+        $selectedServices = $this->bookingModel->getServicesByBooking($id);
+
+        require_once './views/admin/bookings/edit.php';
     }
 
     // Cập nhật booking
@@ -180,35 +207,36 @@ class BookingController
             $this->bookingModel->addCustomer($id, $customerId, $isRep);
         }
 
+        // Xóa dịch vụ cũ
+        $this->bookingModel->deleteServices($id);
+
+        // Thêm lại dịch vụ mới
+        if (!empty($_POST['services'])) {
+            foreach ($_POST['services'] as $serviceId) {
+                // Lấy giá và số lượng từ form
+                $currentPrice = $_POST['service_prices'][$serviceId] ?? 0;
+                $quantity   = $_POST['service_quantities'][$serviceId] ?? 1;
+
+                // Lưu vào DB qua model
+                $this->bookingModel->addService(
+                    $id,
+                    $serviceId,
+                    $quantity,
+                    $currentPrice
+                );
+            }
+        }
+
         // Thông báo nếu thành công
         Message::set('success', 'Cập nhật booking thành công!');
         header("Location:" . BASE_URL . '?act=bookings');
     }
 
-    // Hiển thị form chỉnh sửa booking
-    public function edit()
-    {
-        // lấy id booking
-        $id = $_GET['id'];
-
-
-        $booking = $this->bookingModel->getById($id);
-        $tours = $this->tourModel->getAll();
-        $customers = $this->customerModel->getAll();
-        $services = $this->serviceModel->getAll();
-
-        // Lấy danh sách dịch vụ đã chọn của booking
-        $selectedServices = $this->bookingModel->getServicesByBooking($id);
-
-        require_once './views/admin/bookings/edit.php';
-    }
-
-
     // Xóa booking
     public function delete()
     {
         $id = $_GET['id'];
-        
+
         // Check if booking has payments
         $totalPaid = $this->bookingModel->getTotalPaid($id);
         if ($totalPaid > 0) {
@@ -260,10 +288,10 @@ class BookingController
     public function uploadCustomers()
     {
         $bookingId = $_POST['booking_id'];
-        
+
         if (isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
             $file = $_FILES['file']['tmp_name'];
-            
+
             // Check file extension
             $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
             if (!in_array(strtolower($ext), ['xlsx', 'xls'])) {
@@ -277,7 +305,7 @@ class BookingController
             if ($xlsx = \Shuchkin\SimpleXLSX::parse($file)) {
                 $count = 0;
                 $rows = $xlsx->rows();
-                
+
                 // Loop through rows (skip header)
                 foreach ($rows as $index => $row) {
                     if ($index == 0) continue; // Skip header row
@@ -294,7 +322,7 @@ class BookingController
 
                     // Check if customer exists
                     $customer = $this->customerModel->findByEmailOrPhone($email, $phone);
-                    
+
                     if ($customer) {
                         $customerId = $customer['id'];
                     } else {
@@ -307,7 +335,7 @@ class BookingController
                     // Add to booking
                     $existingCustomers = $this->bookingModel->getCustomers($bookingId);
                     $isAlreadyIn = false;
-                    foreach($existingCustomers as $ec) {
+                    foreach ($existingCustomers as $ec) {
                         if ($ec['id'] == $customerId) {
                             $isAlreadyIn = true;
                             break;
@@ -319,7 +347,7 @@ class BookingController
                         $count++;
                     }
                 }
-                
+
                 Message::set('success', "Đã thêm $count khách hàng từ file Excel.");
             } else {
                 Message::set('errors', 'Không thể đọc file Excel: ' . \Shuchkin\SimpleXLSX::parseError());
@@ -331,47 +359,48 @@ class BookingController
         header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=customers');
     }
 
-        // Xóa khách hàng khỏi booking
-        public function removeCustomer()
-        {
-            $bookingId = $_GET['booking_id'];
-            $customerId = $_GET['customer_id'];
-            
-            $this->bookingModel->removeCustomer($bookingId, $customerId);
-            
-            Message::set('success', 'Đã xóa khách hàng khỏi booking.');
-            header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=customers');
-        }
-    
-        // Hiển thị form thêm khách hàng vào booking
-        public function addCustomer()
-        {
-            $bookingId = $_GET['booking_id'];
-            $booking = $this->bookingModel->getById($bookingId);
-            
-            // Xử lý khi submit form
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $customerId = $_POST['customer_id'];
-                
-                // Check if already exists
-                $existing = $this->bookingModel->getCustomers($bookingId);
-                foreach($existing as $c) {
-                    if ($c['id'] == $customerId) {
-                        Message::set('errors', 'Khách hàng này đã có trong booking.');
-                        header("Location:" . BASE_URL . '?act=booking-add-customer&booking_id=' . $bookingId);
-                        exit;
-                    }
+    // Xóa khách hàng khỏi booking
+    public function removeCustomer()
+    {
+        $bookingId = $_GET['booking_id'];
+        $customerId = $_GET['customer_id'];
+
+        $this->bookingModel->removeCustomer($bookingId, $customerId);
+
+        Message::set('success', 'Đã xóa khách hàng khỏi booking.');
+        header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=customers');
+    }
+
+    // Hiển thị form thêm khách hàng vào booking
+    public function addCustomer()
+    {
+        $bookingId = $_GET['booking_id'];
+        $booking = $this->bookingModel->getById($bookingId);
+
+        // Xử lý khi submit form
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $customerId = $_POST['customer_id'];
+
+            // Check if already exists
+            $existing = $this->bookingModel->getCustomers($bookingId);
+            foreach ($existing as $c) {
+                if ($c['id'] == $customerId) {
+                    Message::set('errors', 'Khách hàng này đã có trong booking.');
+                    header("Location:" . BASE_URL . '?act=booking-add-customer&booking_id=' . $bookingId);
+                    exit;
                 }
-    
-                $this->bookingModel->addCustomer($bookingId, $customerId, 0);
-                Message::set('success', 'Đã thêm khách hàng vào booking.');
-                header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=customers');
-                exit;
             }
-    
-            // Lấy danh sách tất cả khách hàng để chọn
-            $customers = $this->customerModel->getAll();
-            
-            require_once './views/admin/bookings/add_customer.php';
+
+            $this->bookingModel->addCustomer($bookingId, $customerId, 0);
+            Message::set('success', 'Đã thêm khách hàng vào booking.');
+            header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=customers');
+            exit;
         }
+
+        // Lấy danh sách tất cả khách hàng để chọn
+        $customers = $this->customerModel->getAll();
+
+        require_once './views/admin/bookings/add_customer.php';
+    }
+
 }
