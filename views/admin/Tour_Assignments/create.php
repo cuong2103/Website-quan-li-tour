@@ -1,42 +1,49 @@
-<?php require_once './views/components/header.php'; ?>
-<?php require_once './views/components/sidebar.php'; ?>
+<?php
+require_once './views/components/header.php';
+require_once './views/components/sidebar.php';
+?>
 
-<main class="mt-28 px-6 pb-20">
+<main class="mt-28 px-6 pb-20 text-gray-700">
+    <div class="w-full mx-auto bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <h2 class="text-xl font-semibold mb-6 text-gray-800">Phân công Hướng dẫn viên</h2>
 
-    <h1 class="text-xl font-semibold mb-6 flex items-center gap-2">
-        <i data-lucide="plus"></i> Tạo phân công hướng dẫn viên
-    </h1>
-
-    <form action="<?= BASE_URL ?>?act=tour-assignment-store" method="POST"
-          class="bg-white p-6 rounded-xl shadow space-y-4">
-
-        <div>
-            <label class="font-medium">Booking</label>
-            <select name="booking_id" class="w-full p-3 border rounded-lg">
-                <?php foreach ($bookings as $b): ?>
-                <option value="<?= $b['id'] ?>">#<?= $b['id'] ?> - <?= $b['tour_name'] ?></option>
-                <?php endforeach; ?>
-            </select>
+        <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+            <p class="text-sm text-blue-800 font-medium">Booking: <?= $booking['booking_code'] ?></p>
+            <p class="text-sm text-blue-600">Tour: <?= $booking['tour_name'] ?></p>
+            <p class="text-sm text-blue-600">Ngày đi: <?= date('d/m/Y', strtotime($booking['start_date'])) ?></p>
         </div>
 
-        <div>
-            <label class="font-medium">Hướng dẫn viên</label>
-            <select name="guide_id" class="w-full p-3 border rounded-lg">
-            <option value="">Chưa phân công</option>
-                <?php foreach ($guides as $g): ?>
-                <option value="<?= $g['id'] ?>"><?= $g['fullname'] ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+        <form action="<?= BASE_URL ?>?act=tour-assignment-store" method="POST">
+            <input type="hidden" name="booking_id" value="<?= $booking['id'] ?>">
 
-        <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center gap-2">
-            <i data-lucide="save"></i> Lưu phân công
-        </button>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Chọn Hướng dẫn viên</label>
+                <select name="guide_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <option value="">-- Chọn HDV --</option>
+                    <?php foreach ($guides as $g): ?>
+                        <option value="<?= $g['id'] ?>" <?= !empty($assignment) && $assignment['guide_id'] == $g['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($g['fullname']) ?> - <?= htmlspecialchars($g['phone']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-    </form>
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="1" <?= !empty($assignment) && $assignment['status'] == 1 ? 'selected' : '' ?>>Hoạt động</option>
+                    <option value="0" <?= !empty($assignment) && $assignment['status'] == 0 ? 'selected' : '' ?>>Tạm ngưng</option>
+                </select>
+            </div>
 
+            <div class="flex items-center justify-end gap-3">
+                <a href="<?= BASE_URL ?>?act=bookings" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-sm font-medium">Hủy</a>
+                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium">
+                    Lưu phân công
+                </button>
+            </div>
+        </form>
+    </div>
 </main>
 
-<?php
-require_once './views/components/footer.php';
-?>
+<?php require_once './views/components/footer.php'; ?>

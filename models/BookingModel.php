@@ -12,9 +12,11 @@ class BookingModel
     public function getAll()
     {
         try {
-            $sql = "SELECT b.*, t.name AS tour_name
+            $sql = "SELECT b.*, t.name AS tour_name, u.fullname as guide_name
                 FROM bookings b
                 LEFT JOIN tours t ON t.id = b.tour_id
+                LEFT JOIN tour_assignments ta ON ta.booking_id = b.id
+                LEFT JOIN users u ON u.id = ta.guide_id
                 ORDER BY b.id DESC";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();

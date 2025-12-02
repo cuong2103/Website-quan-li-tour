@@ -57,6 +57,7 @@ function renderStatusBadge($status)
                     <th class="py-5">Số lượng</th>
                     <th class="py-5">Tổng tiền</th>
                     <th class="py-5">Trạng thái</th>
+                    <th class="py-5">HDV</th>
                     <th class="py-5">Hành động</th>
                 </tr>
             </thead>
@@ -70,19 +71,37 @@ function renderStatusBadge($status)
                             <td class="py-5"><?= $b['end_date'] ?></td>
                             <td class="py-5"><?= $b['adult_count'] ?> NL, <?= $b['child_count'] ?> TE</td>
                             <td class="py-5"><?= number_format($b['total_amount']) ?>đ</td>
+
                             <td class="py-5"><?= renderStatusBadge($b['status']); ?></td>
+                            <td class="py-5">
+                                <?php if (!empty($b['guide_name'])): ?>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-50 border border-purple-100">
+                                            <i class="w-3.5 h-3.5 text-purple-600" data-lucide="user"></i>
+                                            <span class="text-sm font-medium text-purple-700"><?= htmlspecialchars($b['guide_name']) ?></span>
+                                        </div>
+                                        <a href="<?= BASE_URL ?>?act=tour-assignment-edit&booking_id=<?= $b['id'] ?>"
+                                            class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                                            title="Chỉnh sửa phân công">
+                                            <i class="w-4 h-4" data-lucide="edit-3"></i>
+                                        </a>
+                                    </div>
+                                <?php else: ?>
+                                    <a href="<?= BASE_URL . '?act=tour-assignment-create&booking_id=' . $b['id'] ?>"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200">
+                                        <i class="w-4 h-4" data-lucide="plus-circle"></i>
+                                        <span>Phân công</span>
+                                    </a>
+                                <?php endif; ?>
+                            </td>
                             <td class="py-5">
                                 <div class="flex gap-0 flex-shrink-0">
                                     <a href="<?= BASE_URL . '?act=booking-edit&id=' . $b['id']  ?>" class="inline-flex items-center justify-center  disabled:opacity-50 gap-1.5 px-1 "><i class="w-4 h-4" data-lucide="square-pen"></i></a>
                                     <a href="<?= BASE_URL . '?act=booking-detail&id=' . $b['id']  ?>"
-
                                         class="inline-flex items-center justify-center gap-1.5 px-1 has-[>svg]:px-2.5">
-
                                         <!-- Icon con mắt -->
                                         <i class="w-4 h-4" data-lucide="eye"></i>
-
                                     </a>
-
                                     <a href="<?= BASE_URL . '?act=booking-delete&id=' . $b['id']  ?>" onclick="return confirm('Bạn có chắc muốn xoá không?')" class="inline-flex items-center justify-center gap-1.5 px-1 has-[&gt;svg]:px-2.5"><span class="text-red-600"><i class="w-4 h-4" data-lucide="trash-2"></i></span></a>
                                 </div>
                             </td>
@@ -90,7 +109,7 @@ function renderStatusBadge($status)
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="6" class="py-4 text-center">Chưa có booking</td>
+                        <td colspan="8" class="py-4 text-center">Chưa có booking</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
@@ -103,13 +122,15 @@ function renderStatusBadge($status)
     let timer;
     const form = document.querySelector("form");
 
-    document.querySelectorAll("form input, form select").forEach(element => {
-        element.addEventListener("input", () => {
-            console.log("1");
-            clearTimeout(timer);
-            timer = setTimeout(() => form.submit(), 600);
+    if (form) {
+        document.querySelectorAll("form input, form select").forEach(element => {
+            element.addEventListener("input", () => {
+                console.log("1");
+                clearTimeout(timer);
+                timer = setTimeout(() => form.submit(), 600);
+            });
         });
-    });
+    }
 </script>
 <?php
 require_once './views/components/footer.php';

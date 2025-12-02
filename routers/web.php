@@ -139,7 +139,7 @@ match ($act) {
   'policies-detail' => (new PolicyController())->detail(),
 
   // Tour_Assignments
-  'tour-assignments' => (new TourAssignmentController())->index(),
+  // 'tour-assignments' => (new TourAssignmentController())->index(),
   'tour-assignment-create' => (new TourAssignmentController())->create(),
   'tour-assignment-store' => (new TourAssignmentController())->store(),
   'tour-assignment-edit' => (new TourAssignmentController())->edit(),

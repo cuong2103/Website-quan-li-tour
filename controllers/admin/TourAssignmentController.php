@@ -1,109 +1,138 @@
 <?php
 class TourAssignmentController
 {
-    public $model;
+    /** @var TourAssignmentModel */
+    public $tourAssignmentModel;
+    /** @var BookingModel */
     public $bookingModel;
+    /** @var UserModel */
     public $guideModel;
 
     public function __construct()
     {
         requireAdmin();
-        $this->model = new TourAssignmentModel();
-        $this->bookingModel = new BookingModel();
-        $this->guideModel = new UserModel();
+        $this->tourAssignmentModel = new TourAssignmentModel();
+        $this->bookingModel        = new BookingModel();
+        $this->guideModel          = new UserModel();
     }
 
-    // =============================
-    //  Danh sách phân công
-    // =============================
+    // -------------------------------------------------
+    // List all assignments
+    // -------------------------------------------------
     public function index()
     {
-        $assignments = $this->model->getAll();
-
-        require_once './views/admin/tour_assignments/index.php';
+        $assignments = $this->tourAssignmentModel->getAll();
+        require_once './views/admin/Tour_Assignments/index.php';
     }
 
-    // =============================
-    //  Form tạo phân công
-    // =============================
+    // -------------------------------------------------
+    // Show form to create assignment for a specific booking
+    // -------------------------------------------------
     public function create()
     {
-        // Booking chưa được phân công
-        $bookings = $this->bookingModel->getBookingsWithoutGuide();
-
-        // Hướng dẫn viên
-        $guides = $this->model->getAllGuides();
-
-        require_once './views/admin/tour_assignments/create.php';
+        $bookingId = $_GET['booking_id'] ?? null;
+        if (!$bookingId) {
+            Message::set('errors', 'Không tìm thấy Booking ID');
+            header('Location: ' . BASE_URL . '?act=bookings');
+            exit;
+        }
+        $booking = $this->bookingModel->getById($bookingId);
+        if (!$booking) {
+            Message::set('errors', 'Booking không tồn tại');
+            header('Location: ' . BASE_URL . '?act=bookings');
+            exit;
+        }
+        
+        // Lọc HDV trống lịch
+        $guides = $this->tourAssignmentModel->getAvailableGuides($booking['start_date'], $booking['end_date']);
+        
+        // If an assignment already exists for this booking, load it for editing
+        $assignment = $this->tourAssignmentModel->findByBookingId($bookingId);
+        require_once './views/admin/Tour_Assignments/create.php';
     }
 
-    // =============================
-    //  Lưu phân công mới
-    // =============================
+    // -------------------------------------------------
+    // Store new assignment or update existing one
+    // -------------------------------------------------
     public function store()
     {
         $booking_id = $_POST['booking_id'];
         $guide_id   = ($_POST['guide_id'] == "") ? null : $_POST['guide_id'];
+        $status     = $_POST['status'] ?? 1;
         $created_by = $_SESSION['user_id'] ?? 1;
 
-        $this->model->store($booking_id, $guide_id, $created_by);
-
-        header("Location: " . BASE_URL . "?act=tour-assignments");
-        exit();
+        $existing = $this->tourAssignmentModel->getByBookingId($booking_id);
+        if ($existing) {
+            // Update existing assignment
+            $this->tourAssignmentModel->updateAssignment($existing['id'], [
+                'guide_id' => $guide_id,
+                'status'   => $status
+            ]);
+            Message::set('success', 'Cập nhật phân công thành công');
+        } else {
+            // Create new assignment
+            $this->tourAssignmentModel->store($booking_id, $guide_id, $created_by);
+            Message::set('success', 'Tạo phân công mới thành công');
+        }
+        header('Location: ' . BASE_URL . '?act=bookings');
+        exit;
     }
 
-    // =============================
-    //  Form sửa phân công
-    // =============================
+    // -------------------------------------------------
+    // Show edit form for an assignment (by assignment ID)
+    // -------------------------------------------------
     public function edit()
     {
-        $id = $_GET['id'];
+        $id = $_GET['id'] ?? null;
+        $bookingId = $_GET['booking_id'] ?? null;
+        
+        $assignment = null;
 
-        // Lấy phân công hiện tại
-        $assignment = $this->model->find($id);
+        if ($id) {
+            $assignment = $this->tourAssignmentModel->find($id);
+        } elseif ($bookingId) {
+            $assignment = $this->tourAssignmentModel->findByBookingId($bookingId);
+        }
+
         if (!$assignment) {
-            die("Không tìm thấy phân công tour");
+            Message::set('errors', 'Phân công không tồn tại');
+            header('Location: ' . BASE_URL . '?act=tour-assignments');
+            exit;
         }
-
-        // Lấy booking tương ứng (đã có tour_name do join)
+        
         $booking = $this->bookingModel->getById($assignment['booking_id']);
-        if (!$booking) {
-            die("Không tìm thấy booking");
-        }
-
-        // Gán tour_name vào assignment để view dùng
-        $assignment['tour_name'] = $booking['tour_name'] ?? 'Không có tên tour';
-
-        // Danh sách HDV
-        $guides = $this->model->getAllGuides();
-
-
-        require_once './views/admin/tour_assignments/edit.php';
+        
+        // Lọc HDV trống lịch (trừ chính booking này ra)
+        $guides = $this->tourAssignmentModel->getAvailableGuides($booking['start_date'], $booking['end_date'], $assignment['booking_id']);
+        
+        require_once './views/admin/Tour_Assignments/edit.php';
     }
 
-    // =============================
-    //  Cập nhật phân công
-    // =============================
+    // -------------------------------------------------
+    // Update assignment (only guide change)
+    // -------------------------------------------------
     public function update()
     {
-        $id        = $_POST['id'];
-        $guide_id  = ($_POST['guide_id'] == "") ? null : $_POST['guide_id'];
-
-        $this->model->update($id, $guide_id);
-
-        header("Location: " . BASE_URL . "?act=tour-assignments");
-        exit();
+        $id       = $_POST['id'];
+        $guide_id = ($_POST['guide_id'] == "") ? null : $_POST['guide_id'];
+        $this->tourAssignmentModel->updateGuide($id, $guide_id);
+        Message::set('success', 'Cập nhật phân công thành công');
+        header('Location: ' . BASE_URL . '?act=tour-assignments');
+        exit;
     }
 
-    // =============================
-    //  Xóa phân công
-    // =============================
+    // -------------------------------------------------
+    // Delete assignment
+    // -------------------------------------------------
     public function delete()
     {
-        $id = $_GET['id'];
-        $this->model->delete($id);
-
-        header("Location: " . BASE_URL . "?act=tour-assignments");
-        exit();
+        $id = $_GET['id'] ?? null;
+        if ($id) {
+            $this->tourAssignmentModel->delete($id);
+            Message::set('success', 'Xóa phân công thành công');
+        }
+        header('Location: ' . BASE_URL . '?act=tour-assignments');
+        exit;
     }
 }
+?>
