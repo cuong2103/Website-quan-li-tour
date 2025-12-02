@@ -12,14 +12,18 @@ class CheckinModel
   public function getCustomersByAssignment($assignmentId)
   {
     try {
-      $sql = "SELECT c.*, bc.is_representative,
+      $sql = "SELECT c.*, bc.is_representative, bc.room,
                     (SELECT COUNT(*) FROM customer_checkins 
                      WHERE customer_id = c.id 
                      AND tour_assignment_id = :assignment_id) as checkin_count,
                     (SELECT id FROM customer_checkins 
                      WHERE customer_id = c.id 
                      AND tour_assignment_id = :assignment_id 
-                     ORDER BY checkin_time DESC LIMIT 1) as latest_checkin_id
+                     ORDER BY checkin_time DESC LIMIT 1) as latest_checkin_id,
+                    (SELECT checkin_time FROM customer_checkins 
+                     WHERE customer_id = c.id 
+                     AND tour_assignment_id = :assignment_id 
+                     ORDER BY checkin_time DESC LIMIT 1) as latest_checkin_time
                     FROM booking_customers bc
                     JOIN customers c ON bc.customer_id = c.id
                     JOIN tour_assignments ta ON ta.booking_id = bc.booking_id
@@ -58,18 +62,15 @@ class CheckinModel
   {
     try {
       $sql = "INSERT INTO customer_checkins 
-                    (tour_assignment_id, customer_id, notes, image_url, 
-                     checkin_time, location, created_by, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+                    (tour_assignment_id, customer_id, 
+                     checkin_time, created_by, created_at)
+                    VALUES (?, ?, ?, ?, NOW())";
 
       $stmt = $this->conn->prepare($sql);
       return $stmt->execute([
         $data['tour_assignment_id'],
         $data['customer_id'],
-        $data['notes'] ?? null,
-        $data['image_url'] ?? null,
         $data['checkin_time'] ?? date('Y-m-d H:i:s'),
-        $data['location'] ?? null,
         $data['created_by']
       ]);
     } catch (PDOException $e) {
@@ -154,6 +155,18 @@ class CheckinModel
       return $stmt->fetch(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
       die("Lỗi getCheckinStats(): " . $e->getMessage());
+    }
+  }
+
+  // Cập nhật số phòng
+  public function updateRoom($customerId, $bookingId, $room)
+  {
+    try {
+      $sql = "UPDATE booking_customers SET room = ? WHERE customer_id = ? AND booking_id = ?";
+      $stmt = $this->conn->prepare($sql);
+      return $stmt->execute([$room, $customerId, $bookingId]);
+    } catch (PDOException $e) {
+      die("Lỗi updateRoom(): " . $e->getMessage());
     }
   }
 }

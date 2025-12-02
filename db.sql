@@ -145,14 +145,13 @@ CREATE TABLE `itineraries` (
 
 CREATE TABLE `policies` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
-  `name` varchar(255),
+  `title` varchar(255),
   `content` text,
   `created_by` int,
   `updated_by` int,
   `created_at` timestamp DEFAULT (now()),
   `updated_at` timestamp
 );
---name title
 
 CREATE TABLE `tour_policies` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
@@ -192,7 +191,7 @@ CREATE TABLE `bookings` (
   `remaining_amount` decimal(12,0),
   `start_date` date,
   `end_date` date,
-  `status` tinyint DEFAULT 1,
+  `status` tinyint DEFAULT 1, -- 1: chưa thanh toán 2: đã cọc 3: đã thanh toán
   `special_requests` text,
   `created_by` int,
   `updated_by` int,
@@ -206,6 +205,7 @@ CREATE TABLE `booking_customers` (
   `customer_id` int,
   `is_representative` boolean DEFAULT false,
   `notes` text,
+  `room_number` varchar(20),
   `created_by` int,
   `updated_by` int,
   `created_at` timestamp DEFAULT (now()),
@@ -258,10 +258,7 @@ CREATE TABLE `customer_checkins` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `tour_assignment_id` int,
   `customer_id` int,
-  `notes` text,
-  `image_url` varchar(500),
   `checkin_time` timestamp,
-  `location` varchar(255),
   `created_by` int,
   `updated_by` int,
   `created_at` timestamp DEFAULT (now()),

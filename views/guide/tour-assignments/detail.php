@@ -4,6 +4,7 @@ require './views/components/sidebar.php';
 
 $tabs = [
     'customers' => ['label' => 'Danh sách khách hàng', 'icon' => 'users'],
+    'checkin'   => ['label' => 'Check-in & Nhật ký', 'icon' => 'check-circle'],
     'itinerary' => ['label' => 'Lịch trình chi tiết', 'icon' => 'map'],
     'info'      => ['label' => 'Thông tin & Yêu cầu', 'icon' => 'info'],
     'services'  => ['label' => 'Dịch vụ kèm theo', 'icon' => 'package']
@@ -90,6 +91,88 @@ $tabs = [
         </div>
     <?php endif; ?>
 
+    <!-- tab checkin -->
+    <?php if ($tab === 'checkin'): ?>
+        <div class="bg-white border shadow rounded-xl p-5">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-semibold text-lg">Danh sách Check-in</h3>
+                <div class="flex gap-2">
+                    <a href="<?= BASE_URL . '?act=journal-create&tour_assignment_id=' . $assignment['id'] ?>"
+                        class="bg-orange-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-orange-700 flex items-center gap-2">
+                        <i data-lucide="pen-tool" class="w-4 h-4"></i>
+                        Viết nhật ký
+                    </a>
+                    <a href="<?= BASE_URL . '?act=guide-tour-assignments-export-checkin&id=' . $assignment['id'] ?>"
+                        class="bg-green-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-700 flex items-center gap-2">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                        Tải Excel Xếp phòng
+                    </a>
+                </div>
+            </div>
+
+            <table class="w-full text-sm">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="p-3 text-left">STT</th>
+                        <th class="p-3 text-left">Tên khách hàng</th>
+                        <th class="p-3 text-left">Số điện thoại</th>
+                        <th class="p-3 text-left">Trạng thái</th>
+                        <th class="p-3 text-left">Thời gian</th>
+                        <th class="p-3 text-left">Phòng</th>
+                        <th class="p-3 text-left">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($customers)): ?>
+                        <?php foreach ($customers as $i => $c): ?>
+                            <tr class="border-t">
+                                <td class="p-3"><?= $i + 1 ?></td>
+                                <td class="p-3 font-medium"><?= htmlspecialchars($c['name']) ?></td>
+                                <td class="p-3"><?= htmlspecialchars($c['phone']) ?></td>
+                                <td class="p-3">
+                                    <?php if ($c['checkin_count'] > 0): ?>
+                                        <span class="text-green-600 font-medium flex items-center gap-1">
+                                            <i data-lucide="check" class="w-3 h-3"></i> Đã check-in
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="text-gray-400">Chưa check-in</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="p-3 text-gray-600">
+                                    <?= !empty($c['latest_checkin_time']) ? date('H:i d/m', strtotime($c['latest_checkin_time'])) : '-' ?>
+                                </td>
+                                <td class="p-3 text-gray-600"><?= htmlspecialchars($c['room'] ?? '-') ?></td>
+                                <td class="p-3">
+                                    <?php if ($c['checkin_count'] == 0): ?>
+                                        <form action="<?= BASE_URL . '?act=guide-tour-assignments-checkin' ?>" method="POST">
+                                            <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
+                                            <input type="hidden" name="customer_id" value="<?= $c['id'] ?>">
+                                            <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700">
+                                                Check-in
+                                            </button>
+                                        </form>
+                                    <?php else: ?>
+                                        <form action="<?= BASE_URL . '?act=guide-tour-assignments-checkin-destroy' ?>" method="POST">
+                                            <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
+                                            <input type="hidden" name="checkin_id" value="<?= $c['latest_checkin_id'] ?>">
+                                            <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700">
+                                                Hủy
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="8" class="p-4 text-center text-gray-500">Chưa có khách hàng.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+
     <!-- tab itinerary -->
     <?php if ($tab === 'itinerary'): ?>
         <div class="bg-white border shadow rounded-xl p-5">
@@ -142,4 +225,40 @@ $tabs = [
 
 </main>
 
+<!-- Modal Upload Excel -->
+<div id="uploadRoomModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+    <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+        <h3 class="text-lg font-semibold mb-4">Upload danh sách xếp phòng</h3>
+        <form action="<?= BASE_URL . '?act=guide-tour-assignments-import-room' ?>" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Chọn file Excel (.xlsx, .xls)</label>
+                <input type="file" name="file" accept=".xlsx, .xls" required
+                    class="w-full border rounded-lg p-2">
+                <p class="text-xs text-gray-500 mt-1">File cần có cột: Tên khách hàng, Số điện thoại (để khớp), Phòng (cột I hoặc cột 9).</p>
+            </div>
+
+            <div class="flex gap-3 justify-end">
+                <button type="button" onclick="document.getElementById('uploadRoomModal').classList.add('hidden')"
+                    class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm">
+                    Hủy
+                </button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm">
+                    Upload
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+        let scrollpos = sessionStorage.getItem('checkin_scroll_pos');
+        if (scrollpos) window.scrollTo(0, scrollpos);
+    });
+
+    window.onbeforeunload = function(e) {
+        sessionStorage.setItem('checkin_scroll_pos', window.scrollY);
+    };
+</script>
 <?php require './views/components/footer.php'; ?>
