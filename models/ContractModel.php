@@ -51,6 +51,7 @@ class ContractModel
         try {
             $sql = "SELECT cc.*, 
                            b.id AS booking_id,
+                           b.booking_code,
                            c.name AS customer_name,
                            c.email AS customer_email,
                            c.phone AS customer_phone
@@ -143,6 +144,20 @@ class ContractModel
             return $stmt->execute([$id]);
         } catch (PDOException $e) {
             die("Lỗi ContractModel::delete(): " . $e->getMessage());
+        }
+    }
+
+    // Tự động cập nhật trạng thái các hợp đồng hết hạn
+    public function autoUpdateStatus()
+    {
+        try {
+            $sql = "UPDATE customer_contracts 
+                    SET status = 'expired' 
+                    WHERE status = 'active' AND expiry_date < CURDATE()";
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            die("Lỗi autoUpdateStatus: " . $e->getMessage());
         }
     }
 }

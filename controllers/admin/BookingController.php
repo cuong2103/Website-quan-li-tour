@@ -44,6 +44,14 @@ class BookingController
         // Các dữ liệu khác
         $tours = $this->tourModel->getAll();
         $customers = $this->customerModel->getAll();
+        
+        // Xử lý khi chọn tour (PHP Logic)
+        $selectedTour = null;
+        $selectedTourServices = [];
+        if (isset($_GET['tour_id']) && $_GET['tour_id']) {
+            $selectedTour = $this->tourModel->getById($_GET['tour_id']);
+            $selectedTourServices = $this->tourModel->getServicesByTourId($_GET['tour_id']);
+        }
 
         require_once './views/admin/bookings/create.php';
     }
@@ -259,6 +267,10 @@ class BookingController
     public function detail()
     {
         $id = $_GET['id'];
+
+        // Tự động cập nhật trạng thái hợp đồng
+        $this->contractModel->autoUpdateStatus();
+
         $tab = $_GET['tab'] ?? 'customers';
         $booking = $this->bookingModel->getById($id);
         $customers = $this->bookingModel->getCustomers($id);
@@ -279,11 +291,11 @@ class BookingController
         $totalAmount = $booking['total_amount'];
 
         if ($totalPaid >= $totalAmount) {
-            $this->bookingModel->updateStatus($bookingId, 'thanh toán đủ'); // 
+            $this->bookingModel->updateStatus($bookingId, 3); // Đã thanh toán đủ
         } elseif ($totalPaid > 0) {
-            $this->bookingModel->updateStatus($bookingId, 'thanh toán 1 phần'); // 
+            $this->bookingModel->updateStatus($bookingId, 2); // Đã cọc
         } else {
-            $this->bookingModel->updateStatus($bookingId, 'chưa thanh toán'); // 
+            $this->bookingModel->updateStatus($bookingId, 1); // Chưa thanh toán
         }
     }
 

@@ -22,8 +22,8 @@
         </div>
 
         <div>
-            <p class="font-semibold">Booking:</p>
-            <p><?= $contract['booking_id'] ?></p>
+            <p class="font-semibold">Mã Booking:</p>
+            <p class="font-bold text-blue-600"><?= $contract['booking_code'] ?? 'N/A' ?></p>
         </div>
 
         <div>
@@ -34,12 +34,6 @@
         <div>
             <p class="font-semibold">Khách hàng ký:</p>
             <p><?= htmlspecialchars($contract['customer_name'] ?? 'Không xác định') ?></p>
-        </div>
-
-
-        <div>
-            <p class="font-semibold">Ngày ký:</p>
-            <p><?= !empty($contract['signing_date']) ? date('Y-m-d', strtotime($contract['signing_date'])) : '' ?></p>
         </div>
 
         <div>
@@ -54,16 +48,10 @@
 
 
         <div>
-            <p class="font-semibold">Trạng thái:</p>
+            <p class="font-semibold mb-1">Trạng thái:</p>
             <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded">
                 <?= $contract['status'] ?>
             </span>
-        </div>
-
-
-        <div class="col-span-2">
-            <p class="font-semibold">Ghi chú:</p>
-            <p><?= $contract['notes'] ?: 'Không có' ?></p>
         </div>
 
         <div class="col-span-2">

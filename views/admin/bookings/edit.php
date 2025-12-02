@@ -95,7 +95,7 @@ require_once './views/components/sidebar.php';
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
-                    
+
                     <div>
                         <label class="block mb-1.5 text-sm font-medium text-gray-700">Người đại diện <span class="text-red-500">*</span></label>
                         <select name="is_representative" id="representative"
@@ -126,18 +126,18 @@ require_once './views/components/sidebar.php';
                 <div id="serviceList" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto">
                     <?php foreach ($services as $sv): ?>
                         <?php
-                            $isSelected = false;
-                            $currentPrice = $sv['estimated_price'];
-                            $currentQuantity = 1;
+                        $isSelected = false;
+                        $currentPrice = $sv['estimated_price'];
+                        $currentQuantity = 1;
 
-                            foreach ($selectedServices as $ss) {
-                                if ($ss['id'] == $sv['id']) {
-                                    $isSelected = true;
-                                    $currentPrice = $ss['current_price'];
-                                    $currentQuantity = $ss['quantity'];
-                                    break;
-                                }
+                        foreach ($selectedServices as $ss) {
+                            if ($ss['id'] == $sv['id']) {
+                                $isSelected = true;
+                                $currentPrice = $ss['current_price'];
+                                $currentQuantity = $ss['quantity'];
+                                break;
                             }
+                        }
                         ?>
                         <div class="service-item p-3 border border-gray-200 rounded-lg hover:bg-purple-50 transition">
                             <label class="flex items-center gap-3 cursor-pointer mb-2">
@@ -194,13 +194,13 @@ require_once './views/components/sidebar.php';
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Người lớn</label>
-                            <input type="number" id="adultCount" name="adult_count" 
+                            <input type="number" id="adultCount" name="adult_count"
                                 value="<?= $booking['adult_count'] ?>" min="1"
                                 class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 outline-none transition text-center font-medium">
                         </div>
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Trẻ em</label>
-                            <input type="number" id="childCount" name="child_count" 
+                            <input type="number" id="childCount" name="child_count"
                                 value="<?= $booking['child_count'] ?>" min="0"
                                 class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 outline-none transition text-center font-medium">
                         </div>
@@ -224,30 +224,13 @@ require_once './views/components/sidebar.php';
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block mb-1.5 text-sm font-medium text-gray-700">Đã cọc</label>
-                            <input type="number" name="deposit_amount" id="depositAmount"
-                                value="<?= $booking['deposit_amount'] ?>"
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 outline-none transition">
-                        </div>
-                        <div>
-                            <label class="block mb-1.5 text-sm font-medium text-gray-700">Còn lại</label>
-                            <input type="text" id="remainingAmountDisplay" readonly
-                                class="w-full bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 text-gray-600 font-medium outline-none">
-                            <input type="hidden" name="remaining_amount" id="remainingAmountInput" value="<?= $booking['remaining_amount'] ?>">
-                        </div>
-                    </div>
-
                     <div>
                         <label class="block mb-1.5 text-sm font-medium text-gray-700">Trạng thái</label>
                         <select name="status"
                             class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition">
-                            <option value="1" <?= $booking['status'] == 1 ? 'selected' : '' ?>>Chờ thanh toán</option>
-                            <option value="2" <?= $booking['status'] == 2 ? 'selected' : '' ?>>Đã cọc</option>
-                            <option value="3" <?= $booking['status'] == 3 ? 'selected' : '' ?>>Đã thanh toán đủ</option>
-                            <option value="4" <?= $booking['status'] == 4 ? 'selected' : '' ?>>Đã hủy</option>
-                            <option value="5" <?= $booking['status'] == 5 ? 'selected' : '' ?>>Hoàn thành</option>
+                            <option value="1">Chờ thanh toán</option>
+                            <option value="2">Đã cọc</option>
+                            <option value="3">Đã thanh toán đủ</option>
                         </select>
                     </div>
 
@@ -271,9 +254,6 @@ require_once './views/components/sidebar.php';
         const totalAmountDisplay = document.getElementById("totalAmountDisplay");
         const totalAmountInput = document.getElementById("totalAmountInput");
         const totalServicePriceDisplay = document.getElementById("totalServicePriceDisplay");
-        const depositAmount = document.getElementById("depositAmount");
-        const remainingAmountDisplay = document.getElementById("remainingAmountDisplay");
-        const remainingAmountInput = document.getElementById("remainingAmountInput");
 
         function formatCurrency(amount) {
             return new Intl.NumberFormat('vi-VN').format(amount);
@@ -297,30 +277,24 @@ require_once './views/components/sidebar.php';
                 const id = cb.dataset.id;
                 const priceInput = document.querySelector(`input[name="service_prices[${id}]"]`);
                 const qtyInput = document.querySelector(`input[name="service_quantities[${id}]"]`);
-                
+
                 const price = Number(priceInput.value) || 0;
                 const qty = Number(qtyInput.value) || 1;
-                
+
                 serviceTotal += price * qty;
             });
 
             // 3. Tổng cộng
             const grandTotal = tourTotal + serviceTotal;
 
-            // 4. Tính còn lại
-            const deposit = Number(depositAmount.value) || 0;
-            const remaining = grandTotal - deposit;
-
             // Update UI
             totalServicePriceDisplay.value = formatCurrency(serviceTotal);
             totalAmountDisplay.value = formatCurrency(grandTotal);
             totalAmountInput.value = grandTotal;
-            
-            remainingAmountDisplay.value = formatCurrency(remaining > 0 ? remaining : 0);
-            remainingAmountInput.value = remaining > 0 ? remaining : 0;
         }
-        [tourSelect, adultCount, childCount, depositAmount].forEach(el => {
-            el.addEventListener("input", updatePrice);
+
+        [tourSelect, adultCount, childCount].forEach(el => {
+            if (el) el.addEventListener("input", updatePrice);
         });
 
         // Event Listeners cho Services
@@ -332,7 +306,7 @@ require_once './views/components/sidebar.php';
                 } else {
                     inputsDiv.classList.add('hidden');
                 }
-                updatePrice(); 
+                updatePrice();
             });
         });
 
@@ -382,7 +356,7 @@ require_once './views/components/sidebar.php';
                     let name = nameContainer ? nameContainer.innerText : "Khách hàng";
                     rep.innerHTML += `<option value="${c.value}">${name}</option>`;
                 });
-                
+
                 if ([...checked].some(c => c.value == currentRep)) {
                     rep.value = currentRep;
                 } else if (checked.length === 1) {

@@ -23,28 +23,20 @@
             <input type="text" name="contract_name" value="<?= $contract['contract_name'] ?>" required class="border p-2 w-full rounded">
         </div>
 
-        <div class="grid grid-cols-3 gap-4">
-            <div class="mb-4">
-                <label for="signing_date" class="block text-sm font-medium text-gray-700">Ngày ký</label>
-                <input type="date" id="signing_date" name="signing_date"
-                    value="<?= !empty($contract['signing_date']) ? date('Y-m-d', strtotime($contract['signing_date'])) : '' ?>"
-                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-            </div>
-
+        <div class="grid grid-cols-2 gap-4">
             <div class="mb-4">
                 <label for="effective_date" class="block text-sm font-medium text-gray-700">Ngày hiệu lực</label>
                 <input type="date" id="effective_date" name="effective_date"
                     value="<?= !empty($contract['effective_date']) ? date('Y-m-d', strtotime($contract['effective_date'])) : '' ?>"
-                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    class="border p-2 w-full rounded" readonly>
             </div>
 
             <div class="mb-4">
                 <label for="expiry_date" class="block text-sm font-medium text-gray-700">Ngày hết hạn</label>
                 <input type="date" id="expiry_date" name="expiry_date"
                     value="<?= !empty($contract['expiry_date']) ? date('Y-m-d', strtotime($contract['expiry_date'])) : '' ?>"
-                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    class="border p-2 w-full rounded" readonly>
             </div>
-
         </div>
 
         <div>
@@ -61,7 +53,9 @@
             <select name="customer_id" class="border p-2 w-full rounded" required>
                 <option value="">-- Chọn khách hàng --</option>
                 <?php foreach ($bookingCustomers as $c): ?>
-                    <option value="<?= $c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+                    <option value="<?= $c['id'] ?>" <?= ($contract['customer_id'] == $c['id']) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($c['name']) ?>
+                    </option>
                 <?php endforeach; ?>
             </select>
         </div>
@@ -91,11 +85,6 @@
             </select>
         </div>
 
-        <div>
-            <label class="block text-sm mb-1">Ghi chú</label>
-            <textarea name="notes" class="border p-2 w-full rounded"><?= $contract['notes'] ?></textarea>
-        </div>
-
         <button class="px-4 py-2 bg-blue-600 text-white rounded-lg">
             Cập nhật
         </button>
@@ -105,3 +94,32 @@
 </main>
 
 <?php require_once './views/components/footer.php'; ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const expiryInput = document.getElementById('expiry_date');
+        const statusSelect = document.querySelector('select[name="status"]');
+        const activeOption = statusSelect.querySelector('option[value="active"]');
+
+        function checkExpiry() {
+            const expiryDate = new Date(expiryInput.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (expiryInput.value && expiryDate < today) {
+                // Nếu hết hạn -> Disable active, chuyển sang expired nếu đang chọn active
+                activeOption.disabled = true;
+                if (statusSelect.value === 'active') {
+                    statusSelect.value = 'expired';
+                }
+            } else {
+                activeOption.disabled = false;
+            }
+        }
+
+        // Check on load
+        checkExpiry();
+
+        // Check on change
+        expiryInput.addEventListener('change', checkExpiry);
+    });
+</script>

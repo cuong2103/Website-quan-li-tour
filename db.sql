@@ -205,6 +205,7 @@ CREATE TABLE `booking_customers` (
   `booking_id` int,
   `customer_id` int,
   `is_representative` boolean DEFAULT false,
+  `room_number` varchar(20),
   `notes` text,
   `created_by` int,
   `updated_by` int,

@@ -338,6 +338,18 @@ class BookingModel
             die("Lỗi updateStatus(): " . $e->getMessage());
         }
     }
+
+    // Cập nhật số tiền cọc và còn lại
+    public function updateFinancials($bookingId, $depositAmount, $remainingAmount)
+    {
+        try {
+            $sql = "UPDATE bookings SET deposit_amount = ?, remaining_amount = ?, updated_at = NOW() WHERE id = ?";
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([$depositAmount, $remainingAmount, $bookingId]);
+        } catch (PDOException $e) {
+            die("Lỗi updateFinancials(): " . $e->getMessage());
+        }
+    }
     // Lọc danh sách booking trong form Thêm phân công
     public function getBookingsWithoutGuide()
     {

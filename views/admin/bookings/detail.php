@@ -14,16 +14,20 @@ require_once './views/components/sidebar.php';
         </a>
     </div>
 
-    <!-- Tour Subtitle -->
-    <p class="text-sm text-gray-500 mb-4">
-        <?= htmlspecialchars($booking['tour_name']) ?>
-    </p>
 
     <!-- Thông tin chung -->
     <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
         <h2 class="font-medium mb-4 text-gray-800">Thông tin chung</h2>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+
+            <div>
+                <p class="text-gray-500">Tour</p>
+                <p class="font-medium">
+                    <?= htmlspecialchars($booking['tour_name']) ?>
+                </p>
+            </div>
+
             <div>
                 <p class="text-gray-500">Ngày đi</p>
                 <p class="font-medium"><?= $booking['start_date'] ?></p>
@@ -46,6 +50,25 @@ require_once './views/components/sidebar.php';
                 </p>
             </div>
 
+
+            <div>
+                <p class="text-gray-500">Còn lại</p>
+                <?php
+                $totalPaid = (new BookingModel())->getTotalPaid($booking['id']);
+                $remaining = $booking['total_amount'] - $totalPaid;
+                ?>
+                <p class="font-medium <?= $remaining > 0 ? 'text-red-600' : 'text-green-600' ?>">
+                    <?= number_format($remaining, 0, ',', '.') ?>đ
+                </p>
+            </div>
+
+            <div>
+                <p class="text-gray-500">Yêu cầu đặc biệt</p>
+                <p class="font-medium break-words">
+                    <?= nl2br(htmlspecialchars($booking['special_requests'] ?? '')) ?>
+                </p>
+            </div>
+
             <div>
                 <p class="text-gray-500">Trạng thái</p>
                 <p class="font-medium">
@@ -59,13 +82,6 @@ require_once './views/components/sidebar.php';
                     ];
                     echo $statusArr[$booking['status']] ?? 'Không xác định';
                     ?>
-                </p>
-            </div>
-
-            <div>
-                <p class="text-gray-500">Yêu cầu đặc biệt</p>
-                <p class="font-medium break-words">
-                    <?= nl2br(htmlspecialchars($booking['special_requests'] ?? '')) ?>
                 </p>
             </div>
         </div>
