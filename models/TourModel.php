@@ -28,8 +28,8 @@ class TourModel
 
     $sql = "INSERT INTO tours 
             (category_id, tour_code, name, introduction, adult_price, child_price, 
-             status, duration_days, created_by, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+             status, duration_days, is_fixed, created_by, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
     $stmt = $this->conn->prepare($sql);
 
@@ -42,6 +42,7 @@ class TourModel
       $data['child_price'],
       $data['status'],
       $data['duration_days'],
+      $data['is_fixed'] ?? 0,
       $data['created_by']
     ]);
 
@@ -115,6 +116,7 @@ class TourModel
               child_price = ?,
               status = ?,
               duration_days = ?,
+              is_fixed = ?,
               updated_by = ?,
               updated_at = NOW()
             WHERE id = ?";
@@ -129,6 +131,7 @@ class TourModel
       $data['child_price'],
       $data['status'],
       $data['duration_days'],
+      $data['is_fixed'] ?? 0,
       $userId,
       $id
     ]);
@@ -261,5 +264,35 @@ class TourModel
     $stmt->execute($params);
 
     return $stmt->fetchAll();
+  }
+
+  // Gắn service vào tour
+  public function attachService($tourId, $serviceId, $userId)
+  {
+    $sql = "INSERT INTO tour_services (tour_id, service_id, created_by, created_at) 
+            VALUES (?, ?, ?, NOW())";
+    $stmt = $this->conn->prepare($sql);
+    return $stmt->execute([$tourId, $serviceId, $userId]);
+  }
+
+  // Xóa tất cả services của tour
+  public function detachAllServices($tourId)
+  {
+    $sql = "DELETE FROM tour_services WHERE tour_id = ?";
+    $stmt = $this->conn->prepare($sql);
+    return $stmt->execute([$tourId]);
+  }
+
+  // Lấy services của tour
+  public function getTourServices($tourId)
+  {
+    $sql = "SELECT s.* 
+            FROM services s
+            INNER JOIN tour_services ts ON s.id = ts.service_id
+            WHERE ts.tour_id = ?";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$tourId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 }

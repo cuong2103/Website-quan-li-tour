@@ -87,7 +87,45 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
                 <option value="inactive" <?= ($tourData['status'] ?? '') == 'inactive' ? 'selected' : '' ?>>Tạm dừng</option>
               </select>
             </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Loại tour</label>
+              <div class="flex items-center gap-2 mt-3">
+                <input type="checkbox" id="is_fixed" name="is_fixed" value="1" <?= ($tourData['is_fixed'] ?? 0) ? 'checked' : '' ?> class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                <label for="is_fixed" class="text-gray-700">Tour cố định (Có dịch vụ đi kèm)</label>
+              </div>
+            </div>
+
           </div>
+        </div>
+
+        <!-- Services Section (Hidden by default, shown if is_fixed is checked) -->
+        <div id="services-section" class="hidden">
+          <h3 class="text-lg font-semibold text-gray-900 mb-6">Dịch vụ đi kèm</h3>
+
+          <input id="searchService" type="text" placeholder="Tìm dịch vụ..."
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 text-sm focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition">
+
+          <div id="serviceList" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto">
+            <?php
+            $selectedServices = $_POST['service_ids'] ?? $tourServiceIds ?? [];
+            foreach ($services as $service):
+            ?>
+              <div class="service-item p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <input type="checkbox" name="service_ids[]" value="<?= $service['id'] ?>"
+                    <?= in_array($service['id'], $selectedServices) ? 'checked' : '' ?>
+                    class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                  <span class="text-sm font-medium text-gray-700"><?= htmlspecialchars($service['name']) ?></span>
+                </label>
+              </div>
+            <?php endforeach; ?>
+          </div>
+          <p id="noServiceResult" class="hidden text-sm text-gray-500 italic mt-2 text-center">Không tìm thấy dịch vụ phù hợp.</p>
+
+          <?php if (!empty($errors['service_ids'])): ?>
+            <div class="text-red-500 text-sm mt-1"><?= $errors['service_ids'][0] ?></div>
+          <?php endif; ?>
         </div>
 
         <!-- 2. Lịch trình tour -->
@@ -328,6 +366,50 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
       }
     });
 
+    // Toggle Services Section
+    const isFixedCheckbox = document.getElementById('is_fixed');
+    const servicesSection = document.getElementById('services-section');
+
+    function toggleServices() {
+      if (isFixedCheckbox.checked) {
+        servicesSection.classList.remove('hidden');
+      } else {
+        servicesSection.classList.add('hidden');
+      }
+    }
+
+    if (isFixedCheckbox) {
+      isFixedCheckbox.addEventListener('change', toggleServices);
+      // Run on load to set initial state
+      toggleServices();
+    }
+
+    // Search Services
+    const searchService = document.getElementById("searchService");
+    const serviceItems = document.querySelectorAll(".service-item");
+    const noServiceResult = document.getElementById("noServiceResult");
+
+    if (searchService) {
+      searchService.addEventListener("keyup", function() {
+        const keyword = this.value.toLowerCase();
+        let count = 0;
+        serviceItems.forEach(item => {
+          const text = item.innerText.toLowerCase();
+          if (text.includes(keyword)) {
+            item.style.display = "block";
+            count++;
+          } else {
+            item.style.display = "none";
+          }
+        });
+        noServiceResult.classList.toggle("hidden", count > 0);
+      });
+
+      // Prevent submit on enter
+      searchService.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') e.preventDefault();
+      });
+    }
   });
 </script>
 

@@ -96,6 +96,7 @@ CREATE TABLE `tours` (
   `child_price` decimal(12,0),
   `status` varchar(20) DEFAULT 'active',
   `duration_days` int,
+  `is_fixed` boolean DEFAULT false,
   `created_by` int,
   `updated_by` int,
   `created_at` timestamp DEFAULT (now()),
@@ -115,6 +116,7 @@ CREATE TABLE tour_services (
 
 CREATE TABLE `booking_services` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
+  `booking_id` int,
   `tour_id` int,
   `service_id` int,
   `quantity` int,
@@ -358,6 +360,8 @@ ADD FOREIGN KEY (`service_id`) REFERENCES `services`(`id`);
 
 -- Bảng `booking_services`
 ALTER TABLE `booking_services` 
+ADD FOREIGN KEY (`booking_id`) REFERENCES `bookings`(`id`);
+ALTER TABLE `booking_services` 
 ADD FOREIGN KEY (`tour_id`) REFERENCES `tours`(`id`);
 ALTER TABLE `booking_services` 
 ADD FOREIGN KEY (`service_id`) REFERENCES `services`(`id`);
@@ -416,9 +420,6 @@ ADD FOREIGN KEY (`tour_assignment_id`) REFERENCES `tour_assignments`(`id`);
 ALTER TABLE `journal_images` 
 ADD FOREIGN KEY (`journal_id`) REFERENCES `journals`(`id`);
 
--- Bảng `notifications`
-ALTER TABLE `notifications` 
-ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 
 -- Bảng `incurred_expenses`
 ALTER TABLE `incurred_expenses` 

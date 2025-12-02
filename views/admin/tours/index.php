@@ -27,18 +27,22 @@ require_once './views/components/sidebar.php';
         <div class="p-6">
           <div class="flex justify-between h-12 items-start mb-4">
             <h3 class="font-semibold text-gray-900  w-[70%] text-base"><?= $tour['name'] ?></h3>
-            <?= $tour['status'] == "active" ? '<span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Hoạt động</span>' : '<span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">Tạm dừng</span>' ?>
-
+            <div class="flex flex-col gap-1 items-end">
+              <?= $tour['status'] == "active" ? '<span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Hoạt động</span>' : '<span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">Tạm dừng</span>' ?>
+              <?php if (!empty($tour['is_fixed'])): ?>
+                <span class="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">Cố định</span>
+              <?php endif; ?>
+            </div>
           </div>
 
           <div class="space-y-2 text-sm text-gray-600">
             <div class="flex justify-between">
               <span>Giá người lớn:</span>
-              <span class="font-semibold text-gray-900"><?= $tour['adult_price'] ?>đ</span>
+              <span class="font-semibold text-gray-900"><?= number_format($tour['adult_price']) ?>đ</span>
             </div>
             <div class="flex justify-between">
               <span>Giá trẻ em:</span>
-              <span class="font-semibold text-gray-900"><?= $tour['child_price'] ?>đ</span>
+              <span class="font-semibold text-gray-900"><?= number_format($tour['child_price']) ?>đ</span>
             </div>
             <div class="flex justify-between">
               <span>Số booking:</span>
@@ -61,8 +65,6 @@ require_once './views/components/sidebar.php';
         </div>
       </div>
     <?php endforeach; ?>
-
-
 
   </div>
 </main>
