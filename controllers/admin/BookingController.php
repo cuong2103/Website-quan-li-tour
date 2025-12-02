@@ -227,6 +227,9 @@ class BookingController
             }
         }
 
+        // Cập nhật lại trạng thái thanh toán (đề phòng tổng tiền thay đổi)
+        $this->autoUpdatePaymentStatus($id);
+
         // Thông báo nếu thành công
         Message::set('success', 'Cập nhật booking thành công!');
         header("Location:" . BASE_URL . '?act=bookings');
@@ -359,6 +362,54 @@ class BookingController
         header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=customers');
     }
 
+    // Export danh sách khách hàng ra Excel
+    public function exportCustomers()
+    {
+        $bookingId = $_GET['booking_id'] ?? null;
+        if (!$bookingId) {
+            Message::set('errors', 'Không tìm thấy booking ID');
+            header('Location: ' . BASE_URL . '?act=bookings');
+            exit;
+        }
+
+        $booking = $this->bookingModel->getById($bookingId);
+        if (!$booking) {
+            Message::set('errors', 'Booking không tồn tại');
+            header('Location: ' . BASE_URL . '?act=bookings');
+            exit;
+        }
+
+        $customers = $this->bookingModel->getCustomers($bookingId);
+
+        require_once './lib/SimpleXLSXGen.php';
+
+        $data = [
+            ['STT', 'Họ tên', 'Giới tính', 'Hộ chiếu', 'Địa chỉ', 'SĐT', 'Email', 'Người đại diện']
+        ];
+
+        $i = 1;
+        foreach ($customers as $c) {
+            $gender = 'Khác';
+            if ($c['gender'] == 'male') $gender = 'Nam';
+            elseif ($c['gender'] == 'female') $gender = 'Nữ';
+
+            $data[] = [
+                $i++,
+                $c['name'],
+                $gender,
+                $c['passport'] ?? '',
+                $c['address'],
+                $c['phone'],
+                $c['email'],
+                $c['is_representative'] ? 'Có' : 'Không'
+            ];
+        }
+
+        $filename = 'Danh_sach_khach_hang_Booking_' . $booking['booking_code'] . '.xlsx';
+        \Shuchkin\SimpleXLSXGen::fromArray($data)->downloadAs($filename);
+        exit;
+    }
+
     // Xóa khách hàng khỏi booking
     public function removeCustomer()
     {
@@ -402,5 +453,4 @@ class BookingController
 
         require_once './views/admin/bookings/add_customer.php';
     }
-
 }

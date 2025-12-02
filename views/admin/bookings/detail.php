@@ -161,7 +161,17 @@ require_once './views/components/sidebar.php';
     <!-- Tab Dịch vụ -->
     <?php if ($tab == 'services'): ?>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-base font-semibold text-gray-800 mb-4">Dịch vụ đã chọn</h2>
+            <div class="flex justify-between flex-wrap items-center gap-3 mb-4">
+                <h2 class="text-base font-semibold text-gray-800">Danh sách dịch vụ</h2>
+
+                <div class="flex items-center gap-2">
+                    <a href="<?= BASE_URL . '?act=booking-edit&id=' . $booking['id']  ?>"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium">
+                        <i class="w-4 h-4" data-lucide="square-pen"></i>
+                        Chỉnh sửa dịch vụ
+                    </a>
+                </div>
+            </div>
             <?php if (!empty($bookingServices)): ?>
                 <ul class="space-y-2 text-gray-800 text-sm">
                     <?php foreach ($bookingServices as $s): ?>

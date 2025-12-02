@@ -126,7 +126,6 @@ require_once './views/components/sidebar.php';
                 <div id="serviceList" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto">
                     <?php foreach ($services as $sv): ?>
                         <?php
-                            // Check if service is selected
                             $isSelected = false;
                             $currentPrice = $sv['estimated_price'];
                             $currentQuantity = 1;
@@ -221,7 +220,6 @@ require_once './views/components/sidebar.php';
                         <div class="relative">
                             <input type="text" id="totalAmountDisplay" value="<?= number_format($booking['total_amount'], 0, ',', '.') ?>" readonly
                                 class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-xl font-bold text-orange-600 text-right outline-none">
-                            <span class="absolute right-12 top-3.5 text-gray-400 text-sm">VND</span>
                             <input type="hidden" name="total_amount" id="totalAmountInput" value="<?= $booking['total_amount'] ?>">
                         </div>
                     </div>
@@ -321,8 +319,6 @@ require_once './views/components/sidebar.php';
             remainingAmountDisplay.value = formatCurrency(remaining > 0 ? remaining : 0);
             remainingAmountInput.value = remaining > 0 ? remaining : 0;
         }
-
-        // Event Listeners cho Tour & Pax & Deposit
         [tourSelect, adultCount, childCount, depositAmount].forEach(el => {
             el.addEventListener("input", updatePrice);
         });
@@ -371,11 +367,8 @@ require_once './views/components/sidebar.php';
                 if (e.key === 'Enter') e.preventDefault();
             });
         });
-        
-        // Init calculation on load
         updatePrice();
 
-        /* ------------------ Cập nhật lựa chọn người đại diện ------------------ */
         document.querySelectorAll(".customerCheck").forEach(chk => {
             chk.addEventListener("change", () => {
                 let rep = document.getElementById("representative");
@@ -390,7 +383,6 @@ require_once './views/components/sidebar.php';
                     rep.innerHTML += `<option value="${c.value}">${name}</option>`;
                 });
                 
-                // Restore selection if still valid
                 if ([...checked].some(c => c.value == currentRep)) {
                     rep.value = currentRep;
                 } else if (checked.length === 1) {

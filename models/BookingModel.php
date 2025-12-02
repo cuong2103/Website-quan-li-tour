@@ -264,20 +264,22 @@ class BookingModel
 
 
     // Thêm dịch vụ
+    // Thêm dịch vụ
     public function addService($bookingId, $serviceId, $quantity, $currentPrice)
     {
-        // Lấy tour_id từ booking
+        // Lấy tour_id từ booking (vẫn lưu tour_id cho đầy đủ, hoặc bỏ nếu không cần)
         $stmt = $this->conn->prepare("SELECT tour_id FROM bookings WHERE id = ?");
         $stmt->execute([$bookingId]);
         $tour = $stmt->fetch(PDO::FETCH_ASSOC);
         $tourId = $tour['tour_id'];
 
         $sql = "INSERT INTO booking_services 
-            (tour_id, service_id, quantity, current_price)
-            VALUES (?, ?, ?, ?)";
+            (booking_id, tour_id, service_id, quantity, current_price)
+            VALUES (?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([
+            $bookingId,
             $tourId,
             $serviceId,
             $quantity,
@@ -286,10 +288,11 @@ class BookingModel
     }
 
     // Xóa toàn bộ dịch vụ của một booking
+    // Xóa toàn bộ dịch vụ của một booking
     public function deleteServices($bookingId)
     {
         try {
-            $sql = "DELETE FROM booking_services WHERE tour_id = ?";
+            $sql = "DELETE FROM booking_services WHERE booking_id = ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$bookingId]);
             return true;
@@ -303,8 +306,7 @@ class BookingModel
         $sql = "SELECT s.*, bs.quantity, bs.description, bs.current_price, bs.discount
             FROM booking_services bs
             JOIN services s ON bs.service_id = s.id
-            JOIN bookings b ON bs.tour_id = b.tour_id
-            WHERE b.id = ?";
+            WHERE bs.booking_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$bookingId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
