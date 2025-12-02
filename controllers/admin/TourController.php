@@ -5,6 +5,7 @@ class TourController
   public $policyModel;
   public $categoryModel;
   public $destinationModel;
+  public $serviceModel;
 
   public function __construct()
   {
@@ -13,6 +14,7 @@ class TourController
     $this->policyModel = new PolicyModel();
     $this->categoryModel = new CategoryModel();
     $this->destinationModel = new DestinationModel();
+    $this->serviceModel = new ServiceModel();
   }
 
   public function index()
@@ -26,6 +28,7 @@ class TourController
     $policies = $this->policyModel->getAll();
     $categories = $this->categoryModel->getAll();
     $destinations = $this->destinationModel->getAll();
+    $services = $this->serviceModel->getAll();
     $tree = buildTree($categories);
     require_once './views/admin/tours/create.php';
   }
@@ -40,11 +43,13 @@ class TourController
       'adult_price' => $_POST['adult_price'],
       'child_price' => $_POST['child_price'],
       'status' => $_POST['status'],
+      'is_fixed' => isset($_POST['is_fixed']) ? 1 : 0,
       'destination_id' => $_POST['destination_id'] ?? [],
       'arrival_time' => $_POST['arrival_time'] ?? [],
       'departure_time' => $_POST['departure_time'] ?? [],
       'description' => $_POST['description'] ?? [],
       'policy_ids' => $_POST['policy_ids'] ?? [],
+      'service_ids' => $_POST['service_ids'] ?? [],
       'created_by' => $_SESSION['currentUser']['id']
     ];
 
@@ -67,6 +72,7 @@ class TourController
       $policies = $this->policyModel->getAll();
       $categories = $this->categoryModel->getAll();
       $destinations = $this->destinationModel->getAll();
+      $services = $this->serviceModel->getAll();
       $tree = buildTree($categories);
       require_once './views/admin/tours/create.php';
       exit;
@@ -99,6 +105,13 @@ class TourController
       $this->tourModel->attachPolicy($tourId, $policy_id, $_SESSION['currentUser']['id']);
     }
 
+    // Gắn services nếu là tour cố định
+    if ($data['is_fixed'] && !empty($data['service_ids'])) {
+      foreach ($data['service_ids'] as $service_id) {
+        $this->tourModel->attachService($tourId, $service_id, $_SESSION['currentUser']['id']);
+      }
+    }
+
     Message::set("success", "Thêm tour thành công!");
     redirect("tours");
   }
@@ -109,6 +122,7 @@ class TourController
     $tour = $this->tourModel->getById($id);
     $itineraries = $this->tourModel->getItinerariesByTourId($id);
     $policies = $this->tourModel->getPoliciesByTourId($id);
+    $services = $this->tourModel->getTourServices($id);
     // dd($tour, $itineraries, $policies);
     require_once './views/admin/tours/detail.php';
   }
@@ -125,9 +139,14 @@ class TourController
     $itineraries = $this->tourModel->getItineraries($id);
     $tourPolicies = $this->tourModel->getTourPolicies($id);
     $tourPolicyIds = array_column($tourPolicies, 'id');
+
+    $tourServices = $this->tourModel->getTourServices($id);
+    $tourServiceIds = array_column($tourServices, 'id');
+
     $policies = $this->policyModel->getAll();
     $categories = $this->categoryModel->getAll();
     $destinations = $this->destinationModel->getAll();
+    $services = $this->serviceModel->getAll();
     $tree = buildTree($categories);
 
     require_once './views/admin/tours/edit.php';
@@ -145,11 +164,13 @@ class TourController
       'adult_price' => $_POST['adult_price'],
       'child_price' => $_POST['child_price'],
       'status' => $_POST['status'],
+      'is_fixed' => isset($_POST['is_fixed']) ? 1 : 0,
       'destination_id' => $_POST['destination_id'] ?? [],
       'arrival_time' => $_POST['arrival_time'] ?? [],
       'departure_time' => $_POST['departure_time'] ?? [],
       'description' => $_POST['description'] ?? [],
       'policy_ids' => $_POST['policy_ids'] ?? [],
+      'service_ids' => $_POST['service_ids'] ?? [],
     ];
 
     $rules = [
@@ -172,9 +193,14 @@ class TourController
       $itineraries = $this->tourModel->getItineraries($id);
       $tourPolicies = $this->tourModel->getTourPolicies($id);
       $tourPolicyIds = array_column($tourPolicies, 'id');
+
+      $tourServices = $this->tourModel->getTourServices($id);
+      $tourServiceIds = array_column($tourServices, 'id');
+
       $policies = $this->policyModel->getAll();
       $categories = $this->categoryModel->getAll();
       $destinations = $this->destinationModel->getAll();
+      $services = $this->serviceModel->getAll();
       $tree = buildTree($categories);
       require_once './views/admin/tours/edit.php';
       exit;
@@ -211,6 +237,14 @@ class TourController
     $policy_ids = $_POST['policy_ids'];
     foreach ($policy_ids as $policy_id) {
       $this->tourModel->attachPolicy($id, $policy_id, $_SESSION['currentUser']['id']);
+    }
+
+    // Xử lý services
+    $this->tourModel->detachAllServices($id);
+    if ($data['is_fixed'] && !empty($data['service_ids'])) {
+      foreach ($data['service_ids'] as $service_id) {
+        $this->tourModel->attachService($id, $service_id, $_SESSION['currentUser']['id']);
+      }
     }
 
     Message::set("success", "Cập nhật tour thành công!");
