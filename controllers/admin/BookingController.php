@@ -44,7 +44,7 @@ class BookingController
         // Các dữ liệu khác
         $tours = $this->tourModel->getAll();
         $customers = $this->customerModel->getAll();
-        
+
         // Xử lý khi chọn tour (PHP Logic)
         $selectedTour = null;
         $selectedTourServices = [];
@@ -464,5 +464,111 @@ class BookingController
         $customers = $this->customerModel->getAll();
 
         require_once './views/admin/bookings/add_customer.php';
+    }
+
+    // Import xếp phòng từ Excel
+    public function importRoomArrangement()
+    {
+        $bookingId = $_POST['booking_id'] ?? null;
+        if (!$bookingId) {
+            Message::set('errors', 'Không tìm thấy Booking ID.');
+            header("Location:" . BASE_URL . '?act=bookings');
+            exit;
+        }
+
+        if (isset($_FILES['excel_file']) && $_FILES['excel_file']['error'] == 0) {
+            require_once './lib/SimpleXLSX.php';
+
+            if (class_exists('Shuchkin\SimpleXLSX')) {
+                $xlsx = Shuchkin\SimpleXLSX::parse($_FILES['excel_file']['tmp_name']);
+            } else {
+                Message::set('errors', 'Không tìm thấy thư viện SimpleXLSX.');
+                header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=room_assignment');
+                exit;
+            }
+
+            if ($xlsx) {
+                $rows = $xlsx->rows();
+                $count = 0;
+
+                // Giả sử dòng 1 là header, dữ liệu từ dòng 2
+                // Format: [0] => STT, [1] => Họ tên, [2] => Số phòng
+
+                // Lấy danh sách khách hàng của booking để đối chiếu
+                $customers = $this->bookingModel->getCustomers($bookingId);
+
+                foreach ($rows as $k => $r) {
+                    if ($k == 0) continue; // Skip header
+
+                    $name = trim($r[1] ?? '');
+                    $room = trim($r[2] ?? '');
+
+                    if ($name && $room) {
+                        // Tìm khách hàng theo tên (tương đối)
+                        foreach ($customers as $c) {
+                            if (mb_strtolower($c['name']) == mb_strtolower($name)) {
+                                $this->bookingModel->updateRoomNumber($bookingId, $c['id'], $room);
+                                $count++;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                Message::set('success', "Đã cập nhật phòng cho $count khách hàng.");
+            } else {
+                Message::set('errors', 'Lỗi đọc file Excel: ' . Shuchkin\SimpleXLSX::parseError());
+            }
+        } else {
+            Message::set('errors', 'Vui lòng chọn file Excel hợp lệ.');
+        }
+
+        header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=room_assignment');
+    }
+
+    // Export danh sách xếp phòng ra Excel
+    public function exportRoomArrangement()
+    {
+        $bookingId = $_GET['booking_id'] ?? null;
+        if (!$bookingId) {
+            Message::set('errors', 'Không tìm thấy booking ID');
+            header('Location: ' . BASE_URL . '?act=bookings');
+            exit;
+        }
+
+        $booking = $this->bookingModel->getById($bookingId);
+        if (!$booking) {
+            Message::set('errors', 'Booking không tồn tại');
+            header('Location: ' . BASE_URL . '?act=bookings');
+            exit;
+        }
+
+        $customers = $this->bookingModel->getCustomers($bookingId);
+
+        require_once './lib/SimpleXLSXGen.php';
+
+        $data = [
+            ['STT', 'Họ tên', 'Số phòng']
+        ];
+
+        $i = 1;
+        foreach ($customers as $c) {
+            $data[] = [
+                $i++,
+                $c['name'],
+                $c['room_number'] ?? '',
+            ];
+        }
+
+        $filename = 'Xep_phong_Booking_' . $booking['booking_code'] . '.xlsx';
+
+        if (class_exists('Shuchkin\SimpleXLSXGen')) {
+            \Shuchkin\SimpleXLSXGen::fromArray($data)->downloadAs($filename);
+        } else {
+            // Fallback if class not found (though it should be there if exportCustomers works)
+            Message::set('errors', 'Không tìm thấy thư viện SimpleXLSXGen.');
+            header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=room_assignment');
+        }
+        exit;
     }
 }

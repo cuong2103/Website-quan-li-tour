@@ -225,7 +225,7 @@ class BookingModel
     public function getCustomers($bookingId)
     {
         try {
-            $sql = "SELECT c.*, bc.is_representative 
+            $sql = "SELECT c.*, bc.is_representative, bc.room_number 
             FROM booking_customers bc
             JOIN customers c ON c.id = bc.customer_id
             WHERE bc.booking_id = ?";
@@ -411,6 +411,23 @@ class BookingModel
             $stmt->execute([$bookingId, $customerId]);
         } catch (PDOException $e) {
             die("Lỗi removeCustomer: " . $e->getMessage());
+        }
+    }
+
+    public function updateRoomNumber($bookingId, $customerId, $roomNumber)
+    {
+        try {
+            $sql = "UPDATE booking_customers 
+                    SET room_number = :room_number 
+                    WHERE booking_id = :booking_id AND customer_id = :customer_id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([
+                ':room_number' => $roomNumber,
+                ':booking_id' => $bookingId,
+                ':customer_id' => $customerId
+            ]);
+        } catch (PDOException $e) {
+            die("Lỗi updateRoomNumber: " . $e->getMessage());
         }
     }
 }

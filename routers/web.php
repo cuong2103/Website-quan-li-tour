@@ -107,6 +107,8 @@ match ($act) {
   'booking-export-customers' => (new BookingController())->exportCustomers(),
   'booking-add-customer' => (new BookingController())->addCustomer(),
   'booking-remove-customer' => (new BookingController())->removeCustomer(),
+  'booking-import-rooms' => (new BookingController())->importRoomArrangement(),
+  'booking-export-rooms' => (new BookingController())->exportRoomArrangement(),
 
   // contracts
   'contracts' => (new ContractController())->index(),
