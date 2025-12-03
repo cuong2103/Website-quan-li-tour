@@ -54,14 +54,14 @@ class PolicyController
         // dd($_POST);
         // lấy dữ liệu từ form
         $data = [
-            'name' => trim($_POST['name']),
+            'title' => trim($_POST['title']),
             'content' => trim($_POST['content']),
-            'created_by' => $_SESSION['user']['id'],
+            'created_by' => $_SESSION['currentUser']['id'],
         ];
 
         // validate dữ liệu
         $rules = [
-            'name' => 'required|min:3|max:50',
+            'title' => 'required|min:3|max:50',
             'content' => 'required|min:10',
         ];
         $errors = validate($data, $rules);
@@ -89,14 +89,14 @@ class PolicyController
 
         $data = [
             'id' => $id,
-            'name' => trim($_POST['name']),
+            'title' => trim($_POST['title']),
             'content' => trim($_POST['content']),
-            'created_by' => $_SESSION['user']['id'],
+            'created_by' => $_SESSION['currentUser']['id'],
         ];
 
         // validate
         $rules = [
-            'name' => 'required|min:3|max:50',
+            'title' => 'required|min:3|max:50',
             'content' => 'required|min:10',
         ];
 

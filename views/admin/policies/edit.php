@@ -29,13 +29,13 @@ require_once "./views/components/sidebar.php";
 
                         <input
                             type="text"
-                            name="name"
-                            value="<?= htmlspecialchars($policy['name']) ?>"
+                            name="title"
+                            value="<?= htmlspecialchars($policy['title']) ?>"
                             class="w-full px-3 py-2 border border-gray-300 rounded-md 
                            focus:outline-none focus:ring-2 focus:ring-blue-500">
 
-                        <?php if (!empty($errors['name'])): ?>
-                            <div class="text-red-500 text-sm mt-1"><?= $errors['name'][0] ?></div>
+                        <?php if (!empty($errors['title'])): ?>
+                            <div class="text-red-500 text-sm mt-1"><?= $errors['title'][0] ?></div>
                         <?php endif; ?>
                     </div>
 
@@ -105,7 +105,7 @@ require_once "./views/components/sidebar.php";
 
                                         <div>
                                             <h4 class="font-medium text-gray-900">
-                                                <?= htmlspecialchars($poli['name']) ?>
+                                                <?= htmlspecialchars($poli['title']) ?>
                                             </h4>
 
                                             <ul class="text-gray-700 text-sm mt-1 leading-relaxed">

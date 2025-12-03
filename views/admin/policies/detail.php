@@ -20,7 +20,7 @@ require_once "./views/components/sidebar.php";
 
                 <tr>
                     <th class="px-4 py-3 text-gray-600 font-medium">Tiêu đề</th>
-                    <td class="px-4 py-3"><?= $policy['name'] ?></td>
+                    <td class="px-4 py-3"><?= $policy['title'] ?></td>
                 </tr>
 
                 <tr>
