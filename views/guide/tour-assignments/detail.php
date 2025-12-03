@@ -209,6 +209,10 @@ $tabs = [
                                 <td class="p-3 max-w-md truncate"><?= htmlspecialchars($j['content']) ?></td>
                                 <td class="p-3">
                                     <div class="flex gap-2">
+                                        <a href="<?= BASE_URL . '?act=journal-detail&id=' . $j['id'] ?>"
+                                            class="text-gray-600 hover:bg-gray-100 p-1 rounded transition-colors" title="Xem chi tiết">
+                                            <i data-lucide="eye" class="w-4 h-4"></i>
+                                        </a>
                                         <a href="<?= BASE_URL . '?act=journal-edit&id=' . $j['id'] ?>"
                                             class="text-blue-600 hover:bg-blue-50 p-1 rounded transition-colors" title="Sửa">
                                             <i data-lucide="edit-2" class="w-4 h-4"></i>
