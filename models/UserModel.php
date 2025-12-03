@@ -115,23 +115,23 @@ class UserModel
         $sql = "SELECT * FROM users WHERE email = :email";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute(['email' => $email]);
-    
+
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
         if (!$user) {
             return "Không tìm thấy email trong DB";
         }
-    
+
         // So sánh mật khẩu hash
         if (!password_verify($password, $user['password'])) {
-            return "Sai mật khẩu";
+            return "Tài khoản hoặc mật khẩu không đúng";
         }
-    
+
         // Check tài khoản đang khóa hay không
         if ($user['status'] != 1) {
             return "Tài khoản đang bị khóa";
         }
-    
+
         return $user;
     }
 }
