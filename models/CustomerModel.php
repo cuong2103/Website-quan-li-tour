@@ -17,19 +17,25 @@ class CustomerModel
     // lấy 1 khách hàng theo id
     public function getByID($id)
     {
-        $sql = "SELECT * FROM customers WHERE id = :id";
+        $sql = "SELECT c.*, 
+                       uc.fullname as creator_name, 
+                       uu.fullname as updater_name 
+                FROM customers c
+                LEFT JOIN users uc ON c.created_by = uc.id
+                LEFT JOIN users uu ON c.updated_by = uu.id
+                WHERE c.id = :id";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
     // thêm mới khách hàng
-    public function create($name, $email, $phone, $address, $created_by, $passport, $gender)
+    public function create($name, $email, $phone, $address, $created_by, $passport, $gender, $citizen_id)
     {
         $sql = "INSERT INTO `customers`
-        ( `name`, `email`, `phone`, `address`, `created_by`, `created_at`, `updated_at`, `gender`, `passport`) 
+        ( `name`, `email`, `phone`, `address`, `created_by`, `created_at`, `updated_at`, `gender`, `passport`, `citizen_id`) 
         VALUES 
-        (:name, :email, :phone, :address, :created_by, NOW(), NOW(), :gender, :passport)";
+        (:name, :email, :phone, :address, :created_by, NOW(), NOW(), :gender, :passport, :citizen_id)";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":name", $name);
         $stmt->bindParam(":email", $email);
@@ -38,10 +44,11 @@ class CustomerModel
         $stmt->bindParam(":created_by", $created_by);
         $stmt->bindParam(":gender", $gender);
         $stmt->bindParam(":passport", $passport);
+        $stmt->bindParam(":citizen_id", $citizen_id);
         return $stmt->execute();
     }
     // cập nhật khách hàng
-    public function update($id, $name, $email, $phone, $address, $created_by, $gender, $passport)
+    public function update($id, $name, $email, $phone, $address, $updated_by, $gender, $passport, $citizen_id)
     {
         $sql = "UPDATE customers 
         SET 
@@ -49,9 +56,10 @@ class CustomerModel
             email = :email, 
             phone = :phone, 
             address = :address, 
-            created_by = :created_by,
+            updated_by = :updated_by,
             gender = :gender,
             passport = :passport,
+            citizen_id = :citizen_id,
             updated_at = NOW()
         WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
@@ -60,9 +68,10 @@ class CustomerModel
         $stmt->bindParam(":email", $email);
         $stmt->bindParam(":phone", $phone);
         $stmt->bindParam(":address", $address);
-        $stmt->bindParam(":created_by", $created_by);
+        $stmt->bindParam(":updated_by", $updated_by);
         $stmt->bindParam(":gender", $gender);
         $stmt->bindParam(":passport", $passport);
+        $stmt->bindParam(":citizen_id", $citizen_id);
         return $stmt->execute();
     }
     // xoá khách hàng
