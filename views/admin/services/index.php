@@ -8,13 +8,13 @@ require_once './views/components/sidebar.php';
     <!-- Header trang -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-2xl font-semibold">Quản lý Dịch Vụ</h2>
+            <h2 class="text-2xl font-semibold">Quản lý dịch Vụ</h2>
             <p class="text-gray-500 text-sm">Danh sách dịch vụ đang cung cấp</p>
         </div>
         <button onclick="window.location.href='?act=service-create'"
             class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition flex items-center gap-2">
             <i data-lucide="plus" class="w-4 h-4"></i>
-            Thêm Dịch vụ mới
+            Thêm dịch vụ mới
         </button>
     </div>
 
@@ -55,7 +55,7 @@ require_once './views/components/sidebar.php';
         <table class="w-full">
             <thead class="bg-gray-50 border-b">
                 <tr>
-                    <th class="text-left px-6 py-4 font-medium text-gray-700">Tên Dịch vụ</th>
+                    <th class="text-left px-6 py-4 font-medium text-gray-700">Tên dịch vụ</th>
                     <th class="px-6 py-4 font-medium text-gray-700">Loại</th>
                     <th class="px-6 py-4 font-medium text-gray-700">Nhà cung cấp</th>
                     <th class="px-6 py-4 font-medium text-gray-700">Giá</th>
