@@ -7,11 +7,14 @@ require_once "./views/components/sidebar.php";
     <div class="space-y-6">
 
         <!-- TIÊU ĐỀ CHÍNH -->
-        <div>
-            <h1 class="text-2xl font-semibold text-gray-900 mb-2">Quản lý Chính sách</h1>
-            <p class="text-gray-500">
-                Tạo và quản lý các chính sách áp dụng cho tour (huỷ tour, trẻ em, thanh toán...)
-            </p>
+        <div class="flex items-center gap-4">
+            <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
+                <i data-lucide="chevron-left" class="w-6 h-6"></i>
+            </button>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">Quản lý Chính sách</h2>
+                <p class="text-sm text-gray-600">Tạo và quản lý các chính sách áp dụng cho tour (huỷ tour, trẻ em, thanh toán...)</p>
+            </div>
         </div>
 
         <div class="grid grid-cols-3 gap-6">
@@ -22,14 +25,14 @@ require_once "./views/components/sidebar.php";
 
                     <h2 class="text-lg font-medium text-gray-900 mb-6">Thêm Chính Sách Mới</h2>
 
-                    <form action="<?= BASE_URL ?>?act=policies-store" method="POST">
+                    <form action="<?= BASE_URL ?>?act=policy-store" method="POST">
 
                         <!-- Tiêu đề -->
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-1">
                                 Tiêu đề <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="title"
+                            <input type="text" name="title" value="<?= $_POST['title'] ?? '' ?>"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="Ví dụ: Chính sách huỷ tour, Chính sách trẻ em...">
                             <?php if (!empty($errors['title'])): ?>
@@ -44,7 +47,7 @@ require_once "./views/components/sidebar.php";
                             </label>
                             <textarea name="content" rows="5"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Nhập nội dung chi tiết của chính sách..."></textarea>
+                                placeholder="Nhập nội dung chi tiết của chính sách..."><?= $_POST['content'] ?? '' ?></textarea>
                             <?php if (!empty($errors['content'])): ?>
                                 <div class="text-red-500"><?= $errors['content'][0] ?></div>
                             <?php endif; ?>
@@ -65,11 +68,7 @@ require_once "./views/components/sidebar.php";
                         <!-- Nút lưu -->
                         <button type="submit"
                             class="w-full bg-orange-500 text-white py-3 rounded-md font-medium hover:bg-orange-600 transition flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4" />
-                            </svg>
+                            <i data-lucide="plus"></i>
                             Lưu Chính Sách
                         </button>
 
@@ -91,47 +90,44 @@ require_once "./views/components/sidebar.php";
                             <div class="p-4 border rounded-lg hover:shadow-md transition">
                                 <div class="flex items-start gap-4">
 
-                                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
                                         <i data-lucide="file-text" class="w-5 h-5 text-purple-600"></i>
                                     </div>
 
                                     <div class="flex-1 min-w-0">
-                                        <div class="flex justify-between">
+                                        <h4 class="font-medium text-gray-900">
+                                            <?= htmlspecialchars($poli['title']) ?>
+                                        </h4>
 
-                                            <div>
-                                                <h4 class="font-medium text-gray-900">
-                                                    <?= htmlspecialchars($poli['title']) ?>
-                                                </h4>
-
-                                                <ul class="text-gray-700 text-sm mt-1 leading-relaxed">
-                                                    <?= nl2br(htmlspecialchars($poli['content'])) ?>
-                                                </ul>
-
-                                                <p class="text-xs text-gray-400 mt-2">
-                                                    Tạo ngày: <?= $poli['created_at'] ?>
-                                                </p>
-                                            </div>
-
-                                            <!-- ACTION BUTTONS -->
-                                            <div class="flex gap-2">
-                                                <a href="?act=policies-edit&id=<?= $poli['id'] ?>"
-                                                    class="p-2 hover:bg-gray-100 rounded">
-                                                    <i data-lucide="square-pen" class="w-4 h-4"></i>
-                                                </a>
-
-                                                <a href="?act=policies-detail&id=<?= $poli['id'] ?>"
-                                                    class="p-2 hover:bg-gray-100 rounded">
-                                                    <i data-lucide="eye" class="w-4 h-4"></i>
-                                                </a>
-
-                                                <a href="?act=policies-delete&id=<?= $poli['id'] ?>"
-                                                    onclick="return confirm('Bạn có chắc muốn xoá không?')"
-                                                    class="p-2 hover:bg-red-50 rounded">
-                                                    <i data-lucide="trash-2" class="w-4 h-4 text-red-600"></i>
-                                                </a>
-                                            </div>
-
+                                        <div class="text-gray-700 text-sm mt-1 leading-relaxed">
+                                            <?= nl2br(htmlspecialchars($poli['content'])) ?>
                                         </div>
+
+                                        <p class="text-xs text-gray-400 mt-2">
+                                            Tạo ngày: <?= $poli['created_at'] ?>
+                                        </p>
+                                    </div>
+
+                                    <!-- ACTION BUTTONS -->
+                                    <div class="flex gap-2 flex-shrink-0">
+                                        <a href="?act=policy-edit&id=<?= $poli['id'] ?>"
+                                            class="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                                            title="Chỉnh sửa">
+                                            <i data-lucide="square-pen" class="w-4 h-4 text-blue-600"></i>
+                                        </a>
+
+                                        <a href="?act=policy-detail&id=<?= $poli['id'] ?>"
+                                            class="p-2 hover:bg-green-50 rounded-lg transition-colors"
+                                            title="Xem chi tiết">
+                                            <i data-lucide="eye" class="w-4 h-4 text-green-600"></i>
+                                        </a>
+
+                                        <a href="?act=policy-delete&id=<?= $poli['id'] ?>"
+                                            onclick="return confirm('Bạn có chắc muốn xoá không?')"
+                                            class="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                                            title="Xóa">
+                                            <i data-lucide="trash-2" class="w-4 h-4 text-red-600"></i>
+                                        </a>
                                     </div>
 
                                 </div>

@@ -38,7 +38,7 @@ class PolicyModel
     public function update($data)
     {
         $sql = "UPDATE `policies` 
-            SET title = :title, content = :content, created_by = :created_by 
+            SET title = :title, content = :content, created_by = :created_by, updated_at = NOW() 
             WHERE id = :id";
 
         $stmt = $this->conn->prepare($sql);

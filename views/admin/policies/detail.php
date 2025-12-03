@@ -1,63 +1,95 @@
-<?php
-require_once "./views/components/header.php";
-require_once "./views/components/sidebar.php";
-?>
+<?php require_once "./views/components/header.php"; ?>
+<?php require_once "./views/components/sidebar.php"; ?>
 
-<!-- Nội dung chính -->
-<main class="flex-1 ml-8 mt-28 p-6 bg-gray-100">
+<main class="flex-1 mt-28 overflow-y-auto p-6">
+    <div class="space-y-6 max-w-7xl mx-auto">
 
-    <h1 class="text-2xl font-semibold text-gray-800 mb-6">Chi tiết Chính sách</h1>
+        <!-- Header + Nút quay lại -->
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+                <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
+                    <i class="w-6 h-6" data-lucide="chevron-left"></i>
+                </button>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Chi tiết Chính sách</h2>
+                    <p class="text-sm text-gray-600">Thông tin chi tiết về chính sách</p>
+                </div>
+            </div>
 
-    <div class="bg-white shadow rounded p-6">
-        <table class="min-w-full divide-y divide-gray-200">
+            <a href="?act=policies" class="flex items-center gap-2 text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors">
+                Quay lại <i data-lucide="move-right"></i>
+            </a>
+        </div>
 
-            <tbody class="divide-y divide-gray-100">
+        <div class="grid grid-cols-4 gap-6">
 
-                <tr>
-                    <th class="px-4 py-3 text-gray-600 font-medium w-1/4">ID</th>
-                    <td class="px-4 py-3"><?= $policy['id'] ?></td>
-                </tr>
+            <!-- Thông tin chính -->
+            <div class="col-span-4 space-y-6">
 
-                <tr>
-                    <th class="px-4 py-3 text-gray-600 font-medium">Tiêu đề</th>
-                    <td class="px-4 py-3"><?= $policy['title'] ?></td>
-                </tr>
-
-                <tr>
-                    <th class="px-4 py-3 text-gray-600 font-medium">Nội dung</th>
-                    <td class="px-4 py-3">
-                        <div class="prose max-w-none">
-                            <?= $policy['content'] ?>
+                <!-- Card thông tin chính sách -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-start gap-5">
+                            <div class="w-20 h-20 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="file-text" class="w-10 h-10 text-blue-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-2xl font-bold text-gray-900"><?= htmlspecialchars($policy['title']) ?></h3>
+                                <div class="flex items-center gap-3 mt-2">
+                                    <span class="text-sm text-gray-500">ID: #<?= $policy['id'] ?></span>
+                                </div>
+                            </div>
                         </div>
-                    </td>
-                </tr>
+                    </div>
 
-                <tr>
-                    <th class="px-4 py-3 text-gray-600 font-medium">Người tạo</th>
-                    <td class="px-4 py-3"><?= $policy['created_by'] ?></td>
-                </tr>
+                    <div class="p-6 space-y-6">
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Nội dung</label>
+                            <div class="mt-2 prose prose-slate max-w-none">
+                                <?= $policy['content'] ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <tr>
-                    <th class="px-4 py-3 text-gray-600 font-medium">Ngày tạo</th>
-                    <td class="px-4 py-3"><?= $policy['created_at'] ?></td>
-                </tr>
+                <!-- Thông tin hệ thống -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h4 class="font-medium text-gray-900">Thông tin hệ thống</h4>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                        <div>
+                            <span class="text-gray-500">Người tạo:</span>
+                            <span class="ml-2 font-medium text-gray-900"><?= htmlspecialchars($policy['created_by']) ?></span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Ngày tạo:</span>
+                            <span class="ml-2 font-medium text-gray-900">
+                                <?php
+                                $createdDate = new DateTime($policy['created_at']);
+                                echo $createdDate->format('H:i d/m/Y');
+                                ?>
+                            </span>
+                        </div>
+                        <div>
+                            <span class="text-gray-500">Cập nhật lần cuối:</span>
+                            <span class="ml-2 font-medium text-gray-900">
+                                <?php
+                                if ($policy['updated_at']) {
+                                    $updatedDate = new DateTime($policy['updated_at']);
+                                    echo $updatedDate->format('H:i d/m/Y');
+                                } else {
+                                    echo 'Chưa cập nhật';
+                                }
+                                ?>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <tr>
-                    <th class="px-4 py-3 text-gray-600 font-medium">Ngày cập nhật</th>
-                    <td class="px-4 py-3"><?= $policy['updated_at'] ?></td>
-                </tr>
-
-            </tbody>
-
-        </table>
+        </div>
     </div>
-
-    <!-- Nút quay lại -->
-    <a href="?act=policies"
-        class="inline-block mt-6 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-        Quay lại
-    </a>
-
 </main>
 
 <?php require_once "./views/components/footer.php"; ?>

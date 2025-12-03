@@ -48,7 +48,7 @@ class PolicyController
     public function store()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('policies-create');
+            redirect('policy-create');
             die();
         }
         // dd($_POST);

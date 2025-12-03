@@ -133,12 +133,12 @@ match ($act) {
   //policies
   'policies' => (new PolicyController())->index(),
 
-  'policies-create' => (new PolicyController())->create(),
-  'policies-edit' => (new PolicyController())->edit(),
-  'policies-store' => (new PolicyController())->store(),
-  'policies-update' => (new PolicyController())->update(),
-  'policies-delete' => (new PolicyController())->delete(),
-  'policies-detail' => (new PolicyController())->detail(),
+  'policy-create' => (new PolicyController())->create(),
+  'policy-edit' => (new PolicyController())->edit(),
+  'policy-store' => (new PolicyController())->store(),
+  'policy-update' => (new PolicyController())->update(),
+  'policy-delete' => (new PolicyController())->delete(),
+  'policy-detail' => (new PolicyController())->detail(),
 
   // Tour_Assignments
   'tour-assignment-create' => (new TourAssignmentController())->create(),
