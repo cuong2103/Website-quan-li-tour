@@ -2,85 +2,119 @@
 require_once "./views/components/header.php";
 require_once "./views/components/sidebar.php";
 ?>
-<main class="flex-1 mt-28 overflow-y-auto p-6">
+<main class="flex-1 mt-28 overflow-y-auto p-6 bg-gray-50 w-full">
 
-    <!-- Tiêu đề -->
-    <h1 class="text-2xl font-semibold text-gray-800 mb-6">Cập nhật khách hàng</h1>
-
-    <div class="bg-white shadow-sm rounded-lg p-6 max-w-2xl mx-auto">
+    <div class="w-full mx-auto">
+        <!-- Header -->
+        <div class="mb-6 flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800 tracking-tight">Cập nhật khách hàng</h1>
+                <p class="text-sm text-gray-500 mt-1">Chỉnh sửa thông tin hồ sơ khách hàng</p>
+            </div>
+            <a href="<?= BASE_URL . '?act=customers' ?>" class="text-gray-500 hover:text-gray-700 flex items-center text-sm font-medium transition-colors">
+                <i class="w-4 h-4 mr-1" data-lucide="arrow-left"></i> Quay lại danh sách
+            </a>
+        </div>
 
         <!-- Hiển thị lỗi -->
         <?php if (!empty($err)): ?>
-            <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">
+            <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl flex items-center">
+                <i class="w-5 h-5 mr-2" data-lucide="alert-circle"></i>
                 <?= $err ?>
             </div>
         <?php endif; ?>
 
-        <!-- Form update -->
-        <form action="?act=customer-update&id=<?= $customer['id'] ?>" method="POST" class="space-y-5">
+        <form action="?act=customer-update&id=<?= $customer['id'] ?>" method="POST"
+            class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
 
-            <!-- Tên khách hàng -->
-            <div>
-                <label class="block mb-1 text-sm font-medium text-gray-700">Tên khách hàng *</label>
-                <input
-                    type="text"
-                    name="name"
-                    value="<?= $customer['name'] ?>"
-                    class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+            <div class="p-8">
+                <!-- Section 1: Thông tin cá nhân -->
+                <div class="mb-8">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center pb-2 border-b border-gray-100">
+                        <i class="w-5 h-5 mr-2 text-blue-600" data-lucide="user"></i>
+                        Thông tin cá nhân
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Tên -->
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Họ và tên <span class="text-red-500">*</span></label>
+                            <input type="text" name="name" value="<?= htmlspecialchars($customer['name']) ?>" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" required>
+                        </div>
+
+                        <!-- Giới tính -->
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Giới tính</label>
+                            <select name="gender" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
+                                <option value="male" <?= $customer['gender'] == 'male' ? 'selected' : '' ?>>Nam</option>
+                                <option value="female" <?= $customer['gender'] == 'female' ? 'selected' : '' ?>>Nữ</option>
+                                <option value="other" <?= $customer['gender'] == 'other' ? 'selected' : '' ?>>Khác</option>
+                            </select>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Email <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="w-4 h-4 text-gray-400" data-lucide="mail"></i>
+                                </div>
+                                <input type="email" name="email" value="<?= htmlspecialchars($customer['email']) ?>" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" required>
+                            </div>
+                        </div>
+
+                        <!-- Số điện thoại -->
+                        <div class="col-span-2 md:col-span-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Số điện thoại <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="w-4 h-4 text-gray-400" data-lucide="phone"></i>
+                                </div>
+                                <input type="text" name="phone" value="<?= htmlspecialchars($customer['phone']) ?>" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" required>
+                            </div>
+                        </div>
+
+                        <!-- Địa chỉ -->
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Địa chỉ <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="w-4 h-4 text-gray-400" data-lucide="map-pin"></i>
+                                </div>
+                                <input type="text" name="address" value="<?= htmlspecialchars($customer['address']) ?>" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Giấy tờ tùy thân -->
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center pb-2 border-b border-gray-100">
+                        <i class="w-5 h-5 mr-2 text-blue-600" data-lucide="credit-card"></i>
+                        Giấy tờ tùy thân
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- CCCD -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Căn cước công dân (CCCD)</label>
+                            <input type="text" name="citizen_id" value="<?= htmlspecialchars($customer['citizen_id'] ?? '') ?>" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                        </div>
+
+                        <!-- Hộ chiếu -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Hộ chiếu (Passport)</label>
+                            <input type="text" name="passport" value="<?= htmlspecialchars($customer['passport']) ?>" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Email -->
-            <div>
-                <label class="block mb-1 text-sm font-medium text-gray-700">Email *</label>
-                <input
-                    type="email"
-                    name="email"
-                    value="<?= $customer['email'] ?>"
-                    class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-            </div>
-
-            <!-- Số điện thoại -->
-            <div>
-                <label class="block mb-1 text-sm font-medium text-gray-700">Số điện thoại *</label>
-                <input
-                    type="text"
-                    name="phone"
-                    value="<?= $customer['phone'] ?>"
-                    class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-            </div>
-
-            <!-- Địa chỉ -->
-            <div>
-                <label class="block mb-1 text-sm font-medium text-gray-700">Địa chỉ *</label>
-                <input
-                    type="text"
-                    name="address"
-                    value="<?= $customer['address'] ?>"
-                    class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-            </div>
-            <!-- Giới tính -->
-            <div>
-                <label class="block mb-1 text-sm font-medium text-gray-700">Giới tính *</label>
-                <input
-                    type="text"
-                    name="gender"
-                    value="<?= $customer['gender'] ?>"
-                    class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-            </div>
-            <!-- Hộ chiếu -->
-            <div>
-                <label class="block mb-1 text-sm font-medium text-gray-700">Hộ chiếu *</label>
-                <input
-                    type="text"
-                    name="passport"
-                    value="<?= $customer['passport'] ?>"
-                    class="w-full border border-gray-300 px-4 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-            </div>
-
-            <!-- Nút -->
-            <div class="flex justify-end gap-3 pt-4">
-                <a href="?act=customers" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">Hủy</a>
-                <button type="submit" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg">Cập nhật</button>
+            <!-- Footer Actions -->
+            <div class="px-8 py-5 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3">
+                <button type="submit" class="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg shadow-sm hover:shadow transition-all flex items-center">
+                    <i class="w-4 h-4 mr-2" data-lucide="save"></i> Cập nhật
+                </button>
             </div>
         </form>
     </div>
