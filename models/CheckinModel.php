@@ -12,7 +12,7 @@ class CheckinModel
   public function getCustomersByAssignment($assignmentId)
   {
     try {
-      $sql = "SELECT c.*, bc.is_representative, bc.room,
+      $sql = "SELECT c.*, bc.is_representative, bc.room_number,
                     (SELECT COUNT(*) FROM customer_checkins 
                      WHERE customer_id = c.id 
                      AND tour_assignment_id = :assignment_id) as checkin_count,
@@ -162,11 +162,65 @@ class CheckinModel
   public function updateRoom($customerId, $bookingId, $room)
   {
     try {
-      $sql = "UPDATE booking_customers SET room = ? WHERE customer_id = ? AND booking_id = ?";
+      $sql = "UPDATE booking_customers SET room_number = ? WHERE customer_id = ? AND booking_id = ?";
       $stmt = $this->conn->prepare($sql);
       return $stmt->execute([$room, $customerId, $bookingId]);
     } catch (PDOException $e) {
       die("Lỗi updateRoom(): " . $e->getMessage());
+    }
+  }
+
+  // Kiểm tra xem có thể check-in cho tour này không (dựa vào ngày)
+  public function canCheckin($assignmentId)
+  {
+    try {
+      // JOIN với bảng bookings để lấy start_date và end_date
+      $sql = "SELECT b.start_date, b.end_date 
+              FROM tour_assignments ta
+              JOIN bookings b ON ta.booking_id = b.id
+              WHERE ta.id = ?";
+
+      $stmt = $this->conn->prepare($sql);
+      $stmt->execute([$assignmentId]);
+      $tour = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      if (!$tour) {
+        return [
+          'allowed' => false,
+          'message' => 'Không tìm thấy thông tin tour!'
+        ];
+      }
+
+      $today = date('Y-m-d');
+      $startDate = $tour['start_date'];
+      $endDate = $tour['end_date'];
+
+      // Kiểm tra tour chưa bắt đầu
+      if ($today < $startDate) {
+        return [
+          'allowed' => false,
+          'message' => 'Chưa đến thời gian khởi hành! Tour bắt đầu từ ' . date('d/m/Y', strtotime($startDate))
+        ];
+      }
+
+      // Kiểm tra tour đã kết thúc
+      if ($today > $endDate) {
+        return [
+          'allowed' => false,
+          'message' => 'Tour đã kết thúc từ ngày ' . date('d/m/Y', strtotime($endDate))
+        ];
+      }
+
+      // Tour đang diễn ra
+      return [
+        'allowed' => true,
+        'message' => 'OK'
+      ];
+    } catch (PDOException $e) {
+      return [
+        'allowed' => false,
+        'message' => 'Lỗi kiểm tra thời gian tour: ' . $e->getMessage()
+      ];
     }
   }
 }

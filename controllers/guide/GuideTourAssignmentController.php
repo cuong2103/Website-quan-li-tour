@@ -201,7 +201,7 @@ class GuideTourAssignmentController
             $info = $checkinMap[$c['id']] ?? null;
             $status = $info ? 'Đã check-in' : 'Chưa check-in';
             $time = $info ? date('H:i d/m/Y', strtotime($info['checkin_time'])) : '';
-            $room = $c['room'] ?? '';
+            $room = $c['room_number'] ?? '';
 
             $data[] = [
                 $i + 1,
@@ -225,6 +225,14 @@ class GuideTourAssignmentController
     {
         $assignmentId = $_POST['assignment_id'];
         $customerId = $_POST['customer_id'];
+
+        // Kiểm tra thời gian tour
+        $canCheckin = $this->checkinModel->canCheckin($assignmentId);
+        if (!$canCheckin['allowed']) {
+            Message::set('error', $canCheckin['message']);
+            header("Location: " . BASE_URL . "?act=guide-tour-assignments-detail&id=" . $assignmentId . "&tab=checkin");
+            exit;
+        }
 
         // Kiểm tra đã check-in chưa
         if ($this->checkinModel->hasCheckedIn($assignmentId, $customerId)) {

@@ -105,7 +105,25 @@ $tabs = [
                     </a>
                 </div>
             </div>
+            <?php
+            // Kiểm tra tour có đang diễn ra không
+            $today = date('Y-m-d');
+            $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['end_date']);
 
+            if (!$canCheckinNow): ?>
+                <div class="mb-4 p-4 rounded-lg <?= $today < $assignment['start_date'] ? 'bg-yellow-50 border border-yellow-200' : 'bg-gray-50 border border-gray-200' ?>">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="<?= $today < $assignment['start_date'] ? 'clock' : 'check-circle' ?>" class="w-5 h-5 <?= $today < $assignment['start_date'] ? 'text-yellow-600' : 'text-gray-600' ?>"></i>
+                        <span class="font-medium <?= $today < $assignment['start_date'] ? 'text-yellow-800' : 'text-gray-700' ?>">
+                            <?php if ($today < $assignment['start_date']): ?>
+                                Chưa đến thời gian khởi hành! Tour bắt đầu từ <?= date('d/m/Y', strtotime($assignment['start_date'])) ?>
+                            <?php else: ?>
+                                Tour đã kết thúc từ ngày <?= date('d/m/Y', strtotime($assignment['end_date'])) ?>
+                            <?php endif; ?>
+                        </span>
+                    </div>
+                </div>
+            <?php endif; ?>
             <table class="w-full text-sm">
                 <thead class="bg-gray-100">
                     <tr>
@@ -174,12 +192,36 @@ $tabs = [
         <div class="bg-white border shadow rounded-xl p-5">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-semibold text-lg">Nhật ký tour</h3>
-                <a href="<?= BASE_URL . '?act=journal-create&tour_assignment_id=' . $assignment['id'] ?>"
-                    class="bg-orange-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-orange-700 flex items-center gap-2">
-                    <i data-lucide="pen-tool" class="w-4 h-4"></i>
-                    Viết nhật ký mới
-                </a>
+                <?php
+                // Kiểm tra tour đã bắt đầu chưa (CHỈ chặn khi chưa bắt đầu, vẫn cho phép khi đã kết thúc)
+                $today = date('Y-m-d');
+                $canWriteJournal = ($today >= $assignment['start_date']);
+
+                if ($canWriteJournal): ?>
+                    <a href="<?= BASE_URL . '?act=journal-create&tour_assignment_id=' . $assignment['id'] ?>"
+                        class="bg-orange-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-orange-700 flex items-center gap-2">
+                        <i data-lucide="pen-tool" class="w-4 h-4"></i>
+                        Viết nhật ký mới
+                    </a>
+                <?php else: ?>
+                    <button disabled class="bg-gray-300 text-gray-500 px-3 py-2 rounded-lg text-sm cursor-not-allowed flex items-center gap-2"
+                        title="Chưa đến thời gian khởi hành">
+                        <i data-lucide="pen-tool" class="w-4 h-4"></i>
+                        Viết nhật ký mới
+                    </button>
+                <?php endif; ?>
             </div>
+
+            <?php if (!$canWriteJournal): ?>
+                <div class="mb-4 p-4 rounded-lg bg-yellow-50 border border-yellow-200">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="clock" class="w-5 h-5 text-yellow-600"></i>
+                        <span class="font-medium text-yellow-800">
+                            Chưa đến thời gian khởi hành! Tour bắt đầu từ <?= date('d/m/Y', strtotime($assignment['start_date'])) ?>
+                        </span>
+                    </div>
+                </div>
+            <?php endif; ?>
 
             <table class="w-full text-sm">
                 <thead class="bg-gray-100">

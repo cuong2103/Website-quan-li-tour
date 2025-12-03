@@ -50,6 +50,25 @@ class JournalController
             exit;
         }
 
+        // Kiểm tra ngày tour - chỉ cho phép viết nhật ký khi tour đã bắt đầu
+        $checkinModel = new CheckinModel();
+        $tourDateCheck = $checkinModel->canCheckin($data['tour_assignment_id']);
+
+        if (!$tourDateCheck['allowed']) {
+            // Nếu tour chưa bắt đầu, hiển thị thông báo
+            if (strpos($tourDateCheck['message'], 'Chưa đến') !== false) {
+                Message::set('error', 'Không thể viết nhật ký! Tour chưa bắt đầu.');
+            } else {
+                // Tour đã kết thúc - vẫn cho phép viết nhật ký cho tour đã qua
+            }
+
+            // Chỉ chặn nếu tour chưa bắt đầu
+            if (strpos($tourDateCheck['message'], 'Chưa đến') !== false) {
+                header('Location: ' . BASE_URL . '?act=journal-create&tour_assignment_id=' . $data['tour_assignment_id']);
+                exit;
+            }
+        }
+
         $journal_id = $this->model->create($data);
 
         if (!empty($_FILES['images']['name'][0])) {
