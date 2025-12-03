@@ -325,7 +325,7 @@ CREATE TABLE `notification_recipients` (
   `created_by` INT,
   `updated_by` INT,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY unique_notification_user (`notification_id`, `user_id`)
 );
 
