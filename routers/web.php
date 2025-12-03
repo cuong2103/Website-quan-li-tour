@@ -93,6 +93,8 @@ match ($act) {
   'customer-detail' => (new CustomerController())->detail(),
   'customer-edit' => (new CustomerController())->edit(),
   'customer-delete' => (new CustomerController())->delete(),
+  'customer-export' => (new CustomerController())->exportCustomers(),
+  'customer-import' => (new CustomerController())->importCustomers(),
 
 
   // bookings
@@ -139,7 +141,6 @@ match ($act) {
   'policies-detail' => (new PolicyController())->detail(),
 
   // Tour_Assignments
-  // 'tour-assignments' => (new TourAssignmentController())->index(),
   'tour-assignment-create' => (new TourAssignmentController())->create(),
   'tour-assignment-store' => (new TourAssignmentController())->store(),
   'tour-assignment-edit' => (new TourAssignmentController())->edit(),
