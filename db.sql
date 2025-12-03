@@ -88,8 +88,6 @@ CREATE TABLE `services` (
   `updated_by` INT,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
-  INDEX idx_service_type_id (`service_type_id`),
-  INDEX idx_supplier_id (`supplier_id`)
 );
 
 
@@ -118,7 +116,7 @@ CREATE TABLE `tour_services` (
   `created_by` INT,
   `updated_by` INT,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY unique_tour_service (`tour_id`, `service_id`) 
 );
 
@@ -153,7 +151,7 @@ CREATE TABLE `tour_policies` (
   `created_by` INT,
   `updated_by` INT,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY unique_tour_policy (`tour_id`, `policy_id`) 
 );
 
@@ -216,7 +214,7 @@ CREATE TABLE `booking_customers` (
   `created_by` INT,
   `updated_by` INT,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
+  `updated_at` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY unique_booking_customer (`booking_id`, `customer_id`) 
 );
 
