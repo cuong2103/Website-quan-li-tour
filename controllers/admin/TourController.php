@@ -19,7 +19,28 @@ class TourController
 
   public function index()
   {
-    $tours = $this->tourModel->getAll();
+    // Lấy filter parameters từ GET
+    $filters = [
+      'name' => $_GET['name'] ?? '',
+      'category_id' => $_GET['category_id'] ?? '',
+      'status' => $_GET['status'] ?? '',
+      'is_fixed' => $_GET['is_fixed'] ?? '',
+      'duration' => $_GET['duration'] ?? '',
+      'destination_id' => $_GET['destination_id'] ?? '',
+      'min_price' => $_GET['min_price'] ?? '',
+      'max_price' => $_GET['max_price'] ?? '',
+    ];
+
+    // Lấy tours với filter
+    $tours = $this->tourModel->getAll($filters);
+
+    // Lấy data cho dropdowns
+    $categories = $this->categoryModel->getAll();
+    $destinations = $this->destinationModel->getAll();
+
+    // Tính giá min/max để set slider range
+    $priceRange = $this->tourModel->getPriceRange();
+
     require_once './views/admin/tours/index.php';
   }
 

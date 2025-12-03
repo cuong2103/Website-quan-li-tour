@@ -269,7 +269,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
                   <?= in_array($policy['id'], $selectedPolicyIds) ? 'checked' : '' ?>
                   class="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                 <div>
-                  <p class="font-medium text-gray-900"><?= htmlspecialchars($policy['name']) ?></p>
+                  <p class="font-medium text-gray-900"><?= htmlspecialchars($policy['title']) ?></p>
                   <p class="text-sm text-gray-600"><?= htmlspecialchars($policy['content']) ?></p>
                 </div>
               </label>

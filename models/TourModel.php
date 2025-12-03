@@ -8,17 +8,87 @@ class TourModel
     $this->conn = connectDB();
   }
 
-  // Lấy danh sách tour
-  public function getAll()
+  // Lấy danh sách tour với filter
+  public function getAll($filters = [])
   {
-    $sql = "SELECT t.*, c.name as category_name 
+    $sql = "SELECT DISTINCT t.*, c.name as category_name 
             FROM tours t
             LEFT JOIN categories c ON t.category_id = c.id
-            ORDER BY t.id DESC";
+            LEFT JOIN itineraries i ON t.id = i.tour_id
+            WHERE 1=1";
+    $params = [];
+
+    // Filter theo tên tour
+    if (!empty($filters['name'])) {
+      $sql .= " AND t.name LIKE ?";
+      $params[] = "%" . $filters['name'] . "%";
+    }
+
+    // Filter theo danh mục
+    if (!empty($filters['category_id'])) {
+      $sql .= " AND t.category_id = ?";
+      $params[] = $filters['category_id'];
+    }
+
+    // Filter theo trạng thái
+    if (!empty($filters['status'])) {
+      $sql .= " AND t.status = ?";
+      $params[] = $filters['status'];
+    }
+
+    // Filter theo loại tour (cố định/thường)
+    if (isset($filters['is_fixed']) && $filters['is_fixed'] !== '') {
+      $sql .= " AND t.is_fixed = ?";
+      $params[] = $filters['is_fixed'];
+    }
+
+    // Filter theo số ngày
+    if (!empty($filters['duration'])) {
+      switch ($filters['duration']) {
+        case '1-3':
+          $sql .= " AND t.duration_days BETWEEN 1 AND 3";
+          break;
+        case '4-7':
+          $sql .= " AND t.duration_days BETWEEN 4 AND 7";
+          break;
+        case '7+':
+          $sql .= " AND t.duration_days > 7";
+          break;
+      }
+    }
+
+    // Filter theo điểm đến
+    if (!empty($filters['destination_id'])) {
+      $sql .= " AND i.destination_id = ?";
+      $params[] = $filters['destination_id'];
+    }
+
+    // Filter theo khoảng giá
+    if (!empty($filters['min_price'])) {
+      $sql .= " AND t.adult_price >= ?";
+      $params[] = $filters['min_price'];
+    }
+    if (!empty($filters['max_price'])) {
+      $sql .= " AND t.adult_price <= ?";
+      $params[] = $filters['max_price'];
+    }
+
+    $sql .= " ORDER BY t.id DESC";
+
     $stmt = $this->conn->prepare($sql);
-    $stmt->execute();
+    $stmt->execute($params);
     return $stmt->fetchAll();
   }
+
+  // Lấy khoảng giá min/max của tour
+  public function getPriceRange()
+  {
+    $sql = "SELECT MIN(adult_price) as min_price, MAX(adult_price) as max_price FROM tours";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetch();
+  }
+
 
   // Thêm tour mới
   public function create($data)
