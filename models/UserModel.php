@@ -8,12 +8,28 @@ class UserModel
         $this->conn = connectDB();
     }
 
-    // LẤY TOÀN BỘ USER
-    public function getAll()
+    // LẤY TẤT CẢ USER (với tìm kiếm và lọc)
+    public function getAll($search = '', $role = '')
     {
-        $sql = "SELECT * FROM users";
+        $sql = "SELECT * FROM users WHERE 1=1";
+        $params = [];
+
+        // Tìm kiếm theo tên, email, số điện thoại
+        if (!empty($search)) {
+            $sql .= " AND (fullname LIKE :search OR email LIKE :search OR phone LIKE :search)";
+            $params[':search'] = "%$search%";
+        }
+
+        // Lọc theo vai trò
+        if (!empty($role)) {
+            $sql .= " AND roles = :role";
+            $params[':role'] = $role;
+        }
+
+        $sql .= " ORDER BY created_at DESC";
+
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
@@ -29,23 +45,24 @@ class UserModel
     // THÊM USER
     public function create($data)
     {
-        $sql = "INSERT INTO users (fullname, email, phone, password, roles, status, avatar)
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO users (fullname, email, phone, password, roles, status, avatar, created_by, updated_by)
+                VALUES (:fullname, :email, :phone, :password, :roles, :status, :avatar, :created_by, :updated_by)";
 
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([
-            $data['fullname'],
-            $data['email'],
-            $data['phone'],
-            $data['password'],
-            $data['roles'],
-            $data['status'],
-            $data['avatar'] ?? null,
+            ':fullname' => $data['fullname'],
+            ':email' => $data['email'],
+            ':phone' => $data['phone'],
+            ':password' => $data['password'],
+            ':roles' => $data['roles'],
+            ':status' => $data['status'],
+            ':avatar' => $data['avatar'] ?? null,
+            ':created_by' => $data['created_by'] ?? null,
+            ':updated_by' => $data['updated_by'] ?? null,
         ]);
     }
 
     // UPDATE USER
-    // UserModel.php
     public function update($id, $data)
     {
         $sql = "UPDATE users 
@@ -56,20 +73,31 @@ class UserModel
             avatar = :avatar, 
             roles = :roles,
             status = :status,
+            updated_by = :updated_by,
             updated_at = NOW()
         WHERE id = :id";
 
         $stmt = $this->conn->prepare($sql);
 
-        return $stmt->execute([
+        $params = [
             ':id' => $id,
             ':fullname' => $data['fullname'],
             ':email' => $data['email'],
             ':phone' => $data['phone'],
             ':avatar' => $data['avatar'] ?? null,
-            ':roles' => $data['roles'], // phải đúng kiểu trong DB
-            ':status' => $data['status'], // 0 hoặc 1
-        ]);
+            ':roles' => $data['roles'],
+            ':status' => $data['status'],
+            ':updated_by' => $data['updated_by'] ?? null,
+        ];
+
+        // Handle password update if provided
+        if (!empty($data['password'])) {
+            $sql = str_replace("updated_at = NOW()", "password = :password, updated_at = NOW()", $sql);
+            $stmt = $this->conn->prepare($sql);
+            $params[':password'] = $data['password'];
+        }
+
+        return $stmt->execute($params);
     }
 
 
@@ -82,8 +110,9 @@ class UserModel
             return $stmt->execute([$id]);
         } catch (PDOException $e) {
             if ($e->getCode() == '23000') {
-                return "FOREIGN_KEY_CONSTRAINT";
+                return "Không thể xóa nhân viên này vì đang có dữ liệu liên quan (Tour, Booking, v.v...)";
             } else {
+                return $e->getMessage();
             }
         }
     }
@@ -133,5 +162,17 @@ class UserModel
         }
 
         return $user;
+    }
+
+    // LẤY DANH SÁCH HDV ĐANG NGHỈ PHÉP
+    public function getOnLeave()
+    {
+        $sql = "SELECT * FROM users 
+                WHERE leave_start IS NOT NULL 
+                AND leave_end IS NOT NULL 
+                ORDER BY leave_start DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 }
