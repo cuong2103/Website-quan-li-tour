@@ -17,11 +17,7 @@ require_once './views/components/sidebar.php';
             <label class="block font-medium mb-1">Danh mục</label>
             <select name="category_id" class="border rounded-lg w-full p-2 <?= isset($_SESSION['errors']['category_id']) ? 'border-red-500' : '' ?>">
                 <option value="">-- Chọn danh mục --</option>
-                <?php foreach ($categories as $ct): ?>
-                    <option value="<?= $ct['id'] ?>" <?= ($ct['id'] == ($_SESSION['old']['category_id'] ?? '')) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($ct['name']) ?>
-                    </option>
-                <?php endforeach; ?>
+                <?php renderOption($tree); ?>
             </select>
             <?php if (!empty($_SESSION['errors']['category_id'])): ?>
                 <p class="text-red-500 text-sm mt-1"><?= implode(', ', $_SESSION['errors']['category_id']) ?></p>

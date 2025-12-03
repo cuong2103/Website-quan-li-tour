@@ -2,7 +2,6 @@
 CREATE TABLE `users` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `fullname` VARCHAR(255), 
-  `username` VARCHAR(100) UNIQUE NOT NULL, 
   `password` VARCHAR(255) NOT NULL, 
   `email` VARCHAR(100) UNIQUE NOT NULL,
   `phone` VARCHAR(20),

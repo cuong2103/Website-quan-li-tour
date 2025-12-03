@@ -249,8 +249,14 @@ class TourModel
     }
 
     if (!empty($category_id)) {
-      $sql .= " AND t.category_id = ?";
-      $params[] = $category_id;
+      if (is_array($category_id)) {
+        $placeholders = implode(',', array_fill(0, count($category_id), '?'));
+        $sql .= " AND t.category_id IN ($placeholders)";
+        $params = array_merge($params, $category_id);
+      } else {
+        $sql .= " AND t.category_id = ?";
+        $params[] = $category_id;
+      }
     }
 
     if (!empty($status)) {
@@ -266,18 +272,18 @@ class TourModel
     return $stmt->fetchAll();
   }
 
-    // Lấy tất cả tour_services kèm thông tin service
-    public function getAllTourServices()
-    {
-      $sql = "SELECT ts.*, s.estimated_price 
+  // Lấy tất cả tour_services kèm thông tin service
+  public function getAllTourServices()
+  {
+    $sql = "SELECT ts.*, s.estimated_price 
               FROM tour_services ts
               JOIN services s ON ts.service_id = s.id";
-      $stmt = $this->conn->prepare($sql);
-      $stmt->execute();
-      return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
 
-    
+
   // Lấy services của một tour cụ thể
   public function getServicesByTourId($tourId)
   {
