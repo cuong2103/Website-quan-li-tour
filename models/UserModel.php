@@ -109,30 +109,29 @@ class UserModel
         $stmt->execute([$email]);
         return $stmt->fetch();
     }
-
-    // CHECK LOGIN
+    // Check loggin
     public function checkLogin($email, $password)
     {
         $sql = "SELECT * FROM users WHERE email = :email";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute(['email' => $email]);
-
-        $user = $stmt->fetch();
-
+    
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
         if (!$user) {
             return "Không tìm thấy email trong DB";
         }
-
-        // Tạm thời so sánh trực tiếp (chưa mã hóa)
-        if ($password !== $user['password']) {
+    
+        // So sánh mật khẩu hash
+        if (!password_verify($password, $user['password'])) {
             return "Sai mật khẩu";
         }
-
+    
         // Check tài khoản đang khóa hay không
         if ($user['status'] != 1) {
             return "Tài khoản đang bị khóa";
         }
-
+    
         return $user;
     }
 }

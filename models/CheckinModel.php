@@ -12,7 +12,7 @@ class CheckinModel
   public function getCustomersByAssignment($assignmentId)
   {
     try {
-      $sql = "SELECT c.*, bc.is_representative, bc.room,
+      $sql = "SELECT c.*, bc.is_representative, bc.room_number,
                     (SELECT COUNT(*) FROM customer_checkins 
                      WHERE customer_id = c.id 
                      AND tour_assignment_id = :assignment_id) as checkin_count,
