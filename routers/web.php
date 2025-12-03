@@ -19,8 +19,9 @@ match ($act) {
   'tours-update' => (new TourController())->update(),
 
   'suppliers' => (new SupplierController())->index(),
+  'supplier-create' => (new SupplierController())->create(),
+  'supplier-store' => (new SupplierController())->store(),
   'supplier-edit' => (new SupplierController())->edit(),
-  'supplier-create' => (new SupplierController())->store(),
   'supplier-update' => (new SupplierController())->update(),
   'supplier-detail' => (new SupplierController())->detail(),
   'supplier-delete' => (new SupplierController())->delete(),

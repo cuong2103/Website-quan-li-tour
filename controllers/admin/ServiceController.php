@@ -83,7 +83,7 @@ class ServiceController
             'service_type_id' => $_POST['service_type_id'],
             'supplier_id' => $_POST['supplier_id'],
             'estimated_price' => $_POST['estimated_price'] ?? 0,
-            'created_by' => $_SESSION['admin_id'] ?? 1 // Lưu người tạo vào DB
+            'created_by' => $_SESSION['currentUser']['id'] ?? 1 // Lưu người tạo vào DB
         ];
 
         // Rules validate cơ bản
@@ -152,7 +152,7 @@ class ServiceController
             'service_type_id' => $_POST['service_type_id'],
             'supplier_id' => $_POST['supplier_id'],
             'estimated_price' => $_POST['estimated_price'],
-            'updated_by' => $_SESSION['admin_id'] ?? 1 // Người chỉnh sửa
+            'updated_by' => $_SESSION['currentUser']['id'] ?? 1
         ];
 
         // Validate tương tự tạo mới
