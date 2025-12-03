@@ -305,7 +305,7 @@ class BookingModel
 
     public function getServicesByBooking($bookingId)
     {
-        $sql = "SELECT s.*, bs.quantity, bs.description, bs.current_price, bs.discount
+        $sql = "SELECT s.*, bs.quantity, bs.current_price
             FROM booking_services bs
             JOIN services s ON bs.service_id = s.id
             WHERE bs.booking_id = ?";
@@ -313,6 +313,7 @@ class BookingModel
         $stmt->execute([$bookingId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
     // Hàm lấy tổng tiền đã thanh toán
     public function getTotalPaid($bookingId)
