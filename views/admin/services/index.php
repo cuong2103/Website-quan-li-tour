@@ -8,7 +8,7 @@ require_once './views/components/sidebar.php';
     <!-- Header trang -->
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-2xl font-semibold">Quản lý Dịch Vụ</h2>
+            <h2 class="text-2xl font-semibold">Quản lý dịch Vụ</h2>
             <p class="text-gray-500 text-sm">Danh sách dịch vụ đang cung cấp</p>
         </div>
         <button onclick="window.location.href='?act=service-create'"
