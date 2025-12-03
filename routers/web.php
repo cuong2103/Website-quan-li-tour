@@ -151,6 +151,9 @@ match ($act) {
   // Guide tour_Assignments
   'guide-tour-assignments' => (new GuideTourAssignmentController())->index(),
   'guide-tour-assignments-detail' => (new GuideTourAssignmentController())->detail(),
+  'guide-tour-assignments-export-checkin' => (new GuideTourAssignmentController())->exportCheckinList(),
+  'guide-tour-assignments-checkin' => (new GuideTourAssignmentController())->checkinStore(),
+  'guide-tour-assignments-checkin-destroy' => (new GuideTourAssignmentController())->checkinDestroy(),
 
   // Journal
   'journal' => (new JournalController())->index(),
@@ -161,11 +164,6 @@ match ($act) {
   'journal-delete' => (new JournalController())->delete(),
   'journal-images-delete' => (new JournalController())->deleteImage(),
   'journal-detail' => (new JournalController())->detail(),
-  // Checkin
-  'checkin' => (new CheckinController())->index(),
-  'checkin-store' => (new CheckinController())->checkin(),
-  'checkin-bulk' => (new CheckinController())->bulkCheckin(),
-  'checkin-delete' => (new CheckinController())->delete(),
   '403' => require_once './views/forbidden.php',
   default => require_once './views/notFound.php',
 };
