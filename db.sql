@@ -120,9 +120,9 @@ CREATE TABLE `booking_services` (
   `tour_id` int,
   `service_id` int,
   `quantity` int,
-  `description` text,
+  `description` text, -- Xóa
   `current_price` decimal(12,0),
-  `discount` decimal(12,0),
+  `discount` decimal(12,0), -- Xóa
   `created_by` int,
   `updated_by` int,
   `created_at` timestamp DEFAULT (now()),
@@ -205,6 +205,7 @@ CREATE TABLE `booking_customers` (
   `booking_id` int,
   `customer_id` int,
   `is_representative` boolean DEFAULT false,
+  `room_number` varchar(20),
   `notes` text,
   `created_by` int,
   `updated_by` int,

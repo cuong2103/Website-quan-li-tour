@@ -11,9 +11,22 @@ class ContractController
         $this->bookingModel = new BookingModel();
     }
 
+    // Tự động cập nhật trạng thái
+    private function checkAndAutoUpdateStatus()
+    {
+        $contracts = $this->contractModel->getAll();
+        $today = date('Y-m-d');
+        foreach ($contracts as $c) {
+            if ($c['status'] == 'active' && $c['expiry_date'] < $today) {
+                $this->contractModel->updateStatus($c['id'], 'expired');
+            }
+        }
+    }
+
     // Hiển thị danh sách hợp đồng
     public function index()
     {
+        $this->checkAndAutoUpdateStatus();
         $contracts = $this->contractModel->getAll();
         require_once './views/admin/contracts/index.php';
     }
@@ -26,6 +39,9 @@ class ContractController
 
         // Lấy danh sách khách hàng của booking này
         $bookingCustomers = $this->bookingModel->getCustomers($bookingId);
+
+        // Lấy thông tin booking để điền ngày
+        $booking = $this->bookingModel->getById($bookingId);
 
         require_once './views/admin/contracts/create.php';
     }
@@ -117,6 +133,7 @@ class ContractController
     // Chi tiết hợp đồng
     public function detail()
     {
+        $this->checkAndAutoUpdateStatus();
         $id = $_GET['id'] ?? null;
         if (!$id) die("Thiếu id hợp đồng");
 

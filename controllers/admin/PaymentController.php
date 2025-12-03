@@ -37,10 +37,20 @@ class PaymentController
             'amount'         => $_POST['amount'],
             'type'           => $_POST['type'],
             'status'         => $_POST['status'],
-            'notes'          => $_POST['notes'] ?? null,
             'payment_date'   => $_POST['payment_date'] ?? date('Y-m-d H:i:s'),
             'created_by'     => $_SESSION['currentUser']['id'] ?? 1
         ];
+
+        // Validate số tiền
+        $booking = $this->bookingModel->getById($data['booking_id']);
+        $totalPaid = $this->bookingModel->getTotalPaid($data['booking_id']);
+        $remaining = $booking['total_amount'] - $totalPaid;
+
+        if ($data['status'] == 'success' && $data['amount'] > $remaining) {
+             Message::set('errors', 'Số tiền thanh toán vượt quá số tiền còn lại (' . number_format($remaining) . 'đ)');
+             header("Location: " . BASE_URL . "?act=payment-create&booking_id=" . $data['booking_id']);
+             exit();
+        }
 
         $this->paymentModel->store($data);
 
@@ -69,9 +79,27 @@ class PaymentController
             'amount'         => $_POST['amount'],
             'type'           => $_POST['type'],
             'status'         => $_POST['status'],
-            'notes'          => $_POST['notes'] ?? null,
             'payment_date'   => $_POST['payment_date'] ?? date('Y-m-d H:i:s')
         ];
+
+        // Validate số tiền
+        $payment = $this->paymentModel->findById($id);
+        $bookingId = $payment['booking_id'];
+        $booking = $this->bookingModel->getById($bookingId);
+        
+        $totalPaid = $this->bookingModel->getTotalPaid($bookingId);
+        // Trừ đi số tiền của payment hiện tại (nếu nó đã success) để tính lại remaining thực tế trước khi update
+        if ($payment['status'] == 'success') {
+            $totalPaid -= $payment['amount'];
+        }
+        
+        $remaining = $booking['total_amount'] - $totalPaid;
+
+        if ($data['status'] == 'success' && $data['amount'] > $remaining) {
+             Message::set('errors', 'Số tiền thanh toán vượt quá số tiền còn lại (' . number_format($remaining) . 'đ)');
+             header("Location: " . BASE_URL . "?act=payment-edit&id=" . $id);
+             exit();
+        }
 
         $this->paymentModel->update($id, $data);
 
@@ -118,6 +146,10 @@ class PaymentController
         if (!$booking) return;
 
         $totalAmount = $booking['total_amount'];
+        $remaining = $totalAmount - $totalPaid;
+
+        // Cập nhật số tiền vào booking
+        $this->bookingModel->updateFinancials($bookingId, $totalPaid, $remaining);
 
         if ($totalPaid >= $totalAmount) {
             $this->bookingModel->updateStatus($bookingId, '3'); // 3 = đã thanh toán đủ

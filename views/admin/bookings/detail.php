@@ -14,16 +14,20 @@ require_once './views/components/sidebar.php';
         </a>
     </div>
 
-    <!-- Tour Subtitle -->
-    <p class="text-sm text-gray-500 mb-4">
-        <?= htmlspecialchars($booking['tour_name']) ?>
-    </p>
 
     <!-- Thông tin chung -->
     <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
         <h2 class="font-medium mb-4 text-gray-800">Thông tin chung</h2>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+
+            <div>
+                <p class="text-gray-500">Tour</p>
+                <p class="font-medium">
+                    <?= htmlspecialchars($booking['tour_name']) ?>
+                </p>
+            </div>
+
             <div>
                 <p class="text-gray-500">Ngày đi</p>
                 <p class="font-medium"><?= $booking['start_date'] ?></p>
@@ -46,6 +50,25 @@ require_once './views/components/sidebar.php';
                 </p>
             </div>
 
+
+            <div>
+                <p class="text-gray-500">Còn lại</p>
+                <?php
+                $totalPaid = (new BookingModel())->getTotalPaid($booking['id']);
+                $remaining = $booking['total_amount'] - $totalPaid;
+                ?>
+                <p class="font-medium <?= $remaining > 0 ? 'text-red-600' : 'text-green-600' ?>">
+                    <?= number_format($remaining, 0, ',', '.') ?>đ
+                </p>
+            </div>
+
+            <div>
+                <p class="text-gray-500">Yêu cầu đặc biệt</p>
+                <p class="font-medium break-words">
+                    <?= nl2br(htmlspecialchars($booking['special_requests'] ?? '')) ?>
+                </p>
+            </div>
+
             <div>
                 <p class="text-gray-500">Trạng thái</p>
                 <p class="font-medium">
@@ -61,13 +84,6 @@ require_once './views/components/sidebar.php';
                     ?>
                 </p>
             </div>
-
-            <div>
-                <p class="text-gray-500">Yêu cầu đặc biệt</p>
-                <p class="font-medium break-words">
-                    <?= nl2br(htmlspecialchars($booking['special_requests'] ?? '')) ?>
-                </p>
-            </div>
         </div>
     </div>
 
@@ -79,6 +95,7 @@ require_once './views/components/sidebar.php';
             'services'  => ['icon' => 'concierge-bell', 'label' => 'Dịch vụ'],
             'payments'  => ['icon' => 'credit-card', 'label' => 'Thanh toán'],
             'contracts' => ['icon' => 'file-text', 'label' => 'Hợp đồng'],
+            'room_assignment' => ['icon' => 'bed-double', 'label' => 'Xếp phòng'],
         ];
         ?>
         <?php foreach ($tabs as $key => $t): ?>
@@ -99,7 +116,7 @@ require_once './views/components/sidebar.php';
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             <div class="flex justify-between flex-wrap items-center gap-3 mb-4">
                 <h2 class="text-base font-semibold text-gray-800">Danh sách khách hàng</h2>
-                
+
                 <div class="flex items-center gap-2">
                     <!-- Form Upload Excel -->
                     <form action="<?= BASE_URL ?>?act=booking-upload-customers" method="POST" enctype="multipart/form-data" class="flex items-center gap-2">
@@ -109,6 +126,11 @@ require_once './views/components/sidebar.php';
                             <i class="w-4 h-4" data-lucide="upload"></i> Upload Excel
                         </button>
                     </form>
+                    <a href="<?= BASE_URL ?>?act=booking-export-customers&booking_id=<?= $booking['id'] ?>"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm font-medium">
+                        <i class="w-4 h-4" data-lucide="download"></i>
+                        Export Excel
+                    </a>
                 </div>
             </div>
 
@@ -138,9 +160,9 @@ require_once './views/components/sidebar.php';
                                 <a href="<?= BASE_URL ?>?act=customer-edit&id=<?= $c['id'] ?>" class="p-1 hover:text-blue-600">
                                     <i class="w-4 h-4" data-lucide="square-pen"></i>
                                 </a>
-                                <a href="<?= BASE_URL ?>?act=booking-remove-customer&booking_id=<?= $booking['id'] ?>&customer_id=<?= $c['id'] ?>" 
-                                   onclick="return confirm('Xóa khách này khỏi booking?')"
-                                   class="p-1 hover:text-red-600 text-red-500">
+                                <a href="<?= BASE_URL ?>?act=booking-remove-customer&booking_id=<?= $booking['id'] ?>&customer_id=<?= $c['id'] ?>"
+                                    onclick="return confirm('Xóa khách này khỏi booking?')"
+                                    class="p-1 hover:text-red-600 text-red-500">
                                     <i class="w-4 h-4" data-lucide="trash-2"></i>
                                 </a>
                             </div>
@@ -156,7 +178,17 @@ require_once './views/components/sidebar.php';
     <!-- Tab Dịch vụ -->
     <?php if ($tab == 'services'): ?>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-base font-semibold text-gray-800 mb-4">Dịch vụ đã chọn</h2>
+            <div class="flex justify-between flex-wrap items-center gap-3 mb-4">
+                <h2 class="text-base font-semibold text-gray-800">Danh sách dịch vụ</h2>
+
+                <div class="flex items-center gap-2">
+                    <a href="<?= BASE_URL . '?act=booking-edit&id=' . $booking['id']  ?>"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium">
+                        <i class="w-4 h-4" data-lucide="square-pen"></i>
+                        Chỉnh sửa dịch vụ
+                    </a>
+                </div>
+            </div>
             <?php if (!empty($bookingServices)): ?>
                 <ul class="space-y-2 text-gray-800 text-sm">
                     <?php foreach ($bookingServices as $s): ?>
@@ -165,9 +197,9 @@ require_once './views/components/sidebar.php';
                                 <i class="w-5 h-5 text-blue-600" data-lucide="check-circle"></i>
                                 <div>
                                     <p class="font-medium"><?= htmlspecialchars($s['name']) ?></p>
-                                    <p class="text-xs text-gray-500">
-                                        Giá: <?= number_format($s['current_price'], 0, ',', '.')  ?>đ x <?= $s['quantity'] ?>
-                                    </p>
+                                    <span class="font-semibold text-gray-700">
+                                        <?= number_format(($s['current_price'] ?? 0) * $s['quantity'], 0, ',', '.') ?>đ
+                                    </span>
                                 </div>
                             </div>
                             <span class="font-semibold text-gray-700">
@@ -364,6 +396,66 @@ require_once './views/components/sidebar.php';
             <?php else: ?>
                 <p class="text-gray-500 text-sm">Chưa có hợp đồng nào.</p>
             <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
+    <!-- Tab Xếp phòng -->
+    <?php if ($tab == 'room_assignment'): ?>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex justify-between flex-wrap items-center gap-3 mb-4">
+                <h2 class="text-base font-semibold text-gray-800">Xếp phòng khách sạn</h2>
+
+                <div class="flex items-center gap-2">
+                    <!-- Form Upload Excel -->
+                    <form action="<?= BASE_URL ?>?act=booking-import-rooms" method="POST" enctype="multipart/form-data" class="flex items-center gap-2">
+                        <input type="hidden" name="booking_id" value="<?= $booking['id'] ?>">
+                        <input type="file" name="excel_file" accept=".xlsx, .xls" class="text-sm border border-gray-300 rounded-lg p-1" required>
+                        <button type="submit" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium flex items-center gap-1">
+                            <i class="w-4 h-4" data-lucide="upload"></i> Upload Excel
+                        </button>
+                    </form>
+                    <a href="<?= BASE_URL ?>?act=booking-export-rooms&booking_id=<?= $booking['id'] ?>"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm font-medium">
+                        <i class="w-4 h-4" data-lucide="download"></i>
+                        Export Excel
+                    </a>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3">Khách hàng</th>
+                            <th class="px-4 py-3">Số phòng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($customers)): ?>
+                            <?php foreach ($customers as $c): ?>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">
+                                        <?= htmlspecialchars($c['name']) ?>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <?php if (!empty($c['room_number'])): ?>
+                                            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold">
+                                                <?= htmlspecialchars($c['room_number']) ?>
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="text-gray-400 italic">Chưa xếp</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="3" class="px-4 py-3 text-center text-gray-500 italic">Chưa có khách hàng nào.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     <?php endif; ?>
 </main>

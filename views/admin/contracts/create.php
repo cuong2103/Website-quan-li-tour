@@ -3,10 +3,11 @@
 
 <main class="mt-28 px-6 pb-20">
 
+
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-xl font-semibold">Tạo hợp đồng</h1>
 
-        <a href="<?= BASE_URL ?>?act=booking-detail&id=<?= $booking_id ?>&tab=contracts"
+        <a href="<?= BASE_URL ?>?act=booking-detail&id=<?= $booking['id'] ?>&tab=contracts"
             class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm">
             Quay lại
         </a>
@@ -33,18 +34,13 @@
         </div>
 
         <div>
-            <label>Ngày ký</label>
-            <input type="date" name="signing_date" class="border p-2 w-full rounded">
+            <label class="block text-sm mb-1">Ngày hiệu lực</label>
+            <input type="date" name="effective_date" value="<?= $booking['start_date'] ?? '' ?>" class="border p-2 w-full rounded">
         </div>
 
         <div>
-            <label>Ngày hiệu lực</label>
-            <input type="date" name="effective_date" class="border p-2 w-full rounded">
-        </div>
-
-        <div>
-            <label>Ngày hết hạn</label>
-            <input type="date" name="expiry_date" class="border p-2 w-full rounded">
+            <label class="block text-sm mb-1">Ngày hết hạn</label>
+            <input type="date" name="expiry_date" value="<?= $booking['end_date'] ?? '' ?>" class="border p-2 w-full rounded">
         </div>
 
         <div>
@@ -70,11 +66,6 @@
         <div>
             <label class="block text-sm mb-1">Upload file hợp đồng</label>
             <input type="file" name="file_upload" accept=".pdf,.doc,.docx" required class="border p-2 w-full rounded">
-        </div>
-
-        <div>
-            <label class="block text-sm mb-1">Ghi chú</label>
-            <textarea name="notes" class="border p-2 w-full rounded"></textarea>
         </div>
 
         <button class="px-4 py-2 bg-blue-600 text-white rounded-lg">

@@ -43,10 +43,7 @@ require_once './views/components/sidebar.php';
             <p class="font-medium"><?= $payment['status'] ?></p>
         </div>
 
-        <div>
-            <p class="text-gray-500 text-sm">Ghi chú</p>
-            <p class="font-medium whitespace-pre-line"><?= $payment['notes'] ?></p>
-        </div>
+
 
         <div class="pt-4 flex gap-3">
             <a href="<?= BASE_URL ?>?act=payment-edit&id=<?= $payment['id'] ?>"

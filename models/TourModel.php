@@ -266,6 +266,31 @@ class TourModel
     return $stmt->fetchAll();
   }
 
+    // Lấy tất cả tour_services kèm thông tin service
+    public function getAllTourServices()
+    {
+      $sql = "SELECT ts.*, s.estimated_price 
+              FROM tour_services ts
+              JOIN services s ON ts.service_id = s.id";
+      $stmt = $this->conn->prepare($sql);
+      $stmt->execute();
+      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    
+  // Lấy services của một tour cụ thể
+  public function getServicesByTourId($tourId)
+  {
+    $sql = "SELECT ts.*, s.name, s.estimated_price 
+            FROM tour_services ts
+            JOIN services s ON ts.service_id = s.id
+            WHERE ts.tour_id = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$tourId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+
   // Gắn service vào tour
   public function attachService($tourId, $serviceId, $userId)
   {

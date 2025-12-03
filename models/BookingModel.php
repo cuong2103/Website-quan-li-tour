@@ -12,9 +12,11 @@ class BookingModel
     public function getAll()
     {
         try {
-            $sql = "SELECT b.*, t.name AS tour_name
+            $sql = "SELECT b.*, t.name AS tour_name, u.fullname as guide_name
                 FROM bookings b
                 LEFT JOIN tours t ON t.id = b.tour_id
+                LEFT JOIN tour_assignments ta ON ta.booking_id = b.id
+                LEFT JOIN users u ON u.id = ta.guide_id
                 ORDER BY b.id DESC";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
@@ -85,12 +87,7 @@ class BookingModel
                     $this->addCustomer($bookingId, $customerId, $isRep);
                 }
             }
-            // Lưu dịch vụ
-            if (!empty($data['services'])) {
-                foreach ($data['services'] as $serviceId) {
-                    $this->addService($bookingId, $serviceId);
-                }
-            }
+
 
             return $bookingId;
         } catch (PDOException $e) {
@@ -131,15 +128,7 @@ class BookingModel
                 $this->addCustomer($id, $custId, $isRep);
             }
 
-            //XÓA toàn bộ dịch vụ cũ
-            $this->deleteServices($id);
 
-            // Thêm lại dịch vụ mới
-            if (!empty($data['services'])) {
-                foreach ($data['services'] as $serviceId) {
-                    $this->addService($id, $serviceId);
-                }
-            }
 
             return true;
         } catch (PDOException $e) {
@@ -238,7 +227,7 @@ class BookingModel
     public function getCustomers($bookingId)
     {
         try {
-            $sql = "SELECT c.*, bc.is_representative 
+            $sql = "SELECT c.*, bc.is_representative, bc.room_number 
             FROM booking_customers bc
             JOIN customers c ON c.id = bc.customer_id
             WHERE bc.booking_id = ?";
@@ -277,31 +266,35 @@ class BookingModel
 
 
     // Thêm dịch vụ
-    public function addService($bookingId, $serviceId)
+    // Thêm dịch vụ
+    public function addService($bookingId, $serviceId, $quantity, $currentPrice)
     {
-        // Lấy tour_id từ booking
+        // Lấy tour_id từ booking (vẫn lưu tour_id cho đầy đủ, hoặc bỏ nếu không cần)
         $stmt = $this->conn->prepare("SELECT tour_id FROM bookings WHERE id = ?");
         $stmt->execute([$bookingId]);
         $tour = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$tour) return false;
-
         $tourId = $tour['tour_id'];
 
-        try {
-            $sql = "INSERT INTO booking_services (tour_id, service_id) VALUES (?, ?)";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$tourId, $serviceId]);
-            return true;
-        } catch (PDOException $e) {
-            die("Lỗi addService(): " . $e->getMessage());
-        }
+        $sql = "INSERT INTO booking_services 
+            (booking_id, tour_id, service_id, quantity, current_price)
+            VALUES (?, ?, ?, ?, ?)";
+
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([
+            $bookingId,
+            $tourId,
+            $serviceId,
+            $quantity,
+            $currentPrice
+        ]);
     }
 
+    // Xóa toàn bộ dịch vụ của một booking
     // Xóa toàn bộ dịch vụ của một booking
     public function deleteServices($bookingId)
     {
         try {
-            $sql = "DELETE FROM booking_services WHERE tour_id = ?";
+            $sql = "DELETE FROM booking_services WHERE booking_id = ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$bookingId]);
             return true;
@@ -315,8 +308,7 @@ class BookingModel
         $sql = "SELECT s.*, bs.quantity, bs.description, bs.current_price, bs.discount
             FROM booking_services bs
             JOIN services s ON bs.service_id = s.id
-            JOIN bookings b ON bs.tour_id = b.tour_id
-            WHERE b.id = ?";
+            WHERE bs.booking_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$bookingId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -346,6 +338,18 @@ class BookingModel
             return $stmt->execute([$status, $bookingId]);
         } catch (PDOException $e) {
             die("Lỗi updateStatus(): " . $e->getMessage());
+        }
+    }
+
+    // Cập nhật số tiền cọc và còn lại
+    public function updateFinancials($bookingId, $depositAmount, $remainingAmount)
+    {
+        try {
+            $sql = "UPDATE bookings SET deposit_amount = ?, remaining_amount = ?, updated_at = NOW() WHERE id = ?";
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([$depositAmount, $remainingAmount, $bookingId]);
+        } catch (PDOException $e) {
+            die("Lỗi updateFinancials(): " . $e->getMessage());
         }
     }
     // Lọc danh sách booking trong form Thêm phân công
@@ -400,7 +404,7 @@ class BookingModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    
+
     public function removeCustomer($bookingId, $customerId)
     {
         try {
@@ -409,6 +413,23 @@ class BookingModel
             $stmt->execute([$bookingId, $customerId]);
         } catch (PDOException $e) {
             die("Lỗi removeCustomer: " . $e->getMessage());
+        }
+    }
+
+    public function updateRoomNumber($bookingId, $customerId, $roomNumber)
+    {
+        try {
+            $sql = "UPDATE booking_customers 
+                    SET room_number = :room_number 
+                    WHERE booking_id = :booking_id AND customer_id = :customer_id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([
+                ':room_number' => $roomNumber,
+                ':booking_id' => $bookingId,
+                ':customer_id' => $customerId
+            ]);
+        } catch (PDOException $e) {
+            die("Lỗi updateRoomNumber: " . $e->getMessage());
         }
     }
 }

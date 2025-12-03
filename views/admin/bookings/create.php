@@ -19,8 +19,6 @@ require_once './views/components/sidebar.php';
 
     <!-- FORM -->
     <form method="POST" action="<?= BASE_URL . '?act=booking-store' ?>" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        <!-- LEFT COLUMN (2/3) -->
         <div class="lg:col-span-3 space-y-6">
 
             <!-- Card: Thông tin Tour -->
@@ -42,7 +40,8 @@ require_once './views/components/sidebar.php';
                             <?php foreach ($tours as $t): ?>
                                 <option value="<?= $t['id'] ?>"
                                     data-adult="<?= $t['adult_price'] ?>"
-                                    data-child="<?= $t['child_price'] ?>">
+                                    data-child="<?= $t['child_price'] ?>"
+                                    <?= (isset($_GET['tour_id']) && $_GET['tour_id'] == $t['id']) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($t['name']) ?>
                                 </option>
                             <?php endforeach; ?>
@@ -134,25 +133,43 @@ require_once './views/components/sidebar.php';
 
                 <div id="serviceList" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto">
                     <?php foreach ($services as $sv): ?>
+                        <?php
+                        // Check if service is in selected tour
+                        $isChecked = false;
+                        $defaultQty = 1;
+                        $defaultPrice = $sv['estimated_price'];
+
+                        if (!empty($selectedTourServices)) {
+                            foreach ($selectedTourServices as $ts) {
+                                if ($ts['service_id'] == $sv['id']) {
+                                    $isChecked = true;
+                                    $defaultQty = $ts['default_quantity'] ?? 1;
+                                    // $defaultPrice = $ts['price'] ?? $sv['estimated_price'];
+                                    break;
+                                }
+                            }
+                        }
+                        ?>
                         <div class="service-item p-3 border border-gray-200 rounded-lg hover:bg-purple-50 transition">
                             <label class="flex items-center gap-3 cursor-pointer mb-2">
                                 <input type="checkbox" name="services[]" value="<?= $sv['id'] ?>"
                                     class="w-4 h-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500 service-checkbox"
-                                    data-id="<?= $sv['id'] ?>">
+                                    data-id="<?= $sv['id'] ?>"
+                                    <?= $isChecked ? 'checked' : '' ?>>
                                 <span class="text-sm font-medium text-gray-700"><?= htmlspecialchars($sv['name']) ?></span>
                             </label>
 
-                            <div class="grid grid-cols-2 gap-2 pl-7 hidden" id="service-inputs-<?= $sv['id'] ?>">
+                            <div class="grid grid-cols-2 gap-2 pl-7 <?= $isChecked ? '' : 'hidden' ?>" id="service-inputs-<?= $sv['id'] ?>">
                                 <div>
                                     <label class="text-xs text-gray-500">Giá (VNĐ)</label>
                                     <input type="number" name="service_prices[<?= $sv['id'] ?>]"
-                                        value="<?= $sv['estimated_price'] ?>"
+                                        value="<?= $defaultPrice ?>"
                                         class="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-purple-400">
                                 </div>
                                 <div>
                                     <label class="text-xs text-gray-500">Số lượng</label>
                                     <input type="number" name="service_quantities[<?= $sv['id'] ?>]"
-                                        value="1" min="1"
+                                        value="<?= $defaultQty ?>" min="1"
                                         class="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-purple-400">
                                 </div>
                             </div>
@@ -236,7 +253,6 @@ require_once './views/components/sidebar.php';
 
     </form>
 
-    <!-- SCRIPT -->
     <script>
         // --- LOGIC TÍNH TIỀN ---
         const tourSelect = document.getElementById("tourSelect");
@@ -268,10 +284,10 @@ require_once './views/components/sidebar.php';
                 const id = cb.dataset.id;
                 const priceInput = document.querySelector(`input[name="service_prices[${id}]"]`);
                 const qtyInput = document.querySelector(`input[name="service_quantities[${id}]"]`);
-                
+
                 const price = Number(priceInput.value) || 0;
                 const qty = Number(qtyInput.value) || 1;
-                
+
                 serviceTotal += price * qty;
             });
 
@@ -284,12 +300,9 @@ require_once './views/components/sidebar.php';
             totalAmountInput.value = grandTotal;
         }
 
-        // Event Listeners cho Tour & Pax
         [tourSelect, adultCount, childCount].forEach(el => {
             el.addEventListener("input", updatePrice);
         });
-
-        // Event Listeners cho Services
         // Cần lắng nghe change ở checkbox và input ở các trường giá/số lượng
         document.querySelectorAll('.service-checkbox').forEach(cb => {
             cb.addEventListener('change', function() {
@@ -307,7 +320,6 @@ require_once './views/components/sidebar.php';
         document.querySelectorAll('input[name^="service_prices"], input[name^="service_quantities"]').forEach(input => {
             input.addEventListener('input', updatePrice);
         });
-
 
         // --- LOGIC TÌM DỊCH VỤ ---
         const searchService = document.getElementById("searchService");
@@ -336,17 +348,56 @@ require_once './views/components/sidebar.php';
             });
         });
 
-        // Toggle Service Inputs (This part is now integrated with updatePrice call)
-        // document.querySelectorAll('.service-checkbox').forEach(cb => {
-        //     cb.addEventListener('change', function() {
-        //         const inputsDiv = document.getElementById(`service-inputs-${this.dataset.id}`);
-        //         if (this.checked) {
-        //             inputsDiv.classList.remove('hidden');
-        //         } else {
-        //             inputsDiv.classList.add('hidden');
-        //         }
-        //     });
-        // });
+        // --- LOGIC TÍNH NGÀY KẾT THÚC (Hỗ trợ PHP) ---
+        const startDateInput = document.querySelector('input[name="start_date"]');
+        const endDateInput = document.querySelector('input[name="end_date"]');
+
+        // Lấy duration từ PHP (nếu có tour được chọn)
+        const tourDuration = <?= isset($selectedTour) ? $selectedTour['duration_days'] : 0 ?>;
+        const isFixed = <?= isset($selectedTour) && $selectedTour['is_fixed'] ? 'true' : 'false' ?>;
+
+        function calculateEndDate() {
+            const startDateVal = startDateInput.value;
+            if (isFixed && startDateVal && tourDuration > 0) {
+                const start = new Date(startDateVal);
+                const end = new Date(start);
+                end.setDate(start.getDate() + (tourDuration - 1));
+
+                const yyyy = end.getFullYear();
+                const mm = String(end.getMonth() + 1).padStart(2, '0');
+                const dd = String(end.getDate()).padStart(2, '0');
+                endDateInput.value = `${yyyy}-${mm}-${dd}`;
+
+                // Lock input
+                endDateInput.readOnly = true;
+                endDateInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+            } else if (!isFixed) {
+                endDateInput.readOnly = false;
+                endDateInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+            }
+        }
+
+        // Reload trang khi chọn tour
+        tourSelect.addEventListener('change', function() {
+            const tourId = this.value;
+            const currentUrl = new URL(window.location.href);
+            if (tourId) {
+                currentUrl.searchParams.set('tour_id', tourId);
+            } else {
+                currentUrl.searchParams.delete('tour_id');
+            }
+            window.location.href = currentUrl.toString();
+        });
+
+        startDateInput.addEventListener('change', calculateEndDate);
+
+        // Run on load if data exists
+        if (startDateInput.value) {
+            calculateEndDate();
+        }
+
+        // Trigger updatePrice on load to calculate initial total
+        updatePrice();
     </script>
 
 </main>

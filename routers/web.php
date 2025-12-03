@@ -104,8 +104,11 @@ match ($act) {
   'booking-delete' => (new BookingController())->delete(),
   'booking-detail' => (new BookingController())->detail(),
   'booking-upload-customers' => (new BookingController())->uploadCustomers(),
+  'booking-export-customers' => (new BookingController())->exportCustomers(),
   'booking-add-customer' => (new BookingController())->addCustomer(),
   'booking-remove-customer' => (new BookingController())->removeCustomer(),
+  'booking-import-rooms' => (new BookingController())->importRoomArrangement(),
+  'booking-export-rooms' => (new BookingController())->exportRoomArrangement(),
 
   // contracts
   'contracts' => (new ContractController())->index(),
@@ -136,7 +139,7 @@ match ($act) {
   'policies-detail' => (new PolicyController())->detail(),
 
   // Tour_Assignments
-  'tour-assignments' => (new TourAssignmentController())->index(),
+  // 'tour-assignments' => (new TourAssignmentController())->index(),
   'tour-assignment-create' => (new TourAssignmentController())->create(),
   'tour-assignment-store' => (new TourAssignmentController())->store(),
   'tour-assignment-edit' => (new TourAssignmentController())->edit(),
