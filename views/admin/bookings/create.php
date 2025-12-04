@@ -41,6 +41,7 @@ require_once './views/components/sidebar.php';
                                 <option value="<?= $t['id'] ?>"
                                     data-adult="<?= $t['adult_price'] ?>"
                                     data-child="<?= $t['child_price'] ?>"
+                                    data-duration="<?= $t['duration_days'] ?>"
                                     <?= (isset($_GET['tour_id']) && $_GET['tour_id'] == $t['id']) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($t['name']) ?>
                                 </option>
@@ -111,10 +112,15 @@ require_once './views/components/sidebar.php';
                                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                         </div>
                         <div>
-                            <label class="block mb-1.5 text-sm font-medium text-gray-700">Địa chỉ</label>
-                            <input type="text" name="rep_address" placeholder="Địa chỉ liên hệ..."
+                            <label class="block mb-1.5 text-sm font-medium text-gray-700">CMND/CCCD</label>
+                            <input type="text" name="rep_citizen_id" placeholder="Số CMND/CCCD..."
                                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                         </div>
+                    </div>
+                    <div>
+                        <label class="block mb-1.5 text-sm font-medium text-gray-700">Địa chỉ</label>
+                        <input type="text" name="rep_address" placeholder="Địa chỉ liên hệ..."
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                     </div>
                 </div>
             </div>
@@ -347,25 +353,23 @@ require_once './views/components/sidebar.php';
             });
         });
 
-        // --- LOGIC TÍNH NGÀY KẾT THÚC (Hỗ trợ PHP) ---
+        // --- LOGIC TÍNH NGÀY KẾT THÚC ---
         const startDateInput = document.querySelector('input[name="start_date"]');
         const endDateInput = document.querySelector('input[name="end_date"]');
 
-        // Lấy duration từ PHP (nếu có tour được chọn)
-        const tourDuration = <?= isset($selectedTour) ? $selectedTour['duration_days'] : 0 ?>;
-
         function calculateEndDate() {
             const startDateVal = startDateInput.value;
-            if (startDateVal && tourDuration > 0) {
+            const selectedOption = tourSelect.selectedOptions[0];
+            const duration = selectedOption ? parseInt(selectedOption.dataset.duration) || 0 : 0;
+
+            if (startDateVal && duration > 0) {
                 const start = new Date(startDateVal);
                 const end = new Date(start);
-                end.setDate(start.getDate() + (tourDuration - 1));
-
+                end.setDate(start.getDate() + (duration - 1));
                 const yyyy = end.getFullYear();
                 const mm = String(end.getMonth() + 1).padStart(2, '0');
                 const dd = String(end.getDate()).padStart(2, '0');
                 endDateInput.value = `${yyyy}-${mm}-${dd}`;
-
                 // Lock input
                 endDateInput.readOnly = true;
                 endDateInput.classList.add('bg-gray-100', 'cursor-not-allowed');
@@ -374,25 +378,14 @@ require_once './views/components/sidebar.php';
                 endDateInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
             }
         }
-
-        // Reload trang khi chọn tour
+        // Tính end_date khi chọn tour (không reload)
         tourSelect.addEventListener('change', function() {
-            const tourId = this.value;
-            const currentUrl = new URL(window.location.href);
-            if (tourId) {
-                currentUrl.searchParams.set('tour_id', tourId);
-            } else {
-                currentUrl.searchParams.delete('tour_id');
-            }
-            window.location.href = currentUrl.toString();
-        });
-
-        startDateInput.addEventListener('change', calculateEndDate);
-
-        // Run on load if data exists
-        if (startDateInput.value) {
             calculateEndDate();
-        }
+            updatePrice(); // Cập nhật giá
+        });
+        startDateInput.addEventListener('change', calculateEndDate);
+        // Run on load
+        calculateEndDate();
 
         // Trigger updatePrice on load to calculate initial total
         updatePrice();

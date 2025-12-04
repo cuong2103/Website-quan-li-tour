@@ -8,9 +8,6 @@ class TourAssignmentModel
         $this->conn = connectDB();
     }
 
-    // =========================================
-    // Original method: Get all guides (role guide, active)
-    // =========================================
     public function getGuides()
     {
         try {
@@ -23,9 +20,6 @@ class TourAssignmentModel
         }
     }
 
-    // =========================================
-    // Original method: Get assignment by booking ID
-    // =========================================
     public function getByBookingId($bookingId)
     {
         try {
@@ -38,9 +32,6 @@ class TourAssignmentModel
         }
     }
 
-    // =========================================
-    // Original method: Create assignment (expects associative array)
-    // =========================================
     public function create($data)
     {
         try {
@@ -53,10 +44,6 @@ class TourAssignmentModel
         }
     }
 
-    // =========================================
-    // Original method: Update assignment (expects id and data array with guide_id, status)
-    // Renamed to avoid conflict with new updateGuide method.
-    // =========================================
     public function updateAssignment($id, $data)
     {
         try {
@@ -69,9 +56,6 @@ class TourAssignmentModel
         }
     }
 
-    // =========================================
-    // New method: Get all assignments with booking and guide info
-    // =========================================
     public function getAll()
     {
         try {
@@ -90,9 +74,6 @@ class TourAssignmentModel
         }
     }
 
-    // =========================================
-    // New method: Get all guides (role_id = 2)
-    // =========================================
     public function getAllGuides()
     {
         try {
@@ -105,9 +86,6 @@ class TourAssignmentModel
         }
     }
 
-    // =========================================
-    // New method: Get available guides (check schedule conflict)
-    // =========================================
     public function getAvailableGuides($startDate, $endDate, $excludeBookingId = null)
     {
         try {
@@ -135,12 +113,23 @@ class TourAssignmentModel
             $stmt->execute($params);
             $busyGuideIds = $stmt->fetchAll(PDO::FETCH_COLUMN); // Mảng các ID bận
 
-            // 3. Lọc danh sách
+            // 3. Lọc danh sách: loại bỏ HDV bận tour HOẶC đang nghỉ phép
             $availableGuides = [];
             foreach ($allGuides as $guide) {
-                if (!in_array($guide['id'], $busyGuideIds)) {
-                    $availableGuides[] = $guide;
+                // Bỏ qua nếu HDV đang bận tour
+                if (in_array($guide['id'], $busyGuideIds)) {
+                    continue;
                 }
+
+                // Bỏ qua nếu HDV đang nghỉ phép
+                if (!empty($guide['leave_start']) && !empty($guide['leave_end'])) {
+                    // Kiểm tra trùng ngày nghỉ: (leave_start <= tour_end) AND (leave_end >= tour_start)
+                    if ($guide['leave_start'] <= $endDate && $guide['leave_end'] >= $startDate) {
+                        continue; // HDV đang nghỉ trong khoảng thời gian tour
+                    }
+                }
+
+                $availableGuides[] = $guide;
             }
 
             return $availableGuides;
@@ -149,9 +138,6 @@ class TourAssignmentModel
         }
     }
 
-    // =========================================
-    // New method: Get all bookings (with tour name)
-    // =========================================
     public function getAllBookings()
     {
         try {
@@ -169,9 +155,6 @@ class TourAssignmentModel
         }
     }
 
-    // =========================================
-    // New method: Get bookings without any guide assigned
-    // =========================================
     public function getBookingsWithoutGuide()
     {
         try {
@@ -190,9 +173,6 @@ class TourAssignmentModel
         }
     }
 
-    // =========================================
-    // New method: Store assignment (simple wrapper)
-    // =========================================
     public function store($booking_id, $guide_id, $created_by)
     {
         try {
@@ -204,9 +184,6 @@ class TourAssignmentModel
         }
     }
 
-    // =========================================
-    // New method: Find assignment by its ID
-    // =========================================
     public function find($id)
     {
         try {
@@ -225,9 +202,7 @@ class TourAssignmentModel
         return $this->getByBookingId($bookingId);
     }
 
-    // =========================================
-    // New method: Update guide only (id, guide_id)
-    // =========================================
+
     public function updateGuide($id, $guide_id)
     {
         try {
@@ -239,9 +214,6 @@ class TourAssignmentModel
         }
     }
 
-    // =========================================
-    // New method: Delete assignment
-    // =========================================
     public function delete($id)
     {
         try {
@@ -253,7 +225,6 @@ class TourAssignmentModel
         }
     }
 
-    // Existing helper methods (unchanged)
     public function getAssignmentsByGuide($guideId)
     {
         $sql = "SELECT ta.*, b.booking_code, t.name AS tour_name, b.start_date, b.end_date,

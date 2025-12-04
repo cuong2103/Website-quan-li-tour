@@ -12,13 +12,13 @@ class ContractController
     }
 
     // Tự động cập nhật trạng thái
-    private function checkAndAutoUpdateStatus()
+    public function checkAndAutoUpdateStatus()
     {
         $contracts = $this->contractModel->getAll();
         $today = date('Y-m-d');
         foreach ($contracts as $c) {
             if ($c['status'] == 'active' && $c['expiry_date'] < $today) {
-                $this->contractModel->updateStatus($c['id'], 'expired');
+                $this->contractModel->autoUpdateStatus($c['id'], 'expired');
             }
         }
     }
