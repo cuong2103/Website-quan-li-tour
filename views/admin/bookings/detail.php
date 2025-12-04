@@ -392,7 +392,7 @@ require_once './views/components/sidebar.php';
                             <?php
                             $statusClass = 'bg-gray-100 text-gray-700';
                             $statusText = 'Không xác định';
-                            
+
                             if ($c['status'] === 'active') {
                                 $statusClass = 'bg-green-200 text-green-700';
                                 $statusText = 'Đang hoạt động';
