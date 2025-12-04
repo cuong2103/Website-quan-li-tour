@@ -19,7 +19,7 @@ require_once './views/components/sidebar.php';
     <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
         <h2 class="font-medium mb-4 text-gray-800">Thông tin chung</h2>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
 
             <div>
                 <p class="text-gray-500">Tour</p>
@@ -44,12 +44,18 @@ require_once './views/components/sidebar.php';
             </div>
 
             <div>
+                <p class="text-gray-500">Tiền dịch vụ</p>
+                <p class="font-medium text-purple-600">
+                    <?= number_format($booking['service_amount'] ?? 0, 0, ',', '.') ?>đ
+                </p>
+            </div>
+
+            <div>
                 <p class="text-gray-500">Tổng tiền</p>
                 <p class="font-medium text-green-600">
                     <?= number_format($booking['total_amount'], 0, ',', '.') ?>đ
                 </p>
             </div>
-
 
             <div>
                 <p class="text-gray-500">Còn lại</p>
@@ -238,12 +244,26 @@ require_once './views/components/sidebar.php';
                             <div class="flex flex-col flex-1">
                                 <p class="font-medium text-gray-800 flex items-center gap-1 mb-1">
                                     <i class="w-4 h-4" data-lucide="wallet"></i>
-                                    <?= htmlspecialchars($p['payment_method']) ?>
+                                    <?php
+                                    $methodLabels = [
+                                        'cash' => 'Tiền mặt',
+                                        'bank_transfer' => 'Chuyển khoản'
+                                    ];
+                                    echo $methodLabels[$p['payment_method']] ?? $p['payment_method'];
+                                    ?>
                                 </p>
 
                                 <p class="text-sm text-gray-700 mt-2 flex items-center gap-1 mb-1">
                                     <i class="w-4 h-4" data-lucide="circle-dollar-sign"></i>
-                                    <?= htmlspecialchars($p['type']) ?>
+                                    <?php
+                                    $typeLabels = [
+                                        'deposit' => 'Cọc',
+                                        'full_payment' => 'Thanh toán đủ',
+                                        'remaining' => 'Thanh toán còn lại',
+                                        'refund' => 'Hoàn tiền'
+                                    ];
+                                    echo $typeLabels[$p['type']] ?? $p['type'];
+                                    ?>
                                 </p>
 
                                 <p class="text-sm text-gray-700 mt-1 flex items-center gap-1 mb-1">
@@ -256,25 +276,32 @@ require_once './views/components/sidebar.php';
                                     <i class="w-4 h-4" data-lucide="calendar"></i>
                                     Ngày: <?= date('Y-m-d', strtotime($p['payment_date'])) ?>
                                 </p>
-
-                                <p class="text-sm text-gray-500 mt-1 flex items-center gap-1 mb-1">
-                                    <i class="w-4 h-4" data-lucide="file-edit"></i>
-                                    Ghi chú: <?= !empty($p['notes']) ? htmlspecialchars($p['notes']) : '—' ?>
-                                </p>
                             </div>
 
                             <!-- Status badge -->
                             <?php
                             $statusClass = 'bg-gray-100 text-gray-700';
+                            $statusText = 'Không xác định';
 
-                            if ($p['status'] === 'pending') $statusClass = 'bg-yellow-100 text-yellow-700';
-                            elseif ($p['status'] === 'success') $statusClass = 'bg-green-100 text-green-700';
-                            elseif ($p['status'] === 'failed') $statusClass = 'bg-red-100 text-red-700';
-                            elseif ($p['status'] === 'refund') $statusClass = 'bg-blue-100 text-blue-700';
-                            elseif ($p['status'] === 'expired') $statusClass = 'bg-red-100 text-red-700';
+                            if ($p['status'] === 'pending') {
+                                $statusClass = 'bg-yellow-100 text-yellow-700';
+                                $statusText = 'Chờ xử lý';
+                            } elseif ($p['status'] === 'completed') {
+                                $statusClass = 'bg-green-100 text-green-700';
+                                $statusText = 'Thành công';
+                            } elseif ($p['status'] === 'failed') {
+                                $statusClass = 'bg-red-100 text-red-700';
+                                $statusText = 'Thất bại';
+                            } elseif ($p['status'] === 'refund') {
+                                $statusClass = 'bg-blue-100 text-blue-700';
+                                $statusText = 'Hoàn tiền';
+                            } elseif ($p['status'] === 'expired') {
+                                $statusClass = 'bg-red-100 text-red-700';
+                                $statusText = 'Hết hạn';
+                            }
                             ?>
                             <span class="px-3 py-1 rounded-lg text-xs font-semibold <?= $statusClass ?>">
-                                <?= htmlspecialchars($p['status']) ?>
+                                <?= $statusText ?>
                             </span>
 
                             <!-- Action buttons -->
@@ -364,12 +391,21 @@ require_once './views/components/sidebar.php';
                             <!-- Màu trạng thái -->
                             <?php
                             $statusClass = 'bg-gray-100 text-gray-700';
-                            if ($c['status'] === 'active') $statusClass = 'bg-green-200 text-green-700';
-                            elseif ($c['status'] === 'inactive') $statusClass = 'bg-red-200 text-red-700';
-                            elseif ($c['status'] === 'expired') $statusClass = 'bg-yellow-200 text-yellow-700';
+                            $statusText = 'Không xác định';
+                            
+                            if ($c['status'] === 'active') {
+                                $statusClass = 'bg-green-200 text-green-700';
+                                $statusText = 'Đang hoạt động';
+                            } elseif ($c['status'] === 'inactive') {
+                                $statusClass = 'bg-red-200 text-red-700';
+                                $statusText = 'Ngừng hoạt động';
+                            } elseif ($c['status'] === 'expired') {
+                                $statusClass = 'bg-yellow-200 text-yellow-700';
+                                $statusText = 'Hết hạn';
+                            }
                             ?>
                             <span class="px-3 py-1 rounded-lg text-xs font-semibold <?= $statusClass ?>">
-                                <?= htmlspecialchars($c['status'] ?? '—') ?>
+                                <?= $statusText ?>
                             </span>
 
                             <!-- nút -->
@@ -428,6 +464,7 @@ require_once './views/components/sidebar.php';
                         <tr>
                             <th class="px-4 py-3">Khách hàng</th>
                             <th class="px-4 py-3">Số phòng</th>
+                            <th class="px-4 py-3">Ghi chú</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -445,6 +482,9 @@ require_once './views/components/sidebar.php';
                                         <?php else: ?>
                                             <span class="text-gray-400 italic">Chưa xếp</span>
                                         <?php endif; ?>
+                                    </td>
+                                    <td class="px-4 py-3 text-gray-600">
+                                        <?= htmlspecialchars($c['notes'] ?? '') ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

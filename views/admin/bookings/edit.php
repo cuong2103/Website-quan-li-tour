@@ -44,6 +44,7 @@ require_once './views/components/sidebar.php';
                                 <option value="<?= $t['id'] ?>"
                                     data-adult="<?= $t['adult_price'] ?>"
                                     data-child="<?= $t['child_price'] ?>"
+                                    data-duration="<?= $t['duration_days'] ?>"
                                     <?= $t['id'] == $booking['tour_id'] ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($t['name']) ?>
                                 </option>
@@ -211,7 +212,6 @@ require_once './views/components/sidebar.php';
                         <div class="relative">
                             <input type="text" id="totalServicePriceDisplay" value="0" readonly
                                 class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-lg font-bold text-purple-600 text-right outline-none">
-                            <span class="absolute right-12 top-3.5 text-gray-400 text-sm">VND</span>
                         </div>
                     </div>
 
@@ -343,6 +343,37 @@ require_once './views/components/sidebar.php';
         });
         updatePrice();
 
+        // --- LOGIC TÍNH NGÀY KẾT THÚC ---
+        const startDateInput = document.querySelector('input[name="start_date"]');
+        const endDateInput = document.querySelector('input[name="end_date"]');
+
+        function calculateEndDate() {
+            const startDateVal = startDateInput.value;
+            const selectedOption = tourSelect.selectedOptions[0];
+            const duration = selectedOption ? parseInt(selectedOption.dataset.duration) || 0 : 0;
+
+            if (startDateVal && duration > 0) {
+                const start = new Date(startDateVal);
+                const end = new Date(start);
+                end.setDate(start.getDate() + (duration - 1));
+                const yyyy = end.getFullYear();
+                const mm = String(end.getMonth() + 1).padStart(2, '0');
+                const dd = String(end.getDate()).padStart(2, '0');
+                endDateInput.value = `${yyyy}-${mm}-${dd}`;
+                // Lock input
+                endDateInput.readOnly = true;
+                endDateInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+            } else {
+                endDateInput.readOnly = false;
+                endDateInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+            }
+        }
+        // Tính end_date khi chọn tour hoặc thay đổi start_date
+        tourSelect.addEventListener('change', calculateEndDate);
+        startDateInput.addEventListener('change', calculateEndDate);
+        // Run on load
+        calculateEndDate();
+
         document.querySelectorAll(".customerCheck").forEach(chk => {
             chk.addEventListener("change", () => {
                 let rep = document.getElementById("representative");
@@ -365,7 +396,5 @@ require_once './views/components/sidebar.php';
             });
         });
     </script>
-
 </main>
-
 <?php require_once './views/components/footer.php'; ?>

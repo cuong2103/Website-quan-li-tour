@@ -86,7 +86,7 @@ public function edit() {
             exit;
         }
         $user = $this->UserModel->getById($id);
-        require_once './views/admin/User_management/edit.php';
+        require_once './views/admin/Users/edit.php';
     }
 
     // Xử lý submit edit

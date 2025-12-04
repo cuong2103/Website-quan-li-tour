@@ -8,18 +8,48 @@ class BookingModel
         $this->conn = connectDB();
     }
 
-    // Lấy danh sách booking
-    public function getAll()
+    // Lấy danh sách booking (có hỗ trợ lọc)
+    public function getAll($filters = [])
     {
         try {
-            $sql = "SELECT b.*, t.name AS tour_name, u.fullname as guide_name
-                FROM bookings b
-                LEFT JOIN tours t ON t.id = b.tour_id
-                LEFT JOIN tour_assignments ta ON ta.booking_id = b.id
-                LEFT JOIN users u ON u.id = ta.guide_id
-                ORDER BY b.id DESC";
+            $sql = "SELECT DISTINCT b.*, t.name AS tour_name, u.fullname as guide_name
+                    FROM bookings b
+                    LEFT JOIN tours t ON t.id = b.tour_id
+                    LEFT JOIN tour_assignments ta ON ta.booking_id = b.id
+                    LEFT JOIN users u ON u.id = ta.guide_id
+                    LEFT JOIN booking_customers bc ON bc.booking_id = b.id
+                    LEFT JOIN customers c ON c.id = bc.customer_id
+                    WHERE 1=1";
+
+            $params = [];
+
+            if (!empty($filters['keyword'])) {
+                $keyword = '%' . $filters['keyword'] . '%';
+                $sql .= " AND (b.booking_code LIKE ? OR t.name LIKE ? OR c.name LIKE ?)";
+                $params[] = $keyword;
+                $params[] = $keyword;
+                $params[] = $keyword;
+            }
+
+            if (!empty($filters['status'])) {
+                $sql .= " AND b.status = ?";
+                $params[] = $filters['status'];
+            }
+
+            if (!empty($filters['date_from'])) {
+                $sql .= " AND b.start_date >= ?";
+                $params[] = $filters['date_from'];
+            }
+
+            if (!empty($filters['date_to'])) {
+                $sql .= " AND b.start_date <= ?";
+                $params[] = $filters['date_to'];
+            }
+
+            $sql .= " ORDER BY b.id DESC";
+
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute();
+            $stmt->execute($params);
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             die("Lỗi getAll():" . $e->getMessage());
@@ -58,8 +88,8 @@ class BookingModel
     {
         try {
             $sql = "INSERT INTO bookings 
-                (tour_id, booking_code, start_date, end_date, adult_count, child_count, total_amount, deposit_amount, remaining_amount, status, special_requests, created_by)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                (tour_id, booking_code, start_date, end_date, adult_count, child_count, service_amount, total_amount, deposit_amount, remaining_amount, status, special_requests, created_by)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([
                 $data['tour_id'],
@@ -67,7 +97,8 @@ class BookingModel
                 $data['start_date'],
                 $data['end_date'],
                 $data['adult_count'],
-                $data['child_count'],
+                $data['child_count'] ?? 0,
+                $data['service_amount'] ?? 0,
                 $data['total_amount'],
                 $data['deposit_amount'] ?? 0,
                 $data['remaining_amount'] ?? 0,
@@ -88,7 +119,6 @@ class BookingModel
                 }
             }
 
-
             return $bookingId;
         } catch (PDOException $e) {
             die("Lỗi create():" . $e->getMessage());
@@ -100,7 +130,7 @@ class BookingModel
     {
         try {
             $sql = "UPDATE bookings
-                SET tour_id=?, start_date=?, end_date=?, adult_count=?, child_count=?, total_amount=?, deposit_amount=?, remaining_amount=?, status=?, special_requests=?, updated_at=NOW()
+                SET tour_id=?, start_date=?, end_date=?, adult_count=?, child_count=?, service_amount=?, total_amount=?, deposit_amount=?, remaining_amount=?, status=?, special_requests=?, updated_by=?, updated_at=NOW()
                 WHERE id=?";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([
@@ -108,12 +138,14 @@ class BookingModel
                 $data['start_date'],
                 $data['end_date'],
                 $data['adult_count'],
-                $data['child_count'],
+                $data['child_count'] ?? 0,
+                $data['service_amount'] ?? 0,
                 $data['total_amount'],
                 $data['deposit_amount'] ?? 0,
                 $data['remaining_amount'] ?? 0,
                 $data['status'],
                 $data['special_requests'] ?? null,
+                $data['updated_by'] ?? null,
                 $id
             ]);
 
@@ -127,9 +159,6 @@ class BookingModel
 
                 $this->addCustomer($id, $custId, $isRep);
             }
-
-
-
             return true;
         } catch (PDOException $e) {
             die("Lỗi update():" . $e->getMessage());
@@ -141,39 +170,47 @@ class BookingModel
     {
         $this->conn->beginTransaction();
         try {
-            // --- Lấy tour_id của booking trước ---
-            $stmtTour = $this->conn->prepare("SELECT tour_id FROM bookings WHERE id = ?");
-            $stmtTour->execute([$id]);
-            $tour = $stmtTour->fetch(PDO::FETCH_ASSOC);
-            $tourId = $tour['tour_id'] ?? null;
+            // Xóa dịch vụ booking theo booking_id (chính xác hơn)
+            $this->conn->prepare("DELETE FROM booking_services WHERE booking_id = ?")->execute([$id]);
 
-            // Xóa dịch vụ booking (theo tour_id)
-            if ($tourId) {
-                $this->conn->prepare("DELETE FROM booking_services WHERE tour_id = ?")->execute([$tourId]);
-            }
+            // Xóa khách hàng trong booking
             $this->conn->prepare("DELETE FROM booking_customers WHERE booking_id = ?")->execute([$id]);
+
+            // Xóa hợp đồng
             $this->conn->prepare("DELETE FROM customer_contracts WHERE booking_id = ?")->execute([$id]);
+
+            // Xóa thanh toán
             $this->conn->prepare("DELETE FROM payments WHERE booking_id = ?")->execute([$id]);
 
+            // Lấy danh sách tour_assignments
             $stmt = $this->conn->prepare("SELECT id FROM tour_assignments WHERE booking_id = ?");
             $stmt->execute([$id]);
             $assignments = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
             foreach ($assignments as $assignId) {
-                // Xóa dữ liệu liên quan đến tour_assignment
+                // Lấy danh sách journals
                 $journals = $this->conn->prepare("SELECT id FROM journals WHERE tour_assignment_id = ?");
                 $journals->execute([$assignId]);
                 $journals = $journals->fetchAll(PDO::FETCH_COLUMN);
 
                 foreach ($journals as $journalId) {
+                    // Xóa hình ảnh journal
                     $this->conn->prepare("DELETE FROM journal_images WHERE journal_id = ?")->execute([$journalId]);
                 }
 
+                // Xóa journals
                 $this->conn->prepare("DELETE FROM journals WHERE tour_assignment_id = ?")->execute([$assignId]);
-                $this->conn->prepare("DELETE FROM customer_checkins WHERE tour_assignment_id = ?")->execute([$assignId]);
-            }
 
+                // Xóa tour_checkin_links trước
+                $this->conn->prepare("DELETE FROM tour_checkin_links WHERE tour_assignment_id = ?")->execute([$assignId]);
+            }
+            // Xóa tour_assignments
             $this->conn->prepare("DELETE FROM tour_assignments WHERE booking_id = ?")->execute([$id]);
+
+            // Xóa chi phí phát sinh
+            $this->conn->prepare("DELETE FROM incurred_expenses WHERE booking_id = ?")->execute([$id]);
+
+            // Cuối cùng xóa booking
             $this->conn->prepare("DELETE FROM bookings WHERE id = ?")->execute([$id]);
 
             $this->conn->commit();
@@ -264,8 +301,6 @@ class BookingModel
         }
     }
 
-
-    // Thêm dịch vụ
     // Thêm dịch vụ
     public function addService($bookingId, $serviceId, $quantity, $currentPrice)
     {
@@ -288,8 +323,6 @@ class BookingModel
             $currentPrice
         ]);
     }
-
-    // Xóa toàn bộ dịch vụ của một booking
     // Xóa toàn bộ dịch vụ của một booking
     public function deleteServices($bookingId)
     {
@@ -417,15 +450,16 @@ class BookingModel
         }
     }
 
-    public function updateRoomNumber($bookingId, $customerId, $roomNumber)
+    public function updateRoomNumber($bookingId, $customerId, $roomNumber, $notes = null)
     {
         try {
             $sql = "UPDATE booking_customers 
-                    SET room_number = :room_number 
+                    SET room_number = :room_number, notes = :notes
                     WHERE booking_id = :booking_id AND customer_id = :customer_id";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([
                 ':room_number' => $roomNumber,
+                ':notes' => $notes,
                 ':booking_id' => $bookingId,
                 ':customer_id' => $customerId
             ]);

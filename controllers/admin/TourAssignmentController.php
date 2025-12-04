@@ -17,7 +17,7 @@ class TourAssignmentController
     public function index()
     {
         $assignments = $this->tourAssignmentModel->getAll();
-        require_once './views/admin/Tour_Assignments/index.php';
+        require_once './views/admin/tour_assignments/index.php';
     }
 
     // Show form to create assignment for a specific booking
@@ -49,7 +49,7 @@ class TourAssignmentController
 
         // If an assignment already exists for this booking, load it for editing
         $assignment = $this->tourAssignmentModel->findByBookingId($bookingId);
-        require_once './views/admin/Tour_Assignments/create.php';
+        require_once './views/admin/tour_assignments/create.php';
     }
 
     // Store new assignment or update existing one
@@ -110,7 +110,7 @@ class TourAssignmentController
         // Lọc HDV trống lịch (trừ chính booking này ra)
         $guides = $this->tourAssignmentModel->getAvailableGuides($booking['start_date'], $booking['end_date'], $assignment['booking_id']);
 
-        require_once './views/admin/Tour_Assignments/edit.php';
+        require_once './views/admin/tour_assignments/edit.php';
     }
 
     // Update assignment (only guide change)

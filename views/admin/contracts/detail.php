@@ -46,11 +46,23 @@
             <p><?= !empty($contract['expiry_date']) ? date('Y-m-d', strtotime($contract['expiry_date'])) : '' ?></p>
         </div>
 
-
         <div>
             <p class="font-semibold mb-1">Trạng thái:</p>
-            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded">
-                <?= $contract['status'] ?>
+            <?php
+            $statusLabels = [
+                'active' => 'Đang hoạt động',
+                'inactive' => 'Ngừng hoạt động',
+                'expired' => 'Hết hạn'
+            ];
+            $statusText = $statusLabels[$contract['status']] ?? $contract['status'];
+
+            $statusClass = 'bg-gray-100 text-gray-700';
+            if ($contract['status'] === 'active') $statusClass = 'bg-green-100 text-green-700';
+            elseif ($contract['status'] === 'inactive') $statusClass = 'bg-red-100 text-red-700';
+            elseif ($contract['status'] === 'expired') $statusClass = 'bg-yellow-100 text-yellow-700';
+            ?>
+            <span class="px-3 py-1 <?= $statusClass ?> rounded">
+                <?= $statusText ?>
             </span>
         </div>
 
