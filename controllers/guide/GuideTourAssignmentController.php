@@ -110,7 +110,19 @@ class GuideTourAssignmentController
                 break;
 
             case 'checkin':
-                $customers = $this->checkinModel->getCustomersByAssignment($assignmentId);
+                // Lấy danh sách các đợt check-in
+                $checkinLinks = $this->checkinModel->getCheckinLinks($assignmentId);
+
+                // Lấy link_id từ URL hoặc dùng link mới nhất
+                $currentLinkId = $_GET['link_id'] ?? null;
+                if (!$currentLinkId && !empty($checkinLinks)) {
+                    $currentLinkId = $checkinLinks[0]['id'];
+                }
+
+                // Lấy danh sách khách hàng với trạng thái check-in cho link hiện tại
+                if ($currentLinkId) {
+                    $customers = $this->checkinModel->getCustomersWithCheckinStatus($assignmentId, $currentLinkId);
+                }
                 break;
 
             case 'journals':
@@ -135,140 +147,66 @@ class GuideTourAssignmentController
         require_once './views/guide/tour-assignments/detail.php';
     }
 
-    // Xuất danh sách check-in ra Excel
-    public function exportCheckinList()
+
+
+
+
+    // Tạo đợt check-in mới
+    public function createCheckinSession()
     {
-        $assignmentId = $_GET['id'] ?? null;
+        $assignmentId = $_POST['assignment_id'];
+        $title = $_POST['title'];
+        $note = $_POST['note'] ?? '';
 
-        if (!$assignmentId) {
-            Message::set('error', 'Không tìm thấy thông tin tour!');
-            header("Location: " . BASE_URL . "?act=guide-tour-assignments");
-            exit;
+        if ($this->checkinModel->createCheckinLink($assignmentId, $title, $note)) {
+            Message::set('success', 'Tạo đợt điểm danh thành công!');
+        } else {
+            Message::set('error', 'Tạo đợt điểm danh thất bại!');
         }
 
-        $assignment = $this->bookingModel->getBookingDetails($assignmentId);
-        $customers = $this->checkinModel->getCustomersByAssignment($assignmentId);
-
-        if (empty($customers)) {
-            Message::set('error', 'Chưa có khách hàng nào trong tour này!');
-            header("Location: " . BASE_URL . "?act=guide-tour-assignments-detail&id=" . $assignmentId . "&tab=checkin");
-            exit;
-        }
-
-        require_once './lib/SimpleXLSXGen.php';
-
-        $data = [
-            ['DANH SÁCH KHÁCH HÀNG - ' . mb_strtoupper($assignment['tour_name'])],
-            ['Mã Booking: ' . $assignment['booking_code']],
-            ['Ngày khởi hành: ' . date('d/m/Y', strtotime($assignment['start_date']))],
-            [], // Empty row
-            ['STT', 'Tên khách hàng', 'Số điện thoại', 'Email', 'Trạng thái', 'Thời gian check-in', 'Vị trí', 'Ghi chú']
-        ];
-
-        foreach ($customers as $i => $c) {
-            $status = ($c['checkin_count'] > 0) ? 'Đã check-in' : 'Chưa check-in';
-            $checkinTime = ($c['checkin_count'] > 0) ? date('H:i d/m/Y', strtotime($c['latest_checkin_time'] ?? 'now')) : '';
-
-            $data[] = [
-                $i + 1,
-                $c['name'],
-                $c['phone'],
-                $c['email'],
-                $status,
-                '', // Time placeholder
-                '', // Location placeholder
-                ''  // Note placeholder
-            ];
-        }
-
-
-        $checkinHistory = $this->checkinModel->getCheckinHistory($assignmentId);
-        $checkinMap = [];
-        foreach ($checkinHistory as $h) {
-            $checkinMap[$h['customer_id']] = $h;
-        }
-
-        // Re-build data with map
-        $data = [
-            ['DANH SÁCH KHÁCH HÀNG - ' . mb_strtoupper($assignment['tour_name'])],
-            ['Mã Booking: ' . $assignment['booking_code']],
-            ['Ngày khởi hành: ' . date('d/m/Y', strtotime($assignment['start_date']))],
-            [],
-            ['STT', 'Tên khách hàng', 'Số điện thoại', 'Email', 'Trạng thái', 'Thời gian check-in', 'Phòng']
-        ];
-
-        foreach ($customers as $i => $c) {
-            $info = $checkinMap[$c['id']] ?? null;
-            $status = $info ? 'Đã check-in' : 'Chưa check-in';
-            $time = $info ? date('H:i d/m/Y', strtotime($info['checkin_time'])) : '';
-            $room = $c['room_number'] ?? '';
-
-            $data[] = [
-                $i + 1,
-                $c['name'],
-                $c['phone'],
-                $c['email'],
-                $status,
-                $time,
-                $room
-            ];
-        }
-
-        $xlsx = Shuchkin\SimpleXLSXGen::fromArray($data);
-        $xlsx->downloadAs('Danh_sach_checkin_' . date('Ymd_His') . '.xlsx');
+        header("Location: " . BASE_URL . "?act=guide-tour-assignments-detail&id=" . $assignmentId . "&tab=checkin");
         exit;
     }
 
+    // Xóa đợt check-in
+    public function deleteCheckinSession()
+    {
+        $assignmentId = $_POST['assignment_id'];
+        $linkId = $_POST['link_id'];
 
-    // Xử lý check-in từ trang detail
+        if ($this->checkinModel->deleteCheckinLink($linkId)) {
+            Message::set('success', 'Xóa đợt điểm danh thành công!');
+        } else {
+            Message::set('error', 'Xóa đợt điểm danh thất bại!');
+        }
+
+        header("Location: " . BASE_URL . "?act=guide-tour-assignments-detail&id=" . $assignmentId . "&tab=checkin");
+        exit;
+    }
+
+    // Xử lý check-in/uncheck-in khách hàng
     public function checkinStore()
     {
         $assignmentId = $_POST['assignment_id'];
+        $linkId = $_POST['link_id'];
         $customerId = $_POST['customer_id'];
+        $action = $_POST['action'] ?? 'checkin';
 
-        // Kiểm tra thời gian tour
-        $canCheckin = $this->checkinModel->canCheckin($assignmentId);
-        if (!$canCheckin['allowed']) {
-            Message::set('error', $canCheckin['message']);
-            header("Location: " . BASE_URL . "?act=guide-tour-assignments-detail&id=" . $assignmentId . "&tab=checkin");
-            exit;
-        }
-
-        // Kiểm tra đã check-in chưa
-        if ($this->checkinModel->hasCheckedIn($assignmentId, $customerId)) {
-            Message::set('error', 'Khách hàng này đã được điểm danh!');
+        if ($action === 'uncheckin') {
+            if ($this->checkinModel->uncheckinCustomer($linkId, $customerId)) {
+                Message::set('success', 'Đã hủy điểm danh!');
+            } else {
+                Message::set('error', 'Hủy điểm danh thất bại!');
+            }
         } else {
-            $data = [
-                'tour_assignment_id' => $assignmentId,
-                'customer_id' => $customerId,
-                'checkin_time' => date('Y-m-d H:i:s'),
-                'created_by' => $_SESSION['currentUser']['id']
-            ];
-
-            if ($this->checkinModel->createCheckin($data)) {
+            if ($this->checkinModel->checkinCustomer($linkId, $customerId)) {
                 Message::set('success', 'Điểm danh thành công!');
             } else {
                 Message::set('error', 'Điểm danh thất bại!');
             }
         }
 
-        header("Location: " . BASE_URL . "?act=guide-tour-assignments-detail&id=" . $assignmentId . "&tab=checkin");
-        exit;
-    }
-
-    // Xử lý hủy check-in
-    public function checkinDestroy()
-    {
-        $assignmentId = $_POST['assignment_id'];
-        $checkinId = $_POST['checkin_id'];
-
-        if ($this->checkinModel->deleteCheckin($checkinId)) {
-            Message::set('success', 'Đã hủy điểm danh!');
-        } else {
-            Message::set('error', 'Hủy điểm danh thất bại!');
-        }
-
-        header("Location: " . BASE_URL . "?act=guide-tour-assignments-detail&id=" . $assignmentId . "&tab=checkin");
+        header("Location: " . BASE_URL . "?act=guide-tour-assignments-detail&id=" . $assignmentId . "&tab=checkin&link_id=" . $linkId);
         exit;
     }
 }
