@@ -5,16 +5,14 @@ require_once './views/components/sidebar.php';
 
 <main class="mt-28 px-6 pb-20 overflow-auto scrollbar-hide">
     <div class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">Viết nhật ký</h1>
-            <p class="text-sm text-gray-600">Danh sách nhật ký của bạn</p>
-        </div>
-        <div class="flex space-x-3">
-            <a href="<?= BASE_URL . '?act=journal-create'  ?>"
-                class="px-5 py-2.5 text-white text-sm font-medium rounded-lg bg-blue-500 hover:bg-blue-600 flex items-center space-x-2">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                <span>Tạo nhật ký mới</span>
-            </a>
+        <div class="flex items-center gap-4 mb-6">
+            <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
+                <i data-lucide="chevron-left" class="w-6 h-6"></i>
+            </button>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">Tour của tôi</h2>
+                <p class="text-sm text-gray-600">Quản lý các tour được phân công</p>
+            </div>
         </div>
     </div>
 

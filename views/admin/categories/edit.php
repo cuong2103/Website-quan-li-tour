@@ -59,9 +59,7 @@ require_once './views/components/sidebar.php';
           <!-- Nút lưu -->
           <button type="submit"
             class="w-full bg-orange-400 text-white py-3 rounded-md font-medium hover:bg-orange-500 transition flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
+            <i data-lucide="save" class="w-5 h-5"></i>
             Lưu Danh mục
           </button>
         </form>

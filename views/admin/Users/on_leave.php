@@ -11,9 +11,7 @@ require_once './views/components/sidebar.php';
             <p class="text-gray-600 mt-1">Danh sách các nhân viên hiện đang trong thời gian nghỉ phép</p>
         </div>
         <a href="?act=user" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
+            <i data-lucide="arrow-left" class="w-5 h-5"></i>
             Quay lại
         </a>
     </div>
@@ -21,11 +19,9 @@ require_once './views/components/sidebar.php';
     <?php if (empty($users)): ?>
         <!-- Empty State -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-            <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Không có hướng dẫn viên nào đang nghỉ phép</h3>
-            <p class="text-gray-500">Tất cả hướng dẫn viên hiện đang hoạt động</p>
+            <i data-lucide="alert-circle" class="mx-auto h-16 w-16 text-gray-400 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Không có nhân viên nào đang nghỉ phép</h3>
+            <p class="text-gray-500">Tất cả nhân viên hiện đang hoạt động</p>
         </div>
     <?php else: ?>
         <!-- Table -->
@@ -95,17 +91,13 @@ require_once './views/components/sidebar.php';
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
+                                        <i data-lucide="calendar" class="w-4 h-4 text-gray-400"></i>
                                         <span class="text-gray-900"><?= date('d/m/Y', strtotime($user['leave_start'])) ?></span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
+                                        <i data-lucide="calendar" class="w-4 h-4 text-gray-400"></i>
                                         <span class="text-gray-900"><?= date('d/m/Y', strtotime($user['leave_end'])) ?></span>
                                     </div>
                                 </td>
@@ -132,18 +124,13 @@ require_once './views/components/sidebar.php';
                                         <a href="?act=user-detail&id=<?= $user['id'] ?>"
                                             class="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                             title="Xem chi tiết">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
+                                            <i data-lucide="eye" class="w-5 h-5"></i>
                                         </a>
                                         <a href="?act=user-end-leave&id=<?= $user['id'] ?>"
                                             onclick="return confirm('Bạn có chắc muốn kết thúc nghỉ phép cho <?= htmlspecialchars($user['fullname']) ?>?')"
                                             class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                             title="Kết thúc nghỉ phép">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
+                                            <i data-lucide="x" class="w-5 h-5"></i>
                                         </a>
                                     </div>
                                 </td>
@@ -157,11 +144,9 @@ require_once './views/components/sidebar.php';
         <!-- Summary -->
         <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div class="flex items-center gap-3">
-                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <i data-lucide="alert-circle" class="w-5 h-5 text-blue-600"></i>
                 <p class="text-sm text-blue-800">
-                    <strong>Tổng cộng:</strong> <?= count($users) ?> hướng dẫn viên đang/sắp nghỉ phép
+                    <strong>Tổng cộng:</strong> <?= count($users) ?> nhân viên đang/sắp nghỉ phép
                 </p>
             </div>
         </div>

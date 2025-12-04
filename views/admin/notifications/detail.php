@@ -10,9 +10,7 @@ require_once './views/components/sidebar.php';
       <a href="<?= BASE_URL ?>?act=notifications" class="text-gray-500 hover:text-gray-700 transition-colors">
         Thông báo
       </a>
-      <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-      </svg>
+      <i class="w-4 h-4 text-gray-400" data-lucide="chevron-right"></i>
       <span class="text-gray-900 font-medium">Chi tiết</span>
     </nav>
 

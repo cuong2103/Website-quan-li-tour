@@ -10,9 +10,14 @@ unset($_SESSION['errors'], $_SESSION['old']);
 <main class="mt-28 px-6 min-w-7xl mx-6">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Chỉnh sửa nhật ký</h1>
-            <p class="text-gray-500 mt-1">Cập nhật thông tin hành trình và sự cố</p>
+        <div class="flex items-center gap-4">
+            <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
+                <i data-lucide="chevron-left" class="w-6 h-6"></i>
+            </button>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">Chỉnh sửa nhật ký</h2>
+                <p class="text-sm text-gray-600">Cập nhật thông tin hành trình và sự cố</p>
+            </div>
         </div>
         <a href="<?= BASE_URL . '?act=journal' ?>"
             class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50">

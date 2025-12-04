@@ -5,13 +5,14 @@ class NotificationController
 
   public function __construct()
   {
-    requireAdmin();
+    checkLogin();
     $this->notificationModel = new NotificationModel();
   }
 
   // Danh sách thông báo
   public function index()
   {
+    requireAdmin();
     $notifications = $this->notificationModel->getAll();
     $totalNotifications = $this->notificationModel->getTotalNotifications();
 
@@ -21,6 +22,7 @@ class NotificationController
   // Form tạo thông báo mới
   public function create()
   {
+    requireAdmin();
     $users = $this->notificationModel->getAllUsers();
     require_once './views/admin/notifications/create.php';
   }
@@ -28,6 +30,7 @@ class NotificationController
   // Xử lý tạo thông báo
   public function store()
   {
+    requireAdmin();
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $data = [
         'title' => trim($_POST['title']),
@@ -92,6 +95,7 @@ class NotificationController
   // Chi tiết thông báo
   public function detail()
   {
+    requireAdmin();
     $id = $_GET['id'] ?? null;
     if (!$id) {
       redirect('notifications');
@@ -112,6 +116,7 @@ class NotificationController
   // Xóa thông báo
   public function delete()
   {
+    requireAdmin();
     if (!isset($_GET['id'])) {
       redirect('notifications');
       exit;
@@ -169,6 +174,7 @@ class NotificationController
   // Form chỉnh sửa thông báo
   public function edit()
   {
+    requireAdmin();
     $id = $_GET['id'] ?? null;
     if (!$id) {
       redirect('notifications');
@@ -192,6 +198,7 @@ class NotificationController
   // Xử lý cập nhật thông báo
   public function update()
   {
+    requireAdmin();
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $id = $_POST['id'] ?? null;
 

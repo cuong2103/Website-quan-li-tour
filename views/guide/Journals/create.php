@@ -10,9 +10,14 @@ unset($_SESSION['errors'], $_SESSION['old']);
 <main class="mt-28 px-6  min-w-7xl mx-6">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900">Viết nhật ký mới</h1>
-            <p class="text-gray-500 mt-1">Ghi lại hành trình và sự cố trong tour của bạn</p>
+        <div class="flex items-center gap-4 mb-6">
+            <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
+                <i data-lucide="chevron-left" class="w-6 h-6"></i>
+            </button>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">Viết nhật ký mới</h2>
+                <p class="text-sm text-gray-600">Ghi lại hành trình và sự cố trong tour của bạn</p>
+            </div>
         </div>
         <a href="<?= BASE_URL . '?act=journal' ?>"
             class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50">
@@ -198,16 +203,6 @@ unset($_SESSION['errors'], $_SESSION['old']);
                 wrap.appendChild(img);
                 wrap.appendChild(btn);
                 preview.appendChild(wrap);
-
-                // Re-initialize icons for dynamic content if needed, 
-                // but since we use lucide.createIcons() usually on load, 
-                // we might need to call it again or just use SVG directly if lucide isn't auto-watching.
-                // For simplicity here, assuming lucide.createIcons() runs globally or we use SVG.
-                // Actually, let's just use simple text '×' for safety if lucide isn't available in dynamic context immediately
-                // Or better, just trigger lucide if available.
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
             };
             reader.readAsDataURL(file);
         });

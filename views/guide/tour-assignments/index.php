@@ -12,9 +12,14 @@ $tabs = [
 ?>
 
 <main class="mt-28 px-6 pb-20 text-gray-700">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold">Tour của tôi</h1>
-        <p class="text-gray-500 text-sm">Quản lý các tour được phân công</p>
+    <div class="flex items-center gap-4 mb-6">
+        <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
+            <i data-lucide="chevron-left" class="w-6 h-6"></i>
+        </button>
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900">Tour của tôi</h2>
+            <p class="text-sm text-gray-600">Quản lý các tour được phân công</p>
+        </div>
     </div>
 
     <!-- tab filter -->

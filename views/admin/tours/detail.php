@@ -9,9 +9,7 @@ require_once './views/components/sidebar.php';
     <div class="flex items-center justify-between mb-8">
       <div class="flex items-center gap-4">
         <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
+          <i data-lucide="arrow-left" class="w-6 h-6"></i>
         </button>
         <div>
           <h2 class="text-3xl font-bold text-gray-900">Chi tiết tour</h2>
@@ -139,16 +137,12 @@ require_once './views/components/sidebar.php';
                 <div class="flex items-center justify-between mb-4">
                   <h4 class="text-lg font-semibold text-blue-700">Ngày <?= $day['order_number'] ?></h4>
                   <span class="text-sm text-gray-500 flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <i data-lucide="clock" class="w-4 h-4"></i>
                     <?= date('H:i', strtotime($day['arrival_time'])) ?> → <?= date('H:i', strtotime($day['departure_time'])) ?>
                   </span>
                 </div>
                 <h5 class="font-medium text-gray-900 mb-3 flex items-center gap-2">
-                  <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                  </svg>
+                  <i data-lucide="clock" class="w-5 h-5 text-red-500"></i>
                   <?= htmlspecialchars($day['destination']) ?>
                 </h5>
                 <div class="text-gray-600 leading-relaxed pl-7">
@@ -159,9 +153,7 @@ require_once './views/components/sidebar.php';
           </div>
         <?php else: ?>
           <div class="text-center py-12 text-gray-500">
-            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
+            <i data-lucide="clock" class="w-16 h-16 mx-auto mb-4 text-gray-300"></i>
             <p>Chưa có lịch trình nào</p>
           </div>
         <?php endif; ?>
@@ -179,9 +171,7 @@ require_once './views/components/sidebar.php';
               <div class="flex gap-4 p-5 bg-gray-50 rounded-lg border border-gray-100 hover:border-gray-200 transition">
                 <div class="flex-shrink-0">
                   <div class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <i data-lucide="clock" class="w-5 h-5"></i>
                   </div>
                 </div>
                 <div class="flex-1">
@@ -193,9 +183,7 @@ require_once './views/components/sidebar.php';
           </div>
         <?php else: ?>
           <div class="text-center py-12 text-gray-500">
-            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+            <i data-lucide="clock" class="w-16 h-16 mx-auto mb-4 text-gray-300"></i>
             <p>Chưa có chính sách nào</p>
           </div>
         <?php endif; ?>
@@ -206,9 +194,7 @@ require_once './views/components/sidebar.php';
     <!-- Action buttons -->
     <div class="flex justify-between items-center mt-6 pb-8">
       <button onclick="history.back()" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700">
-        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
+        <i data-lucide="arrow-left" class="w-5 h-5 inline-block mr-2"></i>
         Quay lại
       </button>
 
@@ -216,16 +202,12 @@ require_once './views/components/sidebar.php';
         <a href="<?= BASE_URL ?>?act=tours-delete&id=<?= $tour['id'] ?>"
           onclick="return confirm('Bạn có chắc chắn muốn xóa tour này?')"
           class="px-6 py-3 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition font-medium">
-          <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
+          <i data-lucide="trash-2" class="w-5 h-5 inline-block mr-2"></i>
           Xóa tour
         </a>
         <a href="<?= BASE_URL ?>?act=tours-edit&id=<?= $tour['id'] ?>"
           class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
-          <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
+          <i data-lucide="square-pencil" class="w-5 h-5 inline-block mr-2"></i>
           Chỉnh sửa
         </a>
       </div>

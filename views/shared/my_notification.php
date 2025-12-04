@@ -15,9 +15,7 @@ require_once './views/components/sidebar.php';
       <?php if ($unreadCount > 0): ?>
         <a href="?act=mark-all-notifications-read"
           class="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-800 transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 6L9 17l-5-5" />
-          </svg>
+          <i data-lucide="check" class="w-4 h-4"></i>
           Đánh dấu tất cả đã đọc
         </a>
       <?php endif; ?>
@@ -32,9 +30,7 @@ require_once './views/components/sidebar.php';
       <div class="divide-y divide-gray-100">
         <?php if (empty($notifications)): ?>
           <div class="px-6 py-12 text-center">
-            <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
+            <i data-lucide="bell" class="w-16 h-16 mx-auto text-gray-300 mb-4"></i>
             <p class="text-gray-500 text-sm">Chưa có thông báo nào</p>
           </div>
         <?php else: ?>
