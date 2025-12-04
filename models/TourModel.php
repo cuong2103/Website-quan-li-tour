@@ -407,7 +407,7 @@ class TourModel
     $total = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total'];
 
     // Tour đang hoạt động (đang diễn ra)
-    $sqlActive = "SELECT COUNT(*) as active FROM tours WHERE status = 1";
+    $sqlActive = "SELECT COUNT(*) as active FROM tours WHERE status = 'active'";
     $stmtActive = $this->conn->prepare($sqlActive);
     $stmtActive->execute();
     $active = $stmtActive->fetch(PDO::FETCH_ASSOC)['active'];
@@ -416,7 +416,7 @@ class TourModel
     $sqlOngoing = "SELECT COUNT(DISTINCT t.id) as ongoing 
                       FROM tours t
                       JOIN bookings b ON t.id = b.tour_id
-                      WHERE b.start_date <= CURDATE() AND b.end_date >= CURDATE() AND b.status IN (2, 3)";
+                      WHERE b.start_date <= CURDATE() AND b.end_date >= CURDATE() AND b.status IN ('deposited', 'paid')";
     $stmtOngoing = $this->conn->prepare($sqlOngoing);
     $stmtOngoing->execute();
     $ongoing = $stmtOngoing->fetch(PDO::FETCH_ASSOC)['ongoing'];

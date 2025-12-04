@@ -241,9 +241,9 @@ require_once './views/components/sidebar.php';
                         <label class="block mb-1.5 text-sm font-medium text-gray-700">Trạng thái</label>
                         <select name="status"
                             class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition">
-                            <option value="1">Chờ thanh toán</option>
-                            <option value="2">Đã cọc</option>
-                            <option value="3">Đã thanh toán đủ</option>
+                            <option value="pending">Chờ thanh toán</option>
+                            <option value="deposited">Đã cọc</option>
+                            <option value="paid">Đã thanh toán đủ</option>
                         </select>
                     </div>
 

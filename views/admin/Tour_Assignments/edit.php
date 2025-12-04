@@ -15,7 +15,6 @@ require_once './views/components/sidebar.php';
 
         <form action="<?= BASE_URL ?>?act=tour-assignment-store" method="POST">
             <input type="hidden" name="booking_id" value="<?= $booking['id'] ?>">
-            <!-- Passing assignment ID if needed, though store uses booking_id to find existing -->
             <input type="hidden" name="id" value="<?= $assignment['id'] ?>">
 
             <div class="mb-4">
@@ -33,8 +32,10 @@ require_once './views/components/sidebar.php';
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
                 <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="1" <?= !empty($assignment) && $assignment['status'] == 1 ? 'selected' : '' ?>>Hoạt động</option>
-                    <option value="0" <?= !empty($assignment) && $assignment['status'] == 0 ? 'selected' : '' ?>>Tạm ngưng</option>
+                    <option value="assigned" <?= !empty($assignment) && $assignment['status'] == 'assigned' ? 'selected' : '' ?>>Đã phân công</option>
+                    <option value="in_progress" <?= !empty($assignment) && $assignment['status'] == 'in_progress' ? 'selected' : '' ?>>Đang thực hiện</option>
+                    <option value="completed" <?= !empty($assignment) && $assignment['status'] == 'completed' ? 'selected' : '' ?>>Đã hoàn thành</option>
+                    <option value="cancelled" <?= !empty($assignment) && $assignment['status'] == 'cancelled' ? 'selected' : '' ?>>Đã hủy</option>
                 </select>
             </div>
 

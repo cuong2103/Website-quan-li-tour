@@ -98,7 +98,7 @@ class TourAssignmentModel
                 SELECT DISTINCT ta.guide_id 
                 FROM tour_assignments ta
                 JOIN bookings b ON ta.booking_id = b.id
-                WHERE ta.status = 1 
+                WHERE ta.status IN ('assigned', 'in_progress') 
                 AND (b.start_date <= ? AND b.end_date >= ?)
             ";
 
@@ -176,7 +176,7 @@ class TourAssignmentModel
     public function store($booking_id, $guide_id, $created_by)
     {
         try {
-            $sql = "INSERT INTO tour_assignments (booking_id, guide_id, status, created_by) VALUES (?, ?, 1, ?)";
+            $sql = "INSERT INTO tour_assignments (booking_id, guide_id, status, created_by) VALUES (?, ?, 'assigned', ?)";
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([$booking_id, $guide_id, $created_by]);
         } catch (Exception $e) {

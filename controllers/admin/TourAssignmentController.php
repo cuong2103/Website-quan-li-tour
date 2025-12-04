@@ -57,7 +57,7 @@ class TourAssignmentController
     {
         $booking_id = $_POST['booking_id'];
         $guide_id   = ($_POST['guide_id'] == "") ? null : $_POST['guide_id'];
-        $status     = $_POST['status'] ?? 1;
+        $status     = $_POST['status'] ?? 'assigned';
         $created_by = $_SESSION['user_id'] ?? 1;
 
         // --- KIỂM TRA THANH TOÁN (Double Check) ---

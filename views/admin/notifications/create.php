@@ -31,7 +31,7 @@
           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           placeholder="Nhập nội dung thông báo"><?= htmlspecialchars($message ?? '') ?></textarea>
         <?php if (isset($errors['message'])): ?>
-          <p class="text-red-500 text-sm mt-1"><?= $errors['message'] ?></p>
+          <p class="text-red-500 text-sm mt-1"><?= $errors['message'][0] ?></p>
         <?php endif; ?>
       </div>
 

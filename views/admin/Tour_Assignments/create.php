@@ -31,8 +31,10 @@ require_once './views/components/sidebar.php';
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
                 <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="1" <?= !empty($assignment) && $assignment['status'] == 1 ? 'selected' : '' ?>>Hoạt động</option>
-                    <option value="0" <?= !empty($assignment) && $assignment['status'] == 0 ? 'selected' : '' ?>>Tạm ngưng</option>
+                    <option value="assigned">Đã phân công</option>
+                    <option value="in_progress">Đang thực hiện</option>
+                    <option value="completed">Đã hoàn thành</option>
+                    <option value="cancelled">Đã hủy</option>
                 </select>
             </div>
 
