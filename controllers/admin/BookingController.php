@@ -22,7 +22,14 @@ class BookingController
     // Hiển thị danh sách booking
     public function index()
     {
-        $bookings = $this->bookingModel->getAll();
+        $filters = [
+            'keyword' => $_GET['keyword'] ?? '',
+            'status' => $_GET['status'] ?? '',
+            'date_from' => $_GET['date_from'] ?? '',
+            'date_to' => $_GET['date_to'] ?? ''
+        ];
+        // Lấy danh sách booking từ model với bộ lọc
+        $bookings = $this->bookingModel->getAll($filters);
         require_once './views/admin/bookings/index.php';
     }
 
@@ -65,8 +72,10 @@ class BookingController
             'tour_id' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
-            'adult_count' => 'required',
-            'total_amount' => 'required',
+            'adult_count' => 'required|numeric',
+            'child_count' => 'numeric',
+            'total_amount' => 'required|numeric',
+            'deposit_amount' => 'numeric',
             'status' => 'required',
             'rep_name' => 'required',
             'rep_phone' => 'required',
@@ -75,14 +84,14 @@ class BookingController
 
         $errors = validate($_POST, $rules);
         if (!empty($errors)) {
-            Message::set('errors', 'Vui lòng kiểm tra lại dữ liệu đã nhập.');
+            Message::set('error', 'Vui lòng kiểm tra lại dữ liệu đã nhập.');
             $_SESSION['old'] = $_POST;
             $_SESSION['validate_errors'] = $errors;
             header("Location:" . BASE_URL . '?act=booking-create');
             exit;
         }
 
-        // ===== CREATE BOOKING =====
+        // ===== tạo booking =====
         $bookingCode = 'BK-' . time();
 
         $customer = $this->customerModel->findByEmailOrPhone($_POST['rep_email'], $_POST['rep_phone']);
@@ -103,13 +112,24 @@ class BookingController
             $customerId = $customer['id'];
         }
 
+        // ===== tính toán service_amount =====
+        $serviceAmount = 0;
+        if (!empty($_POST['services'])) {
+            foreach ($_POST['services'] as $serviceId) {
+                $currentPrice = $_POST['service_prices'][$serviceId] ?? 0;
+                $quantity = $_POST['service_quantities'][$serviceId] ?? 1;
+                $serviceAmount += ($currentPrice * $quantity);
+            }
+        }
+
         $data = [
             'tour_id' => $_POST['tour_id'],
             'booking_code' => $bookingCode,
             'start_date' => $_POST['start_date'],
             'end_date' => $_POST['end_date'],
             'adult_count' => $_POST['adult_count'],
-            'child_count' => $_POST['child_count'],
+            'child_count' => $_POST['child_count'] ?? 0,
+            'service_amount' => $serviceAmount,
             'total_amount' => $_POST['total_amount'],
             'deposit_amount' => $_POST['deposit_amount'] ?? 0,
             'remaining_amount' => $_POST['remaining_amount'] ?? 0,
@@ -142,7 +162,7 @@ class BookingController
             }
         }
 
-        // ===== DONE =====
+        // Thông báo nếu thành công
         Message::set('success', 'Tạo booking thành công.');
         header("Location:" . BASE_URL . '?act=bookings');
     }
@@ -173,28 +193,42 @@ class BookingController
             'tour_id' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
-            'adult_count' => 'required',
-            'total_amount' => 'required'
+            'adult_count' => 'required|numeric',
+            'child_count' => 'numeric',
+            'total_amount' => 'required|numeric',
+            'deposit_amount' => 'numeric'
         ];
 
         $errors = validate($_POST, $rules);
 
         if (!empty($errors)) {
-            Message::set('errors', 'Vui lòng kiểm tra lại dữ liệu đã nhập.');
+            Message::set('error', 'Vui lòng kiểm tra lại dữ liệu đã nhập.');
             $_SESSION['old'] = $_POST;
             $_SESSION['validate_errors'] = $errors;
             header("Location:" . BASE_URL . '?act=booking-edit&id=' . $_POST['id']);
+            exit;
         }
 
         // lấy id booking
         $id = $_POST['id'];
+
+        // tính toán service_amount
+        $serviceAmount = 0;
+        if (!empty($_POST['services'])) {
+            foreach ($_POST['services'] as $serviceId) {
+                $currentPrice = $_POST['service_prices'][$serviceId] ?? 0;
+                $quantity = $_POST['service_quantities'][$serviceId] ?? 1;
+                $serviceAmount += ($currentPrice * $quantity);
+            }
+        }
 
         $data = [
             'tour_id' => $_POST['tour_id'],
             'start_date' => $_POST['start_date'],
             'end_date' => $_POST['end_date'],
             'adult_count' => $_POST['adult_count'],
-            'child_count' => $_POST['child_count'],
+            'child_count' => $_POST['child_count'] ?? 0,
+            'service_amount' => $serviceAmount,
             'total_amount' => $_POST['total_amount'],
             'deposit_amount' => $_POST['deposit_amount'] ?? 0,
             'remaining_amount' => $_POST['remaining_amount'] ?? 0,
@@ -202,7 +236,8 @@ class BookingController
             'special_requests' => $_POST['special_requests'] ?? null,
             'customers' => $_POST['customers'] ?? [],
             'is_representative' => $_POST['is_representative'] ?? null,
-            'services' => $_POST['services'] ?? []
+            'services' => $_POST['services'] ?? [],
+            'updated_by' => $_SESSION['currentUser']['id']
         ];
         // Cập nhật booking chính vào db
         $this->bookingModel->update($id, $data);
@@ -249,10 +284,24 @@ class BookingController
     {
         $id = $_GET['id'];
 
-        // Check if booking has payments
-        $totalPaid = $this->bookingModel->getTotalPaid($id);
-        if ($totalPaid > 0) {
-            Message::set('errors', 'Không thể xóa booking đã thanh toán.');
+        // Lấy thông tin booking
+        $booking = $this->bookingModel->getById($id);
+
+        if (!$booking) {
+            Message::set('error', 'Booking không tồn tại.');
+            header("Location:" . BASE_URL . '?act=bookings');
+            exit;
+        }
+
+        // Kiểm tra trạng thái booking
+        if ($booking['status'] === 'paid') {
+            Message::set('error', 'Không thể xóa booking đã thanh toán đủ.');
+            header("Location:" . BASE_URL . '?act=bookings');
+            exit;
+        }
+
+        if ($booking['status'] === 'deposited') {
+            Message::set('error', 'Không thể xóa booking đã cọc. Vui lòng xóa các thanh toán trước.');
             header("Location:" . BASE_URL . '?act=bookings');
             exit;
         }
@@ -307,10 +356,10 @@ class BookingController
         if (isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
             $file = $_FILES['file']['tmp_name'];
 
-            // Check file extension
+            // Kiểm tra định dạng file
             $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
             if (!in_array(strtolower($ext), ['xlsx', 'xls'])) {
-                Message::set('errors', 'Vui lòng chọn file Excel (.xlsx, .xls).');
+                Message::set('error', 'Vui lòng chọn file Excel (.xlsx, .xls).');
                 header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=customers');
                 exit;
             }
@@ -321,39 +370,42 @@ class BookingController
                 $count = 0;
                 $rows = $xlsx->rows();
 
-                // Loop through rows (skip header)
+                // Dòng 1 là header, dữ liệu từ dòng 2
                 foreach ($rows as $index => $row) {
-                    if ($index == 0) continue; // Skip header row
+                    if ($index == 0) continue; // Skip header
 
-                    // Excel Format: Name, Email, Phone, Address, Gender, Passport
-                    $name = $row[0] ?? '';
-                    $email = $row[1] ?? '';
-                    $phone = $row[2] ?? '';
-                    $address = $row[3] ?? '';
-                    $genderRaw = $row[4] ?? 'other';
+                    // Excel Format: STT, Họ tên, Giới tính, Hộ chiếu, CMND/CCCD, Địa chỉ, SĐT, Email, Người đại diện
+                    $name = trim($row[1] ?? '');
+                    $genderText = trim($row[2] ?? 'Khác');
+                    $passport = trim($row[3] ?? '');
+                    $citizenId = trim($row[4] ?? '');
+                    $address = trim($row[5] ?? '');
+                    $phone = trim($row[6] ?? '');
+                    $email = trim($row[7] ?? '');
+
+                    // Chuyển đổi giới tính
                     $gender = 'other';
-                    if (mb_strtolower($genderRaw) == 'nam') {
+                    if (mb_strtolower($genderText) == 'nam' || mb_strtolower($genderText) == 'male') {
                         $gender = 'male';
-                    } elseif (mb_strtolower($genderRaw) == 'nữ') {
+                    } elseif (mb_strtolower($genderText) == 'nữ' || mb_strtolower($genderText) == 'female' || mb_strtolower($genderText) == 'nu') {
                         $gender = 'female';
                     }
-                    $passport = $row[5] ?? '';
 
                     if (empty($name)) continue;
 
-                    // Check if customer exists
+                    // Tìm kiếm khách hàng theo email hoặc số điện thoại
                     $customer = $this->customerModel->findByEmailOrPhone($email, $phone);
 
                     if ($customer) {
                         $customerId = $customer['id'];
                     } else {
-                        // Create new customer
-                        $this->customerModel->create($name, $email, $phone, $address, $_SESSION['currentUser']['id'], $passport, $gender, '');
+                        // Tạo khách hàng mới
+                        $this->customerModel->create($name, $email, $phone, $address, $_SESSION['currentUser']['id'], $passport, $gender, $citizenId);
                         $customer = $this->customerModel->findByEmailOrPhone($email, $phone);
                         $customerId = $customer['id'];
                     }
 
-                    // Add to booking
+                    // Kiểm tra xem khách hàng đã có trong booking chưa
                     $existingCustomers = $this->bookingModel->getCustomers($bookingId);
                     $isAlreadyIn = false;
                     foreach ($existingCustomers as $ec) {
@@ -371,10 +423,10 @@ class BookingController
 
                 Message::set('success', "Đã thêm $count khách hàng từ file Excel.");
             } else {
-                Message::set('errors', 'Không thể đọc file Excel: ' . \Shuchkin\SimpleXLSX::parseError());
+                Message::set('error', 'Không thể đọc file Excel: ' . \Shuchkin\SimpleXLSX::parseError());
             }
         } else {
-            Message::set('errors', 'Vui lòng chọn file Excel.');
+            Message::set('error', 'Vui lòng chọn file Excel.');
         }
 
         header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=customers');
@@ -385,14 +437,14 @@ class BookingController
     {
         $bookingId = $_GET['booking_id'] ?? null;
         if (!$bookingId) {
-            Message::set('errors', 'Không tìm thấy booking ID');
+            Message::set('error', 'Không tìm thấy booking ID');
             header('Location: ' . BASE_URL . '?act=bookings');
             exit;
         }
 
         $booking = $this->bookingModel->getById($bookingId);
         if (!$booking) {
-            Message::set('errors', 'Booking không tồn tại');
+            Message::set('error', 'Booking không tồn tại');
             header('Location: ' . BASE_URL . '?act=bookings');
             exit;
         }
@@ -402,7 +454,7 @@ class BookingController
         require_once './lib/SimpleXLSXGen.php';
 
         $data = [
-            ['STT', 'Họ tên', 'Giới tính', 'Hộ chiếu', 'Địa chỉ', 'SĐT', 'Email', 'Người đại diện']
+            ['STT', 'Họ tên', 'Giới tính', 'Hộ chiếu', 'CMND/CCCD', 'Địa chỉ', 'SĐT', 'Email', 'Người đại diện']
         ];
 
         $i = 1;
@@ -416,9 +468,10 @@ class BookingController
                 $c['name'],
                 $gender,
                 $c['passport'] ?? '',
-                $c['address'],
-                $c['phone'],
-                $c['email'],
+                $c['citizen_id'] ?? '',
+                $c['address'] ?? '',
+                $c['phone'] ?? '',
+                $c['email'] ?? '',
                 $c['is_representative'] ? 'Có' : 'Không'
             ];
         }
@@ -433,6 +486,40 @@ class BookingController
     {
         $bookingId = $_GET['booking_id'];
         $customerId = $_GET['customer_id'];
+
+        // Lấy thông tin booking
+        $booking = $this->bookingModel->getById($bookingId);
+
+        if (!$booking) {
+            Message::set('error', 'Booking không tồn tại.');
+            header("Location:" . BASE_URL . '?act=bookings');
+            exit;
+        }
+
+        // Kiểm tra xem khách hàng có phải người đại diện không
+        $customers = $this->bookingModel->getCustomers($bookingId);
+        $isRepresentative = false;
+
+        foreach ($customers as $c) {
+            if ($c['id'] == $customerId && $c['is_representative'] == 1) {
+                $isRepresentative = true;
+                break;
+            }
+        }
+
+        if ($isRepresentative) {
+            // Đếm số khách hàng còn lại
+            $remainingCustomers = count($customers) - 1;
+
+            if ($remainingCustomers > 0) {
+                Message::set('error', 'Không thể xóa người đại diện. Vui lòng chỉ định người đại diện khác trước khi xóa.');
+            } else {
+                Message::set('error', 'Không thể xóa người đại diện duy nhất của booking.');
+            }
+
+            header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=customers');
+            exit;
+        }
 
         $this->bookingModel->removeCustomer($bookingId, $customerId);
 
@@ -450,11 +537,11 @@ class BookingController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $customerId = $_POST['customer_id'];
 
-            // Check if already exists
+            // Kiểm tra xem khách hàng đã có trong booking chưa
             $existing = $this->bookingModel->getCustomers($bookingId);
             foreach ($existing as $c) {
                 if ($c['id'] == $customerId) {
-                    Message::set('errors', 'Khách hàng này đã có trong booking.');
+                    Message::set('error', 'Khách hàng này đã có trong booking.');
                     header("Location:" . BASE_URL . '?act=booking-add-customer&booking_id=' . $bookingId);
                     exit;
                 }
@@ -468,7 +555,6 @@ class BookingController
 
         // Lấy danh sách tất cả khách hàng để chọn
         $customers = $this->customerModel->getAll();
-
         require_once './views/admin/bookings/add_customer.php';
     }
 
@@ -477,7 +563,7 @@ class BookingController
     {
         $bookingId = $_POST['booking_id'] ?? null;
         if (!$bookingId) {
-            Message::set('errors', 'Không tìm thấy Booking ID.');
+            Message::set('error', 'Không tìm thấy Booking ID.');
             header("Location:" . BASE_URL . '?act=bookings');
             exit;
         }
@@ -485,10 +571,10 @@ class BookingController
         if (isset($_FILES['excel_file']) && $_FILES['excel_file']['error'] == 0) {
             require_once './lib/SimpleXLSX.php';
 
-            if (class_exists('Shuchkin\SimpleXLSX')) {
+            if (class_exists('Shuchkin\\SimpleXLSX')) {
                 $xlsx = Shuchkin\SimpleXLSX::parse($_FILES['excel_file']['tmp_name']);
             } else {
-                Message::set('errors', 'Không tìm thấy thư viện SimpleXLSX.');
+                Message::set('error', 'Không tìm thấy thư viện SimpleXLSX.');
                 header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=room_assignment');
                 exit;
             }
@@ -496,24 +582,22 @@ class BookingController
             if ($xlsx) {
                 $rows = $xlsx->rows();
                 $count = 0;
-
-                // Giả sử dòng 1 là header, dữ liệu từ dòng 2
-                // Format: [0] => STT, [1] => Họ tên, [2] => Số phòng
-
+                // Format: [0] => STT, [1] => Họ tên, [2] => Số phòng, [3] => Ghi chú
                 // Lấy danh sách khách hàng của booking để đối chiếu
                 $customers = $this->bookingModel->getCustomers($bookingId);
 
                 foreach ($rows as $k => $r) {
-                    if ($k == 0) continue; // Skip header
+                    if ($k == 0) continue; // Bỏ qua header
 
                     $name = trim($r[1] ?? '');
                     $room = trim($r[2] ?? '');
+                    $notes = trim($r[3] ?? '');
 
                     if ($name && $room) {
                         // Tìm khách hàng theo tên (tương đối)
                         foreach ($customers as $c) {
                             if (mb_strtolower($c['name']) == mb_strtolower($name)) {
-                                $this->bookingModel->updateRoomNumber($bookingId, $c['id'], $room);
+                                $this->bookingModel->updateRoomNumber($bookingId, $c['id'], $room, $notes);
                                 $count++;
                                 break;
                             }
@@ -523,10 +607,10 @@ class BookingController
 
                 Message::set('success', "Đã cập nhật phòng cho $count khách hàng.");
             } else {
-                Message::set('errors', 'Lỗi đọc file Excel: ' . Shuchkin\SimpleXLSX::parseError());
+                Message::set('error', 'Lỗi đọc file Excel: ' . Shuchkin\SimpleXLSX::parseError());
             }
         } else {
-            Message::set('errors', 'Vui lòng chọn file Excel hợp lệ.');
+            Message::set('error', 'Vui lòng chọn file Excel hợp lệ.');
         }
 
         header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=room_assignment');
@@ -537,14 +621,14 @@ class BookingController
     {
         $bookingId = $_GET['booking_id'] ?? null;
         if (!$bookingId) {
-            Message::set('errors', 'Không tìm thấy booking ID');
+            Message::set('error', 'Không tìm thấy booking ID');
             header('Location: ' . BASE_URL . '?act=bookings');
             exit;
         }
 
         $booking = $this->bookingModel->getById($bookingId);
         if (!$booking) {
-            Message::set('errors', 'Booking không tồn tại');
+            Message::set('error', 'Booking không tồn tại');
             header('Location: ' . BASE_URL . '?act=bookings');
             exit;
         }
@@ -554,7 +638,7 @@ class BookingController
         require_once './lib/SimpleXLSXGen.php';
 
         $data = [
-            ['STT', 'Họ tên', 'Số phòng']
+            ['STT', 'Họ tên', 'Số phòng', 'Ghi chú']
         ];
 
         $i = 1;
@@ -563,16 +647,16 @@ class BookingController
                 $i++,
                 $c['name'],
                 $c['room_number'] ?? '',
+                $c['notes'] ?? '',
             ];
         }
 
         $filename = 'Xep_phong_Booking_' . $booking['booking_code'] . '.xlsx';
 
-        if (class_exists('Shuchkin\SimpleXLSXGen')) {
+        if (class_exists('Shuchkin\\SimpleXLSXGen')) {
             \Shuchkin\SimpleXLSXGen::fromArray($data)->downloadAs($filename);
         } else {
-            // Fallback if class not found (though it should be there if exportCustomers works)
-            Message::set('errors', 'Không tìm thấy thư viện SimpleXLSXGen.');
+            Message::set('error', 'Không tìm thấy thư viện SimpleXLSXGen.');
             header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=room_assignment');
         }
         exit;

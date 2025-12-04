@@ -19,7 +19,7 @@ class UserController
         // Lấy danh sách users với filter
         $users = $this->userModel->getAll($search, $role);
 
-        require './views/admin/User_management/index.php';
+        require './views/admin/Users/index.php';
     }
 
     public function detail()
@@ -30,13 +30,13 @@ class UserController
         $user = $this->userModel->getById($id);
 
         if (!$user) redirect("user");
-        require './views/admin/User_management/detail.php';
+        require './views/admin/Users/detail.php';
     }
 
     public function create()
     {
 
-        require './views/admin/User_management/create.php';
+        require './views/admin/Users/create.php';
     }
 
     public function edit()
@@ -49,7 +49,7 @@ class UserController
             Message::set('error', 'Không tìm thấy nhân viên');
             redirect("user"); // chuyển về danh sách nếu id không tồn tại
         }
-        require_once './views/admin/User_management/edit.php'; // truyền $user sang view
+        require_once './views/admin/Users/edit.php'; // truyền $user sang view
     }
 
     public function store()
@@ -298,7 +298,7 @@ class UserController
     public function onLeave()
     {
         $users = $this->userModel->getOnLeave();
-        require './views/admin/User_management/on_leave.php';
+        require './views/admin/Users/on_leave.php';
     }
 
     // KẾT THÚC NGHỈ PHÉP

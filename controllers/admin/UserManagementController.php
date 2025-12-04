@@ -13,8 +13,7 @@ class UserManagementController
     public function index()
     {
         $users = $this->model->getAll();
-        // dd($users);
-        require './views/admin/User_management/index.php';
+        require './views/admin/Users/index.php';
     }
 
     public function detail()
@@ -25,12 +24,12 @@ class UserManagementController
         $user = $this->model->getById($id);
 
         if (!$user) redirect("user");
-        require './views/admin/User_management/detail.php';
+        require './views/admin/Users/detail.php';
     }
 
     public function create()
     {
-        require './views/admin/User_management/create.php';
+        require './views/admin/Users/create.php';
     }
 
     public function edit()
@@ -43,7 +42,7 @@ class UserManagementController
             Message::set('error', 'Không tìm thấy nhân viên');
             redirect("user"); // chuyển về danh sách nếu id không tồn tại
         }
-        require_once './views/admin/User_management/edit.php'; // truyền $user sang view
+        require_once './views/admin/Users/edit.php'; // truyền $user sang view
     }
 
     public function store()

@@ -55,7 +55,18 @@ require_once './views/components/sidebar.php';
 
         <div>
             <p class="text-gray-500 text-sm">Trạng thái</p>
-            <p class="font-medium"><?= $payment['status'] ?></p>
+            <p class="font-medium">
+                <?php
+                $statusLabels = [
+                    'pending' => 'Chờ xử lý',
+                    'completed' => 'Thành công',
+                    'failed' => 'Thất bại',
+                    'refund' => 'Hoàn tiền',
+                    'expired' => 'Hết hạn'
+                ];
+                echo $statusLabels[$payment['status']] ?? $payment['status'];
+                ?>
+            </p>
         </div>
 
 
