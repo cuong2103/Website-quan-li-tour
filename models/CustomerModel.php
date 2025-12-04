@@ -124,4 +124,22 @@ class CustomerModel
         $stmt->execute(['email' => $email, 'phone' => $phone]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    // Thống kê khách hàng mới
+    public function getNewCustomerStats()
+    {
+        $currentMonth = date('m');
+        $currentYear = date('Y');
+        $lastMonth = date('m', strtotime('-1 month'));
+        $lastMonthYear = date('Y', strtotime('-1 month'));
+
+        $sql = "SELECT 
+            SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as current_month_count,
+            SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as last_month_count
+            FROM customers";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$currentMonth, $currentYear, $lastMonth, $lastMonthYear]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

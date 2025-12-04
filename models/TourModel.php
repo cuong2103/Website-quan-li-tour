@@ -396,4 +396,35 @@ class TourModel
     $stmt->execute([$tourId]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
+
+  // Thống kê tour
+  public function getTourStats()
+  {
+    // Tổng số tour
+    $sqlTotal = "SELECT COUNT(*) as total FROM tours";
+    $stmtTotal = $this->conn->prepare($sqlTotal);
+    $stmtTotal->execute();
+    $total = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total'];
+
+    // Tour đang hoạt động (đang diễn ra)
+    $sqlActive = "SELECT COUNT(*) as active FROM tours WHERE status = 1";
+    $stmtActive = $this->conn->prepare($sqlActive);
+    $stmtActive->execute();
+    $active = $stmtActive->fetch(PDO::FETCH_ASSOC)['active'];
+
+    // Tour đang trong chuyến đi
+    $sqlOngoing = "SELECT COUNT(DISTINCT t.id) as ongoing 
+                      FROM tours t
+                      JOIN bookings b ON t.id = b.tour_id
+                      WHERE b.start_date <= CURDATE() AND b.end_date >= CURDATE() AND b.status IN (2, 3)";
+    $stmtOngoing = $this->conn->prepare($sqlOngoing);
+    $stmtOngoing->execute();
+    $ongoing = $stmtOngoing->fetch(PDO::FETCH_ASSOC)['ongoing'];
+
+    return [
+      'total' => $total,
+      'active' => $active,
+      'ongoing' => $ongoing
+    ];
+  }
 }
