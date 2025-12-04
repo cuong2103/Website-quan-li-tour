@@ -80,17 +80,17 @@ require_once './views/components/sidebar.php';
                 <td class="px-6 py-4 text-sm">
                   <div class="flex items-center gap-2">
                     <a href="<?= BASE_URL ?>?act=notification-detail&id=<?= $notification['id'] ?>"
-                      class="text-indigo-600 hover:text-indigo-900">
-                      <i class="w-5 h-5" data-lucide="eye"></i>
+                      class="text-white-500 hover:text-yellow-700">
+                      <i class="w-5 h-4 mr-2" data-lucide="eye"></i>
                     </a>
                     <a href="<?= BASE_URL ?>?act=notification-edit&id=<?= $notification['id'] ?>"
-                      class="text-blue-600 hover:text-blue-900" title="Chỉnh sửa">
-                      <i class="w-5 h-5" data-lucide="edit"></i>
+                      class="text-white-500 hover:text-blue-900" title="Chỉnh sửa">
+                      <i class="w-5 h-4 mr-2" data-lucide="edit"></i>
                     </a>
                     <a href="<?= BASE_URL ?>?act=notification-delete&id=<?= $notification['id'] ?>"
                       onclick="return confirm('Bạn có chắc muốn xóa thông báo này?')"
-                      class="text-red-600 hover:text-red-900">
-                      <i class="w-5 h-5" data-lucide="trash-2"></i>
+                      class="text-red-500 hover:text-red-900">
+                      <i class="w-5 h-4 mr-2" data-lucide="trash-2"></i>
                     </a>
                   </div>
                 </td>

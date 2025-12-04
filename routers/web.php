@@ -19,8 +19,9 @@ match ($act) {
   'tours-update' => (new TourController())->update(),
 
   'suppliers' => (new SupplierController())->index(),
+  'supplier-create' => (new SupplierController())->create(),
+  'supplier-store' => (new SupplierController())->store(),
   'supplier-edit' => (new SupplierController())->edit(),
-  'supplier-create' => (new SupplierController())->store(),
   'supplier-update' => (new SupplierController())->update(),
   'supplier-detail' => (new SupplierController())->detail(),
   'supplier-delete' => (new SupplierController())->delete(),
@@ -44,13 +45,17 @@ match ($act) {
 
 
   //user_management
-  'user' => (new UserManagementController())->index(),
-  'user-getById' => (new UserManagementController())->detail(),
-  'user-create' => (new UserManagementController())->create(),
-  'user-edit' => (new UserManagementController())->edit(),
-  'user-store' => (new UserManagementController())->store(),
-  'user-update' => (new UserManagementController())->update(),
-  'user-delete' => (new UserManagementController())->delete(),
+  'user' => (new UserController())->index(),
+  'user-getById' => (new UserController())->detail(),
+  'user-create' => (new UserController())->create(),
+  'user-edit' => (new UserController())->edit(),
+  'user-store' => (new UserController())->store(),
+  'user-update' => (new UserController())->update(),
+  'user-update-leave' => (new UserController())->updateLeave(),
+  'user-delete' => (new UserController())->delete(),
+  'user-detail' => (new UserController())->detail(),
+  'user-on-leave' => (new UserController())->onLeave(),
+  'user-end-leave' => (new UserController())->endLeave(),
 
 
   // tour_guide
@@ -102,6 +107,8 @@ match ($act) {
   'customer-detail' => (new CustomerController())->detail(),
   'customer-edit' => (new CustomerController())->edit(),
   'customer-delete' => (new CustomerController())->delete(),
+  'customer-export' => (new CustomerController())->exportCustomers(),
+  'customer-import' => (new CustomerController())->importCustomers(),
 
 
   // bookings
@@ -112,6 +119,12 @@ match ($act) {
   'booking-update' => (new BookingController())->update(),
   'booking-delete' => (new BookingController())->delete(),
   'booking-detail' => (new BookingController())->detail(),
+  'booking-upload-customers' => (new BookingController())->uploadCustomers(),
+  'booking-export-customers' => (new BookingController())->exportCustomers(),
+  'booking-add-customer' => (new BookingController())->addCustomer(),
+  'booking-remove-customer' => (new BookingController())->removeCustomer(),
+  'booking-import-rooms' => (new BookingController())->importRoomArrangement(),
+  'booking-export-rooms' => (new BookingController())->exportRoomArrangement(),
 
   // contracts
   'contracts' => (new ContractController())->index(),
@@ -134,15 +147,14 @@ match ($act) {
   //policies
   'policies' => (new PolicyController())->index(),
 
-  'policies-create' => (new PolicyController())->create(),
-  'policies-edit' => (new PolicyController())->edit(),
-  'policies-store' => (new PolicyController())->store(),
-  'policies-update' => (new PolicyController())->update(),
-  'policies-delete' => (new PolicyController())->delete(),
-  'policies-detail' => (new PolicyController())->detail(),
+  'policy-create' => (new PolicyController())->create(),
+  'policy-edit' => (new PolicyController())->edit(),
+  'policy-store' => (new PolicyController())->store(),
+  'policy-update' => (new PolicyController())->update(),
+  'policy-delete' => (new PolicyController())->delete(),
+  'policy-detail' => (new PolicyController())->detail(),
 
   // Tour_Assignments
-  'tour-assignments' => (new TourAssignmentController())->index(),
   'tour-assignment-create' => (new TourAssignmentController())->create(),
   'tour-assignment-store' => (new TourAssignmentController())->store(),
   'tour-assignment-edit' => (new TourAssignmentController())->edit(),
@@ -154,7 +166,19 @@ match ($act) {
   // Guide tour_Assignments
   'guide-tour-assignments' => (new GuideTourAssignmentController())->index(),
   'guide-tour-assignments-detail' => (new GuideTourAssignmentController())->detail(),
+  'guide-tour-assignments-export-checkin' => (new GuideTourAssignmentController())->exportCheckinList(),
+  'guide-tour-assignments-checkin' => (new GuideTourAssignmentController())->checkinStore(),
+  'guide-tour-assignments-checkin-destroy' => (new GuideTourAssignmentController())->checkinDestroy(),
 
+  // Journal
+  'journal' => (new JournalController())->index(),
+  'journal-create' => (new JournalController())->create(),
+  'journal-store' => (new JournalController())->store(),
+  'journal-edit' => (new JournalController())->edit(),
+  'journal-update' => (new JournalController())->update(),
+  'journal-delete' => (new JournalController())->delete(),
+  'journal-images-delete' => (new JournalController())->deleteImage(),
+  'journal-detail' => (new JournalController())->detail(),
   '403' => require_once './views/forbidden.php',
   default => require_once './views/notFound.php',
 };

@@ -10,104 +10,90 @@ unset($_SESSION['errors'], $_SESSION['old']);
 <div class="ml-54 mt-28 p-6">
 
     <!-- Header -->
-    <div class="flex justify-between items-center mb-8">
+    <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-2xl font-semibold">Thêm Dịch Vụ Mới</h2>
+            <h2 class="text-2xl font-semibold text-gray-800">Thêm dịch vụ mới</h2>
             <p class="text-gray-500 text-sm">Tạo mới dịch vụ để sử dụng trong Tour</p>
         </div>
-
         <a href="?act=service"
-            class="bg-gray-200 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-medium transition flex items-center gap-2">
-            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition flex items-center gap-2 text-sm font-medium">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
             Quay lại
         </a>
     </div>
 
-    <!-- Form tạo dịch vụ -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 w-full mx-auto">
+    <!-- Form Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <form action="?act=service-store" method="POST" class="space-y-6">
 
-        <form action="?act=service-store" method="POST" class="space-y-10">
-
-            <!-- Hai cột -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Tên dịch vụ -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">Tên dịch vụ *</label>
-                    <input type="text" name="name" value="<?= $old['name'] ?? '' ?>"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 focus:bg-white
-                        focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition <?= isset($errors['name']) ? 'border-red-500' : '' ?>">
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700">Tên dịch vụ <span class="text-red-500">*</span></label>
+                    <input type="text" name="name" value="<?= $old['name'] ?? '' ?>" placeholder="Nhập tên dịch vụ..."
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition <?= isset($errors['name']) ? 'border-red-500' : '' ?>">
                     <?php if (isset($errors['name'])): ?>
-                        <p class="text-red-500 text-sm mt-1"><?= $errors['name'][0] ?></p>
+                        <p class="text-red-500 text-xs mt-1"><?= $errors['name'][0] ?></p>
                     <?php endif; ?>
                 </div>
 
                 <!-- Giá -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">Giá dịch vụ (VNĐ) *</label>
-                    <input type="number" min="0" name="estimated_price" value="<?= $old['estimated_price'] ?? '' ?>"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 focus:bg-white
-                        focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition <?= isset($errors['estimated_price']) ? 'border-red-500' : '' ?>">
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700">Giá dự kiến (VNĐ) <span class="text-red-500">*</span></label>
+                    <input type="number" min="0" name="estimated_price" value="<?= $old['estimated_price'] ?? '' ?>" placeholder="0"
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition <?= isset($errors['estimated_price']) ? 'border-red-500' : '' ?>">
                     <?php if (isset($errors['estimated_price'])): ?>
-                        <p class="text-red-500 text-sm mt-1"><?= $errors['estimated_price'][0] ?></p>
+                        <p class="text-red-500 text-xs mt-1"><?= $errors['estimated_price'][0] ?></p>
                     <?php endif; ?>
                 </div>
 
                 <!-- Loại dịch vụ -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">Loại dịch vụ *</label>
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700">Loại dịch vụ <span class="text-red-500">*</span></label>
                     <select name="service_type_id" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 focus:bg-white
-                        focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
-                        <option value="">-- Chọn loại --</option>
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white">
+                        <option value="">-- Chọn loại dịch vụ --</option>
                         <?php foreach ($serviceTypes as $type): ?>
-                            <option value="<?= $type['id'] ?>">
-                                <?= $type['name'] ?></option>
+                            <option value="<?= $type['id'] ?>"><?= $type['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
 
                 <!-- Nhà cung cấp -->
-                <div class="space-y-2">
-                    <label class="block text-sm font-medium text-gray-700">Nhà cung cấp *</label>
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700">Nhà cung cấp <span class="text-red-500">*</span></label>
                     <select name="supplier_id" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 focus:bg-white
-                        focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white">
                         <option value="">-- Chọn nhà cung cấp --</option>
                         <?php foreach ($suppliers as $sup): ?>
                             <option value="<?= $sup['id'] ?>"><?= $sup['name'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-
             </div>
 
             <!-- Mô tả -->
-            <div class="space-y-2">
+            <div class="space-y-1">
                 <label class="block text-sm font-medium text-gray-700">Mô tả dịch vụ</label>
-                <textarea name="description" rows="4"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 focus:bg-white
-                    focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none transition"></textarea>
+                <textarea name="description" rows="4" placeholder="Nhập mô tả..."
+                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none resize-none"></textarea>
             </div>
 
-            <!-- Nút -->
-            <div class="flex justify-end gap-4 pt-6 border-t">
-
+            <!-- Action Buttons -->
+            <div class="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
                 <a href="?act=service"
-                    class="px-6 py-3 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition">
-                    Hủy
+                    class="px-5 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition font-medium">
+                    Hủy bỏ
                 </a>
-
                 <button type="submit"
-                    class="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-medium transition flex items-center gap-2 shadow-sm">
+                    class="px-5 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition font-medium shadow-sm flex items-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
                     Thêm dịch vụ
                 </button>
-
             </div>
 
         </form>
     </div>
-
 </div>
 
 <?php

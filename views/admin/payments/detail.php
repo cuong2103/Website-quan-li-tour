@@ -18,12 +18,27 @@ require_once './views/components/sidebar.php';
 
         <div>
             <p class="text-gray-500 text-sm">Phương thức</p>
-            <p class="font-medium"><?= $payment['payment_method'] ?></p>
+            <p class="font-medium">
+                <?php
+                $methodLabels = ['cash' => 'Tiền mặt', 'bank_transfer' => 'Chuyển khoản'];
+                echo $methodLabels[$payment['payment_method']] ?? $payment['payment_method'];
+                ?>
+            </p>
         </div>
 
         <div>
             <p class="text-gray-500 text-sm">Loại thanh toán</p>
-            <p class="font-medium"><?= $payment['type'] ?></p>
+            <p class="font-medium">
+                <?php
+                $typeLabels = [
+                    'deposit' => 'Cọc',
+                    'full_payment' => 'Thanh toán đủ',
+                    'remaining' => 'Thanh toán còn lại',
+                    'refund' => 'Hoàn tiền'
+                ];
+                echo $typeLabels[$payment['type']] ?? $payment['type'];
+                ?>
+            </p>
         </div>
 
         <div>
@@ -43,10 +58,7 @@ require_once './views/components/sidebar.php';
             <p class="font-medium"><?= $payment['status'] ?></p>
         </div>
 
-        <div>
-            <p class="text-gray-500 text-sm">Ghi chú</p>
-            <p class="font-medium whitespace-pre-line"><?= $payment['notes'] ?></p>
-        </div>
+
 
         <div class="pt-4 flex gap-3">
             <a href="<?= BASE_URL ?>?act=payment-edit&id=<?= $payment['id'] ?>"

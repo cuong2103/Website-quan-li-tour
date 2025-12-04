@@ -23,7 +23,7 @@ require_once './views/components/sidebar.php';
                     <div class="text-lg font-semibold text-gray-700">
                         <?= htmlspecialchars($t['tour_name'] ?? '') ?>
                     </div>
-                    <div class="text-xs text-gray-500">Booking ID: #<?= $t['booking_code'] ?></div>
+                    <div class="text-xs text-gray-500">Mã Booking: <?= $t['booking_code'] ?></div>
 
                     <div class="grid grid-cols-3 gap-4 mt-4 text-sm">
                         <div>
@@ -49,14 +49,14 @@ require_once './views/components/sidebar.php';
                     </div>
 
                     <div class="flex justify-between items-center mt-5 gap-3">
+
+
                         <a href="<?= BASE_URL . '?act=guide-tour-assignments-detail&id=' . $t['assignment_id'] ?>"
-                            class="flex-[7] bg-blue-600 text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-700 items-center justify-center flex gap-1">
+                            class="flex-[10] bg-blue-500 text-white text-xs px-4 py-2 rounded-lg hover:bg-blue-600 items-center justify-center flex gap-1">
                             <i data-lucide="eye"></i> Xem chi tiết tour
                         </a>
 
-                        <button class="flex-[3] text-xs px-4 py-2 border rounded-lg text-gray-700 hover:bg-gray-100 flex items-center justify-center">
-                            Viết nhật ký
-                        </button>
+
                     </div>
                 </div>
             <?php endforeach; ?>

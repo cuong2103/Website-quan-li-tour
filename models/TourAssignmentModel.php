@@ -9,17 +9,74 @@ class TourAssignmentModel
     }
 
     // =========================================
-    // Lấy danh sách tất cả phân công
+    // Original method: Get all guides (role guide, active)
+    // =========================================
+    public function getGuides()
+    {
+        try {
+            $sql = "SELECT * FROM users WHERE roles = 'guide' AND status = 1";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die("Lỗi getGuides: " . $e->getMessage());
+        }
+    }
+
+    // =========================================
+    // Original method: Get assignment by booking ID
+    // =========================================
+    public function getByBookingId($bookingId)
+    {
+        try {
+            $sql = "SELECT ta.*, u.fullname as guide_name FROM tour_assignments ta JOIN users u ON ta.guide_id = u.id WHERE ta.booking_id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$bookingId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die("Lỗi getByBookingId: " . $e->getMessage());
+        }
+    }
+
+    // =========================================
+    // Original method: Create assignment (expects associative array)
+    // =========================================
+    public function create($data)
+    {
+        try {
+            $sql = "INSERT INTO tour_assignments (booking_id, guide_id, status, created_at) VALUES (:booking_id, :guide_id, :status, NOW())";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($data);
+            return $this->conn->lastInsertId();
+        } catch (PDOException $e) {
+            die("Lỗi create assignment: " . $e->getMessage());
+        }
+    }
+
+    // =========================================
+    // Original method: Update assignment (expects id and data array with guide_id, status)
+    // Renamed to avoid conflict with new updateGuide method.
+    // =========================================
+    public function updateAssignment($id, $data)
+    {
+        try {
+            $sql = "UPDATE tour_assignments SET guide_id = :guide_id, status = :status, updated_at = NOW() WHERE id = :id";
+            $data['id'] = $id;
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($data);
+        } catch (PDOException $e) {
+            die("Lỗi update assignment: " . $e->getMessage());
+        }
+    }
+
+    // =========================================
+    // New method: Get all assignments with booking and guide info
     // =========================================
     public function getAll()
     {
         try {
             $sql = "
-                SELECT ta.*, 
-                       b.id AS booking_code,
-                       b.start_date,
-                       b.end_date,
-                       u.fullname AS guide_name
+                SELECT ta.*, b.id AS booking_code, b.start_date, b.end_date, u.fullname AS guide_name
                 FROM tour_assignments ta
                 LEFT JOIN bookings b ON b.id = ta.booking_id
                 LEFT JOIN users u ON u.id = ta.guide_id
@@ -34,12 +91,12 @@ class TourAssignmentModel
     }
 
     // =========================================
-    // Lấy tất cả hướng dẫn viên (role_id = 2)
+    // New method: Get all guides (role_id = 2)
     // =========================================
     public function getAllGuides()
     {
         try {
-            $sql = "SELECT * FROM users WHERE role_id = 2";
+            $sql = "SELECT * FROM users WHERE roles = 'guide'";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -49,7 +106,51 @@ class TourAssignmentModel
     }
 
     // =========================================
-    // Lấy tất cả booking (ít dùng trong controller mới)
+    // New method: Get available guides (check schedule conflict)
+    // =========================================
+    public function getAvailableGuides($startDate, $endDate, $excludeBookingId = null)
+    {
+        try {
+            // 1. Lấy tất cả HDV
+            $allGuides = $this->getAllGuides();
+
+            // 2. Tìm các HDV đang bận trong khoảng thời gian này
+            // Điều kiện trùng: (StartA <= EndB) AND (EndA >= StartB)
+            $sql = "
+                SELECT DISTINCT ta.guide_id 
+                FROM tour_assignments ta
+                JOIN bookings b ON ta.booking_id = b.id
+                WHERE ta.status = 1 
+                AND (b.start_date <= ? AND b.end_date >= ?)
+            ";
+
+            $params = [$endDate, $startDate];
+
+            if ($excludeBookingId) {
+                $sql .= " AND ta.booking_id != ?";
+                $params[] = $excludeBookingId;
+            }
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($params);
+            $busyGuideIds = $stmt->fetchAll(PDO::FETCH_COLUMN); // Mảng các ID bận
+
+            // 3. Lọc danh sách
+            $availableGuides = [];
+            foreach ($allGuides as $guide) {
+                if (!in_array($guide['id'], $busyGuideIds)) {
+                    $availableGuides[] = $guide;
+                }
+            }
+
+            return $availableGuides;
+        } catch (Exception $e) {
+            return [];
+        }
+    }
+
+    // =========================================
+    // New method: Get all bookings (with tour name)
     // =========================================
     public function getAllBookings()
     {
@@ -60,7 +161,6 @@ class TourAssignmentModel
                 LEFT JOIN tours t ON t.id = b.tour_id
                 ORDER BY b.id DESC
             ";
-
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -70,7 +170,7 @@ class TourAssignmentModel
     }
 
     // =========================================
-    // Lấy booking chưa có hướng dẫn viên
+    // New method: Get bookings without any guide assigned
     // =========================================
     public function getBookingsWithoutGuide()
     {
@@ -82,7 +182,6 @@ class TourAssignmentModel
                 WHERE b.id NOT IN (SELECT booking_id FROM tour_assignments)
                 ORDER BY b.id DESC
             ";
-
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -92,16 +191,12 @@ class TourAssignmentModel
     }
 
     // =========================================
-    // Tạo phân công
+    // New method: Store assignment (simple wrapper)
     // =========================================
     public function store($booking_id, $guide_id, $created_by)
     {
         try {
-            $sql = "
-                INSERT INTO tour_assignments (booking_id, guide_id, status, created_by)
-                VALUES (?, ?, 1, ?)
-            ";
-
+            $sql = "INSERT INTO tour_assignments (booking_id, guide_id, status, created_by) VALUES (?, ?, 1, ?)";
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([$booking_id, $guide_id, $created_by]);
         } catch (Exception $e) {
@@ -110,7 +205,7 @@ class TourAssignmentModel
     }
 
     // =========================================
-    // Lấy 1 phân công theo ID
+    // New method: Find assignment by its ID
     // =========================================
     public function find($id)
     {
@@ -118,26 +213,26 @@ class TourAssignmentModel
             $sql = "SELECT * FROM tour_assignments WHERE id = ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$id]);
-
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             return null;
         }
     }
 
+    // Alias for getByBookingId used by controller edit flow
+    public function findByBookingId($bookingId)
+    {
+        return $this->getByBookingId($bookingId);
+    }
+
     // =========================================
-    // Cập nhật phân công (chỉ đổi guide)
+    // New method: Update guide only (id, guide_id)
     // =========================================
-    public function update($id, $guide_id)
+    public function updateGuide($id, $guide_id)
     {
         try {
-            $sql = "
-                UPDATE tour_assignments 
-                SET guide_id = ?
-                WHERE id = ?
-            ";
+            $sql = "UPDATE tour_assignments SET guide_id = ? WHERE id = ?";
             $stmt = $this->conn->prepare($sql);
-
             return $stmt->execute([$guide_id, $id]);
         } catch (Exception $e) {
             return false;
@@ -145,7 +240,7 @@ class TourAssignmentModel
     }
 
     // =========================================
-    // Xóa phân công
+    // New method: Delete assignment
     // =========================================
     public function delete($id)
     {
@@ -158,6 +253,7 @@ class TourAssignmentModel
         }
     }
 
+    // Existing helper methods (unchanged)
     public function getAssignmentsByGuide($guideId)
     {
         $sql = "SELECT ta.*, b.booking_code, t.name AS tour_name, b.start_date, b.end_date,
@@ -179,7 +275,6 @@ class TourAssignmentModel
             LEFT JOIN users u ON j.created_by = u.id
             WHERE j.tour_assignment_id = ?
             ORDER BY j.date DESC";
-
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$assignmentId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -212,7 +307,6 @@ class TourAssignmentModel
              JOIN bookings b ON ta.booking_id = b.id
              JOIN tours t ON b.tour_id = t.id
              WHERE ta.id = ?";
-
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$assignmentId]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -240,7 +334,6 @@ class TourAssignmentModel
              JOIN tours t ON b.tour_id = t.id
              WHERE ta.guide_id = ?
              ORDER BY b.start_date DESC";
-
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$guideId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);

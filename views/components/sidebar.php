@@ -26,33 +26,20 @@
         Dashboard
       </a>
 
-      <!-- Quản lý Booking -->
+      <!-- Quản lý và điều hành tour -->
       <a href="<?= BASE_URL . '?act=bookings' ?>" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700  hover:bg-gray-100 rounded-lg transition">
         <div class="flex items-center">
           <i class="mr-3 w-6 h-6" data-lucide="clipboard"></i>
-          Quản lý Booking
+          Quản lý và điều hành tour
         </div>
       </a>
 
-      <!-- Quản lý Tour -->
-      <div class="menu-group">
-        <button class="menu-toggle w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
-          <div class="flex items-center">
-            <i class="mr-3 w-6 h-6" data-lucide="calendar"></i>
-            Quản lý Tour
-          </div>
-          <i class="w-4 h-4" data-lucide="chevron-down"></i>
-        </button>
-        <div class="submenu pl-12 space-y-1 overflow-hidden transition-all duration-300 max-h-0">
-          <a href="<?= BASE_URL ?>?act=tours" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Danh sách Tour</a>
-          <a href="#" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Lịch khởi hành</a>
+      <!-- Quản lý tour -->
+      <a href="<?= BASE_URL ?>?act=tours" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700  hover:bg-gray-100 rounded-lg transition">
+        <div class="flex items-center">
+          <i class="mr-3 w-6 h-6" data-lucide="calendar"></i>
+          Quản lý tour
         </div>
-      </div>
-
-      <!-- Vận hành Tour -->
-      <a href="<?= BASE_URL . '?act=tour-assignments' ?>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
-        <i class="mr-3 w-6 h-6" data-lucide="zap"></i>
-        Vận hành Tour
       </a>
 
       <!-- Dữ liệu -->
@@ -70,7 +57,6 @@
         hover:bg-gray-100 rounded">Địa điểm</a>
           <a href="<?= BASE_URL ?>?act=policies" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Chính sách</a>
           <a href="<?= BASE_URL ?>?act=categories" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Danh mục</a>
-          <!-- <a href="" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Loại Dịch vụ</a> -->
           <a href="<?= BASE_URL ?>?act=service" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Dịch vụ</a>
           <a href="<?= BASE_URL ?>?act=service-type" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Loại Dịch vụ</a>
         </div>
@@ -83,17 +69,26 @@
       </a>
 
       <!-- Nhà cung cấp -->
-      <a href="<?php echo BASE_URL . '?act=suppliers'; ?>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
+      <a href="<?= BASE_URL . '?act=suppliers' ?>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
         <i class="mr-3 w-6 h-6" data-lucide="building-2"></i>
         Nhà cung cấp
       </a>
 
-      <!-- Nhân viên -->
-      <a href="<?= BASE_URL . '?act=user' ?>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
-        <i class="mr-3 w-6 h-6" data-lucide="users"></i>
-        Nhân viên
-      </a>
-
+      <!-- Quản lý nhân viên -->
+      <div class="menu-group">
+        <button class="menu-toggle w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
+          <div class="flex items-center">
+            <i class="mr-3 w-6 h-6" data-lucide="users"></i>
+            Nhân viên
+          </div>
+          <i class="w-4 h-4" data-lucide="chevron-down"></i>
+        </button>
+        <div class="submenu pl-12 space-y-1 overflow-hidden transition-all duration-300 max-h-0">
+          <a href="<?= BASE_URL . '?act=user' ?>" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Danh sách nhân viên</a>
+          <a href="<?= BASE_URL . '?act=user-on-leave' ?>" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Nhân viên nghỉ phép</a>
+        </div>
+      </div>
+      
       <!-- Thông báo -->
       <a href="<?= BASE_URL . '?act=notifications' ?>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
         <i class="mr-3 w-6 h-6" data-lucide="megaphone"></i>
@@ -121,7 +116,7 @@
       </a>
 
       <!-- Viết nhật kí -->
-      <a href="<?= BASE_URL ?>?act="
+      <a href="<?= BASE_URL ?>?act=journal"
         class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700  hover:bg-gray-100 rounded-lg transition">
         <div class="flex items-center">
           <i data-lucide="notebook-pen" class="mr-3 w-6 h-6"></i>

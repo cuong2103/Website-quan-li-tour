@@ -68,10 +68,17 @@ require_once './views/components/sidebar.php';
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium 
-                            <?= $tour['status'] == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
-              <?= $tour['status'] == 'active' ? 'Đang hoạt động' : 'Tạm dừng' ?>
-            </span>
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium 
+                              <?= $tour['status'] == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
+                <?= $tour['status'] == 'active' ? 'Đang hoạt động' : 'Tạm dừng' ?>
+              </span>
+              <?php if ($tour['is_fixed']): ?>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  Tour cố định
+                </span>
+              <?php endif; ?>
+            </div>
           </div>
 
           <div>
@@ -101,10 +108,28 @@ require_once './views/components/sidebar.php';
         </div>
       </section>
 
-      <!-- 2. Lịch trình chi tiết -->
+      <!-- 2. Dịch vụ đi kèm (Nếu có) -->
+      <?php if (!empty($services)): ?>
+        <section>
+          <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-3">
+            <span class="bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
+            Dịch vụ đi kèm
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <?php foreach ($services as $service): ?>
+              <div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <h4 class="font-medium text-gray-900"><?= htmlspecialchars($service['name']) ?></h4>
+                <p class="text-sm text-gray-500 mt-1"><?= number_format($service['estimated_price']) ?> VND</p>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </section>
+      <?php endif; ?>
+
+      <!-- 3. Lịch trình chi tiết -->
       <section>
         <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-3">
-          <span class="bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center text-sm">2</span>
+          <span class="bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
           Lịch trình tour
         </h3>
         <?php if (!empty($itineraries)): ?>
@@ -142,10 +167,10 @@ require_once './views/components/sidebar.php';
         <?php endif; ?>
       </section>
 
-      <!-- 3. Chính sách -->
+      <!-- 4. Chính sách -->
       <section>
         <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center gap-3">
-          <span class="bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center text-sm">3</span>
+          <span class="bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center text-sm">4</span>
           Chính sách tour
         </h3>
         <?php if (!empty($policies)): ?>

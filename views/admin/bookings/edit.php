@@ -3,228 +3,369 @@ require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
 
-<main class="mt-28 px-6 pb-20">
-     <!-- Header Title -->
-     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-xl font-semibold">Cập nhật booking</h1>
+<main class="mt-28 px-6 pb-24 text-gray-700">
+
+    <!-- Header Title -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Cập nhật Booking</h1>
+            <p class="text-sm text-gray-500 mt-1">Chỉnh sửa thông tin booking.</p>
+        </div>
         <a href="<?= BASE_URL . '?act=bookings' ?>"
-            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm">
+            class="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg text-sm font-medium transition shadow-sm">
             Quay lại
         </a>
     </div>
 
-    <form action="<?= BASE_URL . '?act=booking-update' ?>" method="POST"
-        class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 space-y-6">
-
+    <!-- FORM -->
+    <form method="POST" action="<?= BASE_URL . '?act=booking-update' ?>" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <input type="hidden" name="id" value="<?= $booking['id'] ?>">
 
-        <!-- Chọn Tour -->
-        <div>
-            <label class="block font-semibold mb-1 text-gray-700">Chọn Tour *</label>
-            <select name="tour_id" id="tourSelect"
-                class="border border-gray-300 px-3 py-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400"
-                required>
-                <option value="">-- Chọn Tour --</option>
-                <?php foreach ($tours as $t): ?>
-                    <option value="<?= $t['id'] ?>"
-                        data-adult="<?= $t['adult_price'] ?>"
-                        data-child="<?= $t['child_price'] ?>"
-                        <?= $t['id'] == $booking['tour_id'] ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($t['name']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+        <!-- LEFT COLUMN (2/3) -->
+        <div class="lg:col-span-3 space-y-6">
 
-        <!-- Ngày -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label class="font-semibold text-gray-700">Ngày khởi hành</label>
-                <input type="date" name="start_date"
-                    class="border border-gray-300 w-full p-2 rounded-lg focus:ring-2 focus:ring-blue-400"
-                    value="<?= $booking['start_date'] ?>" required>
+            <!-- Card: Thông tin Tour -->
+            <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+                        <i data-lucide="map" class="w-5 h-5"></i>
+                    </div>
+                    <h2 class="text-lg font-semibold text-gray-800">Thông tin Tour</h2>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block mb-1.5 text-sm font-medium text-gray-700">Chọn Tour <span class="text-red-500">*</span></label>
+                        <select name="tour_id" id="tourSelect"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition"
+                            required>
+                            <option value="">-- Chọn Tour --</option>
+                            <?php foreach ($tours as $t): ?>
+                                <option value="<?= $t['id'] ?>"
+                                    data-adult="<?= $t['adult_price'] ?>"
+                                    data-child="<?= $t['child_price'] ?>"
+                                    <?= $t['id'] == $booking['tour_id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($t['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-1.5 text-sm font-medium text-gray-700">Ngày khởi hành <span class="text-red-500">*</span></label>
+                            <input type="date" name="start_date"
+                                value="<?= $booking['start_date'] ?>"
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition" required>
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 text-sm font-medium text-gray-700">Ngày kết thúc <span class="text-red-500">*</span></label>
+                            <input type="date" name="end_date"
+                                value="<?= $booking['end_date'] ?>"
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition" required>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div>
-                <label class="font-semibold text-gray-700">Ngày kết thúc</label>
-                <input type="date" name="end_date"
-                    class="border border-gray-300 w-full p-2 rounded-lg focus:ring-2 focus:ring-blue-400"
-                    value="<?= $booking['end_date'] ?>" required>
+
+            <!-- Card: Khách hàng (Chỉ hiển thị danh sách để chọn người đại diện, logic thêm khách chi tiết ở trang detail) -->
+            <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="p-2 bg-green-50 rounded-lg text-green-600">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                    </div>
+                    <h2 class="text-lg font-semibold text-gray-800">Khách hàng & Người đại diện</h2>
+                </div>
+
+                <div class="space-y-4">
+                    <label class="block mb-1.5 text-sm font-medium text-gray-700">Danh sách khách hàng trong booking này</label>
+                    <div class="max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                        <?php if (empty($booking['customers'])): ?>
+                            <p class="text-sm text-gray-500 italic">Chưa có khách hàng nào.</p>
+                        <?php else: ?>
+                            <?php foreach ($booking['customers'] as $c): ?>
+                                <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded border-b last:border-0 border-gray-100">
+                                    <input type="checkbox" name="customers[]" value="<?= $c['id'] ?>" checked class="customerCheck w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-800"><?= htmlspecialchars($c['name']) ?></p>
+                                        <p class="text-xs text-gray-500"><?= htmlspecialchars($c['phone']) ?> - <?= htmlspecialchars($c['email']) ?></p>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+
+                    <div>
+                        <label class="block mb-1.5 text-sm font-medium text-gray-700">Người đại diện <span class="text-red-500">*</span></label>
+                        <select name="is_representative" id="representative"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition" required>
+                            <option value="">-- Chọn người đại diện --</option>
+                            <?php foreach ($booking['customers'] as $c): ?>
+                                <option value="<?= $c['id'] ?>" <?= ($c['id'] == $booking['is_representative']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($c['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Số lượng -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label class="font-semibold text-gray-700">Người lớn</label>
-                <input type="number" name="adult_count" id="adultCount"
-                    class="border border-gray-300 w-full p-2 rounded-lg focus:ring-2 focus:ring-blue-400"
-                    min="0" value="<?= $booking['adult_count'] ?>">
+            <!-- Card: Dịch vụ -->
+            <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="p-2 bg-purple-50 rounded-lg text-purple-600">
+                        <i data-lucide="concierge-bell" class="w-5 h-5"></i>
+                    </div>
+                    <h2 class="text-lg font-semibold text-gray-800">Dịch vụ đi kèm</h2>
+                </div>
+
+                <input id="searchService" type="text" placeholder="Tìm dịch vụ..."
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-3 text-sm focus:ring-2 focus:ring-purple-100 focus:border-purple-400 outline-none transition">
+
+                <div id="serviceList" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto">
+                    <?php foreach ($services as $sv): ?>
+                        <?php
+                        $isSelected = false;
+                        $currentPrice = $sv['estimated_price'];
+                        $currentQuantity = 1;
+
+                        foreach ($selectedServices as $ss) {
+                            if ($ss['id'] == $sv['id']) {
+                                $isSelected = true;
+                                $currentPrice = $ss['current_price'];
+                                $currentQuantity = $ss['quantity'];
+                                break;
+                            }
+                        }
+                        ?>
+                        <div class="service-item p-3 border border-gray-200 rounded-lg hover:bg-purple-50 transition">
+                            <label class="flex items-center gap-3 cursor-pointer mb-2">
+                                <input type="checkbox" name="services[]" value="<?= $sv['id'] ?>"
+                                    class="w-4 h-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500 service-checkbox"
+                                    data-id="<?= $sv['id'] ?>"
+                                    <?= $isSelected ? 'checked' : '' ?>>
+                                <span class="text-sm font-medium text-gray-700"><?= htmlspecialchars($sv['name']) ?></span>
+                            </label>
+
+                            <div class="grid grid-cols-2 gap-2 pl-7 <?= $isSelected ? '' : 'hidden' ?>" id="service-inputs-<?= $sv['id'] ?>">
+                                <div>
+                                    <label class="text-xs text-gray-500">Giá (VNĐ)</label>
+                                    <input type="number" name="service_prices[<?= $sv['id'] ?>]"
+                                        value="<?= $currentPrice ?>"
+                                        class="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-purple-400">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Số lượng</label>
+                                    <input type="number" name="service_quantities[<?= $sv['id'] ?>]"
+                                        value="<?= $currentQuantity ?>" min="1"
+                                        class="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-purple-400">
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <p id="noServiceResult" class="hidden text-sm text-gray-500 italic mt-2 text-center">Không tìm thấy dịch vụ phù hợp.</p>
             </div>
-            <div>
-                <label class="font-semibold text-gray-700">Trẻ em</label>
-                <input type="number" name="child_count" id="childCount"
-                    class="border border-gray-300 w-full p-2 rounded-lg focus:ring-2 focus:ring-blue-400"
-                    min="0" value="<?= $booking['child_count'] ?>">
+
+            <!-- Card: Ghi chú -->
+            <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="p-2 bg-gray-100 rounded-lg text-gray-600">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                    </div>
+                    <h2 class="text-lg font-semibold text-gray-800">Ghi chú</h2>
+                </div>
+                <textarea name="special_requests"
+                    class="w-full border border-gray-300 rounded-lg p-3 h-28 resize-none focus:ring-2 focus:ring-gray-200 focus:border-gray-400 outline-none transition"
+                    placeholder="Nhập yêu cầu đặc biệt của khách hàng..."><?= htmlspecialchars($booking['special_requests']) ?></textarea>
             </div>
-        </div>
 
-        <!-- Tổng tiền -->
-        <div>
-            <label class="font-semibold text-gray-700">Tổng tiền</label>
-            <input type="text" name="total_amount" id="totalAmount"
-                class="border border-gray-300 w-full p-2 rounded-lg bg-gray-100 font-semibold"
-                value="<?= $booking['total_amount'] ?>" readonly>
-        </div>
+            <!-- Card: Chi phí & Thanh toán -->
+            <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100 sticky top-28">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="p-2 bg-orange-50 rounded-lg text-orange-600">
+                        <i data-lucide="credit-card" class="w-5 h-5"></i>
+                    </div>
+                    <h2 class="text-lg font-semibold text-gray-800">Chi phí & Thanh toán</h2>
+                </div>
 
-        <!-- Tiền cọc -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <label class="font-semibold text-gray-700">Tiền cọc</label>
-                <input type="number" name="deposit_amount" id="depositAmount"
-                    class="border border-gray-300 w-full p-2 rounded-lg focus:ring-2 focus:ring-blue-400"
-                    value="<?= $booking['deposit_amount'] ?>">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-1.5 text-sm font-medium text-gray-700">Người lớn</label>
+                            <input type="number" id="adultCount" name="adult_count"
+                                value="<?= $booking['adult_count'] ?>" min="1"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 outline-none transition text-center font-medium">
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-sm font-medium text-gray-700">Trẻ em</label>
+                            <input type="number" id="childCount" name="child_count"
+                                value="<?= $booking['child_count'] ?>" min="0"
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 outline-none transition text-center font-medium">
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-dashed border-gray-200">
+                        <label class="block mb-1.5 text-sm font-medium text-gray-700">Tổng tiền dịch vụ</label>
+                        <div class="relative">
+                            <input type="text" id="totalServicePriceDisplay" value="0" readonly
+                                class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-lg font-bold text-purple-600 text-right outline-none">
+                            <span class="absolute right-12 top-3.5 text-gray-400 text-sm">VND</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-dashed border-gray-200">
+                        <label class="block mb-1.5 text-sm font-medium text-gray-700">Tổng tiền dự kiến</label>
+                        <div class="relative">
+                            <input type="text" id="totalAmountDisplay" value="<?= number_format($booking['total_amount'], 0, ',', '.') ?>" readonly
+                                class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-xl font-bold text-orange-600 text-right outline-none">
+                            <input type="hidden" name="total_amount" id="totalAmountInput" value="<?= $booking['total_amount'] ?>">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block mb-1.5 text-sm font-medium text-gray-700">Trạng thái</label>
+                        <select name="status"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition">
+                            <option value="1">Chờ thanh toán</option>
+                            <option value="2">Đã cọc</option>
+                            <option value="3">Đã thanh toán đủ</option>
+                        </select>
+                    </div>
+
+                    <div class="flex fixed bottom-5 right-16 gap-3">
+                        <button class="px-6 py-2.5 bg-black text-white rounded-lg hover:bg-gray-900 transition font-medium">
+                            Cập nhật Booking
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div>
-                <label class="font-semibold text-gray-700">Tiền còn lại</label>
-                <input type="number" name="remaining_amount" id="remainingAmount"
-                    class="border border-gray-300 w-full p-2 rounded-lg bg-gray-100 font-semibold"
-                    value="<?= $booking['remaining_amount'] ?>" readonly>
-            </div>
-        </div>
-
-        <!-- Trạng thái -->
-        <div>
-            <label class="font-semibold text-gray-700">Trạng thái</label>
-            <select name="status"
-                class="border border-gray-300 w-full p-2 rounded-lg focus:ring-2 focus:ring-blue-400">
-                <option value="1" <?= $booking['status'] == 1 ? 'selected' : '' ?>>Chờ thanh toán</option>
-                <option value="2" <?= $booking['status'] == 2 ? 'selected' : '' ?>>Đã cọc</option>
-                <option value="3" <?= $booking['status'] == 3 ? 'selected' : '' ?>>Đã thanh toán đủ</option>
-                <option value="4" <?= $booking['status'] == 4 ? 'selected' : '' ?>>Đã hủy</option>
-                <option value="5" <?= $booking['status'] == 5 ? 'selected' : '' ?>>Hoàn thành</option>
-            </select>
-        </div>
-
-        <!-- Special request -->
-        <div>
-            <label class="font-semibold text-gray-700">Yêu cầu đặc biệt</label>
-            <textarea name="special_requests"
-                class="border border-gray-300 w-full p-3 rounded-lg focus:ring-2 focus:ring-blue-400"
-                rows="3"><?= $booking['special_requests'] ?></textarea>
-        </div>
-
-        <!-- Danh sách khách hàng -->
-        <div>
-            <label class="font-semibold text-gray-700">Chọn khách hàng</label>
-            <div  id="chon-khach-hang" class="border rounded-xl p-4 bg-gray-50 max-h-64 overflow-y-auto">
-
-                <?php $selectedCustomers = array_column($booking['customers'], 'id'); ?>
-
-                <?php foreach ($customers as $c): ?>
-                    <label class="flex justify-between items-center p-2 bg-white rounded-lg mb-2 shadow-sm hover:bg-gray-100">
-                        <span class="font-medium"><?= htmlspecialchars($c['name']) ?></span>
-                        <input type="checkbox" class="customerCheck"
-                            name="customers[]"
-                            value="<?= $c['id'] ?>"
-                            <?= in_array($c['id'], $selectedCustomers) ? 'checked' : '' ?>>
-                    </label>
-                <?php endforeach; ?>
-            </div>
-        </div>
-
-        <!-- Người đại diện -->
-        <div>
-            <label class="font-semibold text-gray-700">Khách đại diện</label>
-            <select name="is_representative" id="representative"
-                class="border w-full p-2 rounded-lg bg-white focus:ring-2 focus:ring-blue-400" required>
-                <option value="">-- Chọn --</option>
-                <?php foreach ($booking['customers'] as $c): ?>
-                    <option value="<?= $c['id'] ?>" <?= ($c['id'] == $booking['is_representative']) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($c['name']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <!-- Service -->
-        <div>
-            <label class="font-semibold text-gray-700">Dịch vụ thêm</label>
-            <div class="grid grid-cols-2 gap-2 mt-2">
-                <?php $selectedServices = array_column($booking['services'], 'service_id'); ?>
-
-                <?php foreach ($services as $service): ?>
-                    <label class="flex items-center gap-2 bg-white p-2 rounded-lg shadow-sm hover:bg-gray-100">
-                        <input type="checkbox"
-                            name="services[]"
-                            value="<?= $service['id'] ?>"
-                            <?= in_array($service['id'], $selectedServices) ? 'checked' : '' ?>>
-                        <span><?= htmlspecialchars($service['name']) ?></span>
-                    </label>
-                <?php endforeach; ?>
-            </div>
-        </div>
-
-        <div class="flex fixed bottom-5 right-16 gap-3">
-            <button class="px-6 py-2.5 bg-black text-white rounded-lg hover:bg-gray-900 transition font-medium">
-                Cập nhật
-            </button>
         </div>
 
     </form>
 
-</main>
+    <!-- SCRIPT -->
+    <script>
+        // --- LOGIC TÍNH TIỀN ---
+        const tourSelect = document.getElementById("tourSelect");
+        const adultCount = document.getElementById("adultCount");
+        const childCount = document.getElementById("childCount");
+        const totalAmountDisplay = document.getElementById("totalAmountDisplay");
+        const totalAmountInput = document.getElementById("totalAmountInput");
+        const totalServicePriceDisplay = document.getElementById("totalServicePriceDisplay");
 
-<script>
-    function updatePrice() {
-        let tour = document.querySelector("#tourSelect");
-        if (!tour.value) return;
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN').format(amount);
+        }
 
-        let adultPrice = parseInt(tour.selectedOptions[0].dataset.adult);
-        let childPrice = parseInt(tour.selectedOptions[0].dataset.child);
+        function updatePrice() {
+            // 1. Tính tiền Tour
+            let tourTotal = 0;
+            if (tourSelect.value) {
+                const option = tourSelect.selectedOptions[0];
+                const adultPrice = Number(option.dataset.adult) || 0;
+                const childPrice = Number(option.dataset.child) || 0;
+                const adults = Number(adultCount.value) || 0;
+                const children = Number(childCount.value) || 0;
+                tourTotal = (adults * adultPrice) + (children * childPrice);
+            }
 
-        let adult = parseInt(document.getElementById("adultCount").value) || 0;
-        let child = parseInt(document.getElementById("childCount").value) || 0;
+            // 2. Tính tiền Dịch vụ
+            let serviceTotal = 0;
+            document.querySelectorAll('.service-checkbox:checked').forEach(cb => {
+                const id = cb.dataset.id;
+                const priceInput = document.querySelector(`input[name="service_prices[${id}]"]`);
+                const qtyInput = document.querySelector(`input[name="service_quantities[${id}]"]`);
 
-        let total = adult * adultPrice + child * childPrice;
-        document.getElementById("totalAmount").value = total;
+                const price = Number(priceInput.value) || 0;
+                const qty = Number(qtyInput.value) || 1;
 
-        updateRemaining();
-    }
-
-    function updateRemaining() {
-        let total = Number(document.getElementById("totalAmount").value || 0);
-        let deposit = Number(document.getElementById("depositAmount").value || 0);
-        let remain = total - deposit;
-
-        document.getElementById("remainingAmount").value = remain >= 0 ? remain : 0;
-    }
-
-    document.querySelectorAll("#tourSelect, #adultCount, #childCount").forEach(el => {
-        el.addEventListener("input", updatePrice);
-    });
-
-    document.getElementById("depositAmount").addEventListener("input", updateRemaining);
-
-    /* ------------------ Cập nhật lựa chọn người đại diện ------------------ */
-    document.querySelectorAll(".customerCheck").forEach(chk => {
-        chk.addEventListener("change", () => {
-            let rep = document.getElementById("representative");
-            rep.innerHTML = `<option value="">-- Chọn --</option>`;
-
-            let checked = document.querySelectorAll(".customerCheck:checked");
-
-            checked.forEach(c => {
-                let name = c.parentElement.querySelector("span").innerText;
-                rep.innerHTML += `<option value="${c.value}">${name}</option>`;
+                serviceTotal += price * qty;
             });
 
-            if (checked.length === 1) {
-                rep.value = checked[0].value;
-            }
-        });
-    });
-</script>
+            // 3. Tổng cộng
+            const grandTotal = tourTotal + serviceTotal;
 
-<?php
-require_once './views/components/footer.php';
-?>
+            // Update UI
+            totalServicePriceDisplay.value = formatCurrency(serviceTotal);
+            totalAmountDisplay.value = formatCurrency(grandTotal);
+            totalAmountInput.value = grandTotal;
+        }
+
+        [tourSelect, adultCount, childCount].forEach(el => {
+            if (el) el.addEventListener("input", updatePrice);
+        });
+
+        // Event Listeners cho Services
+        document.querySelectorAll('.service-checkbox').forEach(cb => {
+            cb.addEventListener('change', function() {
+                const inputsDiv = document.getElementById(`service-inputs-${this.dataset.id}`);
+                if (this.checked) {
+                    inputsDiv.classList.remove('hidden');
+                } else {
+                    inputsDiv.classList.add('hidden');
+                }
+                updatePrice();
+            });
+        });
+
+        document.querySelectorAll('input[name^="service_prices"], input[name^="service_quantities"]').forEach(input => {
+            input.addEventListener('input', updatePrice);
+        });
+
+
+        // --- LOGIC TÌM DỊCH VỤ ---
+        const searchService = document.getElementById("searchService");
+        const serviceItems = document.querySelectorAll(".service-item");
+        const noServiceResult = document.getElementById("noServiceResult");
+
+        searchService.addEventListener("keyup", function() {
+            const keyword = this.value.toLowerCase();
+            let count = 0;
+            serviceItems.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                if (text.includes(keyword)) {
+                    item.style.display = "flex";
+                    count++;
+                } else {
+                    item.style.display = "none";
+                }
+            });
+            noServiceResult.classList.toggle("hidden", count > 0);
+        });
+
+        // Ngăn submit form khi nhấn Enter ở ô tìm kiếm
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') e.preventDefault();
+            });
+        });
+        updatePrice();
+
+        document.querySelectorAll(".customerCheck").forEach(chk => {
+            chk.addEventListener("change", () => {
+                let rep = document.getElementById("representative");
+                let currentRep = rep.value;
+                rep.innerHTML = `<option value="">-- Chọn người đại diện --</option>`;
+
+                let checked = document.querySelectorAll(".customerCheck:checked");
+
+                checked.forEach(c => {
+                    let nameContainer = c.parentElement.querySelector("p.font-medium"); // Updated selector
+                    let name = nameContainer ? nameContainer.innerText : "Khách hàng";
+                    rep.innerHTML += `<option value="${c.value}">${name}</option>`;
+                });
+
+                if ([...checked].some(c => c.value == currentRep)) {
+                    rep.value = currentRep;
+                } else if (checked.length === 1) {
+                    rep.value = checked[0].value;
+                }
+            });
+        });
+    </script>
+
+</main>
+
+<?php require_once './views/components/footer.php'; ?>

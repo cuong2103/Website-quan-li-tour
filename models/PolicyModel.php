@@ -29,23 +29,23 @@ class PolicyModel
     // thêm chính sách mới
     public function create($data)
     {
-        $sql = "INSERT INTO `policies`(`name`, `content`, `created_by`, `created_at`) 
+        $sql = "INSERT INTO `policies`(`title`, `content`, `created_by`, `created_at`) 
         VALUES (?, ?, ?, NOW())";
         $stmt = $this->conn->prepare($sql);
-        // dd($data['name']);
-        return $stmt->execute([$data['name'], $data['content'], $data['created_by']]);
+        // dd($data['title']);
+        return $stmt->execute([$data['title'], $data['content'], $data['created_by']]);
     }
     public function update($data)
     {
         $sql = "UPDATE `policies` 
-            SET name = :name, content = :content, created_by = :created_by 
+            SET title = :title, content = :content, created_by = :created_by, updated_at = NOW() 
             WHERE id = :id";
 
         $stmt = $this->conn->prepare($sql);
 
         return $stmt->execute([
             ':id' => $data['id'],
-            ':name' => $data['name'],
+            ':title' => $data['title'],
             ':content' => $data['content'],
             ':created_by' => $data['created_by'],
         ]);

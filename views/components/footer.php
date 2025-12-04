@@ -1,26 +1,23 @@
 </div>
 <?php if ($success = Message::get('success')): ?>
   <div id="simple-toast"
-    class="fixed top-[6.5rem] right-5 z-50 w-96 bg-white border-[2px] border-green-200 rounded-lg shadow-lg p-4 pb-0 flex flex-col gap-2
-           opacity-0 translate-x-8 transition-all duration-300 ease-out">
+    class="fixed top-[6.5rem] right-5 z-50 w-96 bg-white border-[2px] border-green-400  bg-green-100 border-green-400 rounded-lg shadow-lg p-4 pb-0 max-w-[400px] flex flex-col gap-2 opacity-0 translate-x-8 transition-all duration-300 ease-out">
 
     <div class="flex items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <i class="w-6 h-6 text-green-600" data-lucide="check"></i>
-        <span class="text-green-500 font-medium"><?= $success ?></span>
+        <i class="w-6 h-6 text-green-800" data-lucide="check"></i>
+        <span class="text-green-700 font-medium"><?= $success ?></span>
       </div>
 
       <!-- Nút đóng -->
       <button onclick="this.closest('#simple-toast').remove()" class="text-gray-400 hover:text-gray-600">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
+        <i class="w-6 h-6 text-green-800" data-lucide="x"></i>
       </button>
     </div>
 
     <!-- Thanh countdown -->
     <div class="h-1 w-full -translate-x-4 rounded-full overflow-hidden">
-      <div id="toast-progress" class="h-1 bg-green-200 w-full transition-all"></div>
+      <div id="toast-progress" class="h-1 bg-green-400 w-full transition-all"></div>
     </div>
   </div>
 
@@ -58,25 +55,24 @@
 
 <?php if ($error = Message::get('error')): ?>
   <div id="simple-toast"
-    class="fixed top-[6.5rem] right-5 z-50 w-96 bg-white border-[2px] border-red-200 rounded-lg shadow-lg p-4 pb-0 flex flex-col gap-2
+    class="fixed top-[6.5rem] right-5 z-50 w-96 max-w-[400px] bg-white border-[2px] bg-red-100 border-red-400 rounded-lg shadow-lg p-4 pb-0 flex flex-col gap-2
               opacity-0 translate-x-8 transition-all duration-300 ease-out">
 
     <div class="flex items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <i class="w-6 h-6 text-red-600" data-lucide="x"></i>
-        <span class="text-red-500 font-medium"><?= $error ?></span>
+
+      <div class="flex items-center gap-5">
+        <i class="w-28 h-8 text-red-800" data-lucide="triangle-alert"></i>
+        <span class="text-red-700 font-medium"><?= $error ?></span>
       </div>
       <!-- Nút đóng -->
       <button onclick="this.closest('#simple-toast').remove()" class="text-gray-400 hover:text-gray-600">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
+        <i class="w-6 h-6 text-red-800" data-lucide="x"></i>
       </button>
     </div>
 
     <!-- Thanh countdown -->
     <div class="h-1 w-full -translate-x-4 rounded-full overflow-hidden">
-      <div id="toast-progress" class="h-1  bg-red-200 w-full transition-all"></div>
+      <div id="toast-progress" class="h-1  bg-red-400 w-full transition-all"></div>
     </div>
   </div>
 

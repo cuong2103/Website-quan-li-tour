@@ -11,9 +11,22 @@ class ContractController
         $this->bookingModel = new BookingModel();
     }
 
+    // Tự động cập nhật trạng thái
+    private function checkAndAutoUpdateStatus()
+    {
+        $contracts = $this->contractModel->getAll();
+        $today = date('Y-m-d');
+        foreach ($contracts as $c) {
+            if ($c['status'] == 'active' && $c['expiry_date'] < $today) {
+                $this->contractModel->updateStatus($c['id'], 'expired');
+            }
+        }
+    }
+
     // Hiển thị danh sách hợp đồng
     public function index()
     {
+        $this->checkAndAutoUpdateStatus();
         $contracts = $this->contractModel->getAll();
         require_once './views/admin/contracts/index.php';
     }
@@ -27,6 +40,9 @@ class ContractController
         // Lấy danh sách khách hàng của booking này
         $bookingCustomers = $this->bookingModel->getCustomers($bookingId);
 
+        // Lấy thông tin booking để điền ngày
+        $booking = $this->bookingModel->getById($bookingId);
+
         require_once './views/admin/contracts/create.php';
     }
 
@@ -39,7 +55,6 @@ class ContractController
         $data = [
             'booking_id'     => $bookingId,
             'contract_name'  => $_POST['contract_name'],
-            'signing_date'   => $_POST['signing_date'],
             'effective_date' => $_POST['effective_date'],
             'expiry_date'    => $_POST['expiry_date'],
             'signer_id'      => $_SESSION['currentUser']['id'], // người ký admin
@@ -47,7 +62,7 @@ class ContractController
             'status'         => $_POST['status'],
             'file_name'      => $_FILES['file_upload']['name'],
             'file_url'       => $fileUrl,
-            'notes'          => $_POST['notes'] ?? null
+            'created_by'     => $_SESSION['currentUser']['id']
         ];
 
         $this->contractModel->create($data);
@@ -100,7 +115,6 @@ class ContractController
 
         $data = [
             'contract_name'  => $_POST['contract_name'],
-            'signing_date'   => $_POST['signing_date'],
             'effective_date' => $_POST['effective_date'],
             'expiry_date'    => $_POST['expiry_date'],
             'signer_id'      => $_POST['signer_id'],
@@ -108,7 +122,7 @@ class ContractController
             'status'         => $_POST['status'],
             'file_name'      => $file_name,
             'file_url'       => $file_url,
-            'notes'          => $_POST['notes']
+            'updated_by'     => $_SESSION['currentUser']['id']
         ];
 
         $this->contractModel->update($id, $data);
@@ -119,6 +133,7 @@ class ContractController
     // Chi tiết hợp đồng
     public function detail()
     {
+        $this->checkAndAutoUpdateStatus();
         $id = $_GET['id'] ?? null;
         if (!$id) die("Thiếu id hợp đồng");
 

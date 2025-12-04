@@ -33,6 +33,7 @@ require_once './views/components/sidebar.php';
             <label class="block text-sm font-medium text-gray-700 mb-1">Tên địa điểm</label>
             <input type="text" name="name"
                 value="<?= $_GET['name'] ?? '' ?>"
+                placeholder="Nhập tên địa điểm"
                 class="w-full border border-gray-300 rounded-lg p-2">
         </div>
 
@@ -42,12 +43,7 @@ require_once './views/components/sidebar.php';
             <select name="category_id"
                 class="w-full border border-gray-300 rounded-lg p-2">
                 <option value="">-- Tất cả --</option>
-                <?php foreach ($categories as $ct): ?>
-                    <option value="<?= $ct['id'] ?>"
-                        <?= (isset($_GET['category_id']) && $_GET['category_id'] == $ct['id']) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($ct['name']) ?>
-                    </option>
-                <?php endforeach; ?>
+                <?php renderOption($tree, '', $_GET['category_id'] ?? ''); ?>
             </select>
         </div>
 
@@ -93,6 +89,7 @@ require_once './views/components/sidebar.php';
                         </div>
                     </div>
 
+
                     <p class="text-gray-500 text-sm mt-3 line-clamp-2">
                         <?= htmlspecialchars(substr($item['description'] ?? 'Không có mô tả', 0, 120)) ?>...
                     </p>
@@ -100,18 +97,21 @@ require_once './views/components/sidebar.php';
                     <!-- Hành động -->
                     <div class="flex justify-start items-center mt-5 gap-3 pt-3 border-t">
                         <a href="<?= BASE_URL . '?act=destination-detail&id=' . $item['id'] ?>"
-                            class="flex flex-1 items-center gap-2 px-3 py-1 border rounded-lg hover:bg-gray-50 text-gray-700 transition shadow-sm">
-                            Xem chi tiết
+                            class="flex flex-1 items-center justify-center gap-2 px-3 py-2 border rounded-lg hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition shadow-sm"
+                            title="Xem chi tiết">
+                            <i class="w-4 h-4" data-lucide="eye"></i>
+                            <span class="text-sm font-medium">Xem</span>
                         </a>
                         <a href="<?= BASE_URL . '?act=destination-edit&id=' . $item['id'] ?>"
-                            class="flex items-center gap-2 px-3 py-1 border rounded-lg hover:bg-gray-50 text-gray-700 transition shadow-sm hover:shadow-none">
-                            Sửa
+                            class="flex items-center justify-center gap-2 px-3 py-2 border rounded-lg hover:bg-orange-50 text-orange-600 hover:text-orange-700 transition shadow-sm"
+                            title="Chỉnh sửa">
+                            <i class="w-4 h-4" data-lucide="square-pen"></i>
                         </a>
-
 
                         <a href="<?= BASE_URL ?>?act=destination-delete&id=<?= $item['id'] ?>"
                             onclick="return confirm('Bạn có chắc muốn xóa địa điểm này không?');"
-                            class="flex items-center gap-2 px-3 py-2 border rounded-lg hover:bg-red-50 text-red-600 hover:text-red-700 transition shadow-sm">
+                            class="flex items-center justify-center gap-2 px-3 py-2 border rounded-lg hover:bg-red-50 text-red-600 hover:text-red-700 transition shadow-sm"
+                            title="Xóa">
                             <i class="w-4 h-4" data-lucide="trash-2"></i>
                         </a>
                     </div>

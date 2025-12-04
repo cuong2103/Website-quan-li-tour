@@ -38,17 +38,7 @@ function renderCategory($categories, $level = 0)
   }
 }
 
-// function renderOption($tree, $level = '', $id = null)
-// {
-//   foreach ($tree as $cat) {
-//     $tab = $level;
-//     $prefix = $level === '' ? '' : '→ ';
-//     echo '<option value="' . $cat['id'] . '"' . ($cat['id'] == $id ? "selected " : "") . '>' . $tab . $prefix . $cat['name']  . '</option>';
-//     if (!empty($cat['children']) && strlen($tab) < 60) {
-//       renderOption($cat['children'], $tab . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", $id);
-//     }
-//   }
-// }
+
 function renderOption($tree, $parentName = '', $id = null)
 {
   foreach ($tree as $cat) {
@@ -88,8 +78,3 @@ function getChildIds($categories, $id)
   }
   return $ids;
 }
-// $selectedId = 3; // Thái Lan
-// $allIds = getChildIds($categoryTree, $selectedId);
-// $idsStr = implode(',', $allIds);
-
-// $sql = "SELECT * FROM tours WHERE category_id IN ($idsStr)";

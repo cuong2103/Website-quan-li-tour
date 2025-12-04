@@ -192,7 +192,7 @@ class DestinationModel
 
 
     // Lấy các tour liên quan theo itinerary
-    public function getRelatedTours($destination_id, $limit = 5)
+    public function getRelatedTours($destination_id, $limit = 10)
     {
         $limit = (int)$limit; // đảm bảo là số nguyên
 
@@ -238,8 +238,18 @@ class DestinationModel
         }
 
         if ($category_id) {
-            $sql .= " AND d.category_id = :cat";
-            $params['cat'] = $category_id;
+            if (is_array($category_id)) {
+                $placeholders = [];
+                foreach ($category_id as $k => $id) {
+                    $key = "cat_$k";
+                    $placeholders[] = ":$key";
+                    $params[$key] = $id;
+                }
+                $sql .= " AND d.category_id IN (" . implode(', ', $placeholders) . ")";
+            } else {
+                $sql .= " AND d.category_id = :cat";
+                $params['cat'] = $category_id;
+            }
         }
 
         if ($created_from) {

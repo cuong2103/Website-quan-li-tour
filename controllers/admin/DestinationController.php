@@ -12,21 +12,31 @@ class DestinationController
     // danh sách
     public function index()
     {
+        // Lấy danh mục trước để dựng cây
+        $categories = $this->modelDestination->getCategories();
+        $tree = buildTree($categories);
+
         // Lọc
         $name = $_GET['name'] ?? '';
         $category_id = $_GET['category_id'] ?? '';
         $created_from = $_GET['created_from'] ?? '';
         $created_to = $_GET['created_to'] ?? '';
 
+        $filterIds = $category_id;
+        if ($category_id) {
+            $filterIds = getChildIds($tree, $category_id);
+            // Nếu không tìm thấy con (hoặc chính nó trong cây), vẫn giữ ID gốc để query
+            if (empty($filterIds)) {
+                $filterIds = [$category_id];
+            }
+        }
+
         $listDestination = $this->modelDestination->filter(
             $name,
-            $category_id,
+            $filterIds,
             $created_from,
             $created_to
         );
-
-        // Lấy danh mục
-        $categories = $this->modelDestination->getCategories();
 
         require_once './views/admin/destination/index.php';
     }
@@ -35,6 +45,8 @@ class DestinationController
     public function create()
     {
         $categories = $this->modelDestination->getCategories();
+        $tree = buildTree($categories);
+
         require_once './views/admin/destination/create.php';
     }
 
@@ -102,6 +114,7 @@ class DestinationController
         $id = $_GET['id'];
         $destination = $this->modelDestination->getIdEdit($id);
         $categories = $this->modelDestination->getCategories();
+        $tree = buildTree($categories);
         $images = $this->modelDestination->getImagesByDestination($id);
 
         require_once './views/admin/destination/edit.php';

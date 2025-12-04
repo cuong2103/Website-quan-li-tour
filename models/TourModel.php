@@ -8,17 +8,87 @@ class TourModel
     $this->conn = connectDB();
   }
 
-  // Lấy danh sách tour
-  public function getAll()
+  // Lấy danh sách tour với filter
+  public function getAll($filters = [])
   {
-    $sql = "SELECT t.*, c.name as category_name 
+    $sql = "SELECT DISTINCT t.*, c.name as category_name 
             FROM tours t
             LEFT JOIN categories c ON t.category_id = c.id
-            ORDER BY t.id DESC";
+            LEFT JOIN itineraries i ON t.id = i.tour_id
+            WHERE 1=1";
+    $params = [];
+
+    // Filter theo tên tour
+    if (!empty($filters['name'])) {
+      $sql .= " AND t.name LIKE ?";
+      $params[] = "%" . $filters['name'] . "%";
+    }
+
+    // Filter theo danh mục
+    if (!empty($filters['category_id'])) {
+      $sql .= " AND t.category_id = ?";
+      $params[] = $filters['category_id'];
+    }
+
+    // Filter theo trạng thái
+    if (!empty($filters['status'])) {
+      $sql .= " AND t.status = ?";
+      $params[] = $filters['status'];
+    }
+
+    // Filter theo loại tour (cố định/thường)
+    if (isset($filters['is_fixed']) && $filters['is_fixed'] !== '') {
+      $sql .= " AND t.is_fixed = ?";
+      $params[] = $filters['is_fixed'];
+    }
+
+    // Filter theo số ngày
+    if (!empty($filters['duration'])) {
+      switch ($filters['duration']) {
+        case '1-3':
+          $sql .= " AND t.duration_days BETWEEN 1 AND 3";
+          break;
+        case '4-7':
+          $sql .= " AND t.duration_days BETWEEN 4 AND 7";
+          break;
+        case '7+':
+          $sql .= " AND t.duration_days > 7";
+          break;
+      }
+    }
+
+    // Filter theo điểm đến
+    if (!empty($filters['destination_id'])) {
+      $sql .= " AND i.destination_id = ?";
+      $params[] = $filters['destination_id'];
+    }
+
+    // Filter theo khoảng giá
+    if (!empty($filters['min_price'])) {
+      $sql .= " AND t.adult_price >= ?";
+      $params[] = $filters['min_price'];
+    }
+    if (!empty($filters['max_price'])) {
+      $sql .= " AND t.adult_price <= ?";
+      $params[] = $filters['max_price'];
+    }
+
+    $sql .= " ORDER BY t.id DESC";
+
     $stmt = $this->conn->prepare($sql);
-    $stmt->execute();
+    $stmt->execute($params);
     return $stmt->fetchAll();
   }
+
+  // Lấy khoảng giá min/max của tour
+  public function getPriceRange()
+  {
+    $sql = "SELECT MIN(adult_price) as min_price, MAX(adult_price) as max_price FROM tours";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetch();
+  }
+
 
   // Thêm tour mới
   public function create($data)
@@ -28,8 +98,8 @@ class TourModel
 
     $sql = "INSERT INTO tours 
             (category_id, tour_code, name, introduction, adult_price, child_price, 
-             status, duration_days, created_by, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+             status, duration_days, is_fixed, created_by, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
     $stmt = $this->conn->prepare($sql);
 
@@ -42,6 +112,7 @@ class TourModel
       $data['child_price'],
       $data['status'],
       $data['duration_days'],
+      $data['is_fixed'] ?? 0,
       $data['created_by']
     ]);
 
@@ -115,6 +186,7 @@ class TourModel
               child_price = ?,
               status = ?,
               duration_days = ?,
+              is_fixed = ?,
               updated_by = ?,
               updated_at = NOW()
             WHERE id = ?";
@@ -129,6 +201,7 @@ class TourModel
       $data['child_price'],
       $data['status'],
       $data['duration_days'],
+      $data['is_fixed'] ?? 0,
       $userId,
       $id
     ]);
@@ -246,8 +319,14 @@ class TourModel
     }
 
     if (!empty($category_id)) {
-      $sql .= " AND t.category_id = ?";
-      $params[] = $category_id;
+      if (is_array($category_id)) {
+        $placeholders = implode(',', array_fill(0, count($category_id), '?'));
+        $sql .= " AND t.category_id IN ($placeholders)";
+        $params = array_merge($params, $category_id);
+      } else {
+        $sql .= " AND t.category_id = ?";
+        $params[] = $category_id;
+      }
     }
 
     if (!empty($status)) {
@@ -261,5 +340,60 @@ class TourModel
     $stmt->execute($params);
 
     return $stmt->fetchAll();
+  }
+
+  // Lấy tất cả tour_services kèm thông tin service
+  public function getAllTourServices()
+  {
+    $sql = "SELECT ts.*, s.estimated_price 
+              FROM tour_services ts
+              JOIN services s ON ts.service_id = s.id";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+
+  // Lấy services của một tour cụ thể
+  public function getServicesByTourId($tourId)
+  {
+    $sql = "SELECT ts.*, s.name, s.estimated_price 
+            FROM tour_services ts
+            JOIN services s ON ts.service_id = s.id
+            WHERE ts.tour_id = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$tourId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+  }
+
+
+  // Gắn service vào tour
+  public function attachService($tourId, $serviceId, $userId)
+  {
+    $sql = "INSERT INTO tour_services (tour_id, service_id, created_by, created_at) 
+            VALUES (?, ?, ?, NOW())";
+    $stmt = $this->conn->prepare($sql);
+    return $stmt->execute([$tourId, $serviceId, $userId]);
+  }
+
+  // Xóa tất cả services của tour
+  public function detachAllServices($tourId)
+  {
+    $sql = "DELETE FROM tour_services WHERE tour_id = ?";
+    $stmt = $this->conn->prepare($sql);
+    return $stmt->execute([$tourId]);
+  }
+
+  // Lấy services của tour
+  public function getTourServices($tourId)
+  {
+    $sql = "SELECT s.* 
+            FROM services s
+            INNER JOIN tour_services ts ON s.id = ts.service_id
+            WHERE ts.tour_id = ?";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$tourId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 }
