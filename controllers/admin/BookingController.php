@@ -335,6 +335,7 @@ class BookingController
         // Lấy dữ liệu cho tab check-in và journal
         $checkinLinks = $this->checkinModel->getCheckinLinksByBookingId($id);
         $journals = $this->journalModel->getJournalsByBookingId($id);
+        $tourAssignment = $this->journalModel->getAssignmentByBookingId($id);
         require_once './views/admin/bookings/detail.php';
     }
     // hàm auto cập nhật trạng thái
@@ -668,5 +669,22 @@ class BookingController
             header("Location:" . BASE_URL . '?act=booking-detail&id=' . $bookingId . '&tab=room_assignment');
         }
         exit;
+    }
+
+    // Xem chi tiết journal (Admin)
+    public function journalDetail()
+    {
+        $id = $_GET['id'];
+        $journal = $this->journalModel->getById($id);
+        if (!$journal) {
+            Message::set('error', 'Không tìm thấy nhật ký');
+            header('Location: ' . BASE_URL . '?act=bookings');
+            exit;
+        }
+
+        $images = $this->journalModel->getImages($id);
+        $tour = $this->journalModel->getTourByAssignment($journal['tour_assignment_id']);
+
+        require_once './views/admin/bookings/journal_detail.php';
     }
 }

@@ -33,7 +33,7 @@ require_once './views/components/sidebar.php';
                 <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="assigned">Đã phân công</option>
                     <option value="in_progress">Đang thực hiện</option>
-                    <option value="completed">Đã hoàn thành</option>
+                    <option value="completefixd">Đã hoàn thành</option>
                     <option value="cancelled">Đã hủy</option>
                 </select>
             </div>

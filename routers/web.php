@@ -125,6 +125,7 @@ match ($act) {
   'booking-remove-customer' => (new BookingController())->removeCustomer(),
   'booking-import-rooms' => (new BookingController())->importRoomArrangement(),
   'booking-export-rooms' => (new BookingController())->exportRoomArrangement(),
+  'booking-journal-detail' => (new BookingController())->journalDetail(),
 
   // contracts
   'contracts' => (new ContractController())->index(),

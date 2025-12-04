@@ -42,7 +42,10 @@ class JournalModel
     public function getById($id)
     {
         try {
-            $sql = "SELECT * FROM journals WHERE id = ?";
+            $sql = "SELECT j.*, u.fullname as created_by_name
+                    FROM journals j
+                    LEFT JOIN users u ON j.created_by = u.id
+                    WHERE j.id = ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -171,6 +174,7 @@ class JournalModel
     {
         try {
             $sql = "SELECT ta.id AS tour_assignment_id,
+                   b.id AS booking_id,
                    b.booking_code,
                    t.name AS tour_name,
                    b.status AS tour_status
@@ -202,6 +206,21 @@ class JournalModel
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             die("Lỗi truy vấn: getJournalsByBookingId - " . $e->getMessage());
+        }
+    }
+    // Lấy thông tin assignment theo booking_id
+    public function getAssignmentByBookingId($bookingId)
+    {
+        try {
+            $sql = "SELECT ta.*, b.start_date, b.end_date
+                    FROM tour_assignments ta
+                    INNER JOIN bookings b ON b.id = ta.booking_id
+                    WHERE ta.booking_id = ?";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([$bookingId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die("Lỗi truy vấn: getAssignmentByBookingId - " . $e->getMessage());
         }
     }
 }
