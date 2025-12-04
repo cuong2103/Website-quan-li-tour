@@ -49,7 +49,7 @@ require_once './views/components/sidebar.php';
               <tr class="hover:bg-gray-50 transition-colors">
                 <td class="px-6 py-5 whitespace-nowrap">
                   <div class="flex items-center">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex i tems-center justify-center flex-shrink-0 overflow-hidden">
                       <?php if(!empty($user['avatar'])): ?>
                         <img src="<?= UPLOADS_URL ?>avatar/<?= $user['avatar'] ?>" alt="Avatar" class="w-full h-full object-cover">
                       <?php else: ?>
@@ -92,7 +92,7 @@ require_once './views/components/sidebar.php';
                       <i data-lucide="eye" class="w-5 h-5"></i>
                     </a>
                     <!-- Sửa -->
-                    <a href="?act=user-edit&id=<?= $user['id'] ?>" 
+                    <a href="?act=user-edit&id=<?= $user['id'] ?>&from=index" 
                        class="text-gray-500 hover:text-yellow-600 transition-colors" 
                        title="Chỉnh sửa">
                       <i data-lucide="square-pen" class="w-5 h-5"></i>

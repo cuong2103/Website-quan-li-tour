@@ -130,12 +130,7 @@
       </a>
 
       <!-- Tài khoản -->
-      <a href="<?= BASE_URL ?>?act="
-        class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700  hover:bg-gray-100 rounded-lg transition">
-        <div class="flex items-center">
-          <i data-lucide="user" class="mr-3 w-6 h-6"></i>
-          Tài khoản
-        </div>
+      
       <?php endif; ?>
 
       <!-- Thông báo -->

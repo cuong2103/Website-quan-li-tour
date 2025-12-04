@@ -4,6 +4,9 @@ $currentUser = $_SESSION['currentUser'] ?? null;
 $fullname = $currentUser['fullname'] ?? 'User';
 $role = ($currentUser['roles'] == 'admin')  ? 'Admin' : 'Hướng dẫn viên';
 $avatar = strtoupper(mb_substr($fullname, 0, 1));
+
+$userId = $currentUser['id'] ?? null ;
+
 ?>
 
 <!DOCTYPE html>
@@ -47,13 +50,15 @@ $avatar = strtoupper(mb_substr($fullname, 0, 1));
 
           </button>
           <div class="flex items-center space-x-3">
+            <a class="flex gap-2" href="?act=profile&id=<?= $userId ?>">
             <div class="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
               <?= $avatar ?>
             </div>
-            <div>
+            <div >
               <p class="text-sm font-medium text-gray-900"><?= htmlspecialchars($fullname) ?></p>
               <p class="text-xs text-gray-500"><?= $role ?></p>
-            </div>
+              
+            </div></a>
           </div>
 
         </div>

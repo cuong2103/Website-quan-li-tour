@@ -96,7 +96,8 @@ class UserManagementController
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') redirect("user");
 
-        $id = $_POST['id'];
+        $id = $_POST['id'];    
+    $source = $_POST['source'] ?? 'admin';
         $fullname = trim($_POST['fullname']);
         $email = trim($_POST['email']);
         $phone = trim($_POST['phone']);
@@ -139,13 +140,22 @@ class UserManagementController
 
         $result = $this->model->update($id, $data);
 
-        if ($result) {
-            Message::set('success', 'Cập nhật thành công');
-        } else {
-            Message::set('error', 'Cập nhật thất bại');
-        }
+         if ($result) {
+        Message::set('success', 'Cập nhật thành công');
 
-        redirect("user");
+        // ⭐⭐ PHÂN NHÁNH TẠI ĐÂY ⭐⭐
+        return $source === 'profile'
+            ? redirect("profile&id=$id") // về lại trang profile
+            : redirect("user"); // admin → về lại index
+    } else {
+        Message::set('error', 'Cập nhật thất bại');
+
+        return $source === 'profile'
+            ? redirect("?act=user-edit&id=$id")  // lỗi → về lại form sửa profile
+            : redirect("?act=user-edit&id=$id"); // admin → form sửa admin
+    }
+
+        // redirect("user");
     }
     public function delete()
     {

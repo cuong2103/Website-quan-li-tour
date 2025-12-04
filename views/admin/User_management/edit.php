@@ -16,14 +16,15 @@ require_once './views/components/sidebar.php';
           <span>Nhân viên</span>
         </a>
         <span class="text-gray-400">/</span>
-        <span class="text-gray-900 font-medium">Chỉnh sửa nhân viên</span>
+        <span class="text-gray-900 font-medium">Chỉnh sửa</span>
       </div>
-      <h1 class="text-2xl font-bold text-gray-900 mt-3">Chỉnh sửa nhân viên</h1>
+      <h1 class="text-2xl font-bold text-gray-900 mt-3">Chỉnh sửa</h1>
     </div>
   </div>
 
   <!-- Form sửa -->
 <form action="?act=user-update" method="POST" enctype="multipart/form-data" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+    <input type="hidden" name="source" value="<?= $from ?>">
     <input type="hidden" name="id" value="<?= $user['id'] ?>">
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -105,7 +106,7 @@ require_once './views/components/sidebar.php';
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
             </svg>
-            Cập nhật nhân viên
+            Cập nhật
           </button>
         </div>
       </div>
