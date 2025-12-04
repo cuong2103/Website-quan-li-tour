@@ -144,7 +144,6 @@ require_once './views/components/sidebar.php';
                                 if ($ts['service_id'] == $sv['id']) {
                                     $isChecked = true;
                                     $defaultQty = $ts['default_quantity'] ?? 1;
-                                    // $defaultPrice = $ts['price'] ?? $sv['estimated_price'];
                                     break;
                                 }
                             }
@@ -354,11 +353,10 @@ require_once './views/components/sidebar.php';
 
         // Lấy duration từ PHP (nếu có tour được chọn)
         const tourDuration = <?= isset($selectedTour) ? $selectedTour['duration_days'] : 0 ?>;
-        const isFixed = <?= isset($selectedTour) && $selectedTour['is_fixed'] ? 'true' : 'false' ?>;
 
         function calculateEndDate() {
             const startDateVal = startDateInput.value;
-            if (isFixed && startDateVal && tourDuration > 0) {
+            if (startDateVal && tourDuration > 0) {
                 const start = new Date(startDateVal);
                 const end = new Date(start);
                 end.setDate(start.getDate() + (tourDuration - 1));
@@ -371,7 +369,7 @@ require_once './views/components/sidebar.php';
                 // Lock input
                 endDateInput.readOnly = true;
                 endDateInput.classList.add('bg-gray-100', 'cursor-not-allowed');
-            } else if (!isFixed) {
+            } else {
                 endDateInput.readOnly = false;
                 endDateInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
             }

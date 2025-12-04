@@ -25,22 +25,22 @@ class TourAssignmentController
     {
         $bookingId = $_GET['booking_id'] ?? null;
         if (!$bookingId) {
-            Message::set('errors', 'Không tìm thấy Booking ID');
-            header('Location: ' . BASE_URL . '?act=bookings');
+            Message::set('error', 'Không tìm thấy Booking ID');
+            redirect('bookings');
             exit;
         }
         $booking = $this->bookingModel->getById($bookingId);
         if (!$booking) {
-            Message::set('errors', 'Booking không tồn tại');
-            header('Location: ' . BASE_URL . '?act=bookings');
+            Message::set('error', 'Booking không tồn tại');
+            redirect('bookings');
             exit;
         }
 
         // --- KIỂM TRA THANH TOÁN ---
         // Chỉ cho phép phân công nếu Status = 3 (Đã thanh toán đủ) VÀ Remaining Amount <= 0
-        if ($booking['status'] != 3 || $booking['remaining_amount'] > 0) {
-            Message::set('errors', 'Booking chưa thanh toán đủ. Vui lòng thanh toán trước khi phân công Tour.');
-            header('Location: ' . BASE_URL . '?act=bookings');
+        if ($booking['status'] != 'paid' || $booking['remaining_amount'] > 0) {
+            Message::set('error', 'Booking chưa thanh toán đủ. Vui lòng thanh toán trước khi phân công Tour.');
+            redirect('bookings');
             exit;
         }
 
@@ -62,9 +62,9 @@ class TourAssignmentController
 
         // --- KIỂM TRA THANH TOÁN (Double Check) ---
         $booking = $this->bookingModel->getById($booking_id);
-        if ($booking['status'] != 3 || $booking['remaining_amount'] > 0) {
-            Message::set('errors', 'Booking chưa thanh toán đủ. Không thể phân công.');
-            header('Location: ' . BASE_URL . '?act=bookings');
+        if ($booking['status'] != 'paid' || $booking['remaining_amount'] > 0) {
+            Message::set('error', 'Booking chưa thanh toán đủ. Không thể phân công.');
+            redirect('bookings');
             exit;
         }
 
@@ -81,7 +81,7 @@ class TourAssignmentController
             $this->tourAssignmentModel->store($booking_id, $guide_id, $created_by);
             Message::set('success', 'Tạo phân công mới thành công');
         }
-        header('Location: ' . BASE_URL . '?act=bookings');
+        redirect('bookings');
         exit;
     }
 
@@ -99,9 +99,9 @@ class TourAssignmentController
             $assignment = $this->tourAssignmentModel->findByBookingId($bookingId);
         }
 
-        if (!$assignment) {
-            Message::set('errors', 'Phân công không tồn tại');
-            header('Location: ' . BASE_URL . '?act=tour-assignments');
+        if (!$assignment) { // Kiểm tra tồn tại 
+            Message::set('error', 'Phân công không tồn tại');
+            redirect('tour-assignments');
             exit;
         }
 
@@ -120,7 +120,7 @@ class TourAssignmentController
         $guide_id = ($_POST['guide_id'] == "") ? null : $_POST['guide_id'];
         $this->tourAssignmentModel->updateGuide($id, $guide_id);
         Message::set('success', 'Cập nhật phân công thành công');
-        header('Location: ' . BASE_URL . '?act=tour-assignments');
+        redirect('tour-assignments');
         exit;
     }
 
@@ -132,7 +132,7 @@ class TourAssignmentController
             $this->tourAssignmentModel->delete($id);
             Message::set('success', 'Xóa phân công thành công');
         }
-        header('Location: ' . BASE_URL . '?act=tour-assignments');
+        redirect('tour-assignments');
         exit;
     }
 }

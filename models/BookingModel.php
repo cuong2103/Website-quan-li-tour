@@ -321,7 +321,7 @@ class BookingModel
         try {
             $sql = "SELECT SUM(amount) AS total
                 FROM payments
-                WHERE booking_id = ? AND status = 'success'";
+                WHERE booking_id = ? AND status = 'completed'";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$bookingId]);
             return $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;

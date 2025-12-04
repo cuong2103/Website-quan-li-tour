@@ -29,18 +29,18 @@ require_once './views/components/sidebar.php';
         <div>
             <label class="text-sm font-medium">Phương thức thanh toán</label>
             <select name="payment_method" class="w-full px-3 py-2 border rounded-lg mt-1">
-                <option value="Tiền mặt">Tiền mặt</option>
-                <option value="Chuyển khoản">Chuyển khoản</option>
-                <option value="Thẻ tín dụng">Thẻ tín dụng</option>
+                <option value="cash">Tiền mặt</option>
+                <option value="bank_transfer">Chuyển khoản</option>
             </select>
         </div>
 
         <div>
             <label class="text-sm font-medium">Loại thanh toán</label>
             <select name="type" class="w-full px-3 py-2 border rounded-lg mt-1">
-                <option value="Cọc">Cọc</option>
-                <option value="Thanh toán">Thanh toán hết</option>
-                <option value="Hoàn tiền">Hoàn tiền</option>
+                <option value="deposit">Cọc</option>
+                <option value="full_payment">Thanh toán đủ</option>
+                <option value="remaining">Thanh toán còn lại</option>
+                <option value="refund">Hoàn tiền</option>
             </select>
         </div>
 
@@ -59,7 +59,7 @@ require_once './views/components/sidebar.php';
             <label class="text-sm font-medium">Trạng thái</label>
             <select name="status" class="w-full px-3 py-2 border rounded-lg mt-1">
                 <option value="pending">Chờ xử lý</option>
-                <option value="success">Thành công</option>
+                <option value="completed">Thành công</option>
                 <option value="failed">Thất bại</option>
             </select>
         </div>

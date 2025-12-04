@@ -96,7 +96,8 @@ class BookingController
                 $_POST['rep_address'] ?? '',
                 $_SESSION['currentUser']['id'],
                 $_POST['rep_passport'] ?? '',
-                $_POST['rep_gender'] ?? 'other'
+                $_POST['rep_gender'] ?? 'other',
+                $_POST['rep_citizen_id'] ?? ''
             );
             $customer = $this->customerModel->findByEmailOrPhone($_POST['rep_email'], $_POST['rep_phone']);
             $customerId = $customer['id'];
@@ -277,7 +278,6 @@ class BookingController
         $bookingServices = $this->bookingModel->getServicesByBooking($id);
         $bookingContracts = $this->contractModel->getByBookingId($id);
         $bookingPayments = $this->paymentModel->getAllByBooking($booking['id']);
-
         require_once './views/admin/bookings/detail.php';
     }
     // hàm auto cập nhật trạng thái
@@ -291,11 +291,11 @@ class BookingController
         $totalAmount = $booking['total_amount'];
 
         if ($totalPaid >= $totalAmount) {
-            $this->bookingModel->updateStatus($bookingId, 3); // Đã thanh toán đủ
+            $this->bookingModel->updateStatus($bookingId, 'paid'); // Đã thanh toán đủ
         } elseif ($totalPaid > 0) {
-            $this->bookingModel->updateStatus($bookingId, 2); // Đã cọc
+            $this->bookingModel->updateStatus($bookingId, 'deposited'); // Đã cọc
         } else {
-            $this->bookingModel->updateStatus($bookingId, 1); // Chưa thanh toán
+            $this->bookingModel->updateStatus($bookingId, 'pending'); // Chưa thanh toán
         }
     }
 
@@ -342,7 +342,7 @@ class BookingController
                         $customerId = $customer['id'];
                     } else {
                         // Create new customer
-                        $this->customerModel->create($name, $email, $phone, $address, $_SESSION['currentUser']['id'], $passport, $gender);
+                        $this->customerModel->create($name, $email, $phone, $address, $_SESSION['currentUser']['id'], $passport, $gender, '');
                         $customer = $this->customerModel->findByEmailOrPhone($email, $phone);
                         $customerId = $customer['id'];
                     }

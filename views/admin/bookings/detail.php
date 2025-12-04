@@ -74,11 +74,11 @@ require_once './views/components/sidebar.php';
                 <p class="font-medium">
                     <?php
                     $statusArr = [
-                        1 => 'Chưa thanh toán',
-                        2 => 'Đã cọc',
-                        3 => 'Đã thanh toán đủ',
-                        4 => 'Đã hủy',
-                        5 => 'Hoàn thành Tour'
+                        'pending' => 'Chưa thanh toán',
+                        'deposited' => 'Đã cọc',
+                        'paid' => 'Đã thanh toán đủ',
+                        'cancelled' => 'Đã hủy',
+                        'completed' => 'Hoàn thành Tour'
                     ];
                     echo $statusArr[$booking['status']] ?? 'Không xác định';
                     ?>

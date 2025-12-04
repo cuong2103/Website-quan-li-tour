@@ -29,17 +29,18 @@ require_once './views/components/sidebar.php';
         <div>
             <label class="text-sm font-medium">Phương thức thanh toán</label>
             <select name="payment_method" class="w-full px-3 py-2 border rounded-lg mt-1">
-                <option value="Tiền mặt" <?= $payment['payment_method'] == 'Tiền mặt' ? 'selected' : '' ?>>Tiền mặt</option>
-                <option value="Chuyển khoản" <?= $payment['payment_method'] == 'Chuyển khoản' ? 'selected' : '' ?>>Chuyển khoản</option>
+                <option value="cash" <?= $payment['payment_method'] == 'cash' ? 'selected' : '' ?>>Tiền mặt</option>
+                <option value="bank_transfer" <?= $payment['payment_method'] == 'bank_transfer' ? 'selected' : '' ?>>Chuyển khoản</option>
             </select>
         </div>
 
         <div>
             <label class="text-sm font-medium">Loại thanh toán</label>
             <select name="type" class="w-full px-3 py-2 border rounded-lg mt-1">
-                <option value="Cọc" <?= $payment['type'] == 'Cọc' ? 'selected' : '' ?>>Cọc</option>
-                <option value="Thanh toán hết" <?= $payment['type'] == 'Thanh toán hết' ? 'selected' : '' ?>>Thanh toán hết</option>
-                <option value="Hoàn tiền" <?= $payment['type'] == 'Hoàn tiền' ? 'selected' : '' ?>>Hoàn tiền</option>
+                <option value="deposit" <?= $payment['type'] == 'deposit' ? 'selected' : '' ?>>Cọc</option>
+                <option value="full_payment" <?= $payment['type'] == 'full_payment' ? 'selected' : '' ?>>Thanh toán đủ</option>
+                <option value="remaining" <?= $payment['type'] == 'remaining' ? 'selected' : '' ?>>Thanh toán còn lại</option>
+                <option value="refund" <?= $payment['type'] == 'refund' ? 'selected' : '' ?>>Hoàn tiền</option>
             </select>
         </div>
 
@@ -60,7 +61,7 @@ require_once './views/components/sidebar.php';
             <label class="text-sm font-medium">Trạng thái</label>
             <select name="status" class="w-full px-3 py-2 border rounded-lg mt-1">
                 <option value="pending" <?= $payment['status'] == 'pending' ? 'selected' : '' ?>>Chờ xử lý</option>
-                <option value="success" <?= $payment['status'] == 'success' ? 'selected' : '' ?>>Thành công</option>
+                <option value="completed" <?= $payment['status'] == 'completed' ? 'selected' : '' ?>>Thành công</option>
                 <option value="failed" <?= $payment['status'] == 'failed' ? 'selected' : '' ?>>Thất bại</option>
             </select>
         </div>

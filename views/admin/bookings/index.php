@@ -40,12 +40,12 @@ function renderStatusBadge($status)
         </div>
     </div>
 
-    <?php if (Message::get('errors')): ?>
+    <!-- <?php if (Message::get('errors')): ?>
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
             <strong class="font-medium">Booking của bạn đã thanh toán. Không thể xóa</strong>
             <span class="block sm:inline"><?= Message::get('errors') ?></span>
         </div>
-    <?php endif; ?>
+    <?php endif; ?> -->
 
     <div class="bg-white p-4 rounded-lg shadow">
         <table class="w-full text-left">
