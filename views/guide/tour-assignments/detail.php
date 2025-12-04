@@ -51,7 +51,6 @@ $tabs = [
             </div>
         </div>
     </div>
-
     <!-- tabs -->
     <div class="flex gap-3 border-b mb-4 pb-2">
         <?php foreach ($tabs as $key => $t): ?>
@@ -63,307 +62,29 @@ $tabs = [
             </a>
         <?php endforeach; ?>
     </div>
-
     <!-- tab customers -->
-    <?php if ($tab === 'customers'): ?>
-        <div class="bg-white border shadow rounded-xl p-5">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="p-3 text-left">STT</th>
-                        <th class="p-3 text-left">Tên khách hàng</th>
-                        <th class="p-3 text-left">Số điện thoại</th>
-                        <th class="p-3 text-left">Email</th>
-                        <th class="p-3 text-left">Ghi chú</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($customers as $i => $c): ?>
-                        <tr class="border-t">
-                            <td class="p-3"><?= $i + 1 ?></td>
-                            <td class="p-3"><?= htmlspecialchars($c['name']) ?></td>
-                            <td class="p-3"><?= htmlspecialchars($c['phone']) ?></td>
-                            <td class="p-3"><?= htmlspecialchars($c['email']) ?></td>
-                            <td class="p-3"><?= htmlspecialchars($c['notes'] ?? '-') ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    <?php endif; ?>
-
-    <!-- tab checkin -->
-    <?php if ($tab === 'checkin'): ?>
-        <div class="bg-white border shadow rounded-xl p-5">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold text-lg">Danh sách Check-in</h3>
-                <div class="flex gap-2">
-                    <a href="<?= BASE_URL . '?act=guide-tour-assignments-export-checkin&id=' . $assignment['id'] ?>"
-                        class="bg-green-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-700 flex items-center gap-2">
-                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-                        Tải Excel Xếp phòng
-                    </a>
-                </div>
-            </div>
-            <?php
-            // Kiểm tra tour có đang diễn ra không
-            $today = date('Y-m-d');
-            $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['end_date']);
-
-            if (!$canCheckinNow): ?>
-                <div class="mb-4 p-4 rounded-lg <?= $today < $assignment['start_date'] ? 'bg-yellow-50 border border-yellow-200' : 'bg-gray-50 border border-gray-200' ?>">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="<?= $today < $assignment['start_date'] ? 'clock' : 'check-circle' ?>" class="w-5 h-5 <?= $today < $assignment['start_date'] ? 'text-yellow-600' : 'text-gray-600' ?>"></i>
-                        <span class="font-medium <?= $today < $assignment['start_date'] ? 'text-yellow-800' : 'text-gray-700' ?>">
-                            <?php if ($today < $assignment['start_date']): ?>
-                                Chưa đến thời gian khởi hành! Tour bắt đầu từ <?= date('d/m/Y', strtotime($assignment['start_date'])) ?>
-                            <?php else: ?>
-                                Tour đã kết thúc từ ngày <?= date('d/m/Y', strtotime($assignment['end_date'])) ?>
-                            <?php endif; ?>
-                        </span>
-                    </div>
-                </div>
-            <?php endif; ?>
-            <table class="w-full text-sm">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="p-3 text-left">STT</th>
-                        <th class="p-3 text-left">Tên khách hàng</th>
-                        <th class="p-3 text-left">Số điện thoại</th>
-                        <th class="p-3 text-left">Trạng thái</th>
-                        <th class="p-3 text-left">Thời gian</th>
-                        <th class="p-3 text-left">Phòng</th>
-                        <th class="p-3 text-left">Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($customers)): ?>
-                        <?php foreach ($customers as $i => $c): ?>
-                            <tr class="border-t">
-                                <td class="p-3"><?= $i + 1 ?></td>
-                                <td class="p-3 font-medium"><?= htmlspecialchars($c['name']) ?></td>
-                                <td class="p-3"><?= htmlspecialchars($c['phone']) ?></td>
-                                <td class="p-3">
-                                    <?php if ($c['checkin_count'] > 0): ?>
-                                        <span class="text-green-600 font-medium flex items-center gap-1">
-                                            <i data-lucide="check" class="w-3 h-3"></i> Đã check-in
-                                        </span>
-                                    <?php else: ?>
-                                        <span class="text-gray-400">Chưa check-in</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td class="p-3 text-gray-600">
-                                    <?= !empty($c['latest_checkin_time']) ? date('H:i d/m', strtotime($c['latest_checkin_time'])) : '-' ?>
-                                </td>
-                                <td class="p-3 text-gray-600"><?= htmlspecialchars($c['room'] ?? '-') ?></td>
-                                <td class="p-3">
-                                    <?php if ($c['checkin_count'] == 0): ?>
-                                        <form action="<?= BASE_URL . '?act=guide-tour-assignments-checkin' ?>" method="POST">
-                                            <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
-                                            <input type="hidden" name="customer_id" value="<?= $c['id'] ?>">
-                                            <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700">
-                                                Check-in
-                                            </button>
-                                        </form>
-                                    <?php else: ?>
-                                        <form action="<?= BASE_URL . '?act=guide-tour-assignments-checkin-destroy' ?>" method="POST">
-                                            <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
-                                            <input type="hidden" name="checkin_id" value="<?= $c['latest_checkin_id'] ?>">
-                                            <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700">
-                                                Hủy
-                                            </button>
-                                        </form>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="8" class="p-4 text-center text-gray-500">Chưa có khách hàng.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    <?php endif; ?>
-
-    <!-- tab journals -->
-    <?php if ($tab === 'journals'): ?>
-        <div class="bg-white border shadow rounded-xl p-5">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold text-lg">Nhật ký tour</h3>
-                <?php
-                // Kiểm tra tour đã bắt đầu chưa (CHỈ chặn khi chưa bắt đầu, vẫn cho phép khi đã kết thúc)
-                $today = date('Y-m-d');
-                $canWriteJournal = ($today >= $assignment['start_date']);
-
-                if ($canWriteJournal): ?>
-                    <a href="<?= BASE_URL . '?act=journal-create&tour_assignment_id=' . $assignment['id'] ?>"
-                        class="bg-orange-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-orange-700 flex items-center gap-2">
-                        <i data-lucide="pen-tool" class="w-4 h-4"></i>
-                        Viết nhật ký mới
-                    </a>
-                <?php else: ?>
-                    <button disabled class="bg-gray-300 text-gray-500 px-3 py-2 rounded-lg text-sm cursor-not-allowed flex items-center gap-2"
-                        title="Chưa đến thời gian khởi hành">
-                        <i data-lucide="pen-tool" class="w-4 h-4"></i>
-                        Viết nhật ký mới
-                    </button>
-                <?php endif; ?>
-            </div>
-
-            <?php if (!$canWriteJournal): ?>
-                <div class="mb-4 p-4 rounded-lg bg-yellow-50 border border-yellow-200">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="clock" class="w-5 h-5 text-yellow-600"></i>
-                        <span class="font-medium text-yellow-800">
-                            Chưa đến thời gian khởi hành! Tour bắt đầu từ <?= date('d/m/Y', strtotime($assignment['start_date'])) ?>
-                        </span>
-                    </div>
-                </div>
-            <?php endif; ?>
-
-            <table class="w-full text-sm">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="p-3 text-left">Ngày</th>
-                        <th class="p-3 text-left">Loại</th>
-                        <th class="p-3 text-left">Nội dung</th>
-                        <th class="p-3 text-left">Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($journals)): ?>
-                        <?php foreach ($journals as $j): ?>
-                            <tr class="border-t hover:bg-gray-50">
-                                <td class="p-3"><?= date('d/m/Y', strtotime($j['date'])) ?></td>
-                                <td class="p-3">
-                                    <?php if ($j['type'] == 'incident'): ?>
-                                        <span class="text-red-600 font-medium flex items-center gap-1">
-                                            <i data-lucide="alert-triangle" class="w-3 h-3"></i> Sự cố
-                                        </span>
-                                    <?php else: ?>
-                                        <span class="text-blue-600 font-medium flex items-center gap-1">
-                                            <i data-lucide="book-open" class="w-3 h-3"></i> Nhật ký ngày
-                                        </span>
-                                    <?php endif; ?>
-                                </td>
-                                <td class="p-3 max-w-md truncate"><?= htmlspecialchars($j['content']) ?></td>
-                                <td class="p-3">
-                                    <div class="flex gap-2">
-                                        <a href="<?= BASE_URL . '?act=journal-detail&id=' . $j['id'] ?>"
-                                            class="text-gray-600 hover:bg-gray-100 p-1 rounded transition-colors" title="Xem chi tiết">
-                                            <i data-lucide="eye" class="w-4 h-4"></i>
-                                        </a>
-                                        <a href="<?= BASE_URL . '?act=journal-edit&id=' . $j['id'] ?>"
-                                            class="text-blue-600 hover:bg-blue-50 p-1 rounded transition-colors" title="Sửa">
-                                            <i data-lucide="edit-2" class="w-4 h-4"></i>
-                                        </a>
-                                        <a href="<?= BASE_URL . '?act=journal-delete&id=' . $j['id'] ?>"
-                                            onclick="return confirm('Bạn có chắc muốn xóa nhật ký này?')"
-                                            class="text-red-600 hover:bg-red-50 p-1 rounded transition-colors" title="Xóa">
-                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="4" class="p-4 text-center text-gray-500">Chưa có nhật ký nào.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    <?php endif; ?>
-
-    <!-- tab itinerary -->
-    <?php if ($tab === 'itinerary'): ?>
-        <div class="bg-white border shadow rounded-xl p-5">
-            <?php if (!empty($itinerary_days)): ?>
-                <?php foreach ($itinerary_days as $day => $items): ?>
-                    <h3 class="font-semibold text-lg mb-3">Ngày <?= $day ?></h3>
-                    <div class="border-l ml-2 pl-4 space-y-4">
-                        <?php foreach ($items as $row): ?>
-                            <div>
-                                <div class="font-medium"><?= htmlspecialchars($row['destination_name']) ?></div>
-                                <div class="text-xs text-gray-500"><?= $row['arrival_time'] ?> → <?= $row['departure_time'] ?></div>
-                                <div class="text-sm mt-1"><?= htmlspecialchars($row['description']) ?></div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <hr class="my-4">
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p class="text-gray-500">Chưa có lịch trình chi tiết.</p>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
-
-    <!-- tab info -->
-    <?php if ($tab === 'info'): ?>
-        <div class="bg-white border shadow rounded-xl p-5">
-            <h3 class="font-semibold text-lg mb-3">Yêu cầu đặc biệt</h3>
-            <p class="text-sm text-gray-700 mb-6">
-                <?= htmlspecialchars($assignment['special_requests'] ?? 'Không có yêu cầu đặc biệt.') ?>
-            </p>
-        </div>
-    <?php endif; ?>
-
-    <!-- tab services -->
-    <?php if ($tab === 'services'): ?>
-        <div class="bg-white border shadow rounded-xl p-5">
-            <?php if (!empty($services)): ?>
-                <ul class="list-disc ml-5 text-sm text-gray-700">
-                    <?php foreach ($services as $s): ?>
-                        <li><?= htmlspecialchars($s['service_name']) ?>
-                            <?php if (!empty($s['quantity'])): ?> (Số lượng: <?= $s['quantity'] ?>)<?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php else: ?>
-                <p class="text-gray-500">Chưa có dịch vụ kèm theo.</p>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
-
+    <?php switch ($tab) {
+        case 'customers':
+            require './views/guide/tour-assignments/tabs/customers.php';
+            break;
+        case 'checkin':
+            require './views/guide/tour-assignments/tabs/checkin.php';
+            break;
+        case 'journals':
+            require './views/guide/tour-assignments/tabs/journals.php';
+            break;
+        case 'itinerary':
+            require './views/guide/tour-assignments/tabs/itinerary.php';
+            break;
+        case 'info':
+            require './views/guide/tour-assignments/tabs/info.php';
+            break;
+        case 'services':
+            require './views/guide/tour-assignments/tabs/services.php';
+            break;
+        default:
+            break;
+    } ?>
 </main>
 
-<!-- Modal Upload Excel -->
-<div id="uploadRoomModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-    <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
-        <h3 class="text-lg font-semibold mb-4">Upload danh sách xếp phòng</h3>
-        <form action="<?= BASE_URL . '?act=guide-tour-assignments-import-room' ?>" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
-
-            <div class="mb-4">
-                <label class="block text-sm font-medium mb-2">Chọn file Excel (.xlsx, .xls)</label>
-                <input type="file" name="file" accept=".xlsx, .xls" required
-                    class="w-full border rounded-lg p-2">
-                <p class="text-xs text-gray-500 mt-1">File cần có cột: Tên khách hàng, Số điện thoại (để khớp), Phòng (cột I hoặc cột 9).</p>
-            </div>
-
-            <div class="flex gap-3 justify-end">
-                <button type="button" onclick="document.getElementById('uploadRoomModal').classList.add('hidden')"
-                    class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm">
-                    Hủy
-                </button>
-                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm">
-                    Upload
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-<script>
-    document.addEventListener("DOMContentLoaded", function(event) {
-        let scrollpos = sessionStorage.getItem('checkin_scroll_pos');
-        if (scrollpos) window.scrollTo(0, scrollpos);
-    });
-
-    window.onbeforeunload = function(e) {
-        sessionStorage.setItem('checkin_scroll_pos', window.scrollY);
-    };
-</script>
 <?php require './views/components/footer.php'; ?>

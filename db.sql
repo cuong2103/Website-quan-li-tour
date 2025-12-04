@@ -260,23 +260,23 @@ CREATE TABLE `tour_assignments` (
   `updated_at` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE `customer_checkins` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `customer_id` INT NOT NULL,
-  `checkin_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
-  `created_by` INT,
-  `updated_by` INT,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
-);
-
 CREATE TABLE `tour_checkin_links` ( 
   `id` INT PRIMARY KEY AUTO_INCREMENT, 
   `tour_assignment_id` INT NOT NULL, 
-  `checkin_id` INT NOT NULL, 
-  `note` VARCHAR(255), 
+  `title` VARCHAR(255) NOT NULL,
+  `note` TEXT, 
+  `created_by` INT,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `customer_checkins` (
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `tour_checkin_link_id` INT NOT NULL,
+  `customer_id` INT NOT NULL,
+  `checkin_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `created_by` INT,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY unique_assignment_checkin (`tour_assignment_id`, `checkin_id`) 
+  UNIQUE KEY unique_link_customer (`tour_checkin_link_id`, `customer_id`)
 );
 
 CREATE TABLE `journals` (

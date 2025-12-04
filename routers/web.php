@@ -59,7 +59,7 @@ match ($act) {
 
 
   // tour_guide
-  'profile' => (new ProfileController()) -> GetById() ,
+  'profile' => (new ProfileController())->GetById(),
   'change-password' => (new ProfileController())->changePassword(),
   'profile-edit' => (new ProfileController())->edit(),
   'profile-update' => (new ProfileController())->update(),
@@ -166,9 +166,14 @@ match ($act) {
   // Guide tour_Assignments
   'guide-tour-assignments' => (new GuideTourAssignmentController())->index(),
   'guide-tour-assignments-detail' => (new GuideTourAssignmentController())->detail(),
-  'guide-tour-assignments-export-checkin' => (new GuideTourAssignmentController())->exportCheckinList(),
-  'guide-tour-assignments-checkin' => (new GuideTourAssignmentController())->checkinStore(),
-  'guide-tour-assignments-checkin-destroy' => (new GuideTourAssignmentController())->checkinDestroy(),
+
+  // Guide Check-in Management
+  'guide-checkin-create' => (new CheckinController())->create(),
+  'guide-checkin-detail' => (new CheckinController())->detail(),
+  'guide-checkin-customer' => (new CheckinController())->checkinCustomer(),
+  'guide-checkin-undo' => (new CheckinController())->undoCheckin(),
+  'guide-checkin-delete' => (new CheckinController())->delete(),
+  'checkin-export' => (new CheckinController())->exportCheckinList(),
 
   // Journal
   'journal' => (new JournalController())->index(),

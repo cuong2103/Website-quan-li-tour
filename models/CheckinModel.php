@@ -8,153 +8,152 @@ class CheckinModel
     $this->conn = connectDB();
   }
 
-  // Lấy danh sách khách hàng của tour assignment
-  public function getCustomersByAssignment($assignmentId)
+  // Lấy tất cả các đợt check-in của một tour assignment
+  public function getCheckinLinks($assignmentId)
   {
     try {
-      $sql = "SELECT c.*, bc.is_representative, bc.room_number,
-                    (SELECT COUNT(*) FROM customer_checkins 
-                     WHERE customer_id = c.id 
-                     AND tour_assignment_id = :assignment_id) as checkin_count,
-                    (SELECT id FROM customer_checkins 
-                     WHERE customer_id = c.id 
-                     AND tour_assignment_id = :assignment_id 
-                     ORDER BY checkin_time DESC LIMIT 1) as latest_checkin_id,
-                    (SELECT checkin_time FROM customer_checkins 
-                     WHERE customer_id = c.id 
-                     AND tour_assignment_id = :assignment_id 
-                     ORDER BY checkin_time DESC LIMIT 1) as latest_checkin_time
-                    FROM booking_customers bc
-                    JOIN customers c ON bc.customer_id = c.id
-                    JOIN tour_assignments ta ON ta.booking_id = bc.booking_id
-                    WHERE ta.id = :assignment_id
-                    ORDER BY bc.is_representative DESC, c.name ASC";
-
+      $sql = "SELECT * FROM tour_checkin_links 
+                    WHERE tour_assignment_id = :assignment_id 
+                    ORDER BY created_at DESC";
       $stmt = $this->conn->prepare($sql);
       $stmt->execute([':assignment_id' => $assignmentId]);
       return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-      die("Lỗi getCustomersByAssignment(): " . $e->getMessage());
+      die("Lỗi getCheckinLinks(): " . $e->getMessage());
     }
   }
 
-  // Kiểm tra khách đã check-in chưa
-  public function hasCheckedIn($assignmentId, $customerId)
+  // Tạo đợt check-in mới
+  public function createCheckinLink($assignmentId, $title, $note)
   {
     try {
-      $sql = "SELECT COUNT(*) as count 
-                    FROM customer_checkins 
-                    WHERE tour_assignment_id = ? 
-                    AND customer_id = ?";
-
+      $sql = "INSERT INTO tour_checkin_links (tour_assignment_id, title, note, created_by, created_at) 
+                    VALUES (:assignment_id, :title, :note, :created_by, NOW())";
       $stmt = $this->conn->prepare($sql);
-      $stmt->execute([$assignmentId, $customerId]);
-      $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-      return $result['count'] > 0;
-    } catch (PDOException $e) {
-      die("Lỗi hasCheckedIn(): " . $e->getMessage());
-    }
-  }
-
-  // Tạo check-in mới
-  public function createCheckin($data)
-  {
-    try {
-      $sql = "INSERT INTO customer_checkins 
-                    (tour_assignment_id, customer_id, 
-                     checkin_time, created_by, created_at)
-                    VALUES (?, ?, ?, ?, NOW())";
-
-      $stmt = $this->conn->prepare($sql);
-      return $stmt->execute([
-        $data['tour_assignment_id'],
-        $data['customer_id'],
-        $data['checkin_time'] ?? date('Y-m-d H:i:s'),
-        $data['created_by']
+      $stmt->execute([
+        ':assignment_id' => $assignmentId,
+        ':title' => $title,
+        ':note' => $note,
+        ':created_by' => $_SESSION['currentUser']['id'] ?? null
       ]);
+      return $this->conn->lastInsertId();
     } catch (PDOException $e) {
-      die("Lỗi createCheckin(): " . $e->getMessage());
+      die("Lỗi createCheckinLink(): " . $e->getMessage());
     }
   }
 
-  // Lấy lịch sử check-in
-  public function getCheckinHistory($assignmentId)
+  // Lấy danh sách khách hàng với trạng thái check-in cho một đợt cụ thể
+  public function getCustomersWithCheckinStatus($assignmentId, $checkinLinkId)
   {
     try {
-      $sql = "SELECT cc.*, c.name as customer_name, c.phone, c.email
-                    FROM customer_checkins cc
-                    JOIN customers c ON cc.customer_id = c.id
-                    WHERE cc.tour_assignment_id = ?
-                    ORDER BY cc.checkin_time DESC";
+      $sql = "SELECT c.*, bc.room_number,
+                           cc.id as checkin_id,
+                           cc.checkin_time
+                    FROM customers c
+                    JOIN booking_customers bc ON c.id = bc.customer_id
+                    JOIN bookings b ON bc.booking_id = b.id
+                    JOIN tour_assignments ta ON ta.booking_id = b.id
+                    LEFT JOIN customer_checkins cc ON cc.customer_id = c.id AND cc.tour_checkin_link_id = :link_id
+                    WHERE ta.id = :assignment_id
+                    ORDER BY c.name ASC";
 
       $stmt = $this->conn->prepare($sql);
-      $stmt->execute([$assignmentId]);
+      $stmt->execute([
+        ':assignment_id' => $assignmentId,
+        ':link_id' => $checkinLinkId
+      ]);
       return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-      die("Lỗi getCheckinHistory(): " . $e->getMessage());
+      die("Lỗi getCustomersWithCheckinStatus(): " . $e->getMessage());
     }
   }
 
-  // Lấy chi tiết check-in
-  public function getCheckinDetail($checkinId)
+  // Check-in khách hàng
+  public function checkinCustomer($checkinLinkId, $customerId)
   {
     try {
-      $sql = "SELECT cc.*, c.name as customer_name, c.phone, c.email,
-                    u.fullname as created_by_name
-                    FROM customer_checkins cc
-                    JOIN customers c ON cc.customer_id = c.id
-                    LEFT JOIN users u ON cc.created_by = u.id
-                    WHERE cc.id = ?";
+      // Kiểm tra đã check-in chưa
+      $sqlCheck = "SELECT id FROM customer_checkins WHERE tour_checkin_link_id = ? AND customer_id = ?";
+      $stmtCheck = $this->conn->prepare($sqlCheck);
+      $stmtCheck->execute([$checkinLinkId, $customerId]);
 
-      $stmt = $this->conn->prepare($sql);
-      $stmt->execute([$checkinId]);
-      return $stmt->fetch(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-      die("Lỗi getCheckinDetail(): " . $e->getMessage());
-    }
-  }
-
-  // Xóa check-in
-  public function deleteCheckin($checkinId)
-  {
-    try {
-      // Lấy thông tin check-in để xóa ảnh
-      $checkin = $this->getCheckinDetail($checkinId);
-
-      if ($checkin && !empty($checkin['image_url'])) {
-        $imagePath = __DIR__ . '/../../uploads/checkins/' . $checkin['image_url'];
-        if (file_exists($imagePath)) {
-          unlink($imagePath);
-        }
+      if ($stmtCheck->fetchColumn()) {
+        return true; // Đã check-in rồi
       }
 
-      $sql = "DELETE FROM customer_checkins WHERE id = ?";
+      // Thực hiện check-in
+      $sql = "INSERT INTO customer_checkins (tour_checkin_link_id, customer_id, checkin_time, created_by, created_at)
+                        VALUES (?, ?, NOW(), ?, NOW())";
       $stmt = $this->conn->prepare($sql);
-      return $stmt->execute([$checkinId]);
+      $stmt->execute([$checkinLinkId, $customerId, $_SESSION['currentUser']['id'] ?? null]);
+      return true;
     } catch (PDOException $e) {
-      die("Lỗi deleteCheckin(): " . $e->getMessage());
+      die("Lỗi checkinCustomer(): " . $e->getMessage());
     }
   }
 
-  // Thống kê check-in
-  public function getCheckinStats($assignmentId)
+  // Hủy check-in khách hàng
+  public function uncheckinCustomer($checkinLinkId, $customerId)
   {
     try {
-      $sql = "SELECT 
-                    COUNT(DISTINCT bc.customer_id) as total_customers,
-                    COUNT(DISTINCT cc.customer_id) as checked_in_count
-                    FROM booking_customers bc
-                    JOIN tour_assignments ta ON ta.booking_id = bc.booking_id
-                    LEFT JOIN customer_checkins cc ON cc.customer_id = bc.customer_id 
-                        AND cc.tour_assignment_id = ta.id
-                    WHERE ta.id = ?";
+      $sql = "DELETE FROM customer_checkins WHERE tour_checkin_link_id = ? AND customer_id = ?";
+      $stmt = $this->conn->prepare($sql);
+      $stmt->execute([$checkinLinkId, $customerId]);
+      return true;
+    } catch (PDOException $e) {
+      die("Lỗi uncheckinCustomer(): " . $e->getMessage());
+    }
+  }
 
+  // Xóa đợt check-in
+  public function deleteCheckinLink($linkId)
+  {
+    try {
+      $this->conn->beginTransaction();
+
+      // Xóa các check-in của khách trong đợt này
+      $sql1 = "DELETE FROM customer_checkins WHERE tour_checkin_link_id = ?";
+      $stmt1 = $this->conn->prepare($sql1);
+      $stmt1->execute([$linkId]);
+
+      // Xóa đợt check-in
+      $sql2 = "DELETE FROM tour_checkin_links WHERE id = ?";
+      $stmt2 = $this->conn->prepare($sql2);
+      $stmt2->execute([$linkId]);
+
+      $this->conn->commit();
+      return true;
+    } catch (PDOException $e) {
+      $this->conn->rollBack();
+      die("Lỗi deleteCheckinLink(): " . $e->getMessage());
+    }
+  }
+
+  // Kiểm tra thời gian tour
+  public function canCheckin($assignmentId)
+  {
+    try {
+      $sql = "SELECT b.start_date, b.end_date 
+                    FROM tour_assignments ta
+                    JOIN bookings b ON ta.booking_id = b.id
+                    WHERE ta.id = ?";
       $stmt = $this->conn->prepare($sql);
       $stmt->execute([$assignmentId]);
-      return $stmt->fetch(PDO::FETCH_ASSOC);
+      $tour = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      if (!$tour) return ['allowed' => false, 'message' => 'Tour không tồn tại'];
+
+      $today = date('Y-m-d');
+      if ($today < $tour['start_date']) {
+        return ['allowed' => false, 'message' => 'Tour chưa bắt đầu'];
+      }
+      if ($today > $tour['end_date']) {
+        return ['allowed' => false, 'message' => 'Tour đã kết thúc'];
+      }
+
+      return ['allowed' => true, 'message' => 'OK'];
     } catch (PDOException $e) {
-      die("Lỗi getCheckinStats(): " . $e->getMessage());
+      return ['allowed' => false, 'message' => $e->getMessage()];
     }
   }
 
@@ -162,65 +161,36 @@ class CheckinModel
   public function updateRoom($customerId, $bookingId, $room)
   {
     try {
-      $sql = "UPDATE booking_customers SET room_number = ? WHERE customer_id = ? AND booking_id = ?";
+      $sql = "UPDATE booking_customers 
+                    SET room_number = :room 
+                    WHERE customer_id = :customer_id AND booking_id = :booking_id";
       $stmt = $this->conn->prepare($sql);
-      return $stmt->execute([$room, $customerId, $bookingId]);
+      $stmt->execute([
+        ':room' => $room,
+        ':customer_id' => $customerId,
+        ':booking_id' => $bookingId
+      ]);
+      return true;
     } catch (PDOException $e) {
       die("Lỗi updateRoom(): " . $e->getMessage());
     }
   }
 
-  // Kiểm tra xem có thể check-in cho tour này không (dựa vào ngày)
-  public function canCheckin($assignmentId)
+  public function getCheckinLink($linkId, $assignmentId)
   {
     try {
-      // JOIN với bảng bookings để lấy start_date và end_date
-      $sql = "SELECT b.start_date, b.end_date 
-              FROM tour_assignments ta
-              JOIN bookings b ON ta.booking_id = b.id
-              WHERE ta.id = ?";
-
+      $sql = "SELECT tcl.*, ta.*, t.name as tour_name, b.start_date, b.end_date, b.booking_code
+            FROM tour_checkin_links tcl
+            JOIN tour_assignments ta ON tcl.tour_assignment_id = ta.id
+            JOIN bookings b ON ta.booking_id = b.id
+            JOIN tours t ON b.tour_id = t.id
+            WHERE tcl.id = ? AND ta.id = ?";
       $stmt = $this->conn->prepare($sql);
-      $stmt->execute([$assignmentId]);
-      $tour = $stmt->fetch(PDO::FETCH_ASSOC);
-
-      if (!$tour) {
-        return [
-          'allowed' => false,
-          'message' => 'Không tìm thấy thông tin tour!'
-        ];
-      }
-
-      $today = date('Y-m-d');
-      $startDate = $tour['start_date'];
-      $endDate = $tour['end_date'];
-
-      // Kiểm tra tour chưa bắt đầu
-      if ($today < $startDate) {
-        return [
-          'allowed' => false,
-          'message' => 'Chưa đến thời gian khởi hành! Tour bắt đầu từ ' . date('d/m/Y', strtotime($startDate))
-        ];
-      }
-
-      // Kiểm tra tour đã kết thúc
-      if ($today > $endDate) {
-        return [
-          'allowed' => false,
-          'message' => 'Tour đã kết thúc từ ngày ' . date('d/m/Y', strtotime($endDate))
-        ];
-      }
-
-      // Tour đang diễn ra
-      return [
-        'allowed' => true,
-        'message' => 'OK'
-      ];
+      $stmt->execute([$linkId, $assignmentId]);
+      $checkinLink = $stmt->fetch(PDO::FETCH_ASSOC);
+      return $checkinLink;
     } catch (PDOException $e) {
-      return [
-        'allowed' => false,
-        'message' => 'Lỗi kiểm tra thời gian tour: ' . $e->getMessage()
-      ];
+      die("Lỗi getCheckinLink(): " . $e->getMessage());
     }
   }
 }
