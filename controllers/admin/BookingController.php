@@ -330,7 +330,13 @@ class BookingController
                     $email = $row[1] ?? '';
                     $phone = $row[2] ?? '';
                     $address = $row[3] ?? '';
-                    $gender = $row[4] ?? 'other';
+                    $genderRaw = $row[4] ?? 'other';
+                    $gender = 'other';
+                    if (mb_strtolower($genderRaw) == 'nam') {
+                        $gender = 'male';
+                    } elseif (mb_strtolower($genderRaw) == 'nữ') {
+                        $gender = 'female';
+                    }
                     $passport = $row[5] ?? '';
 
                     if (empty($name)) continue;
