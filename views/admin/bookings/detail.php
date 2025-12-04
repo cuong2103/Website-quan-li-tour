@@ -102,6 +102,8 @@ require_once './views/components/sidebar.php';
             'payments'  => ['icon' => 'credit-card', 'label' => 'Thanh toán'],
             'contracts' => ['icon' => 'file-text', 'label' => 'Hợp đồng'],
             'room_assignment' => ['icon' => 'bed-double', 'label' => 'Xếp phòng'],
+            'checkin' => ['icon' => 'clipboard-check', 'label' => 'Check-in'],
+            'journal' => ['icon' => 'book-open', 'label' => 'Nhật ký'],
         ];
         ?>
         <?php foreach ($tabs as $key => $t): ?>
@@ -496,6 +498,221 @@ require_once './views/components/sidebar.php';
                     </tbody>
                 </table>
             </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Tab Check-in -->
+    <?php if ($tab == 'checkin'): ?>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex justify-between flex-wrap items-center gap-3 mb-4">
+                <h2 class="text-base font-semibold text-gray-800">Quản lý Check-in</h2>
+            </div>
+
+            <?php if (!empty($checkinLinks)): ?>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3">STT</th>
+                                <th class="px-4 py-3">Tiêu đề</th>
+                                <th class="px-4 py-3">Ghi chú</th>
+                                <th class="px-4 py-3">Thời gian tạo</th>
+                                <th class="px-4 py-3">Người tạo</th>
+                                <th class="px-4 py-3">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($checkinLinks as $i => $link): ?>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <td class="px-4 py-3"><?= $i + 1 ?></td>
+                                    <td class="px-4 py-3 font-medium text-gray-900"><?= htmlspecialchars($link['title']) ?></td>
+                                    <td class="px-4 py-3"><?= htmlspecialchars($link['note'] ?? '-') ?></td>
+                                    <td class="px-4 py-3"><?= date('H:i d/m/Y', strtotime($link['created_at'])) ?></td>
+                                    <td class="px-4 py-3">
+                                        <?php
+                                        if ($link['created_by']) {
+                                            $userSql = "SELECT fullname FROM users WHERE id = ?";
+                                            $userStmt = connectDB()->prepare($userSql);
+                                            $userStmt->execute([$link['created_by']]);
+                                            $userName = $userStmt->fetchColumn();
+                                            echo htmlspecialchars($userName ?? 'N/A');
+                                        } else {
+                                            echo 'N/A';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <button onclick="document.getElementById('checkin-modal-<?= $link['id'] ?>').classList.remove('hidden')"
+                                            class="text-blue-600 hover:text-blue-800 font-medium text-xs flex items-center gap-1">
+                                            <i data-lucide="eye" class="w-4 h-4"></i> Chi tiết
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Modals for Details -->
+                <?php foreach ($checkinLinks as $link): ?>
+                    <div id="checkin-modal-<?= $link['id'] ?>" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                        <div class="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                            <div class="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-800">Chi tiết: <?= htmlspecialchars($link['title']) ?></h3>
+                                    <p class="text-sm text-gray-500">Tour: <?= htmlspecialchars($booking['tour_name']) ?> (<?= $booking['booking_code'] ?>)</p>
+                                </div>
+                                <button onclick="document.getElementById('checkin-modal-<?= $link['id'] ?>').classList.add('hidden')"
+                                    class="text-gray-400 hover:text-gray-600">
+                                    <i data-lucide="x" class="w-6 h-6"></i>
+                                </button>
+                            </div>
+
+                            <div class="p-6">
+                                <?php
+                                // Fetch customers with status
+                                $customersWithStatus = $this->checkinModel->getCustomersWithCheckinStatus($link['tour_assignment_id'], $link['id']);
+                                ?>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm text-left text-gray-500">
+                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-3">STT</th>
+                                                <th class="px-4 py-3">Tên khách hàng</th>
+                                                <th class="px-4 py-3">SĐT</th>
+                                                <th class="px-4 py-3">Email</th>
+                                                <th class="px-4 py-3">Số phòng</th>
+                                                <th class="px-4 py-3">Trạng thái</th>
+                                                <th class="px-4 py-3">Thời gian</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php if (!empty($customersWithStatus)): ?>
+                                                <?php foreach ($customersWithStatus as $idx => $c): ?>
+                                                    <tr class="bg-white border-b hover:bg-gray-50">
+                                                        <td class="px-4 py-3"><?= $idx + 1 ?></td>
+                                                        <td class="px-4 py-3 font-medium text-gray-900"><?= htmlspecialchars($c['name']) ?></td>
+                                                        <td class="px-4 py-3"><?= htmlspecialchars($c['phone']) ?></td>
+                                                        <td class="px-4 py-3"><?= htmlspecialchars($c['email'] ?? '-') ?></td>
+                                                        <td class="px-4 py-3"><?= htmlspecialchars($c['room_number'] ?? '-') ?></td>
+                                                        <td class="px-4 py-3">
+                                                            <?php if ($c['checkin_id']): ?>
+                                                                <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium flex items-center gap-1 w-fit">
+                                                                    <i data-lucide="check-circle" class="w-3 h-3"></i> Đã check-in
+                                                                </span>
+                                                            <?php else: ?>
+                                                                <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs font-medium">Chưa check-in</span>
+                                                            <?php endif; ?>
+                                                        </td>
+                                                        <td class="px-4 py-3">
+                                                            <?= $c['checkin_time'] ? date('H:i d/m/Y', strtotime($c['checkin_time'])) : '-' ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
+                                                <tr>
+                                                    <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                                                        Không có khách hàng nào.
+                                                    </td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="p-6 border-t border-gray-100 bg-gray-50 flex justify-end rounded-b-xl">
+                                <button onclick="document.getElementById('checkin-modal-<?= $link['id'] ?>').classList.add('hidden')"
+                                    class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg text-sm font-medium">
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+
+            <?php else: ?>
+                <p class="text-gray-500 text-sm flex items-center gap-2">
+                    <i class="w-4 h-4 text-gray-400" data-lucide="info"></i>
+                    Chưa có đợt check-in nào được tạo.
+                </p>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
+    <!-- Tab Nhật ký -->
+    <?php if ($tab == 'journal'): ?>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex justify-between flex-wrap items-center gap-3 mb-4">
+                <h2 class="text-base font-semibold text-gray-800">Nhật ký Tour</h2>
+            </div>
+
+            <?php if (!empty($journals)): ?>
+                <div class="space-y-4">
+                    <?php foreach ($journals as $journal): ?>
+                        <div class="p-4 border border-gray-200 rounded-xl bg-white hover:bg-gray-50">
+                            <div class="flex items-start gap-4">
+                                <!-- Thumbnail nếu có -->
+                                <?php if (!empty($journal['thumbnail'])): ?>
+                                    <div class="flex-shrink-0">
+                                        <img src="<?= BASE_URL . 'uploads/journals/' . $journal['thumbnail'] ?>"
+                                            alt="Journal thumbnail"
+                                            class="w-20 h-20 object-cover rounded-lg">
+                                    </div>
+                                <?php endif; ?>
+
+                                <div class="flex-1">
+                                    <!-- Ngày và loại -->
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                            <i class="w-4 h-4 text-blue-600" data-lucide="calendar"></i>
+                                            <?= date('d/m/Y', strtotime($journal['date'])) ?>
+                                        </span>
+                                        <?php
+                                        $typeLabels = [
+                                            'daily' => ['label' => 'Hàng ngày', 'class' => 'bg-blue-100 text-blue-700'],
+                                            'incident' => ['label' => 'Sự cố', 'class' => 'bg-red-100 text-red-700'],
+                                            'other' => ['label' => 'Khác', 'class' => 'bg-gray-100 text-gray-700']
+                                        ];
+                                        $typeInfo = $typeLabels[$journal['type']] ?? $typeLabels['other'];
+                                        ?>
+                                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold <?= $typeInfo['class'] ?>">
+                                            <?= $typeInfo['label'] ?>
+                                        </span>
+                                    </div>
+
+                                    <!-- Nội dung -->
+                                    <p class="text-sm text-gray-800 mb-2"><?= nl2br(htmlspecialchars($journal['content'])) ?></p>
+
+                                    <!-- Người tạo -->
+                                    <p class="text-xs text-gray-500 flex items-center gap-1">
+                                        <i class="w-3 h-3" data-lucide="user"></i>
+                                        Ghi bởi: <?= htmlspecialchars($journal['created_by_name'] ?? 'N/A') ?>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Xem chi tiết nếu có ảnh -->
+                            <?php
+                            $journalImages = $this->journalModel->getImages($journal['id']);
+                            if (count($journalImages) > 1):
+                            ?>
+                                <div class="mt-3 pt-3 border-t border-gray-200">
+                                    <p class="text-xs text-gray-600 flex items-center gap-1">
+                                        <i class="w-3 h-3" data-lucide="images"></i>
+                                        <?= count($journalImages) ?> ảnh đính kèm
+                                    </p>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="text-gray-500 text-sm flex items-center gap-2">
+                    <i class="w-4 h-4 text-gray-400" data-lucide="info"></i>
+                    Chưa có nhật ký nào được ghi.
+                </p>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 </main>
