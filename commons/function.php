@@ -216,3 +216,39 @@ function getCurrentDay($startDate, $endDate)
     $diff = $start->diff($today);
     return $diff->days + 1; // +1 ngày bắt đầu
 }
+
+// Lấy danh sách trạng thái booking
+function getBookingStatuses()
+{
+    return [
+        'pending' => 'Chờ thanh toán',
+        'deposited' => 'Đã cọc',
+        'paid' => 'Đã thanh toán đủ',
+        'completed' => 'Hoàn thành Tour',
+        'cancelled' => 'Đã hủy'
+    ];
+}
+
+// Hiển thị badge trạng thái booking
+function renderStatusBadge($status)
+{
+    switch ($status) {
+        case 'pending': // Chờ thanh toán
+            return '<span class="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700">Chờ thanh toán</span>';
+
+        case 'deposited': // Đã cọc
+            return '<span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">Đã cọc</span>';
+
+        case 'paid': // Đã thanh toán đủ
+            return '<span class="px-3 py-1 text-xs font-medium rounded-full bg-sky-100 text-sky-700">Đã thanh toán đủ</span>';
+
+        case 'cancelled': // Đã hủy
+            return '<span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">Đã hủy</span>';
+
+        case 'completed': // Hoàn thành Tour
+            return '<span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">Hoàn thành Tour</span>';
+
+        default:
+            return '<span class="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">Không rõ</span>';
+    }
+}
