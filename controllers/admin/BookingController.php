@@ -7,6 +7,8 @@ class BookingController
     public $serviceModel;
     public $contractModel;
     public $paymentModel;
+    public $checkinModel;
+    public $journalModel;
 
     public function __construct()
     {
@@ -17,6 +19,8 @@ class BookingController
         $this->serviceModel = new ServiceModel();
         $this->contractModel = new ContractModel();
         $this->paymentModel = new PaymentModel();
+        $this->checkinModel = new CheckinModel();
+        $this->journalModel = new JournalModel();
     }
 
     // Hiển thị danh sách booking
@@ -327,6 +331,10 @@ class BookingController
         $bookingServices = $this->bookingModel->getServicesByBooking($id);
         $bookingContracts = $this->contractModel->getByBookingId($id);
         $bookingPayments = $this->paymentModel->getAllByBooking($booking['id']);
+
+        // Lấy dữ liệu cho tab check-in và journal
+        $checkinLinks = $this->checkinModel->getCheckinLinksByBookingId($id);
+        $journals = $this->journalModel->getJournalsByBookingId($id);
         require_once './views/admin/bookings/detail.php';
     }
     // hàm auto cập nhật trạng thái
