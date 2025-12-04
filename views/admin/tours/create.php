@@ -11,9 +11,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
     <div class="flex items-center justify-between mb-8">
       <div class="flex items-center gap-4">
         <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
+          <i data-lucide="arrow-left" class="w-6 h-6"></i>
         </button>
         <div>
           <h2 class="text-2xl font-bold text-gray-900">Tạo Tour mới</h2>
@@ -132,9 +130,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
           <div class="flex items-center justify-between my-6">
             <h3 class="text-lg font-semibold text-gray-900">Lịch trình tour</h3>
             <button type="button" id="add-day" class="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium text-sm">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
+              <i data-lucide="plus" class="w-5 h-5"></i>
               Thêm ngày
             </button>
           </div>
@@ -147,9 +143,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
                 <h4 class="font-medium text-gray-900">Ngày <?= $dayNum ?></h4>
                 <?php if ($i > 0): ?>
                   <button type="button" class="remove-day-btn p-2 text-red-600 hover:text-red-700 text-sm font-medium" data-day="<?= $dayNum ?>">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <i data-lucide="x" class="w-5 h-5"></i>
                   </button>
                 <?php endif; ?>
               </div>
@@ -259,9 +253,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
         <div class="flex items-center justify-between">
           <h4 class="font-medium text-gray-900">Ngày ${dayCount}</h4>
           <button type="button" class="remove-day-btn p-2 text-red-600 hover:text-red-700 text-sm font-medium" data-day="${dayCount}">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <i data-lucide="x" class="w-5 h-5"></i>
           </button>
         </div>
         
