@@ -193,4 +193,39 @@ class CheckinModel
       die("Lỗi getCheckinLink(): " . $e->getMessage());
     }
   }
+
+  // Lấy tất cả check-in links theo booking_id
+  public function getCheckinLinksByBookingId($bookingId)
+  {
+    try {
+      $sql = "SELECT tcl.*, 
+                       (SELECT COUNT(*) FROM customer_checkins cc WHERE cc.tour_checkin_link_id = tcl.id) as checked_count
+                FROM tour_checkin_links tcl
+                JOIN tour_assignments ta ON tcl.tour_assignment_id = ta.id
+                WHERE ta.booking_id = :booking_id
+                ORDER BY tcl.created_at DESC";
+      $stmt = $this->conn->prepare($sql);
+      $stmt->execute([':booking_id' => $bookingId]);
+      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+      die("Lỗi getCheckinLinksByBookingId(): " . $e->getMessage());
+    }
+  }
+
+  // Lấy danh sách khách hàng đã check-in cho một link cụ thể
+  public function getCheckedCustomers($checkinLinkId)
+  {
+    try {
+      $sql = "SELECT c.*, cc.checkin_time
+                FROM customer_checkins cc
+                JOIN customers c ON cc.customer_id = c.id
+                WHERE cc.tour_checkin_link_id = :link_id
+                ORDER BY cc.checkin_time DESC";
+      $stmt = $this->conn->prepare($sql);
+      $stmt->execute([':link_id' => $checkinLinkId]);
+      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+      die("Lỗi getCheckedCustomers(): " . $e->getMessage());
+    }
+  }
 }

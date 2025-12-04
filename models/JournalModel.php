@@ -185,4 +185,23 @@ class JournalModel
             die("Lỗi truy vấn: getTourByAssignment - " . $e->getMessage());
         }
     }
+
+    // Lấy tất cả journals theo booking_id
+    public function getJournalsByBookingId($bookingId)
+    {
+        try {
+            $sql = "SELECT j.*, u.fullname as created_by_name,
+                           (SELECT image_url FROM journal_images WHERE journal_id = j.id ORDER BY id ASC LIMIT 1) AS thumbnail
+                    FROM journals j
+                    INNER JOIN tour_assignments ta ON ta.id = j.tour_assignment_id
+                    LEFT JOIN users u ON j.created_by = u.id
+                    WHERE ta.booking_id = :booking_id
+                    ORDER BY j.date DESC, j.id DESC";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([':booking_id' => $bookingId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            die("Lỗi truy vấn: getJournalsByBookingId - " . $e->getMessage());
+        }
+    }
 }

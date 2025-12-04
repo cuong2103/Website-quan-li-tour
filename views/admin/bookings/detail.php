@@ -102,6 +102,8 @@ require_once './views/components/sidebar.php';
             'payments'  => ['icon' => 'credit-card', 'label' => 'Thanh toán'],
             'contracts' => ['icon' => 'file-text', 'label' => 'Hợp đồng'],
             'room_assignment' => ['icon' => 'bed-double', 'label' => 'Xếp phòng'],
+            'checkin' => ['icon' => 'clipboard-check', 'label' => 'Check-in'],
+            'journal' => ['icon' => 'book-open', 'label' => 'Nhật ký'],
         ];
         ?>
         <?php foreach ($tabs as $key => $t): ?>
@@ -392,7 +394,7 @@ require_once './views/components/sidebar.php';
                             <?php
                             $statusClass = 'bg-gray-100 text-gray-700';
                             $statusText = 'Không xác định';
-                            
+
                             if ($c['status'] === 'active') {
                                 $statusClass = 'bg-green-200 text-green-700';
                                 $statusText = 'Đang hoạt động';
@@ -496,6 +498,144 @@ require_once './views/components/sidebar.php';
                     </tbody>
                 </table>
             </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Tab Check-in -->
+    <?php if ($tab == 'checkin'): ?>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex justify-between flex-wrap items-center gap-3 mb-4">
+                <h2 class="text-base font-semibold text-gray-800">Danh sách Check-in</h2>
+            </div>
+
+            <?php if (!empty($checkinLinks)): ?>
+                <div class="space-y-4">
+                    <?php foreach ($checkinLinks as $link): ?>
+                        <div class="p-4 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100">
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-800 flex items-center gap-2">
+                                        <i class="w-5 h-5 text-blue-600" data-lucide="clipboard-check"></i>
+                                        <?= htmlspecialchars($link['title']) ?>
+                                    </h3>
+                                    <?php if (!empty($link['note'])): ?>
+                                        <p class="text-sm text-gray-600 mt-1"><?= nl2br(htmlspecialchars($link['note'])) ?></p>
+                                    <?php endif; ?>
+                                    <p class="text-xs text-gray-500 mt-2">
+                                        <i class="w-3 h-3" data-lucide="calendar"></i>
+                                        Tạo lúc: <?= date('d/m/Y H:i', strtotime($link['created_at'])) ?>
+                                    </p>
+                                </div>
+                                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-semibold">
+                                    <?= $link['checked_count'] ?> người đã check-in
+                                </span>
+                            </div>
+
+                            <!-- Danh sách khách đã check-in -->
+                            <?php
+                            $checkedCustomers = $this->checkinModel->getCheckedCustomers($link['id']);
+                            if (!empty($checkedCustomers)):
+                            ?>
+                                <div class="mt-3 pt-3 border-t border-gray-200">
+                                    <p class="text-sm font-medium text-gray-700 mb-2">Khách đã check-in:</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                        <?php foreach ($checkedCustomers as $customer): ?>
+                                            <div class="flex items-center gap-2 text-sm bg-white p-2 rounded-lg">
+                                                <i class="w-4 h-4 text-green-600" data-lucide="check-circle"></i>
+                                                <span class="font-medium"><?= htmlspecialchars($customer['name']) ?></span>
+                                                <span class="text-gray-500 text-xs ml-auto">
+                                                    <?= date('H:i', strtotime($customer['checkin_time'])) ?>
+                                                </span>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="text-gray-500 text-sm flex items-center gap-2">
+                    <i class="w-4 h-4 text-gray-400" data-lucide="info"></i>
+                    Chưa có đợt check-in nào được tạo.
+                </p>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
+    <!-- Tab Nhật ký -->
+    <?php if ($tab == 'journal'): ?>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div class="flex justify-between flex-wrap items-center gap-3 mb-4">
+                <h2 class="text-base font-semibold text-gray-800">Nhật ký Tour</h2>
+            </div>
+
+            <?php if (!empty($journals)): ?>
+                <div class="space-y-4">
+                    <?php foreach ($journals as $journal): ?>
+                        <div class="p-4 border border-gray-200 rounded-xl bg-white hover:bg-gray-50">
+                            <div class="flex items-start gap-4">
+                                <!-- Thumbnail nếu có -->
+                                <?php if (!empty($journal['thumbnail'])): ?>
+                                    <div class="flex-shrink-0">
+                                        <img src="<?= htmlspecialchars($journal['thumbnail']) ?>"
+                                            alt="Journal thumbnail"
+                                            class="w-20 h-20 object-cover rounded-lg">
+                                    </div>
+                                <?php endif; ?>
+
+                                <div class="flex-1">
+                                    <!-- Ngày và loại -->
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                            <i class="w-4 h-4 text-blue-600" data-lucide="calendar"></i>
+                                            <?= date('d/m/Y', strtotime($journal['date'])) ?>
+                                        </span>
+                                        <?php
+                                        $typeLabels = [
+                                            'daily' => ['label' => 'Hàng ngày', 'class' => 'bg-blue-100 text-blue-700'],
+                                            'incident' => ['label' => 'Sự cố', 'class' => 'bg-red-100 text-red-700'],
+                                            'other' => ['label' => 'Khác', 'class' => 'bg-gray-100 text-gray-700']
+                                        ];
+                                        $typeInfo = $typeLabels[$journal['type']] ?? $typeLabels['other'];
+                                        ?>
+                                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold <?= $typeInfo['class'] ?>">
+                                            <?= $typeInfo['label'] ?>
+                                        </span>
+                                    </div>
+
+                                    <!-- Nội dung -->
+                                    <p class="text-sm text-gray-800 mb-2"><?= nl2br(htmlspecialchars($journal['content'])) ?></p>
+
+                                    <!-- Người tạo -->
+                                    <p class="text-xs text-gray-500 flex items-center gap-1">
+                                        <i class="w-3 h-3" data-lucide="user"></i>
+                                        Ghi bởi: <?= htmlspecialchars($journal['created_by_name'] ?? 'N/A') ?>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Xem chi tiết nếu có ảnh -->
+                            <?php
+                            $journalImages = $this->journalModel->getImages($journal['id']);
+                            if (count($journalImages) > 1):
+                            ?>
+                                <div class="mt-3 pt-3 border-t border-gray-200">
+                                    <p class="text-xs text-gray-600 flex items-center gap-1">
+                                        <i class="w-3 h-3" data-lucide="images"></i>
+                                        <?= count($journalImages) ?> ảnh đính kèm
+                                    </p>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p class="text-gray-500 text-sm flex items-center gap-2">
+                    <i class="w-4 h-4 text-gray-400" data-lucide="info"></i>
+                    Chưa có nhật ký nào được ghi.
+                </p>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
 </main>
