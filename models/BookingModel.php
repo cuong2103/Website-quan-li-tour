@@ -467,4 +467,117 @@ class BookingModel
             die("Lỗi updateRoomNumber: " . $e->getMessage());
         }
     }
+
+    // Thống kê booking và doanh thu tháng này vs tháng trước
+    public function getMonthlyStats()
+    {
+        $currentMonth = date('m');
+        $currentYear = date('Y');
+        $lastMonth = date('m', strtotime('-1 month'));
+        $lastMonthYear = date('Y', strtotime('-1 month'));
+
+        // Booking mới
+        $sqlBooking = "SELECT 
+            SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as current_month_count,
+            SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as last_month_count
+            FROM bookings";
+        $stmtBooking = $this->conn->prepare($sqlBooking);
+        $stmtBooking->execute([$currentMonth, $currentYear, $lastMonth, $lastMonthYear]);
+        $bookingStats = $stmtBooking->fetch(PDO::FETCH_ASSOC);
+
+        // Doanh thu (tính tất cả các khoản thanh toán đã ghi nhận)
+        $sqlRevenue = "SELECT 
+            SUM(CASE WHEN MONTH(payment_date) = ? AND YEAR(payment_date) = ? THEN amount ELSE 0 END) as current_month_revenue,
+            SUM(CASE WHEN MONTH(payment_date) = ? AND YEAR(payment_date) = ? THEN amount ELSE 0 END) as last_month_revenue
+            FROM payments";
+        $stmtRevenue = $this->conn->prepare($sqlRevenue);
+        $stmtRevenue->execute([$currentMonth, $currentYear, $lastMonth, $lastMonthYear]);
+        $revenueStats = $stmtRevenue->fetch(PDO::FETCH_ASSOC);
+
+        return [
+            'bookings' => $bookingStats,
+            'revenue' => $revenueStats
+        ];
+    }
+
+    // Doanh thu 6 tháng gần nhất (đảm bảo đủ 6 tháng)
+    public function getRecentRevenue()
+    {
+        // 1. Tạo mảng 6 tháng gần nhất với giá trị 0
+        $months = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = date('Y-m', strtotime("-$i months"));
+            $months[$month] = [
+                'month' => $month,
+                'total' => 0
+            ];
+        }
+
+        // 2. Lấy dữ liệu thực tế từ DB (bỏ điều kiện status = completed)
+        $sql = "SELECT 
+                    DATE_FORMAT(payment_date, '%Y-%m') as month,
+                    SUM(amount) as total
+                FROM payments 
+                WHERE payment_date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+                GROUP BY DATE_FORMAT(payment_date, '%Y-%m')";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // 3. Merge dữ liệu DB vào mảng tháng
+        foreach ($results as $row) {
+            if (isset($months[$row['month']])) {
+                $months[$row['month']]['total'] = (float)$row['total'];
+            }
+        }
+
+        // 4. Trả về mảng tuần tự (bỏ keys)
+        return array_values($months);
+    }
+
+    // Thống kê trạng thái booking
+    public function getBookingStatusStats()
+    {
+        // Khởi tạo mảng 5 trạng thái mặc định = 0
+        // pending, deposited, paid, cancelled, completed
+        $stats = [
+            'pending' => 0,
+            'deposited' => 0,
+            'paid' => 0,
+            'cancelled' => 0,
+            'completed' => 0
+        ];
+
+        // Lấy dữ liệu từ DB
+        $sql = "SELECT status, COUNT(*) as count FROM bookings GROUP BY status";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $results = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // Trả về dạng [status => count]
+
+        // Merge dữ liệu DB vào mảng mặc định
+        foreach ($results as $status => $count) {
+            if (isset($stats[$status])) {
+                $stats[$status] = (int)$count;
+            }
+        }
+
+        return $stats;
+    }
+
+    // Lấy booking chờ xử lý mới nhất
+    public function getPendingBookings($limit = 5)
+    {
+        $sql = "SELECT b.*, t.name as tour_name, 
+                       (SELECT name FROM customers c JOIN booking_customers bc ON c.id = bc.customer_id WHERE bc.booking_id = b.id AND bc.is_representative = 1 LIMIT 1) as customer_name
+                FROM bookings b
+                JOIN tours t ON b.tour_id = t.id
+                WHERE b.status = 'pending' 
+                ORDER BY b.created_at DESC 
+                LIMIT ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(1, $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

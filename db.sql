@@ -411,6 +411,8 @@ ALTER TABLE `customer_checkins`
   ADD CONSTRAINT `fk_customer_checkins_link` FOREIGN KEY (`tour_checkin_link_id`) REFERENCES `tour_checkin_links` (`id`) ON DELETE CASCADE;
 ALTER TABLE `tour_checkin_links`
   ADD CONSTRAINT `fk_tour_checkin_links_assignment` FOREIGN KEY (`tour_assignment_id`) REFERENCES `tour_assignments` (`id`);
+ALTER TABLE `customer_checkins`
+  ADD CONSTRAINT `fk_customer_checkins_link` FOREIGN KEY (`tour_checkin_link_id`) REFERENCES `tour_checkin_links`(`id`);
 
 
 ALTER TABLE `journals`

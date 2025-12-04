@@ -21,7 +21,7 @@
   <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
     <?php if ($role === 'Admin'): ?>
 
-      <a href="#" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-indigo-50 text-indigo-700">
+      <a href="<?= BASE_URL ?>" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-indigo-50 text-indigo-700">
         <i class="mr-3 w-6 h-6" data-lucide="layout-dashboard"></i>
         Dashboard
       </a>
@@ -88,7 +88,7 @@
           <a href="<?= BASE_URL . '?act=user-on-leave' ?>" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Nhân viên nghỉ phép</a>
         </div>
       </div>
-      
+
       <!-- Thông báo -->
       <a href="<?= BASE_URL . '?act=notifications' ?>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
         <i class="mr-3 w-6 h-6" data-lucide="megaphone"></i>
@@ -125,18 +125,18 @@
       </a>
 
       <!-- Tài khoản -->
-      
-      <?php endif; ?>
 
-      <!-- Thông báo -->
-      <a href="<?= BASE_URL ?>?act=my-notifications"
-        class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700  hover:bg-gray-100 rounded-lg transition">
-        <div class="flex items-center">
-          <i data-lucide="bell" class="mr-3 w-6 h-6"></i>
-          Thông báo
-        </div>
-        <?= ($_SESSION['unreadCount'] ?? '') > 0 ? '<span class="ml-auto w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">' . $_SESSION['unreadCount'] . '</span>' : '' ?>
-      </a>
+    <?php endif; ?>
+
+    <!-- Thông báo -->
+    <a href="<?= BASE_URL ?>?act=my-notifications"
+      class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700  hover:bg-gray-100 rounded-lg transition">
+      <div class="flex items-center">
+        <i data-lucide="bell" class="mr-3 w-6 h-6"></i>
+        Thông báo
+      </div>
+      <?= ($_SESSION['unreadCount'] ?? '') > 0 ? '<span class="ml-auto w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">' . $_SESSION['unreadCount'] . '</span>' : '' ?>
+    </a>
   </nav>
   <!-- Đăng xuất -->
   <div class="border-t border-gray-200 px-4 py-4">
