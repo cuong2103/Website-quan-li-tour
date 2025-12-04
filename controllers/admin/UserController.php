@@ -12,7 +12,13 @@ class UserController
 
     public function index()
     {
-        $users = $this->userModel->getAll();
+        // Lấy tham số tìm kiếm và lọc
+        $search = $_GET['search'] ?? '';
+        $role = $_GET['role'] ?? '';
+
+        // Lấy danh sách users với filter
+        $users = $this->userModel->getAll($search, $role);
+
         require './views/admin/User_management/index.php';
     }
 
@@ -52,16 +58,13 @@ class UserController
             'fullname'    => $_POST['fullname'] ?? '',
             'email'       => $_POST['email'] ?? '',
             'phone'       => $_POST['phone'] ?? '',
-            'roles'       => isset($_POST['roles']) ? (int)$_POST['roles'] : 2,
+            'roles'       => $_POST['roles'] ?? 'guide',
             'status'      => isset($_POST['status']) ? (int)$_POST['status'] : 1,
             'password'    => !empty($_POST['password'])
                 ? password_hash($_POST['password'], PASSWORD_DEFAULT)
                 : password_hash('123456', PASSWORD_DEFAULT),
-            'birthday'    => $_POST['birthday'] ?? null,
-            'gender'      => $_POST['gender'] ?? null,
-            'address'     => $_POST['address'] ?? null,
-            'start_date'  => $_POST['start_date'] ?? null,
-            'certificate' => $_POST['certificate'] ?? null,
+            'created_by'  => $_SESSION['currentUser']['id'] ?? null,
+            'updated_by'  => $_SESSION['currentUser']['id'] ?? null,
         ];
         // --- Upload avatar trước khi lưu ---
         if (!empty($_FILES['avatar']['name']) && $_FILES['avatar']['error'] == 0) {
@@ -104,7 +107,31 @@ class UserController
         // Check email tồn tại
         if ($this->userModel->emailExists($email, $id)) {
             Message::set('error', 'Email đã tồn tại');
-            redirect("?act=user-edit&id=$id");
+            redirect("user-edit&id=$id");
+        }
+
+        // Lấy thông tin hiện tại để check nghỉ phép
+        $currentUser = $this->userModel->getById($id);
+
+        // Logic: Nếu đang trong thời gian nghỉ phép thì KHÔNG ĐƯỢC set status = 1 (Hoạt động)
+        // Logic: Nếu đang trong thời gian nghỉ phép thì KHÔNG ĐƯỢC set status = 1 (Hoạt động)
+        $isOnLeave = false;
+        if (!empty($currentUser['leave_start']) && !empty($currentUser['leave_end'])) {
+            $today = new DateTime();
+            $today->setTime(0, 0, 0);
+            $start = new DateTime($currentUser['leave_start']);
+            $start->setTime(0, 0, 0);
+            $end = new DateTime($currentUser['leave_end']);
+            $end->setTime(0, 0, 0);
+
+            if ($today >= $start && $today <= $end) {
+                $isOnLeave = true;
+            }
+        }
+
+        if ($isOnLeave && $status == 1) {
+            $status = 0; // Force về tạm dừng
+            Message::set('warning', 'Nhân viên đang trong thời gian nghỉ phép, trạng thái được giữ là "Tạm dừng"');
         }
 
         // --- Xử lý avatar nếu có upload mới ---
@@ -113,11 +140,15 @@ class UserController
             'email' => $email,
             'phone' => $phone,
             'roles' => $roles,
-            'status' => $status
+            'status' => $status,
+            'updated_by' => $_SESSION['currentUser']['id'] ?? null,
         ];
 
-        // Lấy avatar cũ từ DB
-        $currentUser = $this->userModel->getById($id);
+        if (!empty($_POST['password'])) {
+            $data['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        }
+
+        // Lấy avatar cũ từ DB (đã lấy ở trên)
 
         if (!empty($_FILES['avatar']['name']) && $_FILES['avatar']['error'] == 0) {
             $avatar = $_FILES['avatar'];
@@ -137,19 +168,46 @@ class UserController
         $result = $this->userModel->update($id, $data);
 
         if ($result) {
-            Message::set('success', 'Cập nhật thành công');
+            // Chỉ set success nếu chưa có warning (trường hợp bị force status)
+            if (!isset($_SESSION['flash_message']) || $_SESSION['flash_message']['type'] !== 'warning') {
+                Message::set('success', 'Cập nhật thành công');
+            }
         } else {
             Message::set('error', 'Cập nhật thất bại');
         }
 
         redirect("user");
     }
+
     public function delete()
     {
         $id = $_GET['id'] ?? null;
         if ($id === $_SESSION['currentUser']['id']) {
             Message::set('error', 'Không thể xóa chính bạn');
+            redirect("user");
         }
+
+        // Check active assignments
+        $tourAssignmentModel = new TourAssignmentModel();
+        $activeAssignments = $tourAssignmentModel->getAssignmentsByGuide($id);
+        $hasActiveBooking = false;
+        $today = new DateTime();
+        $today->setTime(0, 0, 0);
+
+        foreach ($activeAssignments as $assignment) {
+            $endDate = new DateTime($assignment['end_date']);
+            $endDate->setTime(0, 0, 0);
+            if ($endDate >= $today) {
+                $hasActiveBooking = true;
+                break;
+            }
+        }
+
+        if ($hasActiveBooking) {
+            Message::set('error', 'Không thể xóa hướng dẫn viên này vì đang có lịch tour chưa kết thúc!');
+            redirect("user");
+        }
+
         if ($id) {
             $result = $this->userModel->delete($id);
             if ($result === "FOREIGN_KEY_CONSTRAINT") {
@@ -165,5 +223,108 @@ class UserController
         } else {
             echo "ID nhân viên không hợp lệ!";
         }
+    }
+
+    // CẬP NHẬT THÔNG TIN NGHỈ PHÉP
+    public function updateLeave()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect("user");
+        }
+
+        $id = $_POST['id'] ?? null;
+        $leave_start = !empty($_POST['leave_start']) ? $_POST['leave_start'] : null;
+        $leave_end = !empty($_POST['leave_end']) ? $_POST['leave_end'] : null;
+
+        if (!$id) {
+            Message::set('error', 'ID không hợp lệ');
+            redirect("user");
+        }
+
+        // Trường hợp xóa nghỉ phép (cả 2 trường trống)
+        if (empty($leave_start) && empty($leave_end)) {
+            $sql = "UPDATE users SET leave_start = NULL, leave_end = NULL, status = 1, updated_by = :updated_by, updated_at = NOW() WHERE id = :id";
+            $stmt = $this->userModel->conn->prepare($sql);
+            $result = $stmt->execute([
+                ':id' => $id,
+                ':updated_by' => $_SESSION['currentUser']['id'] ?? null,
+            ]);
+
+            if ($result) {
+                Message::set('success', "Đã xóa thông tin nghỉ phép và chuyển trạng thái sang Hoạt động");
+            } else {
+                Message::set('error', "Cập nhật thất bại");
+            }
+            redirect("user-detail&id=$id");
+            return;
+        }
+
+        // Validate: Nếu có ngày bắt đầu thì phải có ngày kết thúc và ngược lại
+        if (($leave_start && !$leave_end) || (!$leave_start && $leave_end)) {
+            Message::set('error', 'Vui lòng nhập đầy đủ ngày bắt đầu và kết thúc nghỉ phép');
+            redirect("user-detail&id=$id");
+        }
+
+        // Validate: Ngày kết thúc phải sau ngày bắt đầu
+        if ($leave_start && $leave_end && strtotime($leave_end) < strtotime($leave_start)) {
+            Message::set('error', 'Ngày kết thúc phải sau ngày bắt đầu');
+            redirect("user-detail&id=$id");
+        }
+
+        // Tự động cập nhật status: Nếu đang nghỉ phép thì status = 0
+        $status = 0;
+
+        // Update leave fields và status
+        $sql = "UPDATE users SET leave_start = :leave_start, leave_end = :leave_end, status = :status, updated_by = :updated_by, updated_at = NOW() WHERE id = :id";
+        $stmt = $this->userModel->conn->prepare($sql);
+        $result = $stmt->execute([
+            ':id' => $id,
+            ':leave_start' => $leave_start,
+            ':leave_end' => $leave_end,
+            ':status' => $status,
+            ':updated_by' => $_SESSION['currentUser']['id'] ?? null,
+        ]);
+
+        if ($result) {
+            Message::set('success', "Đã cập nhật thông tin nghỉ phép và chuyển trạng thái sang Tạm dừng");
+        } else {
+            Message::set('error', "Cập nhật thất bại");
+        }
+
+        redirect("user-detail&id=$id");
+    }
+
+    // DANH SÁCH HDV ĐANG NGHỈ PHÉP
+    public function onLeave()
+    {
+        $users = $this->userModel->getOnLeave();
+        require './views/admin/User_management/on_leave.php';
+    }
+
+    // KẾT THÚC NGHỈ PHÉP
+    public function endLeave()
+    {
+        $id = $_GET['id'] ?? null;
+
+        if (!$id) {
+            Message::set('error', 'ID không hợp lệ');
+            redirect("user-on-leave");
+        }
+
+        // Xóa thông tin nghỉ phép và chuyển status về hoạt động
+        $sql = "UPDATE users SET leave_start = NULL, leave_end = NULL, status = 1, updated_by = :updated_by, updated_at = NOW() WHERE id = :id";
+        $stmt = $this->userModel->conn->prepare($sql);
+        $result = $stmt->execute([
+            ':id' => $id,
+            ':updated_by' => $_SESSION['currentUser']['id'] ?? null,
+        ]);
+
+        if ($result) {
+            Message::set('success', 'Đã kết thúc nghỉ phép và chuyển trạng thái sang Hoạt động');
+        } else {
+            Message::set('error', 'Kết thúc nghỉ phép thất bại');
+        }
+
+        redirect("user-on-leave");
     }
 }

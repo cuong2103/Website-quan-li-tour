@@ -51,7 +51,11 @@ match ($act) {
   'user-edit' => (new UserController())->edit(),
   'user-store' => (new UserController())->store(),
   'user-update' => (new UserController())->update(),
+  'user-update-leave' => (new UserController())->updateLeave(),
   'user-delete' => (new UserController())->delete(),
+  'user-detail' => (new UserController())->detail(),
+  'user-on-leave' => (new UserController())->onLeave(),
+  'user-end-leave' => (new UserController())->endLeave(),
 
   // Notifications
   'notifications' => (new NotificationController())->index(),
