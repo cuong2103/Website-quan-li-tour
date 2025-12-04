@@ -185,10 +185,11 @@ require_once './views/components/sidebar.php';
                       title="Xem chi tiết">
                       <i data-lucide="eye" class="w-4 h-4"></i>
                     </a>
-                    <a href="?act=user-edit&id=<?= $user['id'] ?>"
-                      class="p-2 text-gray-600 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors"
-                      title="Chỉnh sửa">
-                      <i data-lucide="pencil" class="w-4 h-4"></i>
+                    <!-- Sửa -->
+                    <a href="?act=user-edit&id=<?= $user['id'] ?>&from=index" 
+                       class="text-gray-500 hover:text-yellow-600 transition-colors" 
+                       title="Chỉnh sửa">
+                      <i data-lucide="square-pen" class="w-5 h-5"></i>
                     </a>
                     <a href="?act=user-delete&id=<?= $user['id'] ?>"
                       class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"

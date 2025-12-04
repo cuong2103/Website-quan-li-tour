@@ -57,6 +57,15 @@ match ($act) {
   'user-on-leave' => (new UserController())->onLeave(),
   'user-end-leave' => (new UserController())->endLeave(),
 
+
+  // tour_guide
+  'profile' => (new ProfileController()) -> GetById() ,
+  'change-password' => (new ProfileController())->changePassword(),
+  'profile-edit' => (new ProfileController())->edit(),
+  'profile-update' => (new ProfileController())->update(),
+
+
+
   // Notifications
   'notifications' => (new NotificationController())->index(),
   'notification-create' => (new NotificationController())->create(),

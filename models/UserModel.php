@@ -138,6 +138,29 @@ class UserModel
         $stmt->execute([$email]);
         return $stmt->fetch();
     }
+
+    // KIỂM TRA MẬT KHẨU CŨ
+    public function verifyPassword($userId, $currentPassword){
+        $sql = "SELECT password FROM users WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$userId]);
+
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if(!$user) return false;
+
+        // So sánh trực tiếp
+        return $currentPassword === $user['password'];
+    }
+
+    // ĐỔI MẬT KHẨU
+    public function changePassword($userId, $newPassword){
+        $sql = "UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$newPassword, $userId]);
+    }
+
+    // CHECK LOGIN trực tiếp
     // Check loggin
     public function checkLogin($email, $password)
     {
@@ -147,19 +170,18 @@ class UserModel
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$user) {
-            return "Không tìm thấy email trong DB";
-        }
+        // if (!$user) {
+        //     return "Không tìm thấy email trong DB";
+        // }
 
-        // So sánh mật khẩu hash
-        if (!password_verify($password, $user['password'])) {
-            return "Tài khoản hoặc mật khẩu không đúng";
-        }
+        // // So sánh mật khẩu hash
+        // if (!password_verify($password, $user['password'])) {
+        //     return "Tài khoản hoặc mật khẩu không đúng";
+        // }
 
-        // Check tài khoản đang khóa hay không
-        if ($user['status'] != 1) {
-            return "Tài khoản đang bị khóa";
-        }
+        // if ($user['status'] != 1) {
+        //     return "Tài khoản đang bị khóa";
+        // }
 
         return $user;
     }
