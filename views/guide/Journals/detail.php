@@ -6,24 +6,24 @@ require_once './views/components/sidebar.php';
 <main class="mt-28 px-6 min-w-7xl mx-6">
   <!-- Header -->
   <div class="flex items-center justify-between mb-8">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-900">Chi tiết nhật ký</h1>
-      <p class="text-gray-500 mt-1">
-        Tour: <?= htmlspecialchars($tour['tour_name'] ?? 'N/A') ?>
-        <span class="mx-2">•</span>
-        Mã: <?= htmlspecialchars($tour['booking_code'] ?? 'N/A') ?>
-      </p>
+    <div class="flex items-center gap-4">
+      <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
+        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+      </button>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Chi tiết nhật ký</h1>
+        <p class="text-gray-500 mt-1">
+          Tour: <?= htmlspecialchars($tour['tour_name'] ?? 'N/A') ?>
+          <span class="mx-2">•</span>
+          Mã: <?= htmlspecialchars($tour['booking_code'] ?? 'N/A') ?>
+        </p>
+      </div>
     </div>
     <div class="flex gap-3">
       <a href="<?= BASE_URL . '?act=guide-tour-assignments-detail&id=' . $journal['tour_assignment_id'] . '&tab=journals' ?>"
         class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50">
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
         <span>Quay lại tour</span>
-      </a>
-      <a href="<?= BASE_URL . '?act=journal-edit&id=' . $journal['id'] ?>"
-        class="flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700 transition-colors px-4 py-2 rounded-lg shadow-sm">
-        <i data-lucide="edit-2" class="w-4 h-4"></i>
-        <span>Chỉnh sửa</span>
       </a>
     </div>
   </div>
