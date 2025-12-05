@@ -6,21 +6,20 @@ require_once './views/components/sidebar.php';
 
 <main class="mt-28 px-6 pb-20 overflow-auto scrollbar-hide">
 
-  <!-- Ti ÊU ĐỀ + NÚT TẠO -->
   <div class="flex justify-between items-center mb-6">
     <div>
       <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
       <p class="text-sm text-gray-600">Tổng quan hoạt động kinh doanh</p>
     </div>
     <div class="flex space-x-3">
-      <button class="px-5 py-2.5  text-white text-sm font-medium rounded-lg bg-orange-400 hover:bg-orange-500 flex items-center space-x-2">
+      <a href="<?= BASE_URL ?>?act=booking-create" class="px-5 py-2.5  text-white text-sm font-medium rounded-lg bg-orange-400 hover:bg-orange-500 flex items-center space-x-2">
         <i data-lucide="plus" class="w-5 h-5"></i>
         <span>Tạo Booking</span>
-      </button>
-      <button class="px-5 py-2.5  text-gray-900 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-100 flex items-center space-x-2">
+      </a>
+      <a href="<?= BASE_URL ?>?act=tours-create" class="px-5 py-2.5  text-gray-900 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-100 flex items-center space-x-2">
         <i data-lucide="plus" class="w-5 h-5"></i>
         <span>Tạo Tour</span>
-      </button>
+      </a>
     </div>
   </div>
 
@@ -150,11 +149,11 @@ require_once './views/components/sidebar.php';
                 <td class="px-6 py-4 text-sm text-gray-500">
                   <div class="flex items-center space-x-4">
                     <!-- Xem -->
-                    <a href="?page=booking-detail&id=<?= $booking['id'] ?>" class="text-gray-600 hover:text-orange-600 transition">
+                    <a href="?act=booking-detail&id=<?= $booking['id'] ?>" class="text-gray-600 hover:text-orange-600 transition">
                       <i data-lucide="eye" class="w-5 h-5"></i>
                     </a>
                     <!-- Sửa -->
-                    <a href="?page=booking-edit&id=<?= $booking['id'] ?>" class="text-blue-400 hover:text-blue-600 transition">
+                    <a href="?act=booking-edit&id=<?= $booking['id'] ?>" class="text-blue-400 hover:text-blue-600 transition">
                       <i data-lucide="edit" class="w-5 h-5"></i>
                     </a>
                   </div>

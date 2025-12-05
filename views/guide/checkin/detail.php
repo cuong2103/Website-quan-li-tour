@@ -40,7 +40,7 @@ $canCheckinNow = ($today >= $checkinLink['start_date'] && $today <= $checkinLink
   <div class=" bg-white border shadow rounded-xl p-5">
     <div class="flex justify-between items-center mb-4">
       <h3 class=" inline font-semibold text-lg mb-4">Danh sách khách hàng</h3>
-      <a href="<?= BASE_URL . '?act=guide-tour-assignments-export-checkin&id=' . $assignmentId ?>"
+      <a href="<?= BASE_URL . '?act=checkin-export&id=' . $assignmentId ?>"
         class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 flex items-center gap-2">
         <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
         Xuất Excel

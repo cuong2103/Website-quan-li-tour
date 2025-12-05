@@ -35,7 +35,7 @@ $inactiveClass = 'text-gray-700 hover:bg-gray-100';
     </div>
   </div>
   <!-- Menu -->
-  <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+  <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto scollbar-thin">
     <?php if ($role === 'Admin'): ?>
 
       <a href="<?= BASE_URL ?>" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg <?= $currentAct === '' ? $activeClass : $inactiveClass ?> transition">
@@ -46,7 +46,7 @@ $inactiveClass = 'text-gray-700 hover:bg-gray-100';
       <!-- Quản lý và điều hành tour -->
       <?php $bookingActs = ['bookings', 'booking-detail', 'booking-create', 'booking-edit']; ?>
       <a href="<?= BASE_URL . '?act=bookings' ?>" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($bookingActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
-        <div class="flex items-center">
+        <div class="flex items-center ">
           <i class="mr-3 w-6 h-6" data-lucide="clipboard"></i>
           Quản lý và điều hành tour
         </div>
@@ -73,13 +73,16 @@ $inactiveClass = 'text-gray-700 hover:bg-gray-100';
         </button>
         <div class="submenu pl-12 space-y-1 overflow-hidden transition-all duration-300 <?= isActiveMenu($dataActs, $currentAct) ? 'max-h-96' : 'max-h-0' ?>">
           <?php $destActs = ['destination', 'destination-detail', 'destination-create', 'destination-edit']; ?>
-          <a href="<?= BASE_URL . '?act=destination' ?>" class="block px-4 py-2 text-sm <?= isActiveMenu($destActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Địa điểm</a>
+          <a href="<?= BASE_URL . '?act=destination' ?>" class="block px-4 py-2 mt-1 text-sm <?= isActiveMenu($destActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Địa điểm</a>
           <?php $policyActs = ['policies', 'policy-detail', 'policy-create', 'policy-edit']; ?>
           <a href="<?= BASE_URL ?>?act=policies" class="block px-4 py-2 text-sm <?= isActiveMenu($policyActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Chính sách</a>
+
           <?php $catActs = ['categories', 'category-detail', 'category-create', 'category-edit']; ?>
           <a href="<?= BASE_URL ?>?act=categories" class="block px-4 py-2 text-sm <?= isActiveMenu($catActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Danh mục</a>
+
           <?php $serviceActs = ['service', 'service-detail', 'service-create', 'service-edit']; ?>
           <a href="<?= BASE_URL ?>?act=service" class="block px-4 py-2 text-sm <?= isActiveMenu($serviceActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Dịch vụ</a>
+
           <?php $serviceTypeActs = ['service-type', 'service-type-detail', 'service-type-create', 'service-type-edit']; ?>
           <a href="<?= BASE_URL ?>?act=service-type" class="block px-4 py-2 text-sm <?= isActiveMenu($serviceTypeActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Loại Dịch vụ</a>
         </div>
