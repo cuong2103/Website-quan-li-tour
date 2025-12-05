@@ -1,3 +1,20 @@
+<?php
+// Determine current action for active state
+$currentAct = $_GET['act'] ?? '';
+
+// Helper function to check if menu is active
+function isActiveMenu($acts, $currentAct)
+{
+  if (is_array($acts)) {
+    return in_array($currentAct, $acts);
+  }
+  return $currentAct === $acts;
+}
+
+// Active and inactive classes
+$activeClass = 'bg-indigo-50 text-indigo-700';
+$inactiveClass = 'text-gray-700 hover:bg-gray-100';
+?>
 <aside class="w-64 bg-white shadow-lg h-screen fixed inset-y-0 left-0 flex flex-col z-50">
   <!-- Logo -->
   <div class="px-6 py-7 border-b border-gray-200">
@@ -21,13 +38,14 @@
   <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
     <?php if ($role === 'Admin'): ?>
 
-      <a href="<?= BASE_URL ?>" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-indigo-50 text-indigo-700">
+      <a href="<?= BASE_URL ?>" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg <?= $currentAct === '' ? $activeClass : $inactiveClass ?> transition">
         <i class="mr-3 w-6 h-6" data-lucide="layout-dashboard"></i>
         Dashboard
       </a>
 
       <!-- Quản lý và điều hành tour -->
-      <a href="<?= BASE_URL . '?act=bookings' ?>" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700  hover:bg-gray-100 rounded-lg transition">
+      <?php $bookingActs = ['bookings', 'booking-detail', 'booking-create', 'booking-edit']; ?>
+      <a href="<?= BASE_URL . '?act=bookings' ?>" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($bookingActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
         <div class="flex items-center">
           <i class="mr-3 w-6 h-6" data-lucide="clipboard"></i>
           Quản lý và điều hành tour
@@ -35,7 +53,8 @@
       </a>
 
       <!-- Quản lý tour -->
-      <a href="<?= BASE_URL ?>?act=tours" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700  hover:bg-gray-100 rounded-lg transition">
+      <?php $tourActs = ['tours', 'tour-detail', 'tour-create', 'tour-edit']; ?>
+      <a href="<?= BASE_URL ?>?act=tours" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($tourActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
         <div class="flex items-center">
           <i class="mr-3 w-6 h-6" data-lucide="calendar"></i>
           Quản lý tour
@@ -43,72 +62,80 @@
       </a>
 
       <!-- Dữ liệu -->
+      <?php $dataActs = ['destination', 'destination-detail', 'destination-create', 'destination-edit', 'policies', 'policy-detail', 'policy-create', 'policy-edit', 'categories', 'category-detail', 'category-create', 'category-edit', 'service', 'service-detail', 'service-create', 'service-edit', 'service-type', 'service-type-detail', 'service-type-create', 'service-type-edit']; ?>
       <div class="menu-group">
-        <button class="menu-toggle w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
+        <button class="menu-toggle w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($dataActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
           <div class="flex items-center">
             <i class="mr-3 w-6 h-6" data-lucide="menu"></i>
             Dữ liệu
           </div>
           <i class="w-4 h-4" data-lucide="chevron-down"></i>
         </button>
-        <div class="submenu pl-12 space-y-1 overflow-hidden transition-all duration-300 max-h-0">
-          <a href="<?= BASE_URL . '?act=destination' ?>" class="block px-4 py-2 text-sm text-gray-600 
-        
-        hover:bg-gray-100 rounded">Địa điểm</a>
-          <a href="<?= BASE_URL ?>?act=policies" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Chính sách</a>
-          <a href="<?= BASE_URL ?>?act=categories" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Danh mục</a>
-          <a href="<?= BASE_URL ?>?act=service" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Dịch vụ</a>
-          <a href="<?= BASE_URL ?>?act=service-type" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Loại Dịch vụ</a>
+        <div class="submenu pl-12 space-y-1 overflow-hidden transition-all duration-300 <?= isActiveMenu($dataActs, $currentAct) ? 'max-h-96' : 'max-h-0' ?>">
+          <?php $destActs = ['destination', 'destination-detail', 'destination-create', 'destination-edit']; ?>
+          <a href="<?= BASE_URL . '?act=destination' ?>" class="block px-4 py-2 text-sm <?= isActiveMenu($destActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Địa điểm</a>
+          <?php $policyActs = ['policies', 'policy-detail', 'policy-create', 'policy-edit']; ?>
+          <a href="<?= BASE_URL ?>?act=policies" class="block px-4 py-2 text-sm <?= isActiveMenu($policyActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Chính sách</a>
+          <?php $catActs = ['categories', 'category-detail', 'category-create', 'category-edit']; ?>
+          <a href="<?= BASE_URL ?>?act=categories" class="block px-4 py-2 text-sm <?= isActiveMenu($catActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Danh mục</a>
+          <?php $serviceActs = ['service', 'service-detail', 'service-create', 'service-edit']; ?>
+          <a href="<?= BASE_URL ?>?act=service" class="block px-4 py-2 text-sm <?= isActiveMenu($serviceActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Dịch vụ</a>
+          <?php $serviceTypeActs = ['service-type', 'service-type-detail', 'service-type-create', 'service-type-edit']; ?>
+          <a href="<?= BASE_URL ?>?act=service-type" class="block px-4 py-2 text-sm <?= isActiveMenu($serviceTypeActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Loại Dịch vụ</a>
         </div>
       </div>
 
       <!-- Khách hàng -->
-      <a href="<?= BASE_URL ?>?act=customers" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
+      <?php $customerActs = ['customers', 'customer-detail', 'customer-create', 'customer-edit']; ?>
+      <a href="<?= BASE_URL ?>?act=customers" class="flex items-center px-4 py-3 text-sm font-medium <?= isActiveMenu($customerActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
         <i class="mr-3 w-6 h-6" data-lucide="users-round"></i>
         Khách hàng
       </a>
 
       <!-- Nhà cung cấp -->
-      <a href="<?= BASE_URL . '?act=suppliers' ?>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
+      <?php $supplierActs = ['suppliers', 'supplier-detail', 'supplier-create', 'supplier-edit']; ?>
+      <a href="<?= BASE_URL . '?act=suppliers' ?>" class="flex items-center px-4 py-3 text-sm font-medium <?= isActiveMenu($supplierActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
         <i class="mr-3 w-6 h-6" data-lucide="building-2"></i>
         Nhà cung cấp
       </a>
 
       <!-- Quản lý nhân viên -->
+      <?php $userActs = ['user', 'user-detail', 'user-create', 'user-edit', 'user-on-leave']; ?>
       <div class="menu-group">
-        <button class="menu-toggle w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
+        <button class="menu-toggle w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($userActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
           <div class="flex items-center">
             <i class="mr-3 w-6 h-6" data-lucide="users"></i>
             Nhân viên
           </div>
           <i class="w-4 h-4" data-lucide="chevron-down"></i>
         </button>
-        <div class="submenu pl-12 space-y-1 overflow-hidden transition-all duration-300 max-h-0">
-          <a href="<?= BASE_URL . '?act=user' ?>" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Danh sách nhân viên</a>
-          <a href="<?= BASE_URL . '?act=user-on-leave' ?>" class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Nhân viên nghỉ phép</a>
+        <div class="submenu pl-12 space-y-1 overflow-hidden transition-all duration-300 <?= isActiveMenu($userActs, $currentAct) ? 'max-h-96' : 'max-h-0' ?>">
+          <?php $userListActs = ['user', 'user-detail', 'user-create', 'user-edit']; ?>
+          <a href="<?= BASE_URL . '?act=user' ?>" class="block px-4 py-2 text-sm <?= isActiveMenu($userListActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Danh sách nhân viên</a>
+          <a href="<?= BASE_URL . '?act=user-on-leave' ?>" class="block px-4 py-2 text-sm <?= $currentAct === 'user-on-leave' ? $activeClass : $inactiveClass ?> rounded">Nhân viên nghỉ phép</a>
         </div>
       </div>
 
       <!-- Thông báo -->
-      <a href="<?= BASE_URL . '?act=notifications' ?>" class="flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition">
+      <?php $notifActs = ['notifications', 'notification-detail', 'notification-create', 'notification-edit']; ?>
+      <a href="<?= BASE_URL . '?act=notifications' ?>" class="flex items-center px-4 py-3 text-sm font-medium <?= isActiveMenu($notifActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
         <i class="mr-3 w-6 h-6" data-lucide="megaphone"></i>
         Quản lí thông báo
       </a>
 
-
-
-
       <!-- Thêm các menu Admin khác ở đây -->
     <?php else: ?>
+      <!-- Guide Menu -->
+      <?php $scheduleActs = ['my-schedule']; ?>
       <a href="<?= BASE_URL . '?act=my-schedule' ?>"
-        class="flex items-center px-4 py-3 text-sm font-medium rounded-lg
-              hover:bg-gray-100 text-gray-700">
+        class="flex items-center px-4 py-3 text-sm font-medium rounded-lg <?= isActiveMenu($scheduleActs, $currentAct) ? $activeClass : $inactiveClass ?> transition">
         <i data-lucide="home" class="mr-3 w-6 h-6"></i>
         Trang chủ
       </a>
 
-      <!-- Quản lý Booking -->
-      <a href="<?= BASE_URL . '?act=guide-tour-assignments' ?>" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700  hover:bg-gray-100 rounded-lg transition">
+      <!-- Tour của tôi -->
+      <?php $guideActs = ['guide-tour-assignments', 'guide-tour-assignment-detail']; ?>
+      <a href="<?= BASE_URL . '?act=guide-tour-assignments' ?>" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($guideActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
         <div class="flex items-center">
           <i class="mr-3 w-6 h-6" data-lucide="clipboard"></i>
           Tour của tôi
@@ -116,21 +143,21 @@
       </a>
 
       <!-- Viết nhật kí -->
+      <?php $journalActs = ['journal', 'journal-create', 'journal-detail', 'journal-edit']; ?>
       <a href="<?= BASE_URL ?>?act=journal"
-        class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700  hover:bg-gray-100 rounded-lg transition">
+        class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($journalActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
         <div class="flex items-center">
           <i data-lucide="notebook-pen" class="mr-3 w-6 h-6"></i>
           Viết nhật ký
         </div>
       </a>
 
-      <!-- Tài khoản -->
-
     <?php endif; ?>
 
-    <!-- Thông báo -->
+    <!-- Thông báo (chung cho cả Admin và Guide) -->
+    <?php $myNotifActs = ['my-notifications']; ?>
     <a href="<?= BASE_URL ?>?act=my-notifications"
-      class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700  hover:bg-gray-100 rounded-lg transition">
+      class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($myNotifActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
       <div class="flex items-center">
         <i data-lucide="bell" class="mr-3 w-6 h-6"></i>
         Thông báo
