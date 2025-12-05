@@ -66,4 +66,16 @@ class PolicyModel
         $stmt->bindParam("id", $id);
         return $stmt->execute();
     }
+
+    // Kiểm tra xem policy có đang được sử dụng không
+    public function isUsedInTours($policyId)
+    {
+        $sql = "SELECT COUNT(*) as count 
+            FROM tour_policies 
+            WHERE policy_id = :policy_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':policy_id' => $policyId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['count'] > 0;
+    }
 }

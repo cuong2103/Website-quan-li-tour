@@ -26,9 +26,17 @@ class PolicyController
     public function delete()
     {
         $id = $_GET['id'];
+
+        // Kiểm tra xem policy có đang được sử dụng không
+        if ($this->model->isUsedInTours($id)) {
+            Message::set("error", "Không thể xóa chính sách này vì đang được sử dụng trong tour!");
+            redirect("policies");
+            die();
+        }
+
         $this->model->delete($id);
-        redirect("policies");
         Message::set("success", "Xóa thành công!");
+        redirect("policies");
         die();
     }
     // sửa chính sách
