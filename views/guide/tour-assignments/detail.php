@@ -54,7 +54,8 @@ $tabs = [
     <!-- tabs -->
     <div class="flex gap-3 border-b mb-4 pb-2">
         <?php foreach ($tabs as $key => $t): ?>
-            <a href="<?= BASE_URL . '?act=guide-tour-assignments-detail&id=' . $assignment['id'] . '&tab=' . $key ?>"
+            <a href="<?= BASE_URL . '?act=guide-tour-assignments-detail&id=' . $assignmentId
+                            . '&tab=' . $key ?>"
                 class="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg
                <?= $tab === $key ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-200' ?>">
                 <i data-lucide="<?= $t['icon'] ?>" class="w-4 h-4"></i>

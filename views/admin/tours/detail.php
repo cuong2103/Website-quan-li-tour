@@ -175,7 +175,7 @@ require_once './views/components/sidebar.php';
                   </div>
                 </div>
                 <div class="flex-1">
-                  <h4 class="font-semibold text-gray-900 mb-1"><?= htmlspecialchars($policy['name']) ?></h4>
+                  <h4 class="font-semibold text-gray-900 mb-1"><?= htmlspecialchars($policy['title']) ?></h4>
                   <p class="text-sm text-gray-600 leading-relaxed"><?= nl2br(htmlspecialchars($policy['content'])) ?></p>
                 </div>
               </div>

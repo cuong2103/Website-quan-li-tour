@@ -171,9 +171,8 @@ match ($act) {
   // Guide Check-in Management
   'guide-checkin-create' => (new CheckinController())->create(),
   'guide-checkin-detail' => (new CheckinController())->detail(),
-  'guide-checkin-customer' => (new CheckinController())->checkinCustomer(),
-  'guide-checkin-undo' => (new CheckinController())->undoCheckin(),
   'guide-checkin-delete' => (new CheckinController())->delete(),
+  'guide-checkin-batch-update' => (new CheckinController())->batchUpdate(),
   'checkin-export' => (new CheckinController())->exportCheckinList(),
 
   // Journal

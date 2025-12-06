@@ -70,8 +70,9 @@ class CheckinController
     exit;
   }
 
-  // Check-in khách hàng
-  public function checkinCustomer()
+
+  // Cập nhật batch check-in từ toggle
+  public function batchUpdate()
   {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
       header('Location: ' . BASE_URL . '?act=guide-tour-assignments');
@@ -79,10 +80,10 @@ class CheckinController
     }
 
     $linkId = $_POST['link_id'] ?? null;
-    $customerId = $_POST['customer_id'] ?? null;
     $assignmentId = $_POST['assignment_id'] ?? null;
+    $checkedCustomers = $_POST['checked_customers'] ?? [];
 
-    if (!$linkId || !$customerId || !$assignmentId) {
+    if (!$linkId || !$assignmentId) {
       Message::set('error', 'Thiếu thông tin');
       redirect('my-schedule');
       exit;
@@ -92,58 +93,44 @@ class CheckinController
     $canCheckin = $this->checkinModel->canCheckin($assignmentId);
     if (!$canCheckin['allowed']) {
       Message::set('error', $canCheckin['message']);
-      redirect('my-schedule');
+      redirect('guide-checkin-detail&link_id=' . $linkId . '&assignment_id=' . $assignmentId);
       exit;
     }
 
-    // Check-in khách hàng
-    $result = $this->checkinModel->checkinCustomer($linkId, $customerId);
+    // Lấy danh sách khách hàng hiện tại
+    $customers = $this->checkinModel->getCustomersWithCheckinStatus($assignmentId, $linkId);
 
-    if ($result) {
-      Message::set('success', 'Check-in thành công');
-    } else {
-      Message::set('error', 'Có lỗi xảy ra khi check-in');
+    $checkinCount = 0;
+    $uncheckinCount = 0;
+
+    foreach ($customers as $customer) {
+      $customerId = $customer['id'];
+      $isCurrentlyCheckedIn = !empty($customer['checkin_id']);
+      $shouldBeCheckedIn = in_array($customerId, $checkedCustomers);
+
+      if ($shouldBeCheckedIn && !$isCurrentlyCheckedIn) {
+        // Check-in khách hàng
+        if ($this->checkinModel->checkinCustomer($linkId, $customerId)) {
+          $checkinCount++;
+        }
+      } elseif (!$shouldBeCheckedIn && $isCurrentlyCheckedIn) {
+        // Hủy check-in khách hàng
+        if ($this->checkinModel->uncheckinCustomer($linkId, $customerId)) {
+          $uncheckinCount++;
+        }
+      }
     }
+
+    if ($checkinCount > 0 || $uncheckinCount > 0) {
+      $message = [];
+      if ($checkinCount > 0) $message[] = "Check-in $checkinCount khách";
+      if ($uncheckinCount > 0) $message[] = "Hủy $uncheckinCount khách";
+      Message::set('success', implode(', ', $message));
+    } else {
+      Message::set('info', 'Không có thay đổi nào');
+    }
+
     redirect('guide-checkin-detail&link_id=' . $linkId . '&assignment_id=' . $assignmentId);
-    exit;
-  }
-
-  // Hủy check-in khách hàng
-  public function undoCheckin()
-  {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-      header('Location: ' . BASE_URL . '?act=guide-tour-assignments');
-      exit;
-    }
-
-    $linkId = $_POST['link_id'] ?? null;
-    $customerId = $_POST['customer_id'] ?? null;
-    $assignmentId = $_POST['assignment_id'] ?? null;
-
-    if (!$linkId || !$customerId || !$assignmentId) {
-      Message::set('error', 'Thiếu thông tin');
-      header('Location: ' . BASE_URL . '?act=guide-tour-assignments');
-      exit;
-    }
-
-    // Kiểm tra quyền check-in
-    $canCheckin = $this->checkinModel->canCheckin($assignmentId);
-    if (!$canCheckin['allowed']) {
-      Message::set('error', $canCheckin['message']);
-      header('Location: ' . BASE_URL . '?act=guide-checkin-detail&link_id=' . $linkId . '&assignment_id=' . $assignmentId);
-      exit;
-    }
-
-    // Hủy check-in
-    $result = $this->checkinModel->uncheckinCustomer($linkId, $customerId);
-
-    if ($result) {
-      Message::set('success', 'Hủy check-in thành công');
-    } else {
-      Message::set('error', 'Có lỗi xảy ra khi hủy check-in');
-    }
-
-    header('Location: ' . BASE_URL . '?act=guide-checkin-detail&link_id=' . $linkId . '&assignment_id=' . $assignmentId);
     exit;
   }
 
