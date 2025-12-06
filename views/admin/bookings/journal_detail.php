@@ -73,18 +73,17 @@ require_once './views/components/sidebar.php';
         <h3 class="text-lg font-semibold text-gray-900 mb-4">Hình ảnh đính kèm (<?= count($images) ?>)</h3>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           <?php foreach ($images as $img): ?>
-            <div class="relative group aspect-square rounded-xl overflow-hidden border border-gray-200 shadow-sm cursor-pointer"
-              onclick="window.open('<?= BASE_URL . 'uploads/journals/' . $img['image_url'] ?>', '_blank')">
+            <div class="relative group rounded-xl overflow-hidden border border-gray-200 shadow-sm cursor-pointer inline-block">
               <img src="<?= BASE_URL . 'uploads/journals/' . $img['image_url'] ?>"
-                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
-              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+                class="max-w-full h-auto object-contain transition-transform duration-300 group-hover:scale-105">
             </div>
-          <?php endforeach; ?>
         </div>
+      <?php endforeach; ?>
       </div>
-    <?php endif; ?>
-
   </div>
+<?php endif; ?>
+
+</div>
 </main>
 
 <?php require_once './views/components/footer.php'; ?>
