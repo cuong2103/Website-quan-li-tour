@@ -30,7 +30,7 @@ class ServiceModel
         $params = [];
 
         if ($keyword !== '') {
-            $sql .= " AND s.name LIKE :keyword"; 
+            $sql .= " AND s.name LIKE :keyword";
             $params[':keyword'] = "%$keyword%"; // Tìm theo tên
         }
 
@@ -78,7 +78,6 @@ class ServiceModel
             ]);
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (PDOException $e) {
             echo "Lỗi tìm kiếm: " . $e->getMessage(); // Bắt lỗi truy vấn
             return [];
@@ -120,9 +119,9 @@ class ServiceModel
     public function create($data)
     {
         $sql = "INSERT INTO services 
-                    (service_type_id, supplier_id, name, description, estimated_price, created_by, created_at)
-                VALUES
-                    (:service_type_id, :supplier_id, :name, :description, :estimated_price, :created_by, NOW())";
+                   (service_type_id, supplier_id, name, description, estimated_price, unit, created_by, created_at)
+               VALUES
+                   (:service_type_id, :supplier_id, :name, :description, :estimated_price, :unit, :created_by, NOW())";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -132,6 +131,7 @@ class ServiceModel
             ':name'            => $data['name'],
             ':description'     => $data['description'],
             ':estimated_price' => $data['estimated_price'],
+            ':unit'            => $data['unit'] ?? 'person',
             ':created_by'      => $data['created_by']
         ]);
     }
@@ -140,14 +140,15 @@ class ServiceModel
     public function update($id, $data)
     {
         $sql = "UPDATE services SET
-                    service_type_id = :service_type_id,
-                    supplier_id = :supplier_id,
-                    name = :name,
-                    description = :description,
-                    estimated_price = :estimated_price,
-                    updated_by = :updated_by,
-                    updated_at = NOW()
-                WHERE id = :id";
+                     service_type_id = :service_type_id,
+                     supplier_id = :supplier_id,
+                     name = :name,
+                     description = :description,
+                     estimated_price = :estimated_price,
+                     unit = :unit,
+                     updated_by = :updated_by,
+                     updated_at = NOW()
+                 WHERE id = :id";
 
         $stmt = $this->conn->prepare($sql);
 
@@ -157,6 +158,7 @@ class ServiceModel
             ':name'            => $data['name'],
             ':description'     => $data['description'],
             ':estimated_price' => $data['estimated_price'],
+            ':unit'            => $data['unit'] ?? 'person',
             ':updated_by'      => $data['updated_by'],
             ':id'              => $id
         ]);

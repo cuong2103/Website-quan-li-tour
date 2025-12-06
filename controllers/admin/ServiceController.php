@@ -83,6 +83,7 @@ class ServiceController
             'service_type_id' => $_POST['service_type_id'],
             'supplier_id' => $_POST['supplier_id'],
             'estimated_price' => $_POST['estimated_price'] ?? 0,
+            'unit' => $_POST['unit'] ?? 'person',
             'created_by' => $_SESSION['currentUser']['id'] ?? 1 // Lưu người tạo vào DB
         ];
 
@@ -152,6 +153,7 @@ class ServiceController
             'service_type_id' => $_POST['service_type_id'],
             'supplier_id' => $_POST['supplier_id'],
             'estimated_price' => $_POST['estimated_price'],
+            'unit' => $_POST['unit'] ?? 'person',
             'updated_by' => $_SESSION['currentUser']['id'] ?? 1
         ];
 

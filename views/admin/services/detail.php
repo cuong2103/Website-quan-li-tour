@@ -1,6 +1,18 @@
 <?php require_once './views/components/header.php'; ?>
 <?php require_once './views/components/sidebar.php'; ?>
 
+<?php
+// Map đơn vị tính
+$units = [
+    'person' => 'Người',
+    'room' => 'Phòng',
+    'vehicle' => 'Xe',
+    'tour' => 'Tour',
+    'day' => 'Ngày',
+    'meal' => 'Suất ăn'
+];
+?>
+
 <div class="ml-54 mt-28 p-6">
 
     <!-- Header -->
@@ -41,13 +53,19 @@
                             <div class="text-base font-semibold text-gray-900"><?= $service['name'] ?></div>
                         </div>
                         <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Loại dịch vụ</label>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-700">
+                                <?= $service['service_type_name'] ?>
+                            </span>
+                        </div>
+                        <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Giá dự kiến</label>
                             <div class="text-base font-bold text-orange-600"><?= number_format($service['estimated_price']) ?> ₫</div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Loại dịch vụ</label>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-700">
-                                <?= $service['service_type_name'] ?>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Đơn vị tính</label>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
+                                <?= $units[$service['unit'] ?? 'person'] ?? '👤 Người' ?>
                             </span>
                         </div>
                         <div>
