@@ -29,9 +29,9 @@ class PaymentModel
     {
         try {
             $sql = "INSERT INTO payments 
-                    (booking_id, payment_method, amount, type, status, payment_date, created_by, created_at) 
+                    (booking_id, payment_method, amount, type, payment_date, created_by, created_at) 
                     VALUES 
-                    (:booking_id, :payment_method, :amount, :type, :status, :payment_date, :created_by, NOW())";
+                    (:booking_id, :payment_method, :amount, :type, :payment_date, :created_by, NOW())";
 
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([
@@ -39,7 +39,6 @@ class PaymentModel
                 ':payment_method' => $data['payment_method'],
                 ':amount'         => $data['amount'],
                 ':type'           => $data['type'],
-                ':status'         => $data['status'],
                 ':payment_date'   => $data['payment_date'],
                 ':created_by'     => $data['created_by'],
             ]);
@@ -55,7 +54,6 @@ class PaymentModel
                         payment_method = :payment_method,
                         amount = :amount,
                         type = :type,
-                        status = :status,
                         payment_date = :payment_date,
                         updated_at = NOW()
                     WHERE id = :id";
@@ -65,7 +63,6 @@ class PaymentModel
                 ':payment_method' => $data['payment_method'],
                 ':amount'         => $data['amount'],
                 ':type'           => $data['type'],
-                ':status'         => $data['status'],
                 ':payment_date'   => $data['payment_date'],
                 ':id'             => $id,
             ]);

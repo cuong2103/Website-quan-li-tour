@@ -89,7 +89,7 @@ class BookingModel
         try {
             $sql = "INSERT INTO bookings 
                 (tour_id, booking_code, start_date, end_date, adult_count, child_count, service_amount, total_amount, deposit_amount, remaining_amount, status, special_requests, created_by)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([
                 $data['tour_id'],
@@ -102,7 +102,6 @@ class BookingModel
                 $data['total_amount'],
                 $data['deposit_amount'] ?? 0,
                 $data['remaining_amount'] ?? 0,
-                $data['status'] ?? 1,
                 $data['special_requests'] ?? null,
                 $data['created_by'] ?? null
             ]);
@@ -354,7 +353,7 @@ class BookingModel
         try {
             $sql = "SELECT SUM(amount) AS total
                 FROM payments
-                WHERE booking_id = ? AND status = 'completed'";
+                WHERE booking_id = ? ";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$bookingId]);
             return $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;

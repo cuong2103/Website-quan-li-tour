@@ -28,7 +28,7 @@ require_once './views/components/sidebar.php';
 
         <div>
             <label class="text-sm font-medium">Phương thức thanh toán</label>
-            <select name="payment_method" class="w-full px-3 py-2 border rounded-lg mt-1">
+            <select name="payment_method" class="w-full px-3 py-2 border rounded-lg mt-1" required>
                 <option value="cash" <?= $payment['payment_method'] == 'cash' ? 'selected' : '' ?>>Tiền mặt</option>
                 <option value="bank_transfer" <?= $payment['payment_method'] == 'bank_transfer' ? 'selected' : '' ?>>Chuyển khoản</option>
             </select>
@@ -36,10 +36,8 @@ require_once './views/components/sidebar.php';
 
         <div>
             <label class="text-sm font-medium">Loại thanh toán</label>
-            <select name="type" class="w-full px-3 py-2 border rounded-lg mt-1">
-                <option value="deposit" <?= $payment['type'] == 'deposit' ? 'selected' : '' ?>>Cọc</option>
-                <option value="full_payment" <?= $payment['type'] == 'full_payment' ? 'selected' : '' ?>>Thanh toán đủ</option>
-                <option value="remaining" <?= $payment['type'] == 'remaining' ? 'selected' : '' ?>>Thanh toán còn lại</option>
+            <select name="type" class="w-full px-3 py-2 border rounded-lg mt-1" required>
+                <option value="payment" <?= $payment['type'] == 'payment' ? 'selected' : '' ?>>Thanh toán</option>
                 <option value="refund" <?= $payment['type'] == 'refund' ? 'selected' : '' ?>>Hoàn tiền</option>
             </select>
         </div>
@@ -52,21 +50,10 @@ require_once './views/components/sidebar.php';
 
         <div>
             <label class="text-sm font-medium">Ngày thanh toán</label>
-            <input type="datetime-local" name="payment_date"
-                value="<?= date('Y-m-d\TH:i', strtotime($payment['payment_date'])) ?>"
+            <input type="date" name="payment_date"
+                value="<?= date('Y-m-d', strtotime($payment['payment_date'])) ?>"
                 class="w-full px-3 py-2 border rounded-lg mt-1">
         </div>
-
-        <div>
-            <label class="text-sm font-medium">Trạng thái</label>
-            <select name="status" class="w-full px-3 py-2 border rounded-lg mt-1">
-                <option value="pending" <?= $payment['status'] == 'pending' ? 'selected' : '' ?>>Chờ xử lý</option>
-                <option value="completed" <?= $payment['status'] == 'completed' ? 'selected' : '' ?>>Thành công</option>
-                <option value="failed" <?= $payment['status'] == 'failed' ? 'selected' : '' ?>>Thất bại</option>
-            </select>
-        </div>
-
-
 
         <div class="pt-3 flex gap-3">
             <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Cập nhật</button>

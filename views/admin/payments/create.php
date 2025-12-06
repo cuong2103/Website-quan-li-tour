@@ -25,6 +25,27 @@ require_once './views/components/sidebar.php';
         class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4">
 
         <input type="hidden" name="booking_id" value="<?= $_GET['booking_id'] ?>">
+<!-- 
+        <div>
+            <p class="text-gray-500">Tiền dịch vụ</p>
+            <p class="font-medium text-purple-600">
+                <?= number_format($booking['service_amount'] ?? 0, 0, ',', '.') ?>đ
+            </p>
+        </div>
+
+        <div>
+            <p class="text-gray-500">Tổng tiền</p>
+            <p class="font-medium text-green-600">
+                <?= number_format($booking['total_amount'], 0, ',', '.') ?>đ
+            </p>
+        </div>
+
+        <div>
+            <p class="text-gray-500">Còn lại</p>
+            <p class="font-medium <?= $remaining > 0 ? 'text-red-600' : 'text-green-600' ?>">
+                <?= number_format($remaining, 0, ',', '.') ?>đ
+            </p>
+        </div> -->
 
         <div>
             <label class="text-sm font-medium">Phương thức thanh toán</label>
@@ -54,17 +75,6 @@ require_once './views/components/sidebar.php';
             <input type="datetime-local" name="payment_date" class="w-full px-3 py-2 border rounded-lg mt-1"
                 value="<?= date('Y-m-d\TH:i') ?>">
         </div>
-
-        <div>
-            <label class="text-sm font-medium">Trạng thái</label>
-            <select name="status" class="w-full px-3 py-2 border rounded-lg mt-1">
-                <option value="pending">Chờ xử lý</option>
-                <option value="completed">Thành công</option>
-                <option value="failed">Thất bại</option>
-            </select>
-        </div>
-
-
 
         <div class="pt-3 flex gap-3">
             <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Lưu</button>

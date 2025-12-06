@@ -10,6 +10,7 @@ class BookingController
     public $checkinModel;
     public $journalModel;
 
+
     public function __construct()
     {
         requireAdmin();
@@ -42,14 +43,12 @@ class BookingController
     {
         $keyword = $_GET['keyword'] ?? '';
 
-        // Model
-        $serviceModel = $this->serviceModel;
 
         // Lọc theo keyword nếu có
         if ($keyword) {
-            $services = $serviceModel->search($keyword);
+            $services = $this->serviceModel->search($keyword);
         } else {
-            $services = $serviceModel->getAll();
+            $services = $this->serviceModel->getAll();
         }
 
         // Các dữ liệu khác
@@ -76,22 +75,29 @@ class BookingController
             'tour_id' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
-            'adult_count' => 'required|numeric',
-            'child_count' => 'numeric',
             'total_amount' => 'required|numeric',
             'deposit_amount' => 'numeric',
-            'status' => 'required',
             'rep_name' => 'required',
             'rep_phone' => 'required',
-            'rep_email' => 'required|email'
+            'rep_email' => 'required|email',
+            'rep_passport' => 'required',
+            'rep_gender' => 'required',
+            'rep_citizen_id' => 'required',
+            'rep_address' => 'required',
         ];
 
         $errors = validate($_POST, $rules);
         if (!empty($errors)) {
-            Message::set('error', 'Vui lòng kiểm tra lại dữ liệu đã nhập.');
+            // Lưu lỗi và dữ liệu cũ vào session
             $_SESSION['old'] = $_POST;
             $_SESSION['validate_errors'] = $errors;
-            header("Location:" . BASE_URL . '?act=booking-create');
+            
+            // Redirect về trang create với tour_id nếu có
+            $redirectUrl = BASE_URL . '?act=booking-create';
+            if (!empty($_POST['tour_id'])) {
+                $redirectUrl .= '&tour_id=' . $_POST['tour_id'];
+            }
+            header("Location:" . $redirectUrl);
             exit;
         }
 
@@ -151,7 +157,6 @@ class BookingController
             'total_amount' => $_POST['total_amount'],
             'deposit_amount' => $_POST['deposit_amount'] ?? 0,
             'remaining_amount' => $_POST['remaining_amount'] ?? 0,
-            'status' => $_POST['status'],
             'special_requests' => $_POST['special_requests'] ?? null,
             'customers' => [$customerId],
             'is_representative' => $customerId,
@@ -211,8 +216,6 @@ class BookingController
             'tour_id' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
-            'adult_count' => 'required|numeric',
-            'child_count' => 'numeric',
             'total_amount' => 'required|numeric',
             'deposit_amount' => 'numeric'
         ];
@@ -220,7 +223,7 @@ class BookingController
         $errors = validate($_POST, $rules);
 
         if (!empty($errors)) {
-            Message::set('error', 'Vui lòng kiểm tra lại dữ liệu đã nhập.');
+            // Lưu lỗi và dữ liệu cũ vào session
             $_SESSION['old'] = $_POST;
             $_SESSION['validate_errors'] = $errors;
             header("Location:" . BASE_URL . '?act=booking-edit&id=' . $_POST['id']);
@@ -359,6 +362,8 @@ class BookingController
         $bookingServices = $this->bookingModel->getServicesByBooking($id);
         $bookingContracts = $this->contractModel->getByBookingId($id);
         $bookingPayments = $this->paymentModel->getAllByBooking($booking['id']);
+        $totalPaid = $this->bookingModel->getTotalPaid($booking['id']);
+        $remaining = $booking['total_amount'] - $totalPaid;
 
         // Lấy dữ liệu cho tab check-in và journal
         $checkinLinks = $this->checkinModel->getCheckinLinksByBookingId($id);

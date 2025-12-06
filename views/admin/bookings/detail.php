@@ -59,10 +59,6 @@ require_once './views/components/sidebar.php';
 
             <div>
                 <p class="text-gray-500">Còn lại</p>
-                <?php
-                $totalPaid = (new BookingModel())->getTotalPaid($booking['id']);
-                $remaining = $booking['total_amount'] - $totalPaid;
-                ?>
                 <p class="font-medium <?= $remaining > 0 ? 'text-red-600' : 'text-green-600' ?>">
                     <?= number_format($remaining, 0, ',', '.') ?>đ
                 </p>

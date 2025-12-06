@@ -164,6 +164,15 @@ function validate($data, $rules)
     return $errors;
 }
 
+// Hàm lấy giá trị cũ từ session (dùng khi validation thất bại)
+function old($key, $default = '')
+{
+    if (isset($_SESSION['old'][$key])) {
+        return htmlspecialchars($_SESSION['old'][$key]);
+    }
+    return $default;
+}
+
 function redirect($act)
 {
     header("Location: " . BASE_URL . "?act=" . $act);

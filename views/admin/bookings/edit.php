@@ -37,34 +37,42 @@ require_once './views/components/sidebar.php';
                     <div>
                         <label class="block mb-1.5 text-sm font-medium text-gray-700">Chọn Tour <span class="text-red-500">*</span></label>
                         <select name="tour_id" id="tourSelect"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition"
-                            required>
+                            class="w-full border <?= isset($_SESSION['validate_errors']['tour_id']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition">
                             <option value="">-- Chọn Tour --</option>
                             <?php foreach ($tours as $t): ?>
                                 <option value="<?= $t['id'] ?>"
                                     data-adult="<?= $t['adult_price'] ?>"
                                     data-child="<?= $t['child_price'] ?>"
                                     data-duration="<?= $t['duration_days'] ?>"
-                                    <?= $t['id'] == $booking['tour_id'] ? 'selected' : '' ?>>
+                                    <?= $t['id'] == (old('tour_id') ?: $booking['tour_id']) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($t['name']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        <?php if (isset($_SESSION['validate_errors']['tour_id'])): ?>
+                            <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['tour_id']) ? $_SESSION['validate_errors']['tour_id'][0] : $_SESSION['validate_errors']['tour_id'] ?></p>
+                        <?php endif; ?>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Ngày khởi hành <span class="text-red-500">*</span></label>
                             <input type="date" name="start_date"
-                                value="<?= $booking['start_date'] ?>"
-                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition" required>
+                                value="<?= old('start_date') ?: $booking['start_date'] ?>"
+                                class="w-full border <?= isset($_SESSION['validate_errors']['start_date']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition">
+                            <?php if (isset($_SESSION['validate_errors']['start_date'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['start_date']) ? $_SESSION['validate_errors']['start_date'][0] : $_SESSION['validate_errors']['start_date'] ?></p>
+                            <?php endif; ?>
                         </div>
 
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Ngày kết thúc <span class="text-red-500">*</span></label>
                             <input type="date" name="end_date"
-                                value="<?= $booking['end_date'] ?>"
-                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition" required>
+                                value="<?= old('end_date') ?: $booking['end_date'] ?>"
+                                class="w-full border <?= isset($_SESSION['validate_errors']['end_date']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition">
+                            <?php if (isset($_SESSION['validate_errors']['end_date'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['end_date']) ? $_SESSION['validate_errors']['end_date'][0] : $_SESSION['validate_errors']['end_date'] ?></p>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -205,14 +213,20 @@ require_once './views/components/sidebar.php';
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Người lớn</label>
                             <input type="number" id="adultCount" name="adult_count"
-                                value="<?= $booking['adult_count'] ?>" min="1"
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 outline-none transition text-center font-medium">
+                                value="<?= old('adult_count') ?: $booking['adult_count'] ?>" min="1"
+                                class="w-full border <?= isset($_SESSION['validate_errors']['adult_count']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 outline-none transition text-center font-medium">
+                            <?php if (isset($_SESSION['validate_errors']['adult_count'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['adult_count']) ? $_SESSION['validate_errors']['adult_count'][0] : $_SESSION['validate_errors']['adult_count'] ?></p>
+                            <?php endif; ?>
                         </div>
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Trẻ em</label>
                             <input type="number" id="childCount" name="child_count"
-                                value="<?= $booking['child_count'] ?>" min="0"
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 outline-none transition text-center font-medium">
+                                value="<?= old('child_count') ?: $booking['child_count'] ?>" min="0"
+                                class="w-full border <?= isset($_SESSION['validate_errors']['child_count']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 outline-none transition text-center font-medium">
+                            <?php if (isset($_SESSION['validate_errors']['child_count'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['child_count']) ? $_SESSION['validate_errors']['child_count'][0] : $_SESSION['validate_errors']['child_count'] ?></p>
+                            <?php endif; ?>
                         </div>
                     </div>
 
@@ -414,4 +428,9 @@ require_once './views/components/sidebar.php';
         });
     </script>
 </main>
-<?php require_once './views/components/footer.php'; ?>
+<?php 
+// Xóa session errors và old data sau khi đã hiển thị
+unset($_SESSION['validate_errors']);
+unset($_SESSION['old']);
+require_once './views/components/footer.php'; 
+?>

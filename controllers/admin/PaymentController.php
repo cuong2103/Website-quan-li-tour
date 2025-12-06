@@ -25,6 +25,8 @@ class PaymentController
     public function create()
     {
         $booking_id = $_GET['booking_id']; // Lấy booking ID để gắn vào form
+        // $totalPaid = $this->bookingModel->getTotalPaid($booking_id);
+        // $remaining = $booking['total_amount'] - $totalPaid;
         require_once './views/admin/payments/create.php';
     }
 
@@ -37,8 +39,7 @@ class PaymentController
             'payment_method' => $_POST['payment_method'],
             'amount'         => $_POST['amount'],
             'type'           => $_POST['type'], // payment hoặc refund
-            'status'         => $_POST['status'], // pending / completed
-            'payment_date'   => $_POST['payment_date'] ?? date('Y-m-d H:i:s'),
+            'payment_date'   => $_POST['payment_date'] ?? date('Y-m-d'),
             'created_by'     => $_SESSION['currentUser']['id'] ?? 1
         ];
 
@@ -47,8 +48,8 @@ class PaymentController
         $totalPaid = $this->bookingModel->getTotalPaid($data['booking_id']); // Lấy tổng đã thanh toán
         $remaining = $booking['total_amount'] - $totalPaid; // Tính số tiền còn lại
 
-        // Nếu thanh toán vượt quá số tiền còn lại
-        if ($data['status'] == 'completed' && $data['amount'] > $remaining) {
+        // Nếu thanh toán vượt quá số tiền còn lại (chỉ áp dụng cho payment, không áp dụng cho refund)
+        if ($data['type'] == 'payment' && $data['amount'] > $remaining) {
             Message::set('error', 'Số tiền thanh toán vượt quá số tiền còn lại (' . number_format($remaining) . 'đ)');
             header("Location: " . BASE_URL . "?act=payment-create&booking_id=" . $data['booking_id']);
             exit();
@@ -61,6 +62,7 @@ class PaymentController
         $this->autoUpdateBookingStatus($data['booking_id']);
 
         // Chuyển về trang chi tiết booking
+        Message::set('success', 'Thêm thanh toán thành công!');
         header("Location: " . BASE_URL . "?act=booking-detail&id=" . $data['booking_id'] . "&tab=payments");
         exit();
     }
@@ -84,8 +86,7 @@ class PaymentController
             'payment_method' => $_POST['payment_method'],
             'amount'         => $_POST['amount'],
             'type'           => $_POST['type'],
-            'status'         => $_POST['status'],
-            'payment_date'   => $_POST['payment_date'] ?? date('Y-m-d H:i:s')
+            'payment_date'   => $_POST['payment_date'] ?? date('Y-m-d')
         ];
 
         // Lấy payment hiện tại
@@ -96,15 +97,12 @@ class PaymentController
         $booking = $this->bookingModel->getById($bookingId);
         $totalPaid = $this->bookingModel->getTotalPaid($bookingId);
 
-        // Nếu payment cũ đã completed thì trừ nó ra để tính lại số tiền đúng
-        if ($payment['status'] == 'completed') {
-            $totalPaid -= $payment['amount'];
-        }
-
+        // Trừ payment cũ ra để tính lại số tiền đúng
+        $totalPaid -= $payment['amount'];
         $remaining = $booking['total_amount'] - $totalPaid;
 
-        // Check số tiền có vượt quá số dư không
-        if ($data['status'] == 'completed' && $data['amount'] > $remaining) {
+        // Check số tiền có vượt quá số dư không (chỉ cho payment)
+        if ($data['type'] == 'payment' && $data['amount'] > $remaining) {
             Message::set('error', 'Số tiền thanh toán vượt quá số tiền còn lại (' . number_format($remaining) . 'đ)');
             header("Location: " . BASE_URL . "?act=payment-edit&id=" . $id);
             exit();
@@ -114,11 +112,11 @@ class PaymentController
         $this->paymentModel->update($id, $data);
 
         // Cập nhật lại trạng thái booking
-        $payment = $this->paymentModel->findById($id);
-        $this->autoUpdateBookingStatus($payment['booking_id']);
+        $this->autoUpdateBookingStatus($bookingId);
 
         // Quay lại trang booking
-        header("Location: " . BASE_URL . "?act=booking-detail&id=" . $payment['booking_id'] . "&tab=payments");
+        Message::set('success', 'Cập nhật thanh toán thành công!');
+        header("Location: " . BASE_URL . "?act=booking-detail&id=" . $bookingId . "&tab=payments");
         exit();
     }
 
@@ -151,19 +149,19 @@ class PaymentController
     }
 
     // Logic cập nhật trạng thái booking dựa vào payment
-    private function autoUpdateBookingStatus($bookingId)
+    public function autoUpdateBookingStatus($bookingId)
     {
         $totalPaid = $this->bookingModel->getTotalPaid($bookingId); // Tổng tiền đã thanh toán
         $booking = $this->bookingModel->getById($bookingId); // Lấy booking
 
         if (!$booking) return; // Nếu không có booking thì dừng
 
-        // Kiểm tra xem có payment hoàn tiền (refund) đã hoàn thành không
+        // Kiểm tra xem có payment hoàn tiền (refund) không
         $payments = $this->paymentModel->getAllByBooking($bookingId);
         $hasRefund = false;
 
         foreach ($payments as $payment) {
-            if ($payment['type'] === 'refund' && $payment['status'] === 'completed') {
+            if ($payment['type'] === 'refund') {
                 $hasRefund = true;
                 break;
             }
