@@ -42,7 +42,6 @@ function renderCategory($categories, $level = 0)
 function renderOption($tree, $parentName = '', $id = null)
 {
   foreach ($tree as $cat) {
-
     // Tạo đường dẫn "cha → con"
     $fullName = $parentName
       ? $parentName . " → " . $cat['name']

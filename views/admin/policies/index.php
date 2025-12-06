@@ -78,7 +78,7 @@ require_once "./views/components/sidebar.php";
             </div>
 
             <!-- DANH SÁCH CHÍNH SÁCH -->
-            <div class="lg:col-span-2">
+            <div class="col-span-2">
                 <div class="bg-white rounded-xl border shadow-sm">
 
                     <div class="px-6 pt-6 pb-3">

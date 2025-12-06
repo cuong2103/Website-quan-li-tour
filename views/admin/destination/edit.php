@@ -47,7 +47,7 @@ require_once './views/components/sidebar.php';
         <!-- Mô tả -->
         <div class="mb-4">
             <label class="block font-medium mb-1">Mô tả</label>
-            <textarea name="description" rows="4" class="border w-full p-2 rounded-lg"><?= htmlspecialchars($destination['description']) ?></textarea>
+            <textarea name="description" rows="4" class="border w-full p-2 rounded-lg "><?= htmlspecialchars($destination['description']) ?> </textarea>
         </div>
 
         <!-- Ảnh cũ -->

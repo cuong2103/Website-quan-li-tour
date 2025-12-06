@@ -83,13 +83,13 @@ require_once './views/components/sidebar.php';
                     <div class="flex items-start justify-between">
                         <div>
                             <h2 class="text-lg font-semibold text-gray-900"><?= htmlspecialchars($item['name']) ?></h2>
-                            <p class="text-sm text-gray-500 mt-1">📁 <?= htmlspecialchars($item['category_name'] ?? 'Không rõ danh mục') ?></p>
+                            <p class="text-sm flex items-center gap-1 text-gray-500 mt-1"><i class="w-4 h-4 text-blue-500 flex-shrink-0" data-lucide="folder"></i><?= htmlspecialchars($item['category_name'] ?? 'Không rõ danh mục') ?></p>
                         </div>
                     </div>
 
 
-                    <p class="text-gray-500 text-sm mt-3 line-clamp-2">
-                        <?= htmlspecialchars(substr($item['description'] ?? 'Không có mô tả', 0, 120)) ?>...
+                    <p class="text-gray-500 text-sm mt-3 line-clamp-2 ">
+                        <?= htmlspecialchars(substr($item['locations'] ?? 'Không có mô tả', 0, 120)) ?> ...
                     </p>
 
                     <!-- Hành động -->

@@ -96,7 +96,7 @@ class DestinationModel
     // lấy danh mục
     public function getCategories()
     {
-        $stmt = $this->conn->prepare("SELECT * FROM categories ORDER BY name ASC");
+        $stmt = $this->conn->prepare("SELECT * FROM categories");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
