@@ -48,23 +48,69 @@ class PaymentController
     // Lưu thanh toán mới
     public function store()
     {
+        // Validation
+        $errors = [];
+        
+        // Nếu chuyển khoản thì bắt buộc có mã giao dịch
+        if ($_POST['payment_method'] === 'bank_transfer' && empty($_POST['transaction_code'])) {
+            $errors[] = 'Vui lòng nhập mã giao dịch cho chuyển khoản';
+        }
+        
+        // Xử lý upload file
+        $receiptFile = null;
+        if (isset($_FILES['receipt_file']) && $_FILES['receipt_file']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = 'uploads/receipts/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+            $fileType = $_FILES['receipt_file']['type'];
+            
+            if (!in_array($fileType, $allowedTypes)) {
+                $errors[] = 'Chỉ chấp nhận file JPG, PNG hoặc PDF';
+            }
+            
+            if ($_FILES['receipt_file']['size'] > 5 * 1024 * 1024) {
+                $errors[] = 'File không được vượt quá 5MB';
+            }
+            
+            if (empty($errors)) {
+                $fileName = time() . '_' . basename($_FILES['receipt_file']['name']);
+                if (move_uploaded_file($_FILES['receipt_file']['tmp_name'], $uploadDir . $fileName)) {
+                    $receiptFile = $fileName;
+                } else {
+                    $errors[] = 'Lỗi khi upload file';
+                }
+            }
+        }
+        
+        // Nếu có lỗi validation
+        if (!empty($errors)) {
+            $_SESSION['payment_errors'] = $errors;
+            header("Location: " . BASE_URL . "?act=payment-create&booking_id=" . $_POST['booking_id']);
+            exit();
+        }
+        
         // Gom dữ liệu vào mảng
         $data = [
-            'booking_id'     => $_POST['booking_id'],
-            'payment_method' => $_POST['payment_method'],
-            'amount'         => $_POST['amount'],
-            'type'           => $_POST['type'], // payment hoặc refund
-            'payment_date'   => $_POST['payment_date'] ?? date('Y-m-d'),
-            'created_by'     => $_SESSION['currentUser']['id'] ?? 1
+            'booking_id'       => $_POST['booking_id'],
+            'payment_method'   => $_POST['payment_method'],
+            'transaction_code' => $_POST['transaction_code'] ?? null,
+            'receipt_file'     => $receiptFile,
+            'amount'           => $_POST['amount'],
+            'type'             => $_POST['type'],
+            'payment_date'     => $_POST['payment_date'] ?? date('Y-m-d'),
+            'created_by'       => $_SESSION['currentUser']['id'] ?? 1
         ];
 
         // Validate số tiền thanh toán
-        $booking = $this->bookingModel->getById($data['booking_id']); // Lấy thông tin booking
-        $totalPaid = $this->bookingModel->getTotalPaid($data['booking_id']); // Lấy tổng đã thanh toán
-        $remaining = $booking['total_amount'] - $totalPaid; // Tính số tiền còn lại
+        $booking = $this->bookingModel->getById($data['booking_id']);
+        $totalPaid = $this->bookingModel->getTotalPaid($data['booking_id']);
+        $remaining = $booking['total_amount'] - $totalPaid;
 
-        // Nếu thanh toán vượt quá số tiền còn lại (chỉ áp dụng cho payment, không áp dụng cho refund)
-        if ($data['type'] == 'payment' && $data['amount'] > $remaining) {
+        // Nếu thanh toán vượt quá số tiền còn lại (không áp dụng cho refund)
+        if ($data['type'] != 'refund' && $data['amount'] > $remaining) {
             Message::set('error', 'Số tiền thanh toán vượt quá số tiền còn lại (' . number_format($remaining) . 'đ)');
             header("Location: " . BASE_URL . "?act=payment-create&booking_id=" . $data['booking_id']);
             exit();
@@ -73,7 +119,7 @@ class PaymentController
         // Lưu thanh toán mới vào DB
         $this->paymentModel->store($data);
 
-        // Tự cập nhật trạng thái booking cho đúng logic
+        // Tự cập nhật trạng thái booking
         $this->autoUpdateBookingStatus($data['booking_id']);
 
         // Chuyển về trang chi tiết booking
@@ -112,18 +158,68 @@ class PaymentController
     public function update()
     {
         $id = $_POST['id'];
-
-        // Lấy dữ liệu update
-        $data = [
-            'payment_method' => $_POST['payment_method'],
-            'amount'         => $_POST['amount'],
-            'type'           => $_POST['type'],
-            'payment_date'   => $_POST['payment_date'] ?? date('Y-m-d')
-        ];
-
+        
         // Lấy payment hiện tại
         $payment = $this->paymentModel->findById($id);
         $bookingId = $payment['booking_id'];
+        
+        // Validation
+        $errors = [];
+        
+        // Nếu chuyển khoản thì bắt buộc có mã giao dịch
+        if ($_POST['payment_method'] === 'bank_transfer' && empty($_POST['transaction_code'])) {
+            $errors[] = 'Vui lòng nhập mã giao dịch cho chuyển khoản';
+        }
+        
+        // Xử lý upload file mới (nếu có)
+        $receiptFile = $payment['receipt_file']; // Giữ file cũ
+        if (isset($_FILES['receipt_file']) && $_FILES['receipt_file']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = 'uploads/receipts/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+            $fileType = $_FILES['receipt_file']['type'];
+            
+            if (!in_array($fileType, $allowedTypes)) {
+                $errors[] = 'Chỉ chấp nhận file JPG, PNG hoặc PDF';
+            }
+            
+            if ($_FILES['receipt_file']['size'] > 5 * 1024 * 1024) {
+                $errors[] = 'File không được vượt quá 5MB';
+            }
+            
+            if (empty($errors)) {
+                $fileName = time() . '_' . basename($_FILES['receipt_file']['name']);
+                if (move_uploaded_file($_FILES['receipt_file']['tmp_name'], $uploadDir . $fileName)) {
+                    // Xóa file cũ nếu có
+                    if ($payment['receipt_file'] && file_exists($uploadDir . $payment['receipt_file'])) {
+                        unlink($uploadDir . $payment['receipt_file']);
+                    }
+                    $receiptFile = $fileName;
+                } else {
+                    $errors[] = 'Lỗi khi upload file';
+                }
+            }
+        }
+        
+        // Nếu có lỗi validation
+        if (!empty($errors)) {
+            $_SESSION['payment_errors'] = $errors;
+            header("Location: " . BASE_URL . "?act=payment-edit&id=$id");
+            exit();
+        }
+
+        // Lấy dữ liệu update
+        $data = [
+            'payment_method'   => $_POST['payment_method'],
+            'transaction_code' => $_POST['transaction_code'] ?? null,
+            'receipt_file'     => $receiptFile,
+            'amount'           => $_POST['amount'],
+            'type'             => $_POST['type'],
+            'payment_date'     => $_POST['payment_date'] ?? date('Y-m-d')
+        ];
 
         // Lấy booking để tính tiền còn lại
         $booking = $this->bookingModel->getById($bookingId);
@@ -133,8 +229,8 @@ class PaymentController
         $totalPaid -= $payment['amount'];
         $remaining = $booking['total_amount'] - $totalPaid;
 
-        // Check số tiền có vượt quá số dư không (chỉ cho payment)
-        if ($data['type'] == 'payment' && $data['amount'] > $remaining) {
+        // Check số tiền có vượt quá số dư không (không áp dụng cho refund)
+        if ($data['type'] != 'refund' && $data['amount'] > $remaining) {
             Message::set('error', 'Số tiền thanh toán vượt quá số tiền còn lại (' . number_format($remaining) . 'đ)');
             header("Location: " . BASE_URL . "?act=payment-edit&id=" . $id);
             exit();

@@ -43,11 +43,22 @@ $canAddPayment = !in_array($booking['status'], ['paid', 'completed', 'cancelled'
                                     ?>
                                 </p>
 
+                                <!-- Mã giao dịch (chỉ hiện khi chuyển khoản) -->
+                                <?php if ($p['payment_method'] === 'bank_transfer' && !empty($p['transaction_code'])): ?>
+                                    <p class="text-sm text-gray-600 flex items-center gap-1 mb-1">
+                                        <i class="w-4 h-4" data-lucide="hash"></i>
+                                        Mã GD: <span class="font-mono font-semibold"><?= htmlspecialchars($p['transaction_code']) ?></span>
+                                    </p>
+                                <?php endif; ?>
+
+                                <!-- Loại thanh toán -->
                                 <p class="text-sm text-gray-700 mt-2 flex items-center gap-1 mb-1">
                                     <i class="w-4 h-4" data-lucide="circle-dollar-sign"></i>
                                     <?php
                                     $typeLabels = [
-                                        'payment' => 'Thanh toán',
+                                        'deposit' => 'Cọc',
+                                        'full_payment' => 'Thanh toán đủ',
+                                        'remaining' => 'Thanh toán còn lại',
                                         'refund' => 'Hoàn tiền'
                                     ];
                                     echo $typeLabels[$p['type']] ?? $p['type'];
@@ -62,6 +73,17 @@ $canAddPayment = !in_array($booking['status'], ['paid', 'completed', 'cancelled'
                                     </span>
                                 </p>
 
+                                <!-- File phiếu thu -->
+                                <?php if (!empty($p['receipt_file'])): ?>
+                                    <p class="text-sm text-blue-600 flex items-center gap-1 mb-1">
+                                        <i class="w-4 h-4" data-lucide="download"></i>
+                                        <a href="uploads/receipts/<?= $p['receipt_file'] ?>" download class="hover:underline">
+                                            Tải xuống phiếu thu
+                                        </a>
+                                    </p>
+                                <?php endif; ?>
+
+                                <!-- Ngày thanh toán -->
                                 <p class="text-sm text-gray-500 mt-1 flex items-center gap-1 mb-1">
                                     <i class="w-4 h-4" data-lucide="calendar"></i>
                                     Ngày: <?= date('d/m/Y', strtotime($p['payment_date'])) ?>
