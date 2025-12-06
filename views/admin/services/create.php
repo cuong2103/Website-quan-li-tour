@@ -67,7 +67,6 @@ unset($_SESSION['errors'], $_SESSION['old']);
                         <option value="person" <?= (isset($old['unit']) && $old['unit'] == 'person') ? 'selected' : '' ?>>Người</option>
                         <option value="room" <?= (isset($old['unit']) && $old['unit'] == 'room') ? 'selected' : '' ?>>Phòng</option>
                         <option value="vehicle" <?= (isset($old['unit']) && $old['unit'] == 'vehicle') ? 'selected' : '' ?>>Xe</option>
-                        <option value="tour" <?= (isset($old['unit']) && $old['unit'] == 'tour') ? 'selected' : '' ?>>Tour</option>
                         <option value="day" <?= (isset($old['unit']) && $old['unit'] == 'day') ? 'selected' : '' ?>>Ngày</option>
                         <option value="meal" <?= (isset($old['unit']) && $old['unit'] == 'meal') ? 'selected' : '' ?>>Suất ăn</option>
                     </select>

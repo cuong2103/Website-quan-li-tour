@@ -7,7 +7,6 @@ $units = [
     'person' => 'Người',
     'room' => 'Phòng',
     'vehicle' => 'Xe',
-    'tour' => 'Tour',
     'day' => 'Ngày',
     'meal' => 'Suất ăn'
 ];
@@ -65,7 +64,7 @@ $units = [
                         <div>
                             <label class="block text-sm font-medium text-gray-500 mb-1">Đơn vị tính</label>
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
-                                <?= $units[$service['unit'] ?? 'person'] ?? '👤 Người' ?>
+                                <?= $units[$service['unit'] ?? 'person'] ?? 'Người' ?>
                             </span>
                         </div>
                         <div>

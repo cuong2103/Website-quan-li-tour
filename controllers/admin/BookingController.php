@@ -118,11 +118,25 @@ class BookingController
 
         // ===== tính toán service_amount =====
         $serviceAmount = 0;
+        $totalPeople = ($_POST['adult_count'] ?? 0) + ($_POST['child_count'] ?? 0);
+
         if (!empty($_POST['services'])) {
             foreach ($_POST['services'] as $serviceId) {
+                // Lấy thông tin dịch vụ để biết đơn vị tính
+                $service = $this->serviceModel->getDetail($serviceId);
+                $unit = $service['unit'] ?? 'person';
+
                 $currentPrice = $_POST['service_prices'][$serviceId] ?? 0;
                 $quantity = $_POST['service_quantities'][$serviceId] ?? 1;
-                $serviceAmount += ($currentPrice * $quantity);
+
+                // Tính theo đơn vị
+                if ($unit === 'person') {
+                    // Dịch vụ tính theo người: nhân với tổng số người
+                    $serviceAmount += ($currentPrice * $quantity * $totalPeople);
+                } else {
+                    // Các đơn vị khác: không nhân với số người
+                    $serviceAmount += ($currentPrice * $quantity);
+                }
             }
         }
 
@@ -218,11 +232,25 @@ class BookingController
 
         // tính toán service_amount
         $serviceAmount = 0;
+        $totalPeople = ($_POST['adult_count'] ?? 0) + ($_POST['child_count'] ?? 0);
+
         if (!empty($_POST['services'])) {
             foreach ($_POST['services'] as $serviceId) {
+                // Lấy thông tin dịch vụ để biết đơn vị tính
+                $service = $this->serviceModel->getDetail($serviceId);
+                $unit = $service['unit'] ?? 'person';
+
                 $currentPrice = $_POST['service_prices'][$serviceId] ?? 0;
                 $quantity = $_POST['service_quantities'][$serviceId] ?? 1;
-                $serviceAmount += ($currentPrice * $quantity);
+
+                // Tính theo đơn vị
+                if ($unit === 'person') {
+                    // Dịch vụ tính theo người: nhân với tổng số người
+                    $serviceAmount += ($currentPrice * $quantity * $totalPeople);
+                } else {
+                    // Các đơn vị khác: không nhân với số người
+                    $serviceAmount += ($currentPrice * $quantity);
+                }
             }
         }
 

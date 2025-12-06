@@ -145,8 +145,17 @@ require_once './views/components/sidebar.php';
                                 <input type="checkbox" name="services[]" value="<?= $sv['id'] ?>"
                                     class="w-4 h-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500 service-checkbox"
                                     data-id="<?= $sv['id'] ?>"
+                                    data-unit="<?= $sv['unit'] ?? 'person' ?>"
                                     <?= $isSelected ? 'checked' : '' ?>>
-                                <span class="text-sm font-medium text-gray-700"><?= htmlspecialchars($sv['name']) ?></span>
+                                <span class="text-sm font-medium text-gray-700">
+                                    <?= htmlspecialchars($sv['name']) ?>
+                                    <span class="text-xs text-gray-500">
+                                        (<?php
+                                            $unitMap = ['person' => 'Người', 'room' => 'Phòng', 'vehicle' => 'Xe', 'day' => 'Ngày', 'meal' => 'Suất ăn'];
+                                            echo $unitMap[$sv['unit'] ?? 'person'] ?? 'Người';
+                                            ?>)
+                                    </span>
+                                </span>
                             </label>
 
                             <div class="grid grid-cols-2 gap-2 pl-7 <?= $isSelected ? '' : 'hidden' ?>" id="service-inputs-<?= $sv['id'] ?>">
@@ -273,15 +282,23 @@ require_once './views/components/sidebar.php';
 
             // 2. Tính tiền Dịch vụ
             let serviceTotal = 0;
+            const totalPeople = (Number(adultCount.value) || 0) + (Number(childCount.value) || 0);
+
             document.querySelectorAll('.service-checkbox:checked').forEach(cb => {
                 const id = cb.dataset.id;
+                const unit = cb.dataset.unit || 'person'; // Lấy đơn vị tính
                 const priceInput = document.querySelector(`input[name="service_prices[${id}]"]`);
                 const qtyInput = document.querySelector(`input[name="service_quantities[${id}]"]`);
-
                 const price = Number(priceInput.value) || 0;
                 const qty = Number(qtyInput.value) || 1;
-
-                serviceTotal += price * qty;
+                // Tính theo đơn vị
+                if (unit === 'person') {
+                    // Dịch vụ tính theo người: nhân với tổng số người
+                    serviceTotal += price * qty * totalPeople;
+                } else {
+                    // Các đơn vị khác: không nhân với số người
+                    serviceTotal += price * qty;
+                }
             });
 
             // 3. Tổng cộng
