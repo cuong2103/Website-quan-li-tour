@@ -58,6 +58,7 @@ class GuideTourAssignmentController
     // chi tiết tour
     public function detail()
     {
+
         $assignmentId = $_GET['id'] ?? null;
         $tab = $_GET['tab'] ?? 'customers';
 
@@ -67,6 +68,7 @@ class GuideTourAssignmentController
         }
 
         $assignment = $this->bookingModel->getBookingDetails($assignmentId);
+
         if (!$assignment) {
             echo "Không tìm thấy phân công tour!";
             exit;
@@ -89,10 +91,12 @@ class GuideTourAssignmentController
 
             case 'journals':
                 $journals = $this->assignmentModel->getJournalsByAssignment($assignmentId);
+
                 break;
 
             case 'itinerary':
-                $itineraries = $this->tourModel->getItineraries($bookingId);
+                $itineraries = $this->tourModel->getItineraries($assignment['tour_id']);
+
                 if (!empty($itineraries)) {
                     foreach ($itineraries as $item) {
                         $day = $item['order_number'] ?? 1;
