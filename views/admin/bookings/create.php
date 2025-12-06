@@ -129,27 +129,18 @@ require_once './views/components/sidebar.php';
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Hộ chiếu (Passport)</label>
                             <input type="text" name="rep_passport" placeholder="Số hộ chiếu..." value="<?= old('rep_passport') ?>"
-                                class="w-full border <?= isset($_SESSION['validate_errors']['rep_passport']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
-                            <?php if (isset($_SESSION['validate_errors']['rep_passport'])): ?>
-                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['rep_passport']) ? $_SESSION['validate_errors']['rep_passport'][0] : $_SESSION['validate_errors']['rep_passport'] ?></p>
-                            <?php endif; ?>
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                         </div>
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">CMND/CCCD</label>
                             <input type="text" name="rep_citizen_id" placeholder="Số CMND/CCCD..." value="<?= old('rep_citizen_id') ?>"
-                                class="w-full border <?= isset($_SESSION['validate_errors']['rep_citizen_id']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
-                            <?php if (isset($_SESSION['validate_errors']['rep_citizen_id'])): ?>
-                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['rep_citizen_id']) ? $_SESSION['validate_errors']['rep_citizen_id'][0] : $_SESSION['validate_errors']['rep_citizen_id'] ?></p>
-                            <?php endif; ?>
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                         </div>
                     </div>
                     <div>
                         <label class="block mb-1.5 text-sm font-medium text-gray-700">Địa chỉ</label>
                         <input type="text" name="rep_address" placeholder="Địa chỉ liên hệ..." value="<?= old('rep_address') ?>"
-                            class="w-full border <?= isset($_SESSION['validate_errors']['rep_address']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
-                        <?php if (isset($_SESSION['validate_errors']['rep_address'])): ?>
-                            <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['rep_address']) ? $_SESSION['validate_errors']['rep_address'][0] : $_SESSION['validate_errors']['rep_address'] ?></p>
-                        <?php endif; ?>
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                     </div>
                 </div>
             </div>
@@ -273,16 +264,6 @@ require_once './views/components/sidebar.php';
                                 class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-xl font-bold text-orange-600 text-right outline-none">
                             <input type="hidden" name="total_amount" id="totalAmountInput">
                         </div>
-                    </div>
-
-                    <div>
-                        <label class="block mb-1.5 text-sm font-medium text-gray-700">Trạng thái</label>
-                        <select name="status"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition">
-                            <option value="pending">Chờ thanh toán</option>
-                            <option value="deposited">Đã cọc</option>
-                            <option value="paid">Đã thanh toán đủ</option>
-                        </select>
                     </div>
 
                     <div class="flex fixed bottom-5 right-16 gap-3">

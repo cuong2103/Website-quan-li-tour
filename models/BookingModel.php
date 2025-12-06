@@ -69,6 +69,13 @@ class BookingModel
             $booking = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($booking) {
+                // Auto-update nếu tour đã kết thúc
+                if ($booking['end_date'] < date('Y-m-d') && 
+                    in_array($booking['status'], ['paid', 'in_progress', 'deposited'])) {
+                    $this->updateStatus($id, 'completed');
+                    $booking['status'] = 'completed';
+                }
+                
                 $booking['customers'] = $this->getCustomers($id);
                 // --- Lấy người đại diện ---
                 $rep = array_filter($booking['customers'], fn($c) => $c['is_representative'] == 1);

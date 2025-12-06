@@ -24,9 +24,24 @@ class PaymentController
     // Hiển thị form tạo thanh toán
     public function create()
     {
-        $booking_id = $_GET['booking_id']; // Lấy booking ID để gắn vào form
-        // $totalPaid = $this->bookingModel->getTotalPaid($booking_id);
-        // $remaining = $booking['total_amount'] - $totalPaid;
+        $booking_id = $_GET['booking_id'];
+        
+        // Lấy thông tin booking
+        $booking = $this->bookingModel->getById($booking_id);
+        
+        // Ngăn thêm payment cho booking đã completed
+        if ($booking['status'] === 'completed') {
+            Message::set('error', 'Không thể thêm thanh toán cho booking đã hoàn thành');
+            header("Location: " . BASE_URL . "?act=booking-detail&id=$booking_id&tab=payments");
+            exit();
+        }
+        
+        // Tính tổng đã thanh toán
+        $totalPaid = $this->bookingModel->getTotalPaid($booking_id);
+        
+        // Tính số tiền còn lại
+        $remaining = $booking['total_amount'] - $totalPaid;
+        
         require_once './views/admin/payments/create.php';
     }
 
@@ -70,8 +85,25 @@ class PaymentController
     // Form sửa thanh toán
     public function edit()
     {
-        $id = $_GET['id']; // ID của payment
-        $payment = $this->paymentModel->findById($id); // Lấy payment từ DB
+        $id = $_GET['id'];
+        $payment = $this->paymentModel->findById($id);
+        
+        // Lấy thông tin booking
+        $booking = $this->bookingModel->getById($payment['booking_id']);
+        
+        // Ngăn sửa payment của booking đã completed
+        if ($booking['status'] === 'completed') {
+            Message::set('error', 'Không thể sửa thanh toán của booking đã hoàn thành');
+            header("Location: " . BASE_URL . "?act=booking-detail&id={$payment['booking_id']}&tab=payments");
+            exit();
+        }
+        
+        // Tính tổng đã thanh toán
+        $totalPaid = $this->bookingModel->getTotalPaid($payment['booking_id']);
+        
+        // Trừ payment hiện tại để tính số tiền còn lại chính xác
+        $totalPaid -= $payment['amount'];
+        $remaining = $booking['total_amount'] - $totalPaid;
 
         require_once './views/admin/payments/edit.php';
     }
@@ -137,6 +169,16 @@ class PaymentController
         // Lấy booking_id của payment để lát cập nhật
         $payment = $this->paymentModel->findById($id);
         $booking_id = $payment['booking_id'];
+        
+        // Lấy thông tin booking
+        $booking = $this->bookingModel->getById($booking_id);
+        
+        // Ngăn xóa payment của booking đã completed
+        if ($booking['status'] === 'completed') {
+            Message::set('error', 'Không thể xóa thanh toán của booking đã hoàn thành');
+            header("Location: " . BASE_URL . "?act=booking-detail&id=$booking_id&tab=payments");
+            exit();
+        }
 
         // Xóa payment
         $this->paymentModel->destroy($id);
@@ -151,10 +193,10 @@ class PaymentController
     // Logic cập nhật trạng thái booking dựa vào payment
     public function autoUpdateBookingStatus($bookingId)
     {
-        $totalPaid = $this->bookingModel->getTotalPaid($bookingId); // Tổng tiền đã thanh toán
-        $booking = $this->bookingModel->getById($bookingId); // Lấy booking
+        $totalPaid = $this->bookingModel->getTotalPaid($bookingId);
+        $booking = $this->bookingModel->getById($bookingId);
 
-        if (!$booking) return; // Nếu không có booking thì dừng
+        if (!$booking) return;
 
         // Kiểm tra xem có payment hoàn tiền (refund) không
         $payments = $this->paymentModel->getAllByBooking($bookingId);
@@ -172,7 +214,6 @@ class PaymentController
             $totalAmount = $booking['total_amount'];
             $remaining = $totalAmount - $totalPaid;
 
-            // Cập nhật tiền nhưng đổi trạng thái sang cancelled
             $this->bookingModel->updateFinancials($bookingId, $totalPaid, $remaining);
             $this->bookingModel->updateStatus($bookingId, 'cancelled');
             return;

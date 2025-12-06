@@ -76,14 +76,9 @@ class BookingController
             'start_date' => 'required',
             'end_date' => 'required',
             'total_amount' => 'required|numeric',
-            'deposit_amount' => 'numeric',
             'rep_name' => 'required',
             'rep_phone' => 'required',
             'rep_email' => 'required|email',
-            'rep_passport' => 'required',
-            'rep_gender' => 'required',
-            'rep_citizen_id' => 'required',
-            'rep_address' => 'required',
         ];
 
         $errors = validate($_POST, $rules);
@@ -146,6 +141,7 @@ class BookingController
             }
         }
 
+
         $data = [
             'tour_id' => $_POST['tour_id'],
             'booking_code' => $bookingCode,
@@ -155,8 +151,6 @@ class BookingController
             'child_count' => $_POST['child_count'] ?? 0,
             'service_amount' => $serviceAmount,
             'total_amount' => $_POST['total_amount'],
-            'deposit_amount' => $_POST['deposit_amount'] ?? 0,
-            'remaining_amount' => $_POST['remaining_amount'] ?? 0,
             'special_requests' => $_POST['special_requests'] ?? null,
             'customers' => [$customerId],
             'is_representative' => $customerId,
@@ -185,6 +179,9 @@ class BookingController
             }
         }
 
+        // Cập nhật trạng thái thanh toán và tính toán deposit_amount, remaining_amount
+        $this->autoUpdatePaymentStatus($bookingId);
+
         // Thông báo nếu thành công
         Message::set('success', 'Tạo booking thành công.');
         header("Location:" . BASE_URL . '?act=bookings');
@@ -211,6 +208,19 @@ class BookingController
     // Cập nhật booking
     public function update()
     {
+        // Lấy id booking
+        $id = $_POST['id'];
+        
+        // Lấy thông tin booking hiện tại
+        $booking = $this->bookingModel->getById($id);
+        
+        // Ngăn update booking đã completed
+        if ($booking['status'] === 'completed') {
+            Message::set('error', 'Không thể sửa booking đã hoàn thành');
+            redirect('bookings');
+            exit;
+        }
+        
         // validate dữ liệu
         $rules = [
             'tour_id' => 'required',
@@ -265,8 +275,6 @@ class BookingController
             'child_count' => $_POST['child_count'] ?? 0,
             'service_amount' => $serviceAmount,
             'total_amount' => $_POST['total_amount'],
-            'deposit_amount' => $_POST['deposit_amount'] ?? 0,
-            'remaining_amount' => $_POST['remaining_amount'] ?? 0,
             'status' => $_POST['status'],
             'special_requests' => $_POST['special_requests'] ?? null,
             'customers' => $_POST['customers'] ?? [],
@@ -380,7 +388,12 @@ class BookingController
         if (!$booking) return;
 
         $totalAmount = $booking['total_amount'];
+        $remainingAmount = $totalAmount - $totalPaid;
 
+        // Cập nhật deposit_amount và remaining_amount
+        $this->bookingModel->updateFinancials($bookingId, $totalPaid, $remainingAmount);
+
+        // Cập nhật status dựa trên số tiền đã thanh toán
         if ($totalPaid >= $totalAmount) {
             $this->bookingModel->updateStatus($bookingId, 'paid'); // Đã thanh toán đủ
         } elseif ($totalPaid > 0) {
@@ -537,6 +550,13 @@ class BookingController
             header("Location:" . BASE_URL . '?act=bookings');
             exit;
         }
+        
+        // Ngăn xóa customer khi booking đã completed
+        if ($booking['status'] === 'completed') {
+            Message::set('error', 'Không thể xóa khách hàng của booking đã hoàn thành');
+            header("Location:" . BASE_URL . "?act=booking-detail&id=$bookingId&tab=customers");
+            exit;
+        }
 
         // Kiểm tra xem khách hàng có phải người đại diện không
         $customers = $this->bookingModel->getCustomers($bookingId);
@@ -574,6 +594,13 @@ class BookingController
     {
         $bookingId = $_GET['booking_id'];
         $booking = $this->bookingModel->getById($bookingId);
+        
+        // Ngăn thêm customer khi booking đã completed
+        if ($booking['status'] === 'completed') {
+            Message::set('error', 'Không thể thêm khách hàng cho booking đã hoàn thành');
+            header("Location:" . BASE_URL . "?act=booking-detail&id=$bookingId&tab=customers");
+            exit;
+        }
 
         // Xử lý khi submit form
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

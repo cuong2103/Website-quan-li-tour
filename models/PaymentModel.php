@@ -29,18 +29,20 @@ class PaymentModel
     {
         try {
             $sql = "INSERT INTO payments 
-                    (booking_id, payment_method, amount, type, payment_date, created_by, created_at) 
+                    (booking_id, payment_method, transaction_code, receipt_file, amount, type, payment_date, created_by, created_at) 
                     VALUES 
-                    (:booking_id, :payment_method, :amount, :type, :payment_date, :created_by, NOW())";
+                    (:booking_id, :payment_method, :transaction_code, :receipt_file, :amount, :type, :payment_date, :created_by, NOW())";
 
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([
-                ':booking_id'     => $data['booking_id'],
-                ':payment_method' => $data['payment_method'],
-                ':amount'         => $data['amount'],
-                ':type'           => $data['type'],
-                ':payment_date'   => $data['payment_date'],
-                ':created_by'     => $data['created_by'],
+                ':booking_id'        => $data['booking_id'],
+                ':payment_method'    => $data['payment_method'],
+                ':transaction_code'  => $data['transaction_code'] ?? null,
+                ':receipt_file'      => $data['receipt_file'] ?? null,
+                ':amount'            => $data['amount'],
+                ':type'              => $data['type'],
+                ':payment_date'      => $data['payment_date'],
+                ':created_by'        => $data['created_by'],
             ]);
         } catch (PDOException $e) {
             die("Lỗi PaymentModel::store(): " . $e->getMessage());
@@ -52,6 +54,8 @@ class PaymentModel
         try {
             $sql = "UPDATE payments SET
                         payment_method = :payment_method,
+                        transaction_code = :transaction_code,
+                        receipt_file = :receipt_file,
                         amount = :amount,
                         type = :type,
                         payment_date = :payment_date,
@@ -60,11 +64,13 @@ class PaymentModel
 
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([
-                ':payment_method' => $data['payment_method'],
-                ':amount'         => $data['amount'],
-                ':type'           => $data['type'],
-                ':payment_date'   => $data['payment_date'],
-                ':id'             => $id,
+                ':payment_method'    => $data['payment_method'],
+                ':transaction_code'  => $data['transaction_code'] ?? null,
+                ':receipt_file'      => $data['receipt_file'] ?? null,
+                ':amount'            => $data['amount'],
+                ':type'              => $data['type'],
+                ':payment_date'      => $data['payment_date'],
+                ':id'                => $id,
             ]);
         } catch (PDOException $e) {
             die("Lỗi PaymentModel::update(): " . $e->getMessage());
