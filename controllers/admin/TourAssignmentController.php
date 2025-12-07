@@ -35,6 +35,13 @@ class TourAssignmentController
             redirect('bookings');
             exit;
         }
+        
+        // Ngăn phân công khi booking đã completed
+        if ($booking['status'] === 'completed') {
+            Message::set('error', 'Không thể phân công cho booking đã hoàn thành');
+            redirect('bookings');
+            exit;
+        }
 
         // --- KIỂM TRA THANH TOÁN ---
         // Chỉ cho phép phân công nếu Status = 3 (Đã thanh toán đủ) VÀ Remaining Amount <= 0
@@ -106,6 +113,13 @@ class TourAssignmentController
         }
 
         $booking = $this->bookingModel->getById($assignment['booking_id']);
+
+        // Ngăn phân công khi booking đã completed
+        if ($booking['status'] === 'completed') {
+            Message::set('error', 'Không thể phân công cho booking đã hoàn thành');
+            redirect('bookings');
+            exit;
+        }
 
         // Lọc HDV trống lịch (trừ chính booking này ra)
         $guides = $this->tourAssignmentModel->getAvailableGuides($booking['start_date'], $booking['end_date'], $assignment['booking_id']);

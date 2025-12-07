@@ -221,9 +221,10 @@ CREATE TABLE `payments` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `booking_id` INT NOT NULL,
   `payment_method` ENUM('cash', 'bank_transfer') NOT NULL,
+  `transaction_code` VARCHAR(255) NULL COMMENT 'Mã giao dịch (cho chuyển khoản)', 
+  `receipt_file` VARCHAR(255) NULL COMMENT 'File phiếu thu/ảnh chứng từ',
   `amount` DECIMAL(12,0) NOT NULL, 
   `type` ENUM('deposit', 'full_payment', 'remaining', 'refund') NOT NULL, 
-  `status` ENUM('pending', 'completed', 'failed', 'cancelled') DEFAULT 'pending', 
   `payment_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `created_by` INT,
   `updated_by` INT,
@@ -411,9 +412,6 @@ ALTER TABLE `customer_checkins`
   ADD CONSTRAINT `fk_customer_checkins_link` FOREIGN KEY (`tour_checkin_link_id`) REFERENCES `tour_checkin_links` (`id`) ON DELETE CASCADE;
 ALTER TABLE `tour_checkin_links`
   ADD CONSTRAINT `fk_tour_checkin_links_assignment` FOREIGN KEY (`tour_assignment_id`) REFERENCES `tour_assignments` (`id`);
-ALTER TABLE `customer_checkins`
-  ADD CONSTRAINT `fk_customer_checkins_link` FOREIGN KEY (`tour_checkin_link_id`) REFERENCES `tour_checkin_links`(`id`);
-
 
 ALTER TABLE `journals`
   ADD CONSTRAINT `fk_journals_tour_assignment` FOREIGN KEY (`tour_assignment_id`) REFERENCES `tour_assignments` (`id`) ;

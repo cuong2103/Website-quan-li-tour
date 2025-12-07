@@ -34,32 +34,40 @@ require_once './views/components/sidebar.php';
                     <div>
                         <label class="block mb-1.5 text-sm font-medium text-gray-700">Chọn Tour <span class="text-red-500">*</span></label>
                         <select name="tour_id" id="tourSelect"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition"
-                            required>
+                            class="w-full border <?= isset($_SESSION['validate_errors']['tour_id']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition">
                             <option value="">-- Chọn Tour --</option>
                             <?php foreach ($tours as $t): ?>
                                 <option value="<?= $t['id'] ?>"
                                     data-adult="<?= $t['adult_price'] ?>"
                                     data-child="<?= $t['child_price'] ?>"
                                     data-duration="<?= $t['duration_days'] ?>"
-                                    <?= (isset($_GET['tour_id']) && $_GET['tour_id'] == $t['id']) ? 'selected' : '' ?>>
+                                    <?= (isset($_GET['tour_id']) && $_GET['tour_id'] == $t['id']) || (old('tour_id') == $t['id']) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($t['name']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        <?php if (isset($_SESSION['validate_errors']['tour_id'])): ?>
+                            <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['tour_id']) ? $_SESSION['validate_errors']['tour_id'][0] : $_SESSION['validate_errors']['tour_id'] ?></p>
+                        <?php endif; ?>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Ngày khởi hành <span class="text-red-500">*</span></label>
-                            <input type="date" name="start_date"
-                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition" required>
+                            <input type="date" name="start_date" value="<?= old('start_date') ?>"
+                                class="w-full border <?= isset($_SESSION['validate_errors']['start_date']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition">
+                            <?php if (isset($_SESSION['validate_errors']['start_date'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['start_date']) ? $_SESSION['validate_errors']['start_date'][0] : $_SESSION['validate_errors']['start_date'] ?></p>
+                            <?php endif; ?>
                         </div>
 
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Ngày kết thúc <span class="text-red-500">*</span></label>
-                            <input type="date" name="end_date"
-                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition" required>
+                            <input type="date" name="end_date" value="<?= old('end_date') ?>"
+                                class="w-full border <?= isset($_SESSION['validate_errors']['end_date']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition">
+                            <?php if (isset($_SESSION['validate_errors']['end_date'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['end_date']) ? $_SESSION['validate_errors']['end_date'][0] : $_SESSION['validate_errors']['end_date'] ?></p>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -78,48 +86,60 @@ require_once './views/components/sidebar.php';
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Họ và tên <span class="text-red-500">*</span></label>
-                            <input type="text" name="rep_name" placeholder="Nguyễn Văn A"
-                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition" required>
+                            <input type="text" name="rep_name" placeholder="Nguyễn Văn A" value="<?= old('rep_name') ?>"
+                                class="w-full border <?= isset($_SESSION['validate_errors']['rep_name']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
+                            <?php if (isset($_SESSION['validate_errors']['rep_name'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['rep_name']) ? $_SESSION['validate_errors']['rep_name'][0] : $_SESSION['validate_errors']['rep_name'] ?></p>
+                            <?php endif; ?>
                         </div>
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Số điện thoại <span class="text-red-500">*</span></label>
-                            <input type="text" name="rep_phone" placeholder="0912345678"
-                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition" required>
+                            <input type="text" name="rep_phone" placeholder="0912345678" value="<?= old('rep_phone') ?>"
+                                class="w-full border <?= isset($_SESSION['validate_errors']['rep_phone']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
+                            <?php if (isset($_SESSION['validate_errors']['rep_phone'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['rep_phone']) ? $_SESSION['validate_errors']['rep_phone'][0] : $_SESSION['validate_errors']['rep_phone'] ?></p>
+                            <?php endif; ?>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Email <span class="text-red-500">*</span></label>
-                            <input type="email" name="rep_email" placeholder="email@example.com"
-                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition" required>
+                            <input type="email" name="rep_email" placeholder="email@example.com" value="<?= old('rep_email') ?>"
+                                class="w-full border <?= isset($_SESSION['validate_errors']['rep_email']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
+                            <?php if (isset($_SESSION['validate_errors']['rep_email'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['rep_email']) ? $_SESSION['validate_errors']['rep_email'][0] : $_SESSION['validate_errors']['rep_email'] ?></p>
+                            <?php endif; ?>
                         </div>
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Giới tính</label>
                             <select name="rep_gender"
-                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
-                                <option value="male">Nam</option>
-                                <option value="female">Nữ</option>
-                                <option value="other">Khác</option>
+                                class="w-full border <?= isset($_SESSION['validate_errors']['rep_gender']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
+                                <option value="male" <?= old('rep_gender', 'male') == 'male' ? 'selected' : '' ?>>Nam</option>
+                                <option value="female" <?= old('rep_gender') == 'female' ? 'selected' : '' ?>>Nữ</option>
+                                <option value="other" <?= old('rep_gender') == 'other' ? 'selected' : '' ?>>Khác</option>
                             </select>
+                            <?php if (isset($_SESSION['validate_errors']['rep_gender'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['rep_gender']) ? $_SESSION['validate_errors']['rep_gender'][0] : $_SESSION['validate_errors']['rep_gender'] ?></p>
+                            <?php endif; ?>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Hộ chiếu (Passport)</label>
-                            <input type="text" name="rep_passport" placeholder="Số hộ chiếu..."
+                            <input type="text" name="rep_passport" placeholder="Số hộ chiếu..." value="<?= old('rep_passport') ?>"
                                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                         </div>
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">CMND/CCCD</label>
-                            <input type="text" name="rep_citizen_id" placeholder="Số CMND/CCCD..."
+                            <input type="text" name="rep_citizen_id" placeholder="Số CMND/CCCD..." value="<?= old('rep_citizen_id') ?>"
                                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                         </div>
                     </div>
                     <div>
                         <label class="block mb-1.5 text-sm font-medium text-gray-700">Địa chỉ</label>
-                        <input type="text" name="rep_address" placeholder="Địa chỉ liên hệ..."
+                        <input type="text" name="rep_address" placeholder="Địa chỉ liên hệ..." value="<?= old('rep_address') ?>"
                             class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                     </div>
                 </div>
@@ -160,8 +180,17 @@ require_once './views/components/sidebar.php';
                                 <input type="checkbox" name="services[]" value="<?= $sv['id'] ?>"
                                     class="w-4 h-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500 service-checkbox"
                                     data-id="<?= $sv['id'] ?>"
+                                    data-unit="<?= $sv['unit'] ?? 'person' ?>"
                                     <?= $isChecked ? 'checked' : '' ?>>
-                                <span class="text-sm font-medium text-gray-700"><?= htmlspecialchars($sv['name']) ?></span>
+                                <span class="text-sm font-medium text-gray-700">
+                                    <?= htmlspecialchars($sv['name']) ?>
+                                    <span class="text-xs text-gray-500">
+                                        (<?php
+                                            $unitMap = ['person' => 'Người', 'room' => 'Phòng', 'vehicle' => 'Xe', 'day' => 'Ngày', 'meal' => 'Suất ăn'];
+                                            echo $unitMap[$sv['unit'] ?? 'person'] ?? 'Người';
+                                            ?>)
+                                    </span>
+                                </span>
                             </label>
 
                             <div class="grid grid-cols-2 gap-2 pl-7 <?= $isChecked ? '' : 'hidden' ?>" id="service-inputs-<?= $sv['id'] ?>">
@@ -237,16 +266,6 @@ require_once './views/components/sidebar.php';
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block mb-1.5 text-sm font-medium text-gray-700">Trạng thái</label>
-                        <select name="status"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 outline-none transition">
-                            <option value="pending">Chờ thanh toán</option>
-                            <option value="deposited">Đã cọc</option>
-                            <option value="paid">Đã thanh toán đủ</option>
-                        </select>
-                    </div>
-
                     <div class="flex fixed bottom-5 right-16 gap-3">
                         <button class="px-6 py-2.5 bg-black text-white rounded-lg hover:bg-gray-900 transition font-medium">
                             Tạo booking
@@ -284,17 +303,24 @@ require_once './views/components/sidebar.php';
 
             // 2. Tính tiền Dịch vụ
             let serviceTotal = 0;
+            const totalPeople = (Number(adultCount.value) || 0) + (Number(childCount.value) || 0);
+
             document.querySelectorAll('.service-checkbox:checked').forEach(cb => {
                 const id = cb.dataset.id;
+                const unit = cb.dataset.unit || 'person'; // Lấy đơn vị tính
                 const priceInput = document.querySelector(`input[name="service_prices[${id}]"]`);
                 const qtyInput = document.querySelector(`input[name="service_quantities[${id}]"]`);
-
                 const price = Number(priceInput.value) || 0;
                 const qty = Number(qtyInput.value) || 1;
-
-                serviceTotal += price * qty;
+                // Tính theo đơn vị
+                if (unit === 'person') {
+                    // Dịch vụ tính theo người: nhân với tổng số người
+                    serviceTotal += price * qty * totalPeople;
+                } else {
+                    // Các đơn vị khác (phòng, xe, tour, ngày, suất ăn): không nhân với số người
+                    serviceTotal += price * qty;
+                }
             });
-
             // 3. Tổng cộng
             const grandTotal = tourTotal + serviceTotal;
 
@@ -404,4 +430,9 @@ require_once './views/components/sidebar.php';
     </script>
 </main>
 
-<?php require_once './views/components/footer.php'; ?>
+<?php 
+// Xóa session errors và old data sau khi đã hiển thị
+unset($_SESSION['validate_errors']);
+unset($_SESSION['old']);
+require_once './views/components/footer.php'; 
+?>

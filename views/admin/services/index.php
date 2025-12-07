@@ -1,6 +1,15 @@
 <?php
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
+
+// Map đơn vị tính
+$units = [
+    'person' => 'Người',
+    'room' => 'Phòng',
+    'vehicle' => 'Xe',
+    'day' => 'Ngày',
+    'meal' => 'Suất ăn'
+];
 ?>
 
 <div class="ml-54 mt-28 p-6">
@@ -59,6 +68,7 @@ require_once './views/components/sidebar.php';
                     <th class="px-6 py-4 font-medium text-gray-700">Loại</th>
                     <th class="px-6 py-4 font-medium text-gray-700">Nhà cung cấp</th>
                     <th class="px-6 py-4 font-medium text-gray-700">Giá</th>
+                    <th class="px-6 py-4 font-medium text-gray-700">Đơn vị</th>
                     <th class="px-6 py-4 font-medium text-gray-700 text-center">Hành động</th>
                 </tr>
             </thead>
@@ -94,6 +104,13 @@ require_once './views/components/sidebar.php';
                         <!-- Giá -->
                         <td class="px-6 py-5 text-center font-medium text-gray-700">
                             <?= number_format($service["estimated_price"] ?? 0) . ' VNĐ' ?>
+                        </td>
+
+                        <!-- Đơn vị -->
+                        <td class="px-6 py-5 text-center">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                                <?= $units[$service['unit'] ?? 'person'] ?? 'Người' ?>
+                            </span>
                         </td>
 
                         <!-- Hành động -->

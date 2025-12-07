@@ -48,6 +48,19 @@ unset($_SESSION['errors'], $_SESSION['old']);
                     <?php endif; ?>
                 </div>
 
+                <!-- Đơn vị tính -->
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700">Đơn vị tính <span class="text-red-500">*</span></label>
+                    <select name="unit" required
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white">
+                        <option value="person" <?= ($old['unit'] ?? 'person') == 'person' ? 'selected' : '' ?>>Người</option>
+                        <option value="room" <?= ($old['unit'] ?? '') == 'room' ? 'selected' : '' ?>>Phòng</option>
+                        <option value="vehicle" <?= ($old['unit'] ?? '') == 'vehicle' ? 'selected' : '' ?>>Xe</option>
+                        <option value="day" <?= ($old['unit'] ?? '') == 'day' ? 'selected' : '' ?>>Ngày</option>
+                        <option value="meal" <?= ($old['unit'] ?? '') == 'meal' ? 'selected' : '' ?>>Suất ăn</option>
+                    </select>
+                </div>
+
                 <!-- Loại dịch vụ -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Loại dịch vụ <span class="text-red-500">*</span></label>

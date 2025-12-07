@@ -10,6 +10,7 @@ class BookingController
     public $checkinModel;
     public $journalModel;
 
+
     public function __construct()
     {
         requireAdmin();
@@ -42,14 +43,12 @@ class BookingController
     {
         $keyword = $_GET['keyword'] ?? '';
 
-        // Model
-        $serviceModel = $this->serviceModel;
 
         // Lọc theo keyword nếu có
         if ($keyword) {
-            $services = $serviceModel->search($keyword);
+            $services = $this->serviceModel->search($keyword);
         } else {
-            $services = $serviceModel->getAll();
+            $services = $this->serviceModel->getAll();
         }
 
         // Các dữ liệu khác
@@ -76,22 +75,24 @@ class BookingController
             'tour_id' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
-            'adult_count' => 'required|numeric',
-            'child_count' => 'numeric',
             'total_amount' => 'required|numeric',
-            'deposit_amount' => 'numeric',
-            'status' => 'required',
             'rep_name' => 'required',
             'rep_phone' => 'required',
-            'rep_email' => 'required|email'
+            'rep_email' => 'required|email',
         ];
 
         $errors = validate($_POST, $rules);
         if (!empty($errors)) {
-            Message::set('error', 'Vui lòng kiểm tra lại dữ liệu đã nhập.');
+            // Lưu lỗi và dữ liệu cũ vào session
             $_SESSION['old'] = $_POST;
             $_SESSION['validate_errors'] = $errors;
-            header("Location:" . BASE_URL . '?act=booking-create');
+            
+            // Redirect về trang create với tour_id nếu có
+            $redirectUrl = BASE_URL . '?act=booking-create';
+            if (!empty($_POST['tour_id'])) {
+                $redirectUrl .= '&tour_id=' . $_POST['tour_id'];
+            }
+            header("Location:" . $redirectUrl);
             exit;
         }
 
@@ -118,13 +119,28 @@ class BookingController
 
         // ===== tính toán service_amount =====
         $serviceAmount = 0;
+        $totalPeople = ($_POST['adult_count'] ?? 0) + ($_POST['child_count'] ?? 0);
+
         if (!empty($_POST['services'])) {
             foreach ($_POST['services'] as $serviceId) {
+                // Lấy thông tin dịch vụ để biết đơn vị tính
+                $service = $this->serviceModel->getDetail($serviceId);
+                $unit = $service['unit'] ?? 'person';
+
                 $currentPrice = $_POST['service_prices'][$serviceId] ?? 0;
                 $quantity = $_POST['service_quantities'][$serviceId] ?? 1;
-                $serviceAmount += ($currentPrice * $quantity);
+
+                // Tính theo đơn vị
+                if ($unit === 'person') {
+                    // Dịch vụ tính theo người: nhân với tổng số người
+                    $serviceAmount += ($currentPrice * $quantity * $totalPeople);
+                } else {
+                    // Các đơn vị khác: không nhân với số người
+                    $serviceAmount += ($currentPrice * $quantity);
+                }
             }
         }
+
 
         $data = [
             'tour_id' => $_POST['tour_id'],
@@ -135,9 +151,6 @@ class BookingController
             'child_count' => $_POST['child_count'] ?? 0,
             'service_amount' => $serviceAmount,
             'total_amount' => $_POST['total_amount'],
-            'deposit_amount' => $_POST['deposit_amount'] ?? 0,
-            'remaining_amount' => $_POST['remaining_amount'] ?? 0,
-            'status' => $_POST['status'],
             'special_requests' => $_POST['special_requests'] ?? null,
             'customers' => [$customerId],
             'is_representative' => $customerId,
@@ -166,6 +179,9 @@ class BookingController
             }
         }
 
+        // Cập nhật trạng thái thanh toán và tính toán deposit_amount, remaining_amount
+        $this->autoUpdatePaymentStatus($bookingId);
+
         // Thông báo nếu thành công
         Message::set('success', 'Tạo booking thành công.');
         header("Location:" . BASE_URL . '?act=bookings');
@@ -192,13 +208,24 @@ class BookingController
     // Cập nhật booking
     public function update()
     {
+        // Lấy id booking
+        $id = $_POST['id'];
+        
+        // Lấy thông tin booking hiện tại
+        $booking = $this->bookingModel->getById($id);
+        
+        // Ngăn update booking đã completed
+        if ($booking['status'] === 'completed') {
+            Message::set('error', 'Không thể sửa booking đã hoàn thành');
+            redirect('bookings');
+            exit;
+        }
+        
         // validate dữ liệu
         $rules = [
             'tour_id' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
-            'adult_count' => 'required|numeric',
-            'child_count' => 'numeric',
             'total_amount' => 'required|numeric',
             'deposit_amount' => 'numeric'
         ];
@@ -206,7 +233,7 @@ class BookingController
         $errors = validate($_POST, $rules);
 
         if (!empty($errors)) {
-            Message::set('error', 'Vui lòng kiểm tra lại dữ liệu đã nhập.');
+            // Lưu lỗi và dữ liệu cũ vào session
             $_SESSION['old'] = $_POST;
             $_SESSION['validate_errors'] = $errors;
             header("Location:" . BASE_URL . '?act=booking-edit&id=' . $_POST['id']);
@@ -218,11 +245,25 @@ class BookingController
 
         // tính toán service_amount
         $serviceAmount = 0;
+        $totalPeople = ($_POST['adult_count'] ?? 0) + ($_POST['child_count'] ?? 0);
+
         if (!empty($_POST['services'])) {
             foreach ($_POST['services'] as $serviceId) {
+                // Lấy thông tin dịch vụ để biết đơn vị tính
+                $service = $this->serviceModel->getDetail($serviceId);
+                $unit = $service['unit'] ?? 'person';
+
                 $currentPrice = $_POST['service_prices'][$serviceId] ?? 0;
                 $quantity = $_POST['service_quantities'][$serviceId] ?? 1;
-                $serviceAmount += ($currentPrice * $quantity);
+
+                // Tính theo đơn vị
+                if ($unit === 'person') {
+                    // Dịch vụ tính theo người: nhân với tổng số người
+                    $serviceAmount += ($currentPrice * $quantity * $totalPeople);
+                } else {
+                    // Các đơn vị khác: không nhân với số người
+                    $serviceAmount += ($currentPrice * $quantity);
+                }
             }
         }
 
@@ -234,8 +275,6 @@ class BookingController
             'child_count' => $_POST['child_count'] ?? 0,
             'service_amount' => $serviceAmount,
             'total_amount' => $_POST['total_amount'],
-            'deposit_amount' => $_POST['deposit_amount'] ?? 0,
-            'remaining_amount' => $_POST['remaining_amount'] ?? 0,
             'status' => $_POST['status'],
             'special_requests' => $_POST['special_requests'] ?? null,
             'customers' => $_POST['customers'] ?? [],
@@ -331,6 +370,8 @@ class BookingController
         $bookingServices = $this->bookingModel->getServicesByBooking($id);
         $bookingContracts = $this->contractModel->getByBookingId($id);
         $bookingPayments = $this->paymentModel->getAllByBooking($booking['id']);
+        $totalPaid = $this->bookingModel->getTotalPaid($booking['id']);
+        $remaining = $booking['total_amount'] - $totalPaid;
 
         // Lấy dữ liệu cho tab check-in và journal
         $checkinLinks = $this->checkinModel->getCheckinLinksByBookingId($id);
@@ -347,7 +388,12 @@ class BookingController
         if (!$booking) return;
 
         $totalAmount = $booking['total_amount'];
+        $remainingAmount = $totalAmount - $totalPaid;
 
+        // Cập nhật deposit_amount và remaining_amount
+        $this->bookingModel->updateFinancials($bookingId, $totalPaid, $remainingAmount);
+
+        // Cập nhật status dựa trên số tiền đã thanh toán
         if ($totalPaid >= $totalAmount) {
             $this->bookingModel->updateStatus($bookingId, 'paid'); // Đã thanh toán đủ
         } elseif ($totalPaid > 0) {
@@ -504,6 +550,13 @@ class BookingController
             header("Location:" . BASE_URL . '?act=bookings');
             exit;
         }
+        
+        // Ngăn xóa customer khi booking đã completed
+        if ($booking['status'] === 'completed') {
+            Message::set('error', 'Không thể xóa khách hàng của booking đã hoàn thành');
+            header("Location:" . BASE_URL . "?act=booking-detail&id=$bookingId&tab=customers");
+            exit;
+        }
 
         // Kiểm tra xem khách hàng có phải người đại diện không
         $customers = $this->bookingModel->getCustomers($bookingId);
@@ -541,6 +594,13 @@ class BookingController
     {
         $bookingId = $_GET['booking_id'];
         $booking = $this->bookingModel->getById($bookingId);
+        
+        // Ngăn thêm customer khi booking đã completed
+        if ($booking['status'] === 'completed') {
+            Message::set('error', 'Không thể thêm khách hàng cho booking đã hoàn thành');
+            header("Location:" . BASE_URL . "?act=booking-detail&id=$bookingId&tab=customers");
+            exit;
+        }
 
         // Xử lý khi submit form
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

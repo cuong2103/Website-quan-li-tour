@@ -1,12 +1,29 @@
+<?php
+// Kiểm tra xem có được phép thêm thanh toán không
+$canAddPayment = !in_array($booking['status'], ['paid', 'completed', 'cancelled']);
+?>
+
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
 
             <div class="flex justify-between flex-wrap items-center gap-3 mb-4">
                 <h2 class="text-base font-semibold text-gray-800">Lịch sử thanh toán</h2>
-                <a href="<?= BASE_URL ?>?act=payment-create&booking_id=<?= $booking['id'] ?>"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium">
-                    <i class="w-4 h-4" data-lucide="plus"></i>
-                    Thêm thanh toán
-                </a>
+                
+                <?php if ($canAddPayment): ?>
+                    <a href="<?= BASE_URL ?>?act=payment-create&booking_id=<?= $booking['id'] ?>"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium">
+                        <i class="w-4 h-4" data-lucide="plus"></i>
+                        Thêm thanh toán
+                    </a>
+                <?php else: ?>
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-500 rounded-lg text-sm font-medium">
+                        <i class="w-4 h-4" data-lucide="lock"></i>
+                        <?php
+                            if ($booking['status'] === 'paid') echo 'Đã thanh toán đủ';
+                            elseif ($booking['status'] === 'completed') echo 'Tour đã hoàn thành';
+                            elseif ($booking['status'] === 'cancelled') echo 'Booking đã hủy';
+                        ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <?php if (!empty($bookingPayments)): ?>
@@ -26,6 +43,15 @@
                                     ?>
                                 </p>
 
+                                <!-- Mã giao dịch (chỉ hiện khi chuyển khoản) -->
+                                <?php if ($p['payment_method'] === 'bank_transfer' && !empty($p['transaction_code'])): ?>
+                                    <p class="text-sm text-gray-600 flex items-center gap-1 mb-1">
+                                        <i class="w-4 h-4" data-lucide="hash"></i>
+                                        Mã GD: <span class="font-mono font-semibold"><?= htmlspecialchars($p['transaction_code']) ?></span>
+                                    </p>
+                                <?php endif; ?>
+
+                                <!-- Loại thanh toán -->
                                 <p class="text-sm text-gray-700 mt-2 flex items-center gap-1 mb-1">
                                     <i class="w-4 h-4" data-lucide="circle-dollar-sign"></i>
                                     <?php
@@ -42,40 +68,27 @@
                                 <p class="text-sm text-gray-700 mt-1 flex items-center gap-1 mb-1">
                                     <i class="w-4 h-4" data-lucide="banknote"></i>
                                     Số tiền:
-                                    <span class="font-semibold text-green-600"><?= number_format($p['amount'], 0, ',', '.') ?>đ</span>
+                                    <span class="font-semibold <?= $p['type'] === 'refund' ? 'text-red-600' : 'text-green-600' ?>">
+                                        <?= number_format($p['amount'], 0, ',', '.') ?>đ
+                                    </span>
                                 </p>
 
+                                <!-- File phiếu thu -->
+                                <?php if (!empty($p['receipt_file'])): ?>
+                                    <p class="text-sm text-blue-600 flex items-center gap-1 mb-1">
+                                        <i class="w-4 h-4" data-lucide="download"></i>
+                                        <a href="uploads/receipts/<?= $p['receipt_file'] ?>" download class="hover:underline">
+                                            Tải xuống phiếu thu
+                                        </a>
+                                    </p>
+                                <?php endif; ?>
+
+                                <!-- Ngày thanh toán -->
                                 <p class="text-sm text-gray-500 mt-1 flex items-center gap-1 mb-1">
                                     <i class="w-4 h-4" data-lucide="calendar"></i>
-                                    Ngày: <?= date('Y-m-d', strtotime($p['payment_date'])) ?>
+                                    Ngày: <?= date('d/m/Y', strtotime($p['payment_date'])) ?>
                                 </p>
                             </div>
-
-                            <!-- Status badge -->
-                            <?php
-                            $statusClass = 'bg-gray-100 text-gray-700';
-                            $statusText = 'Không xác định';
-
-                            if ($p['status'] === 'pending') {
-                                $statusClass = 'bg-yellow-100 text-yellow-700';
-                                $statusText = 'Chờ xử lý';
-                            } elseif ($p['status'] === 'completed') {
-                                $statusClass = 'bg-green-100 text-green-700';
-                                $statusText = 'Thành công';
-                            } elseif ($p['status'] === 'failed') {
-                                $statusClass = 'bg-red-100 text-red-700';
-                                $statusText = 'Thất bại';
-                            } elseif ($p['status'] === 'refund') {
-                                $statusClass = 'bg-blue-100 text-blue-700';
-                                $statusText = 'Hoàn tiền';
-                            } elseif ($p['status'] === 'expired') {
-                                $statusClass = 'bg-red-100 text-red-700';
-                                $statusText = 'Hết hạn';
-                            }
-                            ?>
-                            <span class="px-3 py-1 rounded-lg text-xs font-semibold <?= $statusClass ?>">
-                                <?= $statusText ?>
-                            </span>
 
                             <!-- Action buttons -->
                             <div class="flex items-center gap-2 text-gray-600">

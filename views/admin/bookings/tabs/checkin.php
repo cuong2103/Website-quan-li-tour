@@ -3,7 +3,7 @@
                 <h2 class="text-base font-semibold text-gray-800">Quản lý Check-in</h2>
             </div>
 
-            <?php if (!empty($checkinLinks)): ?>
+            <?php if (!empty($checkinData)): ?>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-gray-500">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
@@ -17,27 +17,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($checkinLinks as $i => $link): ?>
+                            <?php $i = 1; foreach ($checkinData as $linkId => $data): ?>
+                                <?php $link = $data['link']; ?>
                                 <tr class="bg-white border-b hover:bg-gray-50">
-                                    <td class="px-4 py-3"><?= $i + 1 ?></td>
+                                    <td class="px-4 py-3"><?= $i++ ?></td>
                                     <td class="px-4 py-3 font-medium text-gray-900"><?= htmlspecialchars($link['title']) ?></td>
                                     <td class="px-4 py-3"><?= htmlspecialchars($link['note'] ?? '-') ?></td>
                                     <td class="px-4 py-3"><?= date('H:i d/m/Y', strtotime($link['created_at'])) ?></td>
+                                    <td class="px-4 py-3"><?= htmlspecialchars($data['created_by_name']) ?></td>
                                     <td class="px-4 py-3">
-                                        <?php
-                                        if ($link['created_by']) {
-                                            $userSql = "SELECT fullname FROM users WHERE id = ?";
-                                            $userStmt = connectDB()->prepare($userSql);
-                                            $userStmt->execute([$link['created_by']]);
-                                            $userName = $userStmt->fetchColumn();
-                                            echo htmlspecialchars($userName ?? 'N/A');
-                                        } else {
-                                            echo 'N/A';
-                                        }
-                                        ?>
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <button onclick="document.getElementById('checkin-modal-<?= $link['id'] ?>').classList.remove('hidden')"
+                                        <button onclick="document.getElementById('checkin-modal-<?= $linkId ?>').classList.remove('hidden')"
                                             class="text-blue-600 hover:text-blue-800 font-medium text-xs flex items-center gap-1">
                                             <i data-lucide="eye" class="w-4 h-4"></i> Chi tiết
                                         </button>
@@ -49,25 +38,25 @@
                 </div>
 
                 <!-- Modals for Details -->
-                <?php foreach ($checkinLinks as $link): ?>
-                    <div id="checkin-modal-<?= $link['id'] ?>" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                <?php foreach ($checkinData as $linkId => $data): ?>
+                    <?php 
+                    $link = $data['link']; 
+                    $customersWithStatus = $data['customers'];
+                    ?>
+                    <div id="checkin-modal-<?= $linkId ?>" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
                         <div class="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
                             <div class="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-800">Chi tiết: <?= htmlspecialchars($link['title']) ?></h3>
                                     <p class="text-sm text-gray-500">Tour: <?= htmlspecialchars($booking['tour_name']) ?> (<?= $booking['booking_code'] ?>)</p>
                                 </div>
-                                <button onclick="document.getElementById('checkin-modal-<?= $link['id'] ?>').classList.add('hidden')"
+                                <button onclick="document.getElementById('checkin-modal-<?= $linkId ?>').classList.add('hidden')"
                                     class="text-gray-400 hover:text-gray-600">
                                     <i data-lucide="x" class="w-6 h-6"></i>
                                 </button>
                             </div>
 
                             <div class="p-6">
-                                <?php
-                                // Fetch customers with status
-                                $customersWithStatus = $this->checkinModel->getCustomersWithCheckinStatus($link['tour_assignment_id'], $link['id']);
-                                ?>
                                 <div class="overflow-x-auto">
                                     <table class="w-full text-sm text-left text-gray-500">
                                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
@@ -117,7 +106,7 @@
                             </div>
 
                             <div class="p-6 border-t border-gray-100 bg-gray-50 flex justify-end rounded-b-xl">
-                                <button onclick="document.getElementById('checkin-modal-<?= $link['id'] ?>').classList.add('hidden')"
+                                <button onclick="document.getElementById('checkin-modal-<?= $linkId ?>').classList.add('hidden')"
                                     class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg text-sm font-medium">
                                     Đóng
                                 </button>

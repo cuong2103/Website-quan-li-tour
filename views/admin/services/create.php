@@ -59,6 +59,19 @@ unset($_SESSION['errors'], $_SESSION['old']);
                     </select>
                 </div>
 
+                <!-- Đơn vị tính -->
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700">Đơn vị tính <span class="text-red-500">*</span></label>
+                    <select name="unit" required
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white">
+                        <option value="person" <?= (isset($old['unit']) && $old['unit'] == 'person') ? 'selected' : '' ?>>Người</option>
+                        <option value="room" <?= (isset($old['unit']) && $old['unit'] == 'room') ? 'selected' : '' ?>>Phòng</option>
+                        <option value="vehicle" <?= (isset($old['unit']) && $old['unit'] == 'vehicle') ? 'selected' : '' ?>>Xe</option>
+                        <option value="day" <?= (isset($old['unit']) && $old['unit'] == 'day') ? 'selected' : '' ?>>Ngày</option>
+                        <option value="meal" <?= (isset($old['unit']) && $old['unit'] == 'meal') ? 'selected' : '' ?>>Suất ăn</option>
+                    </select>
+                </div>
+
                 <!-- Nhà cung cấp -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Nhà cung cấp <span class="text-red-500">*</span></label>
