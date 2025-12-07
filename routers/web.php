@@ -147,6 +147,7 @@ match ($act) {
   'payment-delete' => (new PaymentController())->delete(),
   'payment-detail' => (new PaymentController())->detail(),
 
+
   //policies
   'policies' => (new PolicyController())->index(),
 

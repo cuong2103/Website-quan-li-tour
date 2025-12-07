@@ -392,6 +392,7 @@ class BookingController
             case 'payments':
                 $bookingPayments = $this->paymentModel->getAllByBooking($booking['id']);
                 break;
+
             case 'itinerary':
                 // Lấy itinerary từ tour_id của booking
                 $itineraries = $this->tourModel->getItineraries($booking['tour_id']);

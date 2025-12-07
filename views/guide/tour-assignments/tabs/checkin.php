@@ -48,7 +48,6 @@ $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['
         <th class="p-3 text-left">Tiêu đề</th>
         <th class="p-3 text-left">Ghi chú</th>
         <th class="p-3 text-left">Thời gian tạo</th>
-        <th class="p-3 text-left">Người tạo</th>
         <th class="p-3 text-left">Hành động</th>
       </tr>
     </thead>
@@ -60,20 +59,6 @@ $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['
             <td class="p-3 font-medium"><?= htmlspecialchars($link['title']) ?></td>
             <td class="p-3 text-gray-600"><?= htmlspecialchars($link['note'] ?? '-') ?></td>
             <td class="p-3 text-gray-600"><?= date('H:i d/m/Y', strtotime($link['created_at'])) ?></td>
-            <td class="p-3 text-gray-600">
-              <?php
-              // Lấy tên người tạo nếu có
-              if ($link['created_by']) {
-                $userSql = "SELECT fullname FROM users WHERE id = ?";
-                $userStmt = connectDB()->prepare($userSql);
-                $userStmt->execute([$link['created_by']]);
-                $userName = $userStmt->fetchColumn();
-                echo htmlspecialchars($userName ?? 'N/A');
-              } else {
-                echo 'N/A';
-              }
-              ?>
-            </td>
             <td class="p-3">
               <div class="flex gap-2">
                 <a href="<?= BASE_URL . '?act=guide-checkin-detail&link_id=' . $link['id'] . '&assignment_id=' . $assignmentId ?>"

@@ -64,7 +64,7 @@ class ContractModel
             $stmt->execute([':id' => $id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            echo "Lỗi: " . $e->getMessage();
+            error_log("Lỗi ContractModel::findById: " . $e->getMessage());
             return false;
         }
     }

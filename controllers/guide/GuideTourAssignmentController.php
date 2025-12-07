@@ -164,69 +164,6 @@ class GuideTourAssignmentController
         require_once './views/guide/tour-assignments/detail.php';
     }
 
-
-
-
-
-    // Tạo đợt check-in mới
-    public function createCheckinSession()
-    {
-        $assignmentId = $_POST['assignment_id'];
-        $title = $_POST['title'];
-        $note = $_POST['note'] ?? '';
-
-        if ($this->checkinModel->createCheckinLink($assignmentId, $title, $note)) {
-            Message::set('success', 'Tạo đợt điểm danh thành công!');
-        } else {
-            Message::set('error', 'Tạo đợt điểm danh thất bại!');
-        }
-
-        header("Location: " . BASE_URL . "?act=guide-tour-assignments-detail&id=" . $assignmentId . "&tab=checkin");
-        exit;
-    }
-
-    // Xóa đợt check-in
-    public function deleteCheckinSession()
-    {
-        $assignmentId = $_POST['assignment_id'];
-        $linkId = $_POST['link_id'];
-
-        if ($this->checkinModel->deleteCheckinLink($linkId)) {
-            Message::set('success', 'Xóa đợt điểm danh thành công!');
-        } else {
-            Message::set('error', 'Xóa đợt điểm danh thất bại!');
-        }
-
-        header("Location: " . BASE_URL . "?act=guide-tour-assignments-detail&id=" . $assignmentId . "&tab=checkin");
-        exit;
-    }
-
-    // Xử lý check-in/uncheck-in khách hàng
-    public function checkinStore()
-    {
-        $assignmentId = $_POST['assignment_id'];
-        $linkId = $_POST['link_id'];
-        $customerId = $_POST['customer_id'];
-        $action = $_POST['action'] ?? 'checkin';
-
-        if ($action === 'uncheckin') {
-            if ($this->checkinModel->uncheckinCustomer($linkId, $customerId)) {
-                Message::set('success', 'Đã hủy điểm danh!');
-            } else {
-                Message::set('error', 'Hủy điểm danh thất bại!');
-            }
-        } else {
-            if ($this->checkinModel->checkinCustomer($linkId, $customerId)) {
-                Message::set('success', 'Điểm danh thành công!');
-            } else {
-                Message::set('error', 'Điểm danh thất bại!');
-            }
-        }
-
-        header("Location: " . BASE_URL . "?act=guide-tour-assignments-detail&id=" . $assignmentId . "&tab=checkin&link_id=" . $linkId);
-        exit;
-    }
-
     // Export danh sách phòng ra Excel
     public function exportRooms()
     {
