@@ -25,23 +25,23 @@ class PaymentController
     public function create()
     {
         $booking_id = $_GET['booking_id'];
-        
+
         // Lấy thông tin booking
         $booking = $this->bookingModel->getById($booking_id);
-        
+
         // Ngăn thêm payment cho booking đã completed
         if ($booking['status'] === 'completed') {
             Message::set('error', 'Không thể thêm thanh toán cho booking đã hoàn thành');
             header("Location: " . BASE_URL . "?act=booking-detail&id=$booking_id&tab=payments");
             exit();
         }
-        
+
         // Tính tổng đã thanh toán
         $totalPaid = $this->bookingModel->getTotalPaid($booking_id);
-        
+
         // Tính số tiền còn lại
         $remaining = $booking['total_amount'] - $totalPaid;
-        
+
         require_once './views/admin/payments/create.php';
     }
 
@@ -50,12 +50,12 @@ class PaymentController
     {
         // Validation
         $errors = [];
-        
+
         // Nếu chuyển khoản thì bắt buộc có mã giao dịch
         if ($_POST['payment_method'] === 'bank_transfer' && empty($_POST['transaction_code'])) {
             $errors[] = 'Vui lòng nhập mã giao dịch cho chuyển khoản';
         }
-        
+
         // Xử lý upload file
         $receiptFile = null;
         if (isset($_FILES['receipt_file']) && $_FILES['receipt_file']['error'] === UPLOAD_ERR_OK) {
@@ -63,18 +63,18 @@ class PaymentController
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
-            
+
             $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
             $fileType = $_FILES['receipt_file']['type'];
-            
+
             if (!in_array($fileType, $allowedTypes)) {
                 $errors[] = 'Chỉ chấp nhận file JPG, PNG hoặc PDF';
             }
-            
+
             if ($_FILES['receipt_file']['size'] > 5 * 1024 * 1024) {
                 $errors[] = 'File không được vượt quá 5MB';
             }
-            
+
             if (empty($errors)) {
                 $fileName = time() . '_' . basename($_FILES['receipt_file']['name']);
                 if (move_uploaded_file($_FILES['receipt_file']['tmp_name'], $uploadDir . $fileName)) {
@@ -84,14 +84,14 @@ class PaymentController
                 }
             }
         }
-        
+
         // Nếu có lỗi validation
         if (!empty($errors)) {
             $_SESSION['payment_errors'] = $errors;
             header("Location: " . BASE_URL . "?act=payment-create&booking_id=" . $_POST['booking_id']);
             exit();
         }
-        
+
         // Gom dữ liệu vào mảng
         $data = [
             'booking_id'       => $_POST['booking_id'],
@@ -133,20 +133,20 @@ class PaymentController
     {
         $id = $_GET['id'];
         $payment = $this->paymentModel->findById($id);
-        
+
         // Lấy thông tin booking
         $booking = $this->bookingModel->getById($payment['booking_id']);
-        
+
         // Ngăn sửa payment của booking đã completed
         if ($booking['status'] === 'completed') {
             Message::set('error', 'Không thể sửa thanh toán của booking đã hoàn thành');
             header("Location: " . BASE_URL . "?act=booking-detail&id={$payment['booking_id']}&tab=payments");
             exit();
         }
-        
+
         // Tính tổng đã thanh toán
         $totalPaid = $this->bookingModel->getTotalPaid($payment['booking_id']);
-        
+
         // Trừ payment hiện tại để tính số tiền còn lại chính xác
         $totalPaid -= $payment['amount'];
         $remaining = $booking['total_amount'] - $totalPaid;
@@ -158,19 +158,19 @@ class PaymentController
     public function update()
     {
         $id = $_POST['id'];
-        
+
         // Lấy payment hiện tại
         $payment = $this->paymentModel->findById($id);
         $bookingId = $payment['booking_id'];
-        
+
         // Validation
         $errors = [];
-        
+
         // Nếu chuyển khoản thì bắt buộc có mã giao dịch
         if ($_POST['payment_method'] === 'bank_transfer' && empty($_POST['transaction_code'])) {
             $errors[] = 'Vui lòng nhập mã giao dịch cho chuyển khoản';
         }
-        
+
         // Xử lý upload file mới (nếu có)
         $receiptFile = $payment['receipt_file']; // Giữ file cũ
         if (isset($_FILES['receipt_file']) && $_FILES['receipt_file']['error'] === UPLOAD_ERR_OK) {
@@ -178,18 +178,18 @@ class PaymentController
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
-            
+
             $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
             $fileType = $_FILES['receipt_file']['type'];
-            
+
             if (!in_array($fileType, $allowedTypes)) {
                 $errors[] = 'Chỉ chấp nhận file JPG, PNG hoặc PDF';
             }
-            
+
             if ($_FILES['receipt_file']['size'] > 5 * 1024 * 1024) {
                 $errors[] = 'File không được vượt quá 5MB';
             }
-            
+
             if (empty($errors)) {
                 $fileName = time() . '_' . basename($_FILES['receipt_file']['name']);
                 if (move_uploaded_file($_FILES['receipt_file']['tmp_name'], $uploadDir . $fileName)) {
@@ -203,7 +203,7 @@ class PaymentController
                 }
             }
         }
-        
+
         // Nếu có lỗi validation
         if (!empty($errors)) {
             $_SESSION['payment_errors'] = $errors;
@@ -265,10 +265,10 @@ class PaymentController
         // Lấy booking_id của payment để lát cập nhật
         $payment = $this->paymentModel->findById($id);
         $booking_id = $payment['booking_id'];
-        
+
         // Lấy thông tin booking
         $booking = $this->bookingModel->getById($booking_id);
-        
+
         // Ngăn xóa payment của booking đã completed
         if ($booking['status'] === 'completed') {
             Message::set('error', 'Không thể xóa thanh toán của booking đã hoàn thành');

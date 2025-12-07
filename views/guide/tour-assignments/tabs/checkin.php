@@ -2,6 +2,7 @@
 
 $today = date('Y-m-d');
 $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['end_date']);
+
 ?>
 
 <div class="bg-white border shadow rounded-xl p-5">
@@ -75,7 +76,7 @@ $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['
             </td>
             <td class="p-3">
               <div class="flex gap-2">
-                <a href="<?= BASE_URL . '?act=guide-checkin-detail&link_id=' . $link['id'] . '&assignment_id=' . $assignment['id'] ?>"
+                <a href="<?= BASE_URL . '?act=guide-checkin-detail&link_id=' . $link['id'] . '&assignment_id=' . $assignment['tour_id'] ?>"
                   class="text-blue-600 hover:bg-blue-50 px-3 py-1 rounded text-xs font-medium flex items-center gap-1"
                   title="Xem chi tiết & Check-in">
                   <i data-lucide="users" class="w-4 h-4"></i>
@@ -84,7 +85,7 @@ $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['
                 <form action="<?= BASE_URL . '?act=guide-checkin-delete' ?>" method="POST"
                   onsubmit="return confirm('Bạn có chắc muốn xóa đợt check-in này?')">
                   <input type="hidden" name="link_id" value="<?= $link['id'] ?>">
-                  <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
+                  <input type="hidden" name="assignment_id" value="<?= $assignment['tour_id'] ?>">
                   <button type="submit" class="text-red-600 hover:bg-red-50 px-3 py-1 rounded text-xs font-medium"
                     title="Xóa">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -114,7 +115,7 @@ $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['
   <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
     <h3 class="text-lg font-semibold mb-4">Tạo đợt check-in mới</h3>
     <form action="<?= BASE_URL . '?act=guide-checkin-create' ?>" method="POST">
-      <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
+      <input type="hidden" name="assignment_id" value="<?= $assignment['tour_id'] ?>">
 
       <div class="mb-4">
         <label class="block text-sm font-medium mb-2">Tiêu đề <span class="text-red-500">*</span></label>

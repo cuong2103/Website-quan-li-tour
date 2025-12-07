@@ -10,6 +10,7 @@ $tabs = [
     'info'      => ['label' => 'Thông tin & Yêu cầu', 'icon' => 'info'],
     'services'  => ['label' => 'Dịch vụ kèm theo', 'icon' => 'package']
 ];
+dd($assignment);
 ?>
 
 <main class="pt-28 px-6 pb-20 text-gray-700">

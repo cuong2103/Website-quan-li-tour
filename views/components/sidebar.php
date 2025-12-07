@@ -62,7 +62,7 @@ $inactiveClass = 'text-gray-700 hover:bg-gray-100';
       </a>
 
       <!-- Dữ liệu -->
-      <?php $dataActs = ['destination', 'destination-detail', 'destination-create', 'destination-edit', 'policies', 'policy-detail', 'policy-create', 'policy-edit', 'categories', 'category-detail', 'category-create', 'category-edit', 'service', 'service-detail', 'service-create', 'service-edit', 'service-type', 'service-type-detail', 'service-type-create', 'service-type-edit']; ?>
+      <?php $dataActs = ['destination', 'destination-detail', 'destination-create', 'destination-edit', 'policies', 'policy-detail', 'policy-create', 'policy-edit', 'categories', 'category-detail', 'category-create', 'category-edit', 'service', 'service-detail', 'service-create', 'service-edit', 'service-type', 'service-type-detail', 'service-type-create', 'service-type-edit', 'itinerary', 'itinerary-detail', 'itinerary-create', 'itinerary-edit', 'suppliers', 'supplier-detail', 'supplier-create', 'supplier-edit']; ?>
       <div class="menu-group">
         <button class="menu-toggle w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($dataActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
           <div class="flex items-center">

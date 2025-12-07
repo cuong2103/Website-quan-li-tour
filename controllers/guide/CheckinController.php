@@ -47,7 +47,7 @@ class CheckinController
       redirect('my-schedule');
       exit;
     }
-
+    // dd($assignmentId);
     // Kiểm tra quyền check-in
     $canCheckin = $this->checkinModel->canCheckin($assignmentId);
     if (!$canCheckin['allowed']) {
@@ -82,7 +82,6 @@ class CheckinController
     $linkId = $_POST['link_id'] ?? null;
     $assignmentId = $_POST['assignment_id'] ?? null;
     $checkedCustomers = $_POST['checked_customers'] ?? [];
-
     if (!$linkId || !$assignmentId) {
       Message::set('error', 'Thiếu thông tin');
       redirect('my-schedule');
