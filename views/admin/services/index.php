@@ -6,7 +6,7 @@ require_once './views/components/sidebar.php';
 $units = [
     'person' => 'Người',
     'room' => 'Phòng',
-    'vehicle' => 'Xe',
+    'vehicle' => 'Chuyến',
     'day' => 'Ngày',
     'meal' => 'Suất ăn'
 ];

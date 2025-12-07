@@ -65,7 +65,7 @@
 
     <form action="<?= BASE_URL ?>?act=booking-upload-customers" method="POST" enctype="multipart/form-data">
       <div class="mb-4">
-        <input type="hidden" name="id" value="<?= $booking['id'] ?>">
+        <input type="hidden" name="booking_id" value="<?= $booking['id'] ?>">
         <label class="block text-sm font-medium text-gray-700 mb-2">Chọn file Excel</label>
         <input type="file" name="file" accept=".xlsx,.xls" required
           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
