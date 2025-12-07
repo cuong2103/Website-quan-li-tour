@@ -3,7 +3,7 @@ require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
 
-<main class="mt-28 px-6 pb-20 text-gray-700">
+<main class="pt-28 px-6 pb-20 text-gray-700">
 
     <h1 class="text-xl font-semibold mb-6">Sửa thanh toán</h1>
 
@@ -75,7 +75,7 @@ require_once './views/components/sidebar.php';
 
         <div>
             <label class="text-sm font-medium">Số tiền <span class="text-red-500">*</span></label>
-            <input type="number" name="amount" value="<?= $payment['amount'] ?>" max="<?= $remaining ?>" 
+            <input type="number" name="amount" value="<?= $payment['amount'] ?>" max="<?= $remaining ?>"
                 class="w-full px-3 py-2 border rounded-lg mt-1" required>
             <p class="text-xs text-gray-500 mt-1">Tối đa: <?= number_format($remaining, 0, ',', '.') ?>đ</p>
         </div>
@@ -94,15 +94,15 @@ require_once './views/components/sidebar.php';
                     </a>
                 </div>
             <?php endif; ?>
-            <input type="file" name="receipt_file" id="receiptFile" accept="image/*,.pdf" 
+            <input type="file" name="receipt_file" id="receiptFile" accept="image/*,.pdf"
                 class="w-full px-3 py-2 border rounded-lg mt-1">
             <p class="text-xs text-gray-500 mt-1">Chấp nhận: JPG, PNG, PDF (tối đa 5MB). Để trống nếu không muốn thay đổi.</p>
-            
+
             <!-- Preview ảnh -->
             <div id="imagePreview" class="mt-3 hidden">
                 <div class="relative inline-block">
                     <img id="previewImg" src="" alt="Preview" class="max-w-xs max-h-48 rounded border">
-                    <button type="button" id="removeImage" 
+                    <button type="button" id="removeImage"
                         class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 shadow-lg">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -110,7 +110,7 @@ require_once './views/components/sidebar.php';
                     </button>
                 </div>
             </div>
-            
+
             <!-- Preview PDF -->
             <div id="pdfPreview" class="mt-3 hidden">
                 <div class="flex items-center gap-2 p-3 bg-gray-50 rounded border">
@@ -121,7 +121,7 @@ require_once './views/components/sidebar.php';
                         <p class="text-sm font-medium" id="pdfName"></p>
                         <p class="text-xs text-gray-500">File PDF</p>
                     </div>
-                    <button type="button" id="removePdf" 
+                    <button type="button" id="removePdf"
                         class="text-red-500 hover:text-red-700">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -150,7 +150,7 @@ require_once './views/components/sidebar.php';
         // Toggle mã giao dịch
         const paymentMethod = document.getElementById('paymentMethod');
         const transactionCodeField = document.getElementById('transactionCodeField');
-        
+
         paymentMethod.addEventListener('change', function() {
             if (this.value === 'bank_transfer') {
                 transactionCodeField.style.display = 'block';
@@ -160,7 +160,7 @@ require_once './views/components/sidebar.php';
                 transactionCodeField.querySelector('input').required = false;
             }
         });
-        
+
         if (paymentMethod.value === 'bank_transfer') {
             transactionCodeField.querySelector('input').required = true;
         }
@@ -179,7 +179,7 @@ require_once './views/components/sidebar.php';
             if (file) {
                 imagePreview.classList.add('hidden');
                 pdfPreview.classList.add('hidden');
-                
+
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = function(e) {

@@ -2,7 +2,7 @@
 require_once "./views/components/header.php";
 require_once "./views/components/sidebar.php";
 ?>
-<main class="flex-1 mt-28 overflow-y-auto p-6">
+<main class="flex-1 pt-28 overflow-y-auto p-6">
 
     <!-- Tiêu đề + nút thêm khách hàng -->
     <div class="flex items-center justify-between mb-6">
@@ -147,9 +147,9 @@ require_once "./views/components/sidebar.php";
                 </div>
 
                 <div class="mb-4">
-                    <a href="?act=customer-export" class="text-sm text-blue-600 hover:underline flex items-center gap-1">
+                    <a href="?act=customer-export-template" class="text-sm text-blue-600 hover:underline flex items-center gap-1">
                         <i class="w-4 h-4" data-lucide="download"></i>
-                        Tải file mẫu (danh sách hiện tại)
+                        Tải file mẫu
                     </a>
                 </div>
 

@@ -3,7 +3,7 @@ require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
 
-<main class="mt-28 px-6 pb-20">
+<main class="pt-28 px-6 pb-20">
 
     <h1 class="text-2xl font-bold mb-6">Thêm địa điểm mới</h1>
 

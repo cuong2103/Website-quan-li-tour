@@ -2,7 +2,7 @@
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
-<main class="mt-28 px-6 pb-20 overflow-auto scrollbar-hide">
+<main class="pt-28 px-6 pb-20 overflow-auto scrollbar-hide">
     <div class="flex justify-between items-center mb-6">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Quản lí booking</h1>

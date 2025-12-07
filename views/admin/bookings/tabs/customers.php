@@ -4,13 +4,9 @@
 
     <div class="flex items-center gap-2">
       <!-- Form Upload Excel -->
-      <form action="<?= BASE_URL ?>?act=booking-upload-customers" method="POST" enctype="multipart/form-data" class="flex items-center gap-2">
-        <input type="hidden" name="booking_id" value="<?= $booking['id'] ?>">
-        <input type="file" name="file" accept=".xlsx, .xls" class="text-sm border border-gray-300 rounded-lg p-1" required>
-        <button type="submit" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium flex items-center gap-1">
-          <i class="w-4 h-4" data-lucide="upload"></i> Upload Excel
-        </button>
-      </form>
+      <button onclick="document.getElementById('importModal').classList.remove('hidden')" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md flex items-center gap-2">
+        <i class="w-4 h-4" data-lucide="upload"></i> Tải lên Excel
+      </button>
       <a href="<?= BASE_URL ?>?act=booking-export-customers&booking_id=<?= $booking['id'] ?>"
         class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm font-medium">
         <i class="w-4 h-4" data-lucide="download"></i>
@@ -57,4 +53,53 @@
   <?php else: ?>
     <p class="text-gray-500 text-sm">Chưa có khách hàng nào.</p>
   <?php endif; ?>
+</div>
+<div id="importModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-6 w-full max-w-md">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-gray-800">Tải lên danh sách khách hàng</h3>
+      <button onclick="document.getElementById('importModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
+        <i class="w-5 h-5" data-lucide="x"></i>
+      </button>
+    </div>
+
+    <form action="<?= BASE_URL ?>?act=booking-upload-customers" method="POST" enctype="multipart/form-data">
+      <div class="mb-4">
+        <input type="hidden" name="id" value="<?= $booking['id'] ?>">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Chọn file Excel</label>
+        <input type="file" name="file" accept=".xlsx,.xls" required
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+        <p class="text-xs text-gray-500 mt-1">Định dạng: .xlsx hoặc .xls</p>
+      </div>
+
+      <div class="mb-4 p-3 bg-blue-50 rounded-lg">
+        <p class="text-sm text-gray-700 mb-2"><strong>Định dạng file Excel:</strong></p>
+        <p class="text-xs text-gray-600">Cột 1: STT</p>
+        <p class="text-xs text-gray-600">Cột 2: Họ tên</p>
+        <p class="text-xs text-gray-600">Cột 3: Số điện thoại</p>
+        <p class="text-xs text-gray-600">Cột 4: Email</p>
+        <p class="text-xs text-gray-600">Cột 5: Địa chỉ</p>
+        <p class="text-xs text-gray-600">Cột 6: Giới tính (Nam/Nữ/Khác)</p>
+        <p class="text-xs text-gray-600">Cột 7: Hộ chiếu</p>
+        <p class="text-xs text-gray-600">Cột 8: Căn cước công dân (CCCD)</p>
+      </div>
+
+      <div class="mb-4">
+        <a href="<?= BASE_URL ?>?act=booking-export-template-customers" class="text-sm text-blue-600 hover:underline flex items-center gap-1">
+          <i class="w-4 h-4" data-lucide="download"></i>
+          Tải file mẫu
+        </a>
+      </div>
+
+      <div class="flex gap-2">
+        <button type="button" onclick="document.getElementById('importModal').classList.add('hidden')"
+          class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50">
+          Hủy
+        </button>
+        <button type="submit" class="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md">
+          Tải lên
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

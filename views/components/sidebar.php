@@ -79,6 +79,9 @@ $inactiveClass = 'text-gray-700 hover:bg-gray-100';
           <?php $destActs = ['destination', 'destination-detail', 'destination-create', 'destination-edit']; ?>
           <a href="<?= BASE_URL . '?act=destination' ?>" class="block px-4 py-2  text-sm <?= isActiveMenu($destActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Địa điểm</a>
 
+          <?php $supplierActs = ['suppliers', 'supplier-detail', 'supplier-create', 'supplier-edit']; ?>
+          <a href="<?= BASE_URL . '?act=suppliers' ?>" class="block px-4 py-2  text-sm <?= isActiveMenu($supplierActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Nhà cung cấp</a>
+
           <?php $serviceTypeActs = ['service-type', 'service-type-detail', 'service-type-create', 'service-type-edit']; ?>
           <a href="<?= BASE_URL ?>?act=service-type" class="block px-4 py-2 text-sm <?= isActiveMenu($serviceTypeActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Loại Dịch vụ</a>
 
@@ -97,12 +100,7 @@ $inactiveClass = 'text-gray-700 hover:bg-gray-100';
         Khách hàng
       </a>
 
-      <!-- Nhà cung cấp -->
-      <?php $supplierActs = ['suppliers', 'supplier-detail', 'supplier-create', 'supplier-edit']; ?>
-      <a href="<?= BASE_URL . '?act=suppliers' ?>" class="flex items-center px-4 py-3 text-sm font-medium <?= isActiveMenu($supplierActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
-        <i class="mr-3 w-6 h-6" data-lucide="building-2"></i>
-        Nhà cung cấp
-      </a>
+
 
       <!-- Quản lý nhân viên -->
       <?php $userActs = ['user', 'user-detail', 'user-create', 'user-edit', 'user-on-leave']; ?>

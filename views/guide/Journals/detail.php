@@ -3,7 +3,7 @@ require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
 
-<main class="mt-28 px-6 min-w-7xl mx-6">
+<main class="pt-28 px-6 min-w-7xl mx-6">
   <!-- Header -->
   <div class="flex items-center justify-between mb-8">
     <div class="flex items-center gap-4">

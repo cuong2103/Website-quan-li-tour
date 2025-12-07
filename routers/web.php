@@ -108,6 +108,7 @@ match ($act) {
   'customer-edit' => (new CustomerController())->edit(),
   'customer-delete' => (new CustomerController())->delete(),
   'customer-export' => (new CustomerController())->exportCustomers(),
+  'customer-export-template' => (new CustomerController())->exportTemplate(),
   'customer-import' => (new CustomerController())->importCustomers(),
 
 
@@ -120,6 +121,7 @@ match ($act) {
   'booking-delete' => (new BookingController())->delete(),
   'booking-detail' => (new BookingController())->detail(),
   'booking-upload-customers' => (new BookingController())->uploadCustomers(),
+  'booking-export-template-customers' => (new BookingController())->exportBookingCustomersTemplate(),
   'booking-export-customers' => (new BookingController())->exportCustomers(),
   'booking-add-customer' => (new BookingController())->addCustomer(),
   'booking-remove-customer' => (new BookingController())->removeCustomer(),

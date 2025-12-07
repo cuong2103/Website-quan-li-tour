@@ -70,12 +70,14 @@ class BookingModel
 
             if ($booking) {
                 // Auto-update nếu tour đã kết thúc
-                if ($booking['end_date'] < date('Y-m-d') && 
-                    in_array($booking['status'], ['paid', 'in_progress', 'deposited'])) {
+                if (
+                    $booking['end_date'] < date('Y-m-d') &&
+                    in_array($booking['status'], ['paid', 'in_progress', 'deposited'])
+                ) {
                     $this->updateStatus($id, 'completed');
                     $booking['status'] = 'completed';
                 }
-                
+
                 $booking['customers'] = $this->getCustomers($id);
                 // --- Lấy người đại diện ---
                 $rep = array_filter($booking['customers'], fn($c) => $c['is_representative'] == 1);
@@ -255,12 +257,12 @@ class BookingModel
 
 
     // Quản lí khách hàng trong booking
-    public function addCustomer($bookingId, $customerId, $isRepresentative = 0)
+    public function addCustomer($bookingId, $customerId, $isRepresentative = 0, $notes = null)
     {
         try {
-            $sql = "INSERT INTO booking_customers (booking_id, customer_id, is_representative) VALUES (?, ?, ?)";
+            $sql = "INSERT INTO booking_customers (booking_id, customer_id, is_representative,  notes) VALUES (?, ?, ?, ?)";
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$bookingId, $customerId, $isRepresentative]);
+            $stmt->execute([$bookingId, $customerId, $isRepresentative, $notes]);
             return $stmt;
         } catch (PDOException $e) {
             die("Lỗi addCustomer(): " . $e->getMessage());
@@ -270,7 +272,7 @@ class BookingModel
     public function getCustomers($bookingId)
     {
         try {
-            $sql = "SELECT c.*, bc.is_representative, bc.room_number 
+            $sql = "SELECT c.*, bc.is_representative, bc.room_number ,bc.notes
             FROM booking_customers bc
             JOIN customers c ON c.id = bc.customer_id
             WHERE bc.booking_id = ?";

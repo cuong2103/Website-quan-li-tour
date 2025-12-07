@@ -3,7 +3,7 @@ require_once "./views/components/header.php";
 require_once "./views/components/sidebar.php";
 ?>
 
-<main class="flex-1 mt-28 overflow-y-auto p-6">
+<main class="flex-1 pt-28 overflow-y-auto p-6">
     <div class="space-y-6">
 
         <!-- TIÊU ĐỀ CHÍNH -->

@@ -4,7 +4,7 @@ require_once './views/components/sidebar.php';
 ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<main class="mt-28 px-6 pb-20 overflow-auto scrollbar-hide">
+<main class="pt-28 px-6 pb-20 overflow-auto scrollbar-hide">
 
   <div class="flex justify-between items-center mb-6">
     <div>
@@ -179,8 +179,9 @@ require_once './views/components/sidebar.php';
   // BIỂU ĐỒ DOANH THU 6 THÁNG (Line Chart)
   document.addEventListener("DOMContentLoaded", function() {
     const revenueData = <?= json_encode($revenueChartData ?? []) ?>;
+    console.log(revenueData);
     const bookingStatusData = <?= json_encode($bookingStatusChartData ?? []) ?>;
-
+    console.log(bookingStatusData);
     new Chart(document.getElementById('revenueChart'), {
       type: 'line',
       data: {

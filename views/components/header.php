@@ -7,6 +7,14 @@ $avatar = strtoupper(mb_substr($fullname, 0, 1));
 
 $userId = $currentUser['id'] ?? null;
 
+// Lấy số thông báo chưa đọc
+$unreadNotifications = 0;
+if ($userId) {
+  require_once './models/NotificationModel.php';
+  $notificationModel = new NotificationModel();
+  $unreadNotifications = $notificationModel->countUnread($userId);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -44,8 +52,11 @@ $userId = $currentUser['id'] ?? null;
         <div class="flex items-center space-x-4">
           <button onclick="window.location.href='<?= BASE_URL ?>?act=my-notifications'" class="relative p-2 text-gray-600 hover:bg-gray-100 rounded-full">
             <i data-lucide="bell"></i>
-
-
+            <?php if ($unreadNotifications > 0): ?>
+              <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                <?= $unreadNotifications > 99 ? '99+' : $unreadNotifications ?>
+              </span>
+            <?php endif; ?>
           </button>
           <div class="flex items-center space-x-3">
             <a class="flex gap-2" href="?act=profile&id=<?= $userId ?>">

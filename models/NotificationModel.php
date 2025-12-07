@@ -9,7 +9,7 @@ class NotificationModel
   }
 
   // Lấy tất cả thông báo (cho admin)
-  public function getAll($limit = null, $offset = 0)
+  public function getAll()
   {
     $sql = "SELECT n.*, 
                    u.fullname as creator_name,
@@ -21,21 +21,13 @@ class NotificationModel
             GROUP BY n.id
             ORDER BY n.created_at DESC";
 
-    if ($limit) {
-      $sql .= " LIMIT :limit OFFSET :offset";
-    }
-
     $stmt = $this->conn->prepare($sql);
-    if ($limit) {
-      $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-      $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-    }
     $stmt->execute();
     return $stmt->fetchAll();
   }
 
   // Lấy thông báo của 1 user cụ thể
-  public function getByUserId($userId, $limit = null)
+  public function getByUserId($userId)
   {
     $sql = "SELECT n.*, nr.is_read, nr.read_at, u.fullname as creator_name
             FROM notifications n
@@ -44,15 +36,8 @@ class NotificationModel
             WHERE nr.user_id = :user_id
             ORDER BY n.created_at DESC";
 
-    if ($limit) {
-      $sql .= " LIMIT :limit";
-    }
-
     $stmt = $this->conn->prepare($sql);
     $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
-    if ($limit) {
-      $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-    }
     $stmt->execute();
     return $stmt->fetchAll();
   }

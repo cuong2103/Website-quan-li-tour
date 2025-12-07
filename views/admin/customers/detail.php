@@ -2,7 +2,7 @@
 require_once "./views/components/header.php";
 require_once "./views/components/sidebar.php";
 ?>
-<main class="flex-1 mt-28 overflow-y-auto p-6 bg-gray-50 w-full">
+<main class="flex-1 pt-28 overflow-y-auto p-6 bg-gray-50 w-full">
 
     <div class="w-full mx-auto">
         <!-- Header -->

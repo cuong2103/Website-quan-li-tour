@@ -156,6 +156,23 @@ class CustomerController
         exit;
     }
 
+    public function exportTemplate()
+    {
+        require_once './lib/SimpleXLSXGen.php'; // Thư viện tạo file Excel
+
+        // Tạo dòng tiêu đề
+        $data = [
+            ['STT', 'Họ tên', 'SĐT', 'Email', 'Địa chỉ', 'Giới tính', 'Hộ chiếu(nếu có)', 'CCCD']
+        ];
+
+        // Tạo tên file
+        $filename = 'Template_khach_hang.xlsx';
+
+        // Xuất file Excel
+        \Shuchkin\SimpleXLSXGen::fromArray($data)->downloadAs($filename);
+        exit;
+    }
+
     // Import khách hàng từ file Excel
     public function importCustomers()
     {
@@ -183,13 +200,13 @@ class CustomerController
                     if ($index == 0) continue; // Bỏ dòng tiêu đề
 
                     // Lấy dữ liệu từng ô trong Excel
-                    $name = trim($row[1] ?? $row[0] ?? '');
-                    $email = trim($row[2] ?? $row[1] ?? '');
-                    $phone = trim($row[3] ?? $row[2] ?? '');
-                    $address = trim($row[4] ?? $row[3] ?? '');
-                    $genderText = trim($row[5] ?? $row[4] ?? 'Khác');
-                    $passport = trim($row[6] ?? $row[5] ?? '');
-                    $citizen_id = trim($row[7] ?? $row[6] ?? '');
+                    $name = trim($row[1] ?? '');
+                    $phone = trim($row[2] ?? '');
+                    $email = trim($row[3] ?? '');
+                    $genderText = trim($row[4] ?? 'Khác');
+                    $address = trim($row[5] ?? '');
+                    $citizenId = trim($row[6] ?? '');
+                    $passport = trim($row[7] ?? '');
 
                     // Kiểm tra dữ liệu bắt buộc
                     if (empty($name) || empty($email) || empty($phone) || empty($address)) {
@@ -215,7 +232,7 @@ class CustomerController
 
                     // Thêm khách hàng mới
                     $created_by = $_SESSION['currentUser']['id'];
-                    $this->model->create($name, $email, $phone, $address, $created_by, $passport, $gender, $citizen_id);
+                    $this->model->create($name, $email, $phone, $address, $created_by, $passport, $gender, $citizenId);
                     $count++;
                 }
 

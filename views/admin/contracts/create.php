@@ -1,7 +1,7 @@
 <?php require_once './views/components/header.php'; ?>
 <?php require_once './views/components/sidebar.php'; ?>
 
-<main class="mt-28 px-6 pb-20">
+<main class="pt-28 px-6 pb-20">
 
 
     <div class="flex justify-between items-center mb-6">

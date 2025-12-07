@@ -3,8 +3,8 @@ require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
 
-<main class="flex-1 mt-28 overflow-y-auto p-6 bg-gray-50 w-full">
-    
+<main class="flex-1 pt-28 overflow-y-auto p-6 bg-gray-50 w-full">
+
     <div class="w-full mx-auto">
         <!-- Header -->
         <div class="mb-6 flex items-center justify-between">
@@ -21,7 +21,7 @@ require_once './views/components/sidebar.php';
             method="POST"
             enctype="multipart/form-data"
             class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            
+
             <div class="p-8">
                 <!-- Section 1: Thông tin cá nhân -->
                 <div class="mb-8">
@@ -29,7 +29,7 @@ require_once './views/components/sidebar.php';
                         <i class="w-5 h-5 mr-2 text-blue-600" data-lucide="user"></i>
                         Thông tin cá nhân
                     </h2>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Tên -->
                         <div class="col-span-2 md:col-span-1">
@@ -88,7 +88,7 @@ require_once './views/components/sidebar.php';
                         <i class="w-5 h-5 mr-2 text-blue-600" data-lucide="credit-card"></i>
                         Giấy tờ tùy thân
                     </h2>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- CCCD -->
                         <div>

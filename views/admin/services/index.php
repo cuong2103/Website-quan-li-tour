@@ -12,7 +12,7 @@ $units = [
 ];
 ?>
 
-<div class="ml-54 mt-28 p-6">
+<div class="ml-54 pt-28 p-6">
 
     <!-- Header trang -->
     <div class="flex justify-between items-center mb-6">
@@ -86,11 +86,11 @@ $units = [
                         <td class="px-6 py-5 text-center">
                             <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium
                             <?php
-                                if ($service["service_type_name"] == 'Khách sạn') echo 'bg-blue-100 text-blue-700';
-                                elseif ($service["service_type_name"] == 'Vận chuyển') echo 'bg-purple-100 text-purple-700';
-                                elseif ($service["service_type_name"] == 'Ăn uống') echo 'bg-cyan-100 text-cyan-700';
-                                elseif ($service["service_type_name"] == 'Vé tham quan') echo 'bg-green-100 text-green-700';
-                                else echo 'bg-gray-100 text-gray-700';
+                            if ($service["service_type_name"] == 'Khách sạn') echo 'bg-blue-100 text-blue-700';
+                            elseif ($service["service_type_name"] == 'Vận chuyển') echo 'bg-purple-100 text-purple-700';
+                            elseif ($service["service_type_name"] == 'Ăn uống') echo 'bg-cyan-100 text-cyan-700';
+                            elseif ($service["service_type_name"] == 'Vé tham quan') echo 'bg-green-100 text-green-700';
+                            else echo 'bg-gray-100 text-gray-700';
                             ?>">
                                 <?= $service["service_type_name"] ?>
                             </span>
@@ -142,36 +142,36 @@ $units = [
 
         <!-- Footer -->
         <div class="px-6 py-4 bg-gray-50 border-t text-sm text-gray-600">
-            Danh sách dịch vụ hiện có (<?=  count($services) ?>)
+            Danh sách dịch vụ hiện có (<?= count($services) ?>)
         </div>
     </div>
 </div>
 
 <script>
-let timer = null;
+    let timer = null;
 
-function autoFilter() {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-        const keyword = document.getElementById('filter-keyword').value;
-        const type = document.getElementById('filter-type').value;
-        const supplier = document.getElementById('filter-supplier').value;
+    function autoFilter() {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            const keyword = document.getElementById('filter-keyword').value;
+            const type = document.getElementById('filter-type').value;
+            const supplier = document.getElementById('filter-supplier').value;
 
-        const params = new URLSearchParams({
-            act: "service",
-            keyword: keyword,
-            service_type_id: type,
-            supplier_id: supplier
-        });
+            const params = new URLSearchParams({
+                act: "service",
+                keyword: keyword,
+                service_type_id: type,
+                supplier_id: supplier
+            });
 
-        window.location.href = "?" + params.toString();
-    }, 600);
-}
+            window.location.href = "?" + params.toString();
+        }, 600);
+    }
 
-// Gắn event realtime
-document.getElementById("filter-keyword").addEventListener("input", autoFilter);
-document.getElementById("filter-type").addEventListener("change", autoFilter);
-document.getElementById("filter-supplier").addEventListener("change", autoFilter);
+    // Gắn event realtime
+    document.getElementById("filter-keyword").addEventListener("input", autoFilter);
+    document.getElementById("filter-type").addEventListener("change", autoFilter);
+    document.getElementById("filter-supplier").addEventListener("change", autoFilter);
 </script>
 
 <?php

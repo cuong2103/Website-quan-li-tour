@@ -3,7 +3,7 @@ require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
 
-<main class="mt-28 px-6 pb-24 text-gray-700">
+<main class="pt-28 px-6 pb-24 text-gray-700">
 
     <!-- Header Title -->
     <div class="flex items-center justify-between mb-6">
@@ -428,9 +428,9 @@ require_once './views/components/sidebar.php';
         });
     </script>
 </main>
-<?php 
+<?php
 // Xóa session errors và old data sau khi đã hiển thị
 unset($_SESSION['validate_errors']);
 unset($_SESSION['old']);
-require_once './views/components/footer.php'; 
+require_once './views/components/footer.php';
 ?>

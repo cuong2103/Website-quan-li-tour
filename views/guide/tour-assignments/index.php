@@ -11,7 +11,7 @@ $tabs = [
 ];
 ?>
 
-<main class="mt-28 px-6 pb-20 text-gray-700">
+<main class="pt-28 px-6 pb-20 text-gray-700">
     <div class="flex items-center gap-4 mb-6">
         <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
             <i data-lucide="chevron-left" class="w-6 h-6"></i>

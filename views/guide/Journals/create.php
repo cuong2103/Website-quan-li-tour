@@ -7,7 +7,7 @@ $old = $_SESSION['old'] ?? [];
 unset($_SESSION['errors'], $_SESSION['old']);
 ?>
 
-<main class="mt-28 px-6  min-w-7xl mx-6">
+<main class="pt-28 px-6  min-w-7xl mx-6">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
         <div class="flex items-center gap-4 mb-6">

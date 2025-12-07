@@ -3,7 +3,7 @@ require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
 
-<main class="mt-28 px-6 pb-20 text-gray-700">
+<main class="pt-28 px-6 pb-20 text-gray-700">
 
     <!-- Tiêu đề + nút -->
     <div class="flex items-center justify-between mb-6">

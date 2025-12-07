@@ -2,7 +2,7 @@
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
-<main class="mt-28 px-6">
+<main class="pt-28 px-6">
 
   <!-- Tiêu đề + nút tạo tour -->
   <div class="flex justify-between items-center mb-8">

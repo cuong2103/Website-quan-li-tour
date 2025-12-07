@@ -3,7 +3,7 @@ require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
 
-<main class="mt-28 px-6 pb-20">
+<main class="pt-28 px-6 pb-20">
 
     <!-- Nút quay lại -->
     <div class="flex justify-end mt-4">

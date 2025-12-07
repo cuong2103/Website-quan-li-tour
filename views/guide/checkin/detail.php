@@ -7,7 +7,7 @@ $today = date('Y-m-d');
 $canCheckinNow = ($today >= $checkinLink['start_date'] && $today <= $checkinLink['end_date']);
 ?>
 
-<main class="mt-28 px-6 pb-20 text-gray-700">
+<main class="pt-28 px-6 pb-20 text-gray-700">
 
   <div class="flex justify-between items-center mb-6">
     <div>

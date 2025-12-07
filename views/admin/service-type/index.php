@@ -2,18 +2,20 @@
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
-<main class="w-full flex-1 mt-28 overflow-y-auto p-6 bg-gray-50 ">
-<?php if (!empty($_SESSION['error'])): ?>
-    <div class="px-4 py-2 mb-4 text-red-700 bg-red-100 rounded-lg">
-        <?= $_SESSION['error']; unset($_SESSION['error']); ?>
-    </div>
-<?php endif; ?>
+<main class="w-full flex-1 pt-28 overflow-y-auto p-6 bg-gray-50 ">
+    <?php if (!empty($_SESSION['error'])): ?>
+        <div class="px-4 py-2 mb-4 text-red-700 bg-red-100 rounded-lg">
+            <?= $_SESSION['error'];
+            unset($_SESSION['error']); ?>
+        </div>
+    <?php endif; ?>
 
-<?php if (!empty($_SESSION['success'])): ?>
-    <div class="px-4 py-2 mb-4 text-green-700 bg-green-100 rounded-lg">
-        <?= $_SESSION['success']; unset($_SESSION['success']); ?>
-    </div>
-<?php endif; ?>
+    <?php if (!empty($_SESSION['success'])): ?>
+        <div class="px-4 py-2 mb-4 text-green-700 bg-green-100 rounded-lg">
+            <?= $_SESSION['success'];
+            unset($_SESSION['success']); ?>
+        </div>
+    <?php endif; ?>
 
     <div class="w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
 
@@ -89,20 +91,20 @@ require_once './views/components/sidebar.php';
 
                                     <!-- Sửa -->
                                     <a href="<?= BASE_URL . '?act=service-type-edit&id=' . $serviceType['id'] ?>"
-                                       class="p-1 text-gray-600 hover:text-orange-500 transition">
+                                        class="p-1 text-gray-600 hover:text-orange-500 transition">
                                         <i class="w-5 h-4" data-lucide="square-pen"></i>
                                     </a>
 
                                     <!-- Xem chi tiết -->
                                     <a href="<?= BASE_URL . '?act=service-type-detail&id=' . $serviceType['id'] ?>"
-                                       class="p-1 text-gray-600 hover:text-blue-500 transition">
+                                        class="p-1 text-gray-600 hover:text-blue-500 transition">
                                         <i class="w-5 h-4" data-lucide="eye"></i>
                                     </a>
 
                                     <!-- Xóa -->
                                     <a href="<?= BASE_URL . '?act=service-type-delete&id=' . $serviceType['id'] ?>"
-                                       onclick="return confirm('Bạn có chắc muốn xóa không?')"
-                                       class="p-1 text-red-600 hover:text-red-700 transition">
+                                        onclick="return confirm('Bạn có chắc muốn xóa không?')"
+                                        class="p-1 text-red-600 hover:text-red-700 transition">
                                         <i class="w-5 h-4" data-lucide="trash-2"></i>
                                     </a>
 

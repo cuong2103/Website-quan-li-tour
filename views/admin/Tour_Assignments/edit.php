@@ -3,7 +3,7 @@ require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
 
-<main class="mt-28 px-6 pb-20 text-gray-700">
+<main class="pt-28 px-6 pb-20 text-gray-700">
     <div class="w-full mx-auto bg-white p-6 rounded-xl shadow-sm border border-gray-100">
         <h2 class="text-xl font-semibold mb-6 text-gray-800">Cập nhật Phân công HDV</h2>
 

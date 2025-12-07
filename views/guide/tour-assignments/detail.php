@@ -12,7 +12,7 @@ $tabs = [
 ];
 ?>
 
-<main class="mt-28 px-6 pb-20 text-gray-700">
+<main class="pt-28 px-6 pb-20 text-gray-700">
 
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Chi tiết Tour: <?= htmlspecialchars($assignment['tour_name']) ?></h1>

@@ -3,7 +3,7 @@ require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
 
-<main class="mt-28 px-6 pb-20 overflow-auto scrollbar-hide">
+<main class="pt-28 px-6 pb-20 overflow-auto scrollbar-hide">
 
     <!-- Tiêu đề và nút thêm -->
     <div class="flex justify-between items-center mb-6">
