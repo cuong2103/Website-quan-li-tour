@@ -159,7 +159,7 @@ require_once './views/components/sidebar.php';
                                     <?= htmlspecialchars($sv['name']) ?>
                                     <span class="text-xs text-gray-500">
                                         (<?php
-                                            $unitMap = ['person' => 'Người', 'room' => 'Phòng', 'vehicle' => 'Xe', 'day' => 'Ngày', 'meal' => 'Suất ăn'];
+                                            $unitMap = ['person' => 'Người', 'room' => 'Phòng', 'vehicle' => 'Chuyến', 'day' => 'Ngày', 'meal' => 'Suất ăn'];
                                             echo $unitMap[$sv['unit'] ?? 'person'] ?? 'Người';
                                             ?>)
                                     </span>
