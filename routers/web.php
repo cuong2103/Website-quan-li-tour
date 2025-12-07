@@ -57,6 +57,11 @@ match ($act) {
   'user-on-leave' => (new UserController())->onLeave(),
   'user-end-leave' => (new UserController())->endLeave(),
 
+  // Admin Leave Approval
+'user-leave-requests' => (new UserController())->leaveRequests(),
+'user-approve-leave' => (new UserController())->approveLeave(),
+'user-reject-leave' => (new UserController())->rejectLeave(),
+
 
   // tour_guide
   'profile' => (new ProfileController())->GetById(),
@@ -167,6 +172,12 @@ match ($act) {
 
   // 
   'my-schedule' => (new MyScheduleController())->index(),
+
+  // Guide Leave Requests
+'guide-leave' => (new LeaveRequestController())->index(),
+'guide-leave-create' => (new LeaveRequestController())->create(),
+'guide-leave-store' => (new LeaveRequestController())->store(),
+'guide-leave-cancel' => (new LeaveRequestController())->cancel(),
   // Guide tour_Assignments
   'guide-tour-assignments' => (new GuideTourAssignmentController())->index(),
   'guide-tour-assignments-detail' => (new GuideTourAssignmentController())->detail(),
