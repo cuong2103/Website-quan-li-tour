@@ -392,6 +392,19 @@ class BookingController
             case 'payments':
                 $bookingPayments = $this->paymentModel->getAllByBooking($booking['id']);
                 break;
+            case 'itinerary':
+                // Lấy itinerary từ tour_id của booking
+                $itineraries = $this->tourModel->getItineraries($booking['tour_id']);
+                // Nhóm theo order_number (ngày)
+                $itinerary_days = [];
+                foreach ($itineraries as $item) {
+                    $day = $item['order_number'];
+                    if (!isset($itinerary_days[$day])) {
+                        $itinerary_days[$day] = [];
+                    }
+                    $itinerary_days[$day][] = $item;
+                }
+                break;
             case 'checkins':
                 $checkinLinks = $this->checkinModel->getCheckinLinksByBookingId($id);
                 break;

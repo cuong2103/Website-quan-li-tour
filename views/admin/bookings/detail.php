@@ -97,6 +97,7 @@ require_once './views/components/sidebar.php';
             'services'  => ['icon' => 'concierge-bell', 'label' => 'Dịch vụ'],
             'payments'  => ['icon' => 'credit-card', 'label' => 'Thanh toán'],
             'contracts' => ['icon' => 'file-text', 'label' => 'Hợp đồng'],
+            'itinerary' => ['icon' => 'map-pin', 'label' => 'Lịch trình'],
             'room_assignment' => ['icon' => 'bed-double', 'label' => 'Xếp phòng'],
             'checkin' => ['icon' => 'clipboard-check', 'label' => 'Check-in'],
             'journal' => ['icon' => 'book-open', 'label' => 'Nhật ký'],
@@ -129,6 +130,9 @@ require_once './views/components/sidebar.php';
             break;
         case 'contracts':
             require_once './views/admin/bookings/tabs/contracts.php';
+            break;
+        case 'itinerary':
+            require_once './views/admin/bookings/tabs/itinerary.php';
             break;
         case 'room_assignment':
             require_once './views/admin/bookings/tabs/room_assignment.php';
