@@ -169,6 +169,7 @@ match ($act) {
   // Guide tour_Assignments
   'guide-tour-assignments' => (new GuideTourAssignmentController())->index(),
   'guide-tour-assignments-detail' => (new GuideTourAssignmentController())->detail(),
+  'guide-tour-assignments-export-rooms' => (new GuideTourAssignmentController())->exportRooms(),
 
   // Guide Check-in Management
   'guide-checkin-create' => (new CheckinController())->create(),

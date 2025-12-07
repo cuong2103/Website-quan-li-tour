@@ -70,7 +70,16 @@ class GuideTourAssignmentController
         $assignment = $this->bookingModel->getBookingDetails($assignmentId);
 
         if (!$assignment) {
-            echo "Không tìm thấy phân công tour!";
+            Message::set('error', 'Không tìm thấy phân công tour!');
+            header("Location: " . BASE_URL . "?act=guide-tour-assignments");
+            exit;
+        }
+
+        // Authorization check: Chỉ cho phép HDV xem tour của mình
+        $currentGuideId = $_SESSION['currentUser']['id'];
+        if ($assignment['guide_id'] != $currentGuideId) {
+            Message::set('error', 'Bạn không có quyền xem tour này!');
+            header("Location: " . BASE_URL . "?act=guide-tour-assignments");
             exit;
         }
 
@@ -85,8 +94,12 @@ class GuideTourAssignmentController
                 $customers = $this->bookingModel->getCustomers($bookingId);
                 break;
 
+            case 'rooms':
+                $customers = $this->bookingModel->getCustomers($bookingId);
+                break;
+
             case 'services':
-                $services = $this->bookingModel->getServices($bookingId);
+                $services = $this->bookingModel->getServicesByBooking($bookingId);
                 break;
 
             case 'journals':
@@ -211,6 +224,65 @@ class GuideTourAssignmentController
         }
 
         header("Location: " . BASE_URL . "?act=guide-tour-assignments-detail&id=" . $assignmentId . "&tab=checkin&link_id=" . $linkId);
+        exit;
+    }
+
+    // Export danh sách phòng ra Excel
+    public function exportRooms()
+    {
+        $assignmentId = $_GET['id'] ?? null;
+
+        if (!$assignmentId) {
+            Message::set('error', 'Không tìm thấy thông tin tour!');
+            header("Location: " . BASE_URL . "?act=guide-tour-assignments");
+            exit;
+        }
+
+        $assignment = $this->bookingModel->getBookingDetails($assignmentId);
+
+        if (!$assignment) {
+            Message::set('error', 'Không tìm thấy phân công tour!');
+            header("Location: " . BASE_URL . "?act=guide-tour-assignments");
+            exit;
+        }
+
+        // Authorization check: Chỉ cho phép HDV xuất dữ liệu tour của mình
+        $currentGuideId = $_SESSION['currentUser']['id'];
+        if ($assignment['guide_id'] != $currentGuideId) {
+            Message::set('error', 'Bạn không có quyền xuất dữ liệu tour này!');
+            header("Location: " . BASE_URL . "?act=guide-tour-assignments");
+            exit;
+        }
+
+        $customers = $this->bookingModel->getCustomers($assignment['booking_id']);
+
+        if (empty($customers)) {
+            Message::set('error', 'Chưa có khách hàng nào trong tour này!');
+            header("Location: " . BASE_URL . "?act=guide-tour-assignments-detail&id=" . $assignmentId . "&tab=rooms");
+            exit;
+        }
+
+        require_once './lib/SimpleXLSXGen.php';
+
+        $data = [
+            ['DANH SÁCH PHÒNG - ' . mb_strtoupper($assignment['tour_name'])],
+            ['Mã Booking: ' . $assignment['booking_code']],
+            ['Ngày khởi hành: ' . date('d/m/Y', strtotime($assignment['start_date']))],
+            [],
+            ['STT', 'Tên khách hàng', 'Số phòng', 'Ghi chú']
+        ];
+
+        foreach ($customers as $i => $c) {
+            $data[] = [
+                $i + 1,
+                $c['name'],
+                $c['room_number'] ?? '',
+                $c['notes'] ?? ''
+            ];
+        }
+
+        $xlsx = Shuchkin\SimpleXLSXGen::fromArray($data);
+        $xlsx->downloadAs('Danh_sach_phong_' . date('Ymd_His') . '.xlsx');
         exit;
     }
 }
