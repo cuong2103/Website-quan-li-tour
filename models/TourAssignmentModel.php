@@ -245,7 +245,7 @@ class TourAssignmentModel
             FROM journals j
             LEFT JOIN users u ON j.created_by = u.id
             WHERE j.tour_assignment_id = ?
-            ORDER BY j.date DESC";
+             ORDER BY j.created_at DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$assignmentId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

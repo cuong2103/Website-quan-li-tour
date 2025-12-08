@@ -84,39 +84,44 @@ require_once './views/components/sidebar.php';
                     <div class="p-2 bg-green-50 rounded-lg text-green-600">
                         <i data-lucide="users" class="w-5 h-5"></i>
                     </div>
-                    <h2 class="text-lg font-semibold text-gray-800">Khách hàng & Người đại diện</h2>
+                    <h2 class="text-lg font-semibold text-gray-800">Người đại diện</h2>
                 </div>
 
                 <div class="space-y-4">
-                    <label class="block mb-1.5 text-sm font-medium text-gray-700">Danh sách khách hàng trong booking này</label>
-                    <div class="max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
-                        <?php if (empty($booking['customers'])): ?>
-                            <p class="text-sm text-gray-500 italic">Chưa có khách hàng nào.</p>
-                        <?php else: ?>
-                            <?php foreach ($booking['customers'] as $c): ?>
-                                <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded border-b last:border-0 border-gray-100">
-                                    <input type="checkbox" name="customers[]" value="<?= $c['id'] ?>" checked class="customerCheck w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500">
-                                    <div>
-                                        <p class="text-sm font-medium text-gray-800"><?= htmlspecialchars($c['name']) ?></p>
-                                        <p class="text-xs text-gray-500"><?= htmlspecialchars($c['phone']) ?> - <?= htmlspecialchars($c['email']) ?></p>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                    <?php
+                    $representativeName = 'Chưa có người đại diện';
+                    $representativePhone = '';
+                    $representativeEmail = '';
+                    foreach ($booking['customers'] as $c) {
+                        if ($c['id'] == $booking['is_representative']) {
+                            $representativeName = htmlspecialchars($c['name']);
+                            $representativePhone = $c['phone'] ?? '';
+                            $representativeEmail = $c['email'] ?? '';
+                            break;
+                        }
+                    }
+                    ?>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block mb-1.5 text-sm font-medium text-gray-700">Họ và tên</label>
+                            <div class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700 font-medium">
+                                <?= $representativeName ?>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-sm font-medium text-gray-700">Số điện thoại</label>
+                            <div class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700">
+                                <?= $representativePhone ?: '<span class="text-gray-400 italic">Chưa có</span>' ?>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block mb-1.5 text-sm font-medium text-gray-700">Email</label>
+                            <div class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-gray-700">
+                                <?= $representativeEmail ?: '<span class="text-gray-400 italic">Chưa có</span>' ?>
+                            </div>
+                        </div>
                     </div>
-
-                    <div>
-                        <label class="block mb-1.5 text-sm font-medium text-gray-700">Người đại diện <span class="text-red-500">*</span></label>
-                        <select name="is_representative" id="representative"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition" required>
-                            <option value="">-- Chọn người đại diện --</option>
-                            <?php foreach ($booking['customers'] as $c): ?>
-                                <option value="<?= $c['id'] ?>" <?= ($c['id'] == $booking['is_representative']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($c['name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+                    <input type="hidden" name="is_representative" value="<?= $booking['is_representative'] ?>">
                 </div>
             </div>
 
@@ -404,28 +409,6 @@ require_once './views/components/sidebar.php';
         startDateInput.addEventListener('change', calculateEndDate);
         // Run on load
         calculateEndDate();
-
-        document.querySelectorAll(".customerCheck").forEach(chk => {
-            chk.addEventListener("change", () => {
-                let rep = document.getElementById("representative");
-                let currentRep = rep.value;
-                rep.innerHTML = `<option value="">-- Chọn người đại diện --</option>`;
-
-                let checked = document.querySelectorAll(".customerCheck:checked");
-
-                checked.forEach(c => {
-                    let nameContainer = c.parentElement.querySelector("p.font-medium"); // Updated selector
-                    let name = nameContainer ? nameContainer.innerText : "Khách hàng";
-                    rep.innerHTML += `<option value="${c.value}">${name}</option>`;
-                });
-
-                if ([...checked].some(c => c.value == currentRep)) {
-                    rep.value = currentRep;
-                } else if (checked.length === 1) {
-                    rep.value = checked[0].value;
-                }
-            });
-        });
     </script>
 </main>
 <?php

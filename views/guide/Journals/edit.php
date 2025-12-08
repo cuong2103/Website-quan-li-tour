@@ -19,11 +19,11 @@ unset($_SESSION['errors'], $_SESSION['old']);
                 <p class="text-sm text-gray-600">Cập nhật thông tin hành trình và sự cố</p>
             </div>
         </div>
-        <a href="<?= BASE_URL . '?act=journal' ?>"
+        <button onclick="history.back()"
             class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
             <span>Quay lại</span>
-        </a>
+        </button>
     </div>
 
     <!-- Form Card -->
@@ -175,10 +175,10 @@ unset($_SESSION['errors'], $_SESSION['old']);
 
             <!-- Buttons -->
             <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-100">
-                <a href="<?= BASE_URL . '?act=journal' ?>"
+                <button onclick="history.back()"
                     class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 transition-all">
                     Hủy bỏ
-                </a>
+                </button>
                 <button type="submit"
                     class="px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-100 shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2">
                     <i data-lucide="save" class="w-4 h-4"></i>

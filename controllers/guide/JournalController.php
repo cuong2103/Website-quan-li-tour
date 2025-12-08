@@ -1,31 +1,26 @@
 <?php
 class JournalController
 {
-    protected $model;
+    public $modelJournal;
+    public $checkinModel;
 
     public function __construct()
     {
-        $this->model = new JournalModel();
+        $this->modelJournal = new JournalModel();
+        $this->checkinModel = new CheckinModel();
     }
-
-    // Danh sách
-    public function index()
-    {
-        $journals = $this->model->getAll();
-
-        require './views/guide/journals/index.php';
-    }
-
     // Form tạo
     public function create()
     {
         $guideId = $_SESSION['currentUser']['id'];
         $selected_tour_id = $_GET['tour_assignment_id'] ?? null;
         // Lấy tất cả tour assignment của guide
-        $tourAssignments = $this->model->getAssignmentsByGuide($guideId);
+        $tourAssignments = $this->modelJournal->getAssignmentsByGuide($guideId);
         // Chỉ giữ những tour chưa hoàn thành
-        $tourAssignments = array_filter($tourAssignments, fn($ta) => $ta['tour_status'] !== 1);
-        // dd($tourAssignments);
+        $tourAssignments = array_filter($tourAssignments, fn($ta) => $ta['tour_status'] !== 'completed');
+        $now = date('Y-m-d');
+
+
         require './views/guide/journals/create.php';
     }
 
@@ -46,13 +41,13 @@ class JournalController
         if ($errors) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old'] = $data;
-            header('Location: ' . BASE_URL . '?act=journal-create&tour_assignment_id=' . $data['tour_assignment_id']);
+            redirect('journal-create&tour_assignment_id=' . $data['tour_assignment_id']);
             exit;
         }
 
         // Kiểm tra ngày tour - chỉ cho phép viết nhật ký khi tour đã bắt đầu
-        $checkinModel = new CheckinModel();
-        $tourDateCheck = $checkinModel->canCheckin($data['tour_assignment_id']);
+
+        $tourDateCheck = $this->checkinModel->canCheckin($data['tour_assignment_id']);
 
         if (!$tourDateCheck['allowed']) {
             // Nếu tour chưa bắt đầu, hiển thị thông báo
@@ -64,12 +59,12 @@ class JournalController
 
             // Chỉ chặn nếu tour chưa bắt đầu
             if (strpos($tourDateCheck['message'], 'Chưa đến') !== false) {
-                header('Location: ' . BASE_URL . '?act=journal-create&tour_assignment_id=' . $data['tour_assignment_id']);
+                redirect('journal-create&tour_assignment_id=' . $data['tour_assignment_id']);
                 exit;
             }
         }
 
-        $journal_id = $this->model->create($data);
+        $journal_id = $this->modelJournal->create($data);
 
         if (!empty($_FILES['images']['name'][0])) {
             $uploadDir = __DIR__ . '/../../uploads/journals/';
@@ -78,13 +73,13 @@ class JournalController
                 $ext = pathinfo($filename, PATHINFO_EXTENSION);
                 $newName = uniqid() . '.' . $ext;
                 if (move_uploaded_file($tmp, $uploadDir . $newName)) {
-                    $this->model->addImage($journal_id, $newName, $_SESSION['currentUser']['id']);
+                    $this->modelJournal->addImage($journal_id, $newName, $_SESSION['currentUser']['id']);
                 }
             }
         }
 
         Message::set('success', 'Thêm nhật ký thành công!');
-        header('Location: ' . BASE_URL . '?act=journal&tour_assignment_id=' . $data['tour_assignment_id']);
+        redirect('guide-tour-assignments-detail&id=' . $data['tour_assignment_id'] . '&tab=journals');
         exit;
     }
 
@@ -92,17 +87,17 @@ class JournalController
     public function edit()
     {
         $id = $_GET['id'];
-        $journal = $this->model->getById($id);
-        $images = $this->model->getImages($id);
+        $journal = $this->modelJournal->getById($id);
+        $images = $this->modelJournal->getImages($id);
 
         $guideId = $_SESSION['currentUser']['id'];
-        $tourAssignments = $this->model->getAssignmentsByGuide($guideId);
+        $tourAssignments = $this->modelJournal->getAssignmentsByGuide($guideId);
 
         // Chỉ giữ những tour chưa hoàn thành hoặc tour của journal hiện tại
         $tourAssignments = array_filter(
             $tourAssignments,
             fn($ta) =>
-            $ta['tour_status'] != '1' || $ta['id'] == $journal['tour_assignment_id']
+            $ta['tour_status'] !== 'completed' || $ta['id'] == $journal['tour_assignment_id']
         );
 
         require_once './views/guide/journals/edit.php';
@@ -124,11 +119,11 @@ class JournalController
         if ($errors) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old'] = $data;
-            header('Location: ' . BASE_URL . '?act=journal-edit&id=' . $id);
+            redirect('journal-edit&id=' . $id);
             exit;
         }
 
-        $this->model->update($id, $data);
+        $this->modelJournal->update($id, $data);
 
         if (!empty($_FILES['images']['name'][0])) {
             $uploadDir = __DIR__ . '/../../uploads/journals/';
@@ -137,13 +132,13 @@ class JournalController
                 $ext = pathinfo($filename, PATHINFO_EXTENSION);
                 $newName = uniqid() . '.' . $ext;
                 if (move_uploaded_file($tmp, $uploadDir . $newName)) {
-                    $this->model->addImage($id, $newName, $_SESSION['currentUser']['id']);
+                    $this->modelJournal->addImage($id, $newName, $_SESSION['currentUser']['id']);
                 }
             }
         }
 
         Message::set('success', 'Cập nhật nhật ký thành công!');
-        header('Location: ' . BASE_URL . '?act=journal&tour_assignment_id=' . $_POST['tour_assignment_id']);
+        redirect('guide-tour-assignments-detail&id=' . $_POST['tour_assignment_id'] . '&tab=journals');
         exit;
     }
 
@@ -151,7 +146,7 @@ class JournalController
     public function delete()
     {
         $id = $_GET['id'];
-        $images = $this->model->getImages($id);
+        $images = $this->modelJournal->getImages($id);
         $uploadDir = __DIR__ . '/../../uploads/journals/';
 
         foreach ($images as $img) {
@@ -159,9 +154,9 @@ class JournalController
             if (file_exists($filePath)) unlink($filePath);
         }
 
-        $this->model->delete($id);
+        $this->modelJournal->delete($id);
         Message::set('success', 'Xóa nhật ký thành công!');
-        header('Location: ' . BASE_URL . '?act=journal&tour_assignment_id=' . $_GET['tour_assignment_id']);
+        redirect("guide-tour-assignments-detail&id=" . $_GET['tour_assignment_id'] . "&tab=journals");
         exit;
     }
 
@@ -169,14 +164,14 @@ class JournalController
     public function deleteImage()
     {
         $id = $_GET['id'];
-        $image = $this->model->getImageById($id);
+        $image = $this->modelJournal->getImageById($id);
         if (!$image) die('Không tìm thấy ảnh');
 
         $filePath = __DIR__ . '/../../uploads/journals/' . $image['image_url'];
         if (file_exists($filePath)) unlink($filePath);
 
-        $this->model->deleteImage($id);
-        header('Location: ' . BASE_URL . '?act=journal-edit&id=' . $image['journal_id']);
+        $this->modelJournal->deleteImage($id);
+        redirect('journal-edit&id=' . $image['journal_id']);
         exit;
     }
 
@@ -185,15 +180,15 @@ class JournalController
     public function detail()
     {
         $id = $_GET['id'];
-        $journal = $this->model->getById($id);
+        $journal = $this->modelJournal->getById($id);
         if (!$journal) {
             Message::set('error', 'Không tìm thấy nhật ký');
-            header('Location: ' . BASE_URL . '?act=journal');
+            redirect('guide-tour-assignments');
             exit;
         }
 
-        $images = $this->model->getImages($id);
-        $tour = $this->model->getTourByAssignment($journal['tour_assignment_id']);
+        $images = $this->modelJournal->getImages($id);
+        $tour = $this->modelJournal->getTourByAssignment($journal['tour_assignment_id']);
 
         require_once './views/guide/journals/detail.php';
     }

@@ -11,17 +11,16 @@ $tabs = [
     'info'      => ['label' => 'Thông tin & Yêu cầu', 'icon' => 'info'],
     'services'  => ['label' => 'Dịch vụ kèm theo', 'icon' => 'package']
 ];
-// dd($assignment);
 ?>
 
 <main class="pt-28 px-6 pb-20 text-gray-700">
 
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Chi tiết Tour: <?= htmlspecialchars($assignment['tour_name']) ?></h1>
-        <a href="<?= BASE_URL . '?act=guide-tour-assignments' ?>"
+        <button onclick="history.back()"
             class="flex items-center gap-2 bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-black text-sm">
             <i data-lucide="arrow-left"></i> Quay lại
-        </a>
+        </button>
     </div>
 
     <div class="bg-white border shadow-md rounded-xl p-6 mb-8">
