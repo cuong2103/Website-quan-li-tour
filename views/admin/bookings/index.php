@@ -70,6 +70,7 @@ require_once './views/components/sidebar.php';
             <thead>
                 <tr class="border-b bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
                     <th class="py-4 px-4 font-medium">Tour</th>
+                    <th class="py-4 px-4 font-medium">Người đại diện</th>
                     <th class="py-4 px-4 font-medium">Ngày đi</th>
                     <th class="py-4 px-4 font-medium">Ngày về</th>
                     <th class="py-4 px-4 font-medium">Số lượng</th>
@@ -85,6 +86,16 @@ require_once './views/components/sidebar.php';
                     <?php foreach ($bookings as $b): ?>
                         <tr class="hover:bg-gray-50 transition-colors text-sm text-gray-700">
                             <td class="py-4 px-4 font-medium text-gray-900"><?= $b['tour_name'] ?></td>
+                            <td class="py-4 px-4">
+                                <?php if (!empty($b['representative_name'])): ?>
+                                    <div class="flex items-center gap-1.5">
+                                        <i class="w-3.5 h-3.5 text-green-600" data-lucide="user-check"></i>
+                                        <span class="text-gray-700"><?= htmlspecialchars($b['representative_name']) ?></span>
+                                    </div>
+                                <?php else: ?>
+                                    <span class="text-gray-400 italic text-xs">Chưa có</span>
+                                <?php endif; ?>
+                            </td>
                             <td class="py-4 px-4"><?= date('d/m/Y', strtotime($b['start_date'])) ?></td>
                             <td class="py-4 px-4"><?= date('d/m/Y', strtotime($b['end_date'])) ?></td>
                             <td class="py-4 px-4">
@@ -145,7 +156,7 @@ require_once './views/components/sidebar.php';
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="8" class="py-8 text-center text-gray-500">
+                        <td colspan="9" class="py-8 text-center text-gray-500">
                             <div class="flex flex-col items-center justify-center">
                                 <i class="w-8 h-8 text-gray-300 mb-2" data-lucide="inbox"></i>
                                 <p>Không tìm thấy booking nào phù hợp</p>

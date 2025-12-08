@@ -12,7 +12,10 @@ class BookingModel
     public function getAll($filters = [])
     {
         try {
-            $sql = "SELECT DISTINCT b.*, t.name AS tour_name, u.fullname as guide_name
+            $sql = "SELECT DISTINCT b.*, t.name AS tour_name, u.fullname as guide_name,
+                       (SELECT c2.name FROM customers c2 
+                        JOIN booking_customers bc2 ON c2.id = bc2.customer_id 
+                        WHERE bc2.booking_id = b.id AND bc2.is_representative = 1 LIMIT 1) as representative_name
                     FROM bookings b
                     LEFT JOIN tours t ON t.id = b.tour_id
                     LEFT JOIN tour_assignments ta ON ta.booking_id = b.id
@@ -521,10 +524,14 @@ class BookingModel
             ];
         }
 
-        // 2. Lấy dữ liệu thực tế từ DB (bỏ điều kiện status = completed)
+        // 2. Lấy dữ liệu thực tế từ DB
+        // Tính doanh thu: cộng deposit/full_payment/remaining, trừ refund
         $sql = "SELECT 
                     DATE_FORMAT(payment_date, '%Y-%m') as month,
-                    SUM(amount) as total
+                    SUM(CASE 
+                        WHEN type = 'refund' THEN -amount 
+                        ELSE amount 
+                    END) as total
                 FROM payments 
                 WHERE payment_date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
                 GROUP BY DATE_FORMAT(payment_date, '%Y-%m')";

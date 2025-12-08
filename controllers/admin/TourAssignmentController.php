@@ -35,7 +35,7 @@ class TourAssignmentController
             redirect('bookings');
             exit;
         }
-        
+
         // Ngăn phân công khi booking đã completed
         if ($booking['status'] === 'completed') {
             Message::set('error', 'Không thể phân công cho booking đã hoàn thành');
