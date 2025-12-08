@@ -73,7 +73,6 @@ require_once './views/components/sidebar.php';
                     <th class="py-4 px-4 font-medium">Người đại diện</th>
                     <th class="py-4 px-4 font-medium">Ngày đi</th>
                     <th class="py-4 px-4 font-medium">Ngày về</th>
-                    <th class="py-4 px-4 font-medium">Số lượng</th>
                     <th class="py-4 px-4 font-medium">Tổng tiền</th>
                     <th class="py-4 px-4 font-medium">Trạng thái</th>
                     <th class="py-4 px-4 font-medium">HDV</th>
@@ -98,12 +97,6 @@ require_once './views/components/sidebar.php';
                             </td>
                             <td class="py-4 px-4"><?= date('d/m/Y', strtotime($b['start_date'])) ?></td>
                             <td class="py-4 px-4"><?= date('d/m/Y', strtotime($b['end_date'])) ?></td>
-                            <td class="py-4 px-4">
-                                <span class="inline-flex items-center gap-1">
-                                    <i class="w-3 h-3 text-gray-400" data-lucide="users"></i>
-                                    <?= $b['adult_count'] ?>L, <?= $b['child_count'] ?>N
-                                </span>
-                            </td>
                             <td class="py-4 px-4 font-medium text-blue-600"><?= number_format($b['total_amount']) ?>đ</td>
 
                             <td class="py-4 px-4">
