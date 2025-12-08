@@ -4,12 +4,12 @@ require './views/components/sidebar.php';
 
 $tabs = [
     'customers' => ['label' => 'Danh sách khách hàng', 'icon' => 'users'],
-    'rooms'     => ['label' => 'Xem phòng', 'icon' => 'bed-double'],
     'checkin'   => ['label' => 'Check-in', 'icon' => 'check-circle'],
-    'journals'  => ['label' => 'Nhật ký tour', 'icon' => 'book-open'],
-    'itinerary' => ['label' => 'Lịch trình chi tiết', 'icon' => 'map'],
     'info'      => ['label' => 'Thông tin & Yêu cầu', 'icon' => 'info'],
-    'services'  => ['label' => 'Dịch vụ kèm theo', 'icon' => 'package']
+    'services'  => ['label' => 'Dịch vụ kèm theo', 'icon' => 'package'],
+    'rooms'     => ['label' => 'Xem phòng', 'icon' => 'bed-double'],
+    'itinerary' => ['label' => 'Lịch trình chi tiết', 'icon' => 'map'],
+    'journals'  => ['label' => 'Nhật ký tour', 'icon' => 'book-open'],
 ];
 ?>
 

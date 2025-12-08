@@ -94,11 +94,11 @@ require_once './views/components/sidebar.php';
         <?php
         $tabs = [
             'customers' => ['icon' => 'users', 'label' => 'Khách hàng'],
-            'services'  => ['icon' => 'concierge-bell', 'label' => 'Dịch vụ'],
-            'payments'  => ['icon' => 'credit-card', 'label' => 'Thanh toán'],
-            'contracts' => ['icon' => 'file-text', 'label' => 'Hợp đồng'],
-            'itinerary' => ['icon' => 'map-pin', 'label' => 'Lịch trình'],
             'room_assignment' => ['icon' => 'bed-double', 'label' => 'Xếp phòng'],
+            'services'  => ['icon' => 'concierge-bell', 'label' => 'Dịch vụ'],
+            'itinerary' => ['icon' => 'map-pin', 'label' => 'Lịch trình'],
+            'contracts' => ['icon' => 'file-text', 'label' => 'Hợp đồng'],
+            'payments'  => ['icon' => 'credit-card', 'label' => 'Thanh toán'],
             'checkin' => ['icon' => 'clipboard-check', 'label' => 'Check-in'],
             'journal' => ['icon' => 'book-open', 'label' => 'Nhật ký'],
         ];
