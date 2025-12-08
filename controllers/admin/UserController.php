@@ -243,7 +243,7 @@ class UserController
 
         // Trường hợp xóa nghỉ phép (cả 2 trường trống)
         if (empty($leave_start) && empty($leave_end)) {
-            $sql = "UPDATE users SET leave_start = NULL, leave_end = NULL, status = 1, updated_by = :updated_by, updated_at = NOW() WHERE id = :id";
+            $sql = "UPDATE users SET leave_start = NULL, leave_end = NULL, leave_status = NULL, leave_reason = NULL, status = 1, updated_by = :updated_by, updated_at = NOW() WHERE id = :id";
             $stmt = $this->userModel->conn->prepare($sql);
             $result = $stmt->execute([
                 ':id' => $id,
@@ -312,7 +312,7 @@ class UserController
         }
 
         // Xóa thông tin nghỉ phép và chuyển status về hoạt động
-        $sql = "UPDATE users SET leave_start = NULL, leave_end = NULL, status = 1, updated_by = :updated_by, updated_at = NOW() WHERE id = :id";
+        $sql = "UPDATE users SET leave_start = NULL, leave_end = NULL, leave_status = NULL, leave_reason = NULL, status = 1, updated_by = :updated_by, updated_at = NOW() WHERE id = :id";
         $stmt = $this->userModel->conn->prepare($sql);
         $result = $stmt->execute([
             ':id' => $id,
@@ -326,5 +326,77 @@ class UserController
         }
 
         redirect("user-on-leave");
+    }
+
+     public function leaveRequests()
+    {
+        $requests = $this->userModel->getPendingLeaveRequests();
+        require './views/admin/users/leave_requests.php';
+    }
+    // DUYỆT ĐƠN XIN NGHỈ
+    public function approveLeave()
+    {
+        $id = $_GET['id'] ?? null;
+        
+        if (!$id) {
+            Message::set('error', 'ID không hợp lệ');
+            redirect('user-leave-requests');
+            exit;
+        }
+        $user = $this->userModel->getById($id);
+        if (!$user) {
+            Message::set('error', 'Không tìm thấy nhân viên');
+            redirect('user-leave-requests');
+            exit;
+        }
+        if ($this->userModel->approveLeaveRequest($id, $_SESSION['currentUser']['id'])) {
+            // Gửi notification cho HDV
+            $notificationModel = new NotificationModel();
+            $notifId = $notificationModel->create([
+                'title' => 'Đơn xin nghỉ đã được duyệt',
+                'message' => 'Đơn xin nghỉ của bạn từ ' . date('d/m/Y', strtotime($user['leave_start'])) . ' đến ' . date('d/m/Y', strtotime($user['leave_end'])) . ' đã được duyệt.',
+                'type' => 'general',
+                'created_by' => $_SESSION['currentUser']['id']
+            ]);
+            $notificationModel->addRecipients($notifId, [$id]);
+            Message::set('success', 'Đã duyệt đơn xin nghỉ!');
+        } else {
+            Message::set('error', 'Duyệt đơn thất bại!');
+        }
+        redirect('user-leave-requests');
+        exit;
+    }
+    // TỪ CHỐI ĐƠN XIN NGHỈ
+    public function rejectLeave()
+    {
+        $id = $_GET['id'] ?? null;
+        
+        if (!$id) {
+            Message::set('error', 'ID không hợp lệ');
+            redirect('user-leave-requests');
+            exit;
+        }
+        $user = $this->userModel->getById($id);
+        if (!$user) {
+            Message::set('error', 'Không tìm thấy nhân viên');
+            redirect('user-leave-requests');
+            exit;
+        }
+        if ($this->userModel->rejectLeaveRequest($id, $_SESSION['currentUser']['id'])) {
+            // Gửi notification cho HDV
+            $notificationModel = new NotificationModel();
+            $notifId = $notificationModel->create([
+                'title' => 'Đơn xin nghỉ bị từ chối',
+                'message' => 'Đơn xin nghỉ của bạn từ ' . date('d/m/Y', strtotime($user['leave_start'])) . ' đến ' . date('d/m/Y', strtotime($user['leave_end'])) . ' đã bị từ chối. Vui lòng liên hệ admin để biết thêm chi tiết.',
+                'type' => 'general',
+                'created_by' => $_SESSION['currentUser']['id']
+            ]);
+            $notificationModel->addRecipients($notifId, [$id]);
+            Message::set('success', 'Đã từ chối đơn xin nghỉ!');
+        } else {
+            Message::set('error', 'Từ chối đơn thất bại!');
+        }
+        redirect('user-leave-requests');
+        exit;
     }
 }
