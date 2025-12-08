@@ -179,13 +179,12 @@ require_once './views/components/sidebar.php';
   // BIỂU ĐỒ DOANH THU 6 THÁNG (Line Chart)
   document.addEventListener("DOMContentLoaded", function() {
     const revenueData = <?= json_encode($revenueChartData ?? []) ?>;
-    console.log(revenueData);
+    const revenueLabels = <?= json_encode($revenueChartLabels ?? []) ?>;
     const bookingStatusData = <?= json_encode($bookingStatusChartData ?? []) ?>;
-    console.log(bookingStatusData);
     new Chart(document.getElementById('revenueChart'), {
       type: 'line',
       data: {
-        labels: ['T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+        labels: revenueLabels,
         datasets: [{
           label: 'Doanh thu (VNĐ)',
           data: revenueData,

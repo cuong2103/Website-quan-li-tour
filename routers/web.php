@@ -58,9 +58,9 @@ match ($act) {
   'user-end-leave' => (new UserController())->endLeave(),
 
   // Admin Leave Approval
-'user-leave-requests' => (new UserController())->leaveRequests(),
-'user-approve-leave' => (new UserController())->approveLeave(),
-'user-reject-leave' => (new UserController())->rejectLeave(),
+  'user-leave-requests' => (new UserController())->leaveRequests(),
+  'user-approve-leave' => (new UserController())->approveLeave(),
+  'user-reject-leave' => (new UserController())->rejectLeave(),
 
 
   // tour_guide
@@ -174,10 +174,10 @@ match ($act) {
   'my-schedule' => (new MyScheduleController())->index(),
 
   // Guide Leave Requests
-'guide-leave' => (new LeaveRequestController())->index(),
-'guide-leave-create' => (new LeaveRequestController())->create(),
-'guide-leave-store' => (new LeaveRequestController())->store(),
-'guide-leave-cancel' => (new LeaveRequestController())->cancel(),
+  'guide-leave' => (new LeaveRequestController())->index(),
+  'guide-leave-create' => (new LeaveRequestController())->create(),
+  'guide-leave-store' => (new LeaveRequestController())->store(),
+  'guide-leave-cancel' => (new LeaveRequestController())->cancel(),
   // Guide tour_Assignments
   'guide-tour-assignments' => (new GuideTourAssignmentController())->index(),
   'guide-tour-assignments-detail' => (new GuideTourAssignmentController())->detail(),
@@ -191,7 +191,6 @@ match ($act) {
   'checkin-export' => (new CheckinController())->exportCheckinList(),
 
   // Journal
-  'journal' => (new JournalController())->index(),
   'journal-create' => (new JournalController())->create(),
   'journal-store' => (new JournalController())->store(),
   'journal-edit' => (new JournalController())->edit(),

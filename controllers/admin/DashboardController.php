@@ -40,11 +40,14 @@ class DashboardController
     $pendingBookings = $this->bookingModel->getPendingBookings(5);
 
     // Xử lý dữ liệu cho biểu đồ
-    // Biểu đồ doanh thu: lấy mảng total từ $recentRevenue
+    // Biểu đồ doanh thu: lấy mảng total và labels từ $recentRevenue
     $revenueChartData = array_column($recentRevenue, 'total');
+    // Tạo labels động theo tháng thực tế
+    $revenueChartLabels = array_map(function ($item) {
+      $monthNum = (int) date('n', strtotime($item['month'] . '-01'));
+      return 'T' . $monthNum;
+    }, $recentRevenue);
 
-    // Biểu đồ trạng thái booking: chuyển từ mảng associative sang mảng values
-    // Thứ tự: pending, deposited, paid, cancelled, completed
     $bookingStatusChartData = [
       $bookingStatusStats['pending'] ?? 0,
       $bookingStatusStats['deposited'] ?? 0,
@@ -53,11 +56,6 @@ class DashboardController
       $bookingStatusStats['completed'] ?? 0
     ];
 
-    // Các biến sẽ được truyền sang view:
-    // - $currentBookings, $bookingGrowth
-    // - $currentRevenue, $revenueGrowth
-    // - $revenueChartData, $bookingStatusChartData
-    // - $pendingBookings
 
     require_once './views/admin/dashboard.php';
   }
