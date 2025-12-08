@@ -86,7 +86,7 @@ require_once './views/components/sidebar.php';
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Họ và tên <span class="text-red-500">*</span></label>
-                            <input type="text" name="rep_name" placeholder="Nguyễn Văn A" value="<?= old('rep_name') ?>"
+                            <input type="text" name="rep_name" placeholder="Nguyễn Văn A" value="<?= 'Nguyễn Văn Tài' ?>"
                                 class="w-full border <?= isset($_SESSION['validate_errors']['rep_name']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                             <?php if (isset($_SESSION['validate_errors']['rep_name'])): ?>
                                 <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['rep_name']) ? $_SESSION['validate_errors']['rep_name'][0] : $_SESSION['validate_errors']['rep_name'] ?></p>
@@ -94,7 +94,7 @@ require_once './views/components/sidebar.php';
                         </div>
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Số điện thoại <span class="text-red-500">*</span></label>
-                            <input type="text" name="rep_phone" placeholder="0912345678" value="<?= old('rep_phone') ?>"
+                            <input type="text" name="rep_phone" placeholder="0912345678" value="<?= '0912345678' ?>"
                                 class="w-full border <?= isset($_SESSION['validate_errors']['rep_phone']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                             <?php if (isset($_SESSION['validate_errors']['rep_phone'])): ?>
                                 <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['rep_phone']) ? $_SESSION['validate_errors']['rep_phone'][0] : $_SESSION['validate_errors']['rep_phone'] ?></p>
@@ -105,7 +105,7 @@ require_once './views/components/sidebar.php';
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Email <span class="text-red-500">*</span></label>
-                            <input type="email" name="rep_email" placeholder="email@example.com" value="<?= old('rep_email') ?>"
+                            <input type="email" name="rep_email" placeholder="email@example.com" value="<?= 'email@example.com' ?>"
                                 class="w-full border <?= isset($_SESSION['validate_errors']['rep_email']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                             <?php if (isset($_SESSION['validate_errors']['rep_email'])): ?>
                                 <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['rep_email']) ? $_SESSION['validate_errors']['rep_email'][0] : $_SESSION['validate_errors']['rep_email'] ?></p>
@@ -128,18 +128,18 @@ require_once './views/components/sidebar.php';
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">Hộ chiếu (Passport)</label>
-                            <input type="text" name="rep_passport" placeholder="Số hộ chiếu..." value="<?= old('rep_passport') ?>"
+                            <input type="text" name="rep_passport" placeholder="Số hộ chiếu..." value="<?= 'PC023453' ?>"
                                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                         </div>
                         <div>
                             <label class="block mb-1.5 text-sm font-medium text-gray-700">CMND/CCCD</label>
-                            <input type="text" name="rep_citizen_id" placeholder="Số CMND/CCCD..." value="<?= old('rep_citizen_id') ?>"
+                            <input type="text" name="rep_citizen_id" placeholder="Số CMND/CCCD..." value="<?= '001206044754' ?>"
                                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                         </div>
                     </div>
                     <div>
                         <label class="block mb-1.5 text-sm font-medium text-gray-700">Địa chỉ</label>
-                        <input type="text" name="rep_address" placeholder="Địa chỉ liên hệ..." value="<?= old('rep_address') ?>"
+                        <input type="text" name="rep_address" placeholder="Địa chỉ liên hệ..." value="<?= 'Hà Nội' ?>"
                             class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-green-100 focus:border-green-400 outline-none transition">
                     </div>
                 </div>
@@ -223,7 +223,7 @@ require_once './views/components/sidebar.php';
                 </div>
                 <textarea name="special_requests"
                     class="w-full border border-gray-300 rounded-lg p-3 h-28 resize-none focus:ring-2 focus:ring-gray-200 focus:border-gray-400 outline-none transition"
-                    placeholder="Nhập yêu cầu đặc biệt của khách hàng..."></textarea>
+                    placeholder="Nhập yêu cầu đặc biệt của khách hàng...">Chuẩn bị hoa chúc mừng 10 năm ngày cưới.</textarea>
             </div>
 
             <!-- Card: Chi phí & Thanh toán -->

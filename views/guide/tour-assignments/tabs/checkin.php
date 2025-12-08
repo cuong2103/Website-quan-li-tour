@@ -104,7 +104,7 @@ $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['
 
       <div class="mb-4">
         <label class="block text-sm font-medium mb-2">Tiêu đề <span class="text-red-500">*</span></label>
-        <input type="text" name="title" required
+        <input type="text" name="title" value="<?= 'Checkin sáng ngày 1' ?>" required
           placeholder="VD: Check-in sáng ngày 1, Check-in khách sạn, v.v..."
           class="w-full border rounded-lg p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
       </div>
@@ -113,7 +113,7 @@ $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['
         <label class="block text-sm font-medium mb-2">Ghi chú</label>
         <textarea name="note" rows="3"
           placeholder="Ghi chú thêm về đợt check-in này (không bắt buộc)"
-          class="w-full border rounded-lg p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"></textarea>
+          class="w-full border rounded-lg p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"><?= 'Check-in khách sạn' ?></textarea>
       </div>
 
       <div class="flex gap-3 justify-end">

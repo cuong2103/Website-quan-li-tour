@@ -116,7 +116,7 @@ unset($_SESSION['errors'], $_SESSION['old']);
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Nội dung chi tiết <span class="text-red-500">*</span></label>
                 <textarea name="content" rows="6"
                     placeholder="Mô tả chi tiết về hoạt động hoặc sự cố..."
-                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-y <?= isset($errors['content']) ? 'border-red-500 ring-1 ring-red-500' : '' ?>"><?= htmlspecialchars($old['content'] ?? '') ?></textarea>
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-y <?= isset($errors['content']) ? 'border-red-500 ring-1 ring-red-500' : '' ?>"><?= htmlspecialchars($old['content'] ?? 'Xe đón khách tại khách sạn. Kiểm tra quân số đủ, hành lý đầy đủ.') ?></textarea>
                 <?php if (!empty($errors['content'])): ?>
                     <p class="text-red-500 text-sm mt-1 flex items-center gap-1">
                         <i data-lucide="alert-circle" class="w-3 h-3"></i>
