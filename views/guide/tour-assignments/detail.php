@@ -4,6 +4,7 @@ require './views/components/sidebar.php';
 
 $tabs = [
     'customers' => ['label' => 'Danh sách khách hàng', 'icon' => 'users'],
+    'rooms'     => ['label' => 'Xem phòng', 'icon' => 'bed-double'],
     'checkin'   => ['label' => 'Check-in', 'icon' => 'check-circle'],
     'journals'  => ['label' => 'Nhật ký tour', 'icon' => 'book-open'],
     'itinerary' => ['label' => 'Lịch trình chi tiết', 'icon' => 'map'],
@@ -67,6 +68,9 @@ $tabs = [
     <?php switch ($tab) {
         case 'customers':
             require './views/guide/tour-assignments/tabs/customers.php';
+            break;
+        case 'rooms':
+            require './views/guide/tour-assignments/tabs/rooms.php';
             break;
         case 'checkin':
             require './views/guide/tour-assignments/tabs/checkin.php';

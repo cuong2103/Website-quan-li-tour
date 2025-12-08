@@ -1,6 +1,13 @@
 <?php
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
+
+// Mapping loại thông báo sang tiếng Việt
+$typeLabels = [
+  'urgent' => 'Khẩn cấp',
+  'important' => 'Quan trọng',
+  'general' => 'Thông thường'
+];
 ?>
 
 <main class="min-h-screen mt-24 bg-gray-50 py-8 px-4">
@@ -49,7 +56,7 @@ require_once './views/components/sidebar.php';
                     <p class="mt-1 text-sm text-gray-700"><?= htmlspecialchars($notification['message']) ?></p>
                     <?php if ($notification['type'] !== 'general'): ?>
                       <span class="inline-block mt-2 px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
-                        <?= ucfirst($notification['type']) ?>
+                        <?= $typeLabels[$notification['type']] ?? ucfirst($notification['type']) ?>
                       </span>
                     <?php endif; ?>
                   </div>
@@ -66,7 +73,7 @@ require_once './views/components/sidebar.php';
                     <p class="mt-1 text-sm text-gray-500"><?= htmlspecialchars($notification['message']) ?></p>
                     <?php if ($notification['type'] !== 'general'): ?>
                       <span class="inline-block mt-2 px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600">
-                        <?= ucfirst($notification['type']) ?>
+                        <?= $typeLabels[$notification['type']] ?? ucfirst($notification['type']) ?>
                       </span>
                     <?php endif; ?>
                     <div class="mt-2 text-xs text-gray-400">

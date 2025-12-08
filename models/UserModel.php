@@ -170,19 +170,6 @@ class UserModel
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // if (!$user) {
-        //     return "Không tìm thấy email trong DB";
-        // }
-
-        // // So sánh mật khẩu hash
-        // if (!password_verify($password, $user['password'])) {
-        //     return "Tài khoản hoặc mật khẩu không đúng";
-        // }
-
-        // if ($user['status'] != 1) {
-        //     return "Tài khoản đang bị khóa";
-        // }
-
         return $user;
     }
 
@@ -196,5 +183,120 @@ class UserModel
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
+    }
+
+    // LẤY DANH SÁCH ĐƠN XIN NGHỈ CHỜ DUYỆT
+    public function getPendingLeaveRequests()
+    {
+        $sql = "SELECT * FROM users 
+                WHERE leave_status = 'pending'
+                AND roles = 'guide'
+                ORDER BY created_at DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // LẤY ĐƠN XIN NGHỈ CỦA HDV
+    public function getMyLeaveRequest($userId)
+    {
+        $sql = "SELECT * FROM users WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // TẠO ĐƠN XIN NGHỈ
+    public function createLeaveRequest($userId, $data)
+    {
+        try {
+            $sql = "UPDATE users 
+                    SET leave_start = :leave_start,
+                        leave_end = :leave_end,
+                        leave_reason = :leave_reason,
+                        leave_status = 'pending',
+                        updated_by = :updated_by,
+                        updated_at = NOW()
+                    WHERE id = :id";
+            
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([
+                ':id' => $userId,
+                ':leave_start' => $data['leave_start'],
+                ':leave_end' => $data['leave_end'],
+                ':leave_reason' => $data['leave_reason'],
+                ':updated_by' => $userId
+            ]);
+        } catch (PDOException $e) {
+            error_log("Lỗi createLeaveRequest: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // DUYỆT ĐƠN XIN NGHỈ
+    public function approveLeaveRequest($id, $adminId)
+    {
+        try {
+            $sql = "UPDATE users 
+                    SET leave_status = 'approved',
+                        status = 0,
+                        updated_by = :updated_by,
+                        updated_at = NOW()
+                    WHERE id = :id";
+            
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([
+                ':id' => $id,
+                ':updated_by' => $adminId
+            ]);
+        } catch (PDOException $e) {
+            error_log("Lỗi approveLeaveRequest: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // TỪ CHỐI ĐƠN XIN NGHỈ
+    public function rejectLeaveRequest($id, $adminId)
+    {
+        try {
+            $sql = "UPDATE users 
+                    SET leave_status = 'rejected',
+                        updated_by = :updated_by,
+                        updated_at = NOW()
+                    WHERE id = :id";
+            
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([
+                ':id' => $id,
+                ':updated_by' => $adminId
+            ]);
+        } catch (PDOException $e) {
+            error_log("Lỗi rejectLeaveRequest: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // HỦY ĐƠN XIN NGHỈ (CHỈ KHI PENDING)
+    public function cancelLeaveRequest($userId)
+    {
+        try {
+            $sql = "UPDATE users 
+                    SET leave_start = NULL,
+                        leave_end = NULL,
+                        leave_reason = NULL,
+                        leave_status = NULL,
+                        updated_by = :updated_by,
+                        updated_at = NOW()
+                    WHERE id = :id AND leave_status = 'pending'";
+            
+            $stmt = $this->conn->prepare($sql);
+            return $stmt->execute([
+                ':id' => $userId,
+                ':updated_by' => $userId
+            ]);
+        } catch (PDOException $e) {
+            error_log("Lỗi cancelLeaveRequest: " . $e->getMessage());
+            return false;
+        }
     }
 }

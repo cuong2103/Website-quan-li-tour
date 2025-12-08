@@ -48,7 +48,6 @@ $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['
         <th class="p-3 text-left">Tiêu đề</th>
         <th class="p-3 text-left">Ghi chú</th>
         <th class="p-3 text-left">Thời gian tạo</th>
-        <th class="p-3 text-left">Người tạo</th>
         <th class="p-3 text-left">Hành động</th>
       </tr>
     </thead>
@@ -60,23 +59,9 @@ $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['
             <td class="p-3 font-medium"><?= htmlspecialchars($link['title']) ?></td>
             <td class="p-3 text-gray-600"><?= htmlspecialchars($link['note'] ?? '-') ?></td>
             <td class="p-3 text-gray-600"><?= date('H:i d/m/Y', strtotime($link['created_at'])) ?></td>
-            <td class="p-3 text-gray-600">
-              <?php
-              // Lấy tên người tạo nếu có
-              if ($link['created_by']) {
-                $userSql = "SELECT fullname FROM users WHERE id = ?";
-                $userStmt = connectDB()->prepare($userSql);
-                $userStmt->execute([$link['created_by']]);
-                $userName = $userStmt->fetchColumn();
-                echo htmlspecialchars($userName ?? 'N/A');
-              } else {
-                echo 'N/A';
-              }
-              ?>
-            </td>
             <td class="p-3">
               <div class="flex gap-2">
-                <a href="<?= BASE_URL . '?act=guide-checkin-detail&link_id=' . $link['id'] . '&assignment_id=' . $assignment['tour_id'] ?>"
+                <a href="<?= BASE_URL . '?act=guide-checkin-detail&link_id=' . $link['id'] . '&assignment_id=' . $assignmentId ?>"
                   class="text-blue-600 hover:bg-blue-50 px-3 py-1 rounded text-xs font-medium flex items-center gap-1"
                   title="Xem chi tiết & Check-in">
                   <i data-lucide="users" class="w-4 h-4"></i>
@@ -85,7 +70,7 @@ $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['
                 <form action="<?= BASE_URL . '?act=guide-checkin-delete' ?>" method="POST"
                   onsubmit="return confirm('Bạn có chắc muốn xóa đợt check-in này?')">
                   <input type="hidden" name="link_id" value="<?= $link['id'] ?>">
-                  <input type="hidden" name="assignment_id" value="<?= $assignment['tour_id'] ?>">
+                  <input type="hidden" name="assignment_id" value="<?= $assignmentId ?>">
                   <button type="submit" class="text-red-600 hover:bg-red-50 px-3 py-1 rounded text-xs font-medium"
                     title="Xóa">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -115,7 +100,7 @@ $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['
   <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
     <h3 class="text-lg font-semibold mb-4">Tạo đợt check-in mới</h3>
     <form action="<?= BASE_URL . '?act=guide-checkin-create' ?>" method="POST">
-      <input type="hidden" name="assignment_id" value="<?= $assignment['tour_id'] ?>">
+      <input type="hidden" name="assignment_id" value="<?= $assignmentId ?>">
 
       <div class="mb-4">
         <label class="block text-sm font-medium mb-2">Tiêu đề <span class="text-red-500">*</span></label>

@@ -10,6 +10,8 @@ CREATE TABLE `users` (
   `status` BOOLEAN DEFAULT true, 
   `leave_start` DATE,
   `leave_end` DATE,
+  `leave_status` ENUM('approved', 'pending', 'rejected') DEFAULT NULL,
+  `leave_reason` TEXT DEFAULT NULL,
   `created_by` INT,
   `updated_by` INT,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -79,7 +79,7 @@ class ServiceModel
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            echo "Lỗi tìm kiếm: " . $e->getMessage(); // Bắt lỗi truy vấn
+            error_log("Lỗi tìm kiếm dịch vụ: " . $e->getMessage());
             return [];
         }
     }

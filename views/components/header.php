@@ -15,6 +15,14 @@ if ($userId) {
   $unreadNotifications = $notificationModel->countUnread($userId);
 }
 
+// Lấy số đơn xin nghỉ chờ duyệt (chỉ cho admin)
+$pendingLeaveCount = 0;
+if ($userId && $role === 'Admin') {
+  require_once './models/UserModel.php';
+  $userModel = new UserModel();
+  $pendingLeaveCount = count($userModel->getPendingLeaveRequests());
+}
+
 ?>
 
 <!DOCTYPE html>
