@@ -97,32 +97,6 @@ require_once './views/components/sidebar.php';
         <?php endif; ?>
     </div>
 
-    <!-- thống kê -->
-    <div class="grid grid-cols-3 gap-4">
-        <div class="border rounded-xl p-4 shadow-sm bg-white">
-            <p class="text-sm text-gray-600 flex items-center gap-1">
-                <i data-lucide="book"></i> Nhật ký đã viết
-            </p>
-            <p class="text-2xl font-bold mt-1"><?= $journalCount ?? 0 ?></p>
-        </div>
-
-        <div class="border rounded-xl p-4 shadow-sm bg-white">
-            <p class="text-sm text-gray-600 flex items-center gap-1">
-                <i data-lucide="bell"></i> Thông báo mới
-            </p>
-            <p class="text-2xl font-bold text-red-500 mt-1"><?= $notificationCount ?? 0 ?></p>
-        </div>
-
-        <div class="border rounded-xl p-4 shadow-sm bg-white">
-            <p class="text-sm text-gray-600 flex items-center gap-1">
-                <i data-lucide="calendar"></i> Tổng tour tháng này
-            </p>
-            <p class="text-2xl font-bold mt-1">
-                <?= count($currentTours) + count($upcomingTours) ?>
-            </p>
-        </div>
-    </div>
-
 </main>
 
 <?php
