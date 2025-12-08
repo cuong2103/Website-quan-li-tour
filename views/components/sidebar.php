@@ -151,15 +151,6 @@ $inactiveClass = 'text-gray-700 hover:bg-gray-100';
         </div>
       </a>
 
-      <!-- Viết nhật kí -->
-      <?php $journalActs = ['journal', 'journal-create', 'journal-detail', 'journal-edit']; ?>
-      <a href="<?= BASE_URL ?>?act=journal"
-        class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($journalActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
-        <div class="flex items-center">
-          <i data-lucide="notebook-pen" class="mr-3 w-6 h-6"></i>
-          Viết nhật ký
-        </div>
-      </a>
       <!-- Đăng ký nghỉ phép -->
       <?php $leaveActs = ['guide-leave', 'guide-leave-create']; ?>
       <a href="<?= BASE_URL ?>?act=guide-leave"
