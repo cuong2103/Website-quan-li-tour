@@ -1,15 +1,15 @@
 <div class="bg-white border shadow rounded-xl p-5">
   <div class="flex justify-between items-center mb-4">
     <h3 class="font-semibold text-lg">Nhật ký tour</h3>
+
     <?php
     // Kiểm tra tour đang diễn ra (start_date <= today <= end_date)
     $today = date('Y-m-d');
     $isUpcoming = ($today < $assignment['start_date']);
     $isCompleted = ($today > $assignment['end_date']);
     $canWriteJournal = (!$isUpcoming && !$isCompleted);
-
     if ($canWriteJournal): ?>
-      <a href="<?= BASE_URL . '?act=journal-create&tour_assignment_id=' . $assignment['id'] ?>"
+      <a href="<?= BASE_URL . '?act=journal-create&tour_assignment_id=' . $_GET['id'] ?>"
         class="bg-orange-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-orange-700 flex items-center gap-2">
         <i data-lucide="pen-tool" class="w-4 h-4"></i>
         Viết nhật ký mới
@@ -75,7 +75,7 @@
                     class="text-blue-600 hover:bg-blue-50 p-1 rounded transition-colors" title="Sửa">
                     <i data-lucide="edit-2" class="w-4 h-4"></i>
                   </a>
-                  <a href="<?= BASE_URL . '?act=journal-delete&id=' . $j['id'] ?>"
+                  <a href="<?= BASE_URL . '?act=journal-delete&id=' . $j['id'] . '&tour_assignment_id=' . $j['tour_assignment_id'] ?>"
                     onclick="return confirm('Bạn có chắc muốn xóa nhật ký này?')"
                     class="text-red-600 hover:bg-red-50 p-1 rounded transition-colors" title="Xóa">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>

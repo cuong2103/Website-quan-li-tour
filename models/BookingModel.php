@@ -435,7 +435,7 @@ class BookingModel
         $sql = "SELECT ta.*, 
                        b.*, 
                        t.name AS tour_name,
-                       (b.adult_count + b.child_count) AS total_customers
+                       (SELECT COUNT(*) FROM booking_customers bc WHERE bc.booking_id = b.id) AS total_customers
                 FROM tour_assignments ta
                 JOIN bookings b ON ta.booking_id = b.id
                 JOIN tours t ON b.tour_id = t.id
