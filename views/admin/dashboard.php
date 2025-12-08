@@ -96,7 +96,7 @@ require_once './views/components/sidebar.php';
       <div class="flex items-center justify-between">
         <div>
           <p class="text-sm text-gray-600">Booking hoàn thành</p>
-          <p class="text-3xl font-bold text-gray-900 mt-2"><?= $bookingStatusChartData[2] ?? 0 ?></p>
+          <p class="text-3xl font-bold text-gray-900 mt-2"><?= $bookingStatusChartData['4'] ?? 0 ?></p>
           <p class="text-sm text-gray-600 mt-2">Tổng đã hoàn thành</p>
         </div>
         <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
