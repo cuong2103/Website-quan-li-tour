@@ -406,14 +406,56 @@ class BookingController
                     $itinerary_days[$day][] = $item;
                 }
                 break;
-            case 'checkins':
+            case 'room_assignment':
+                $customers = $this->bookingModel->getCustomers($id);
+                break;
+            case 'checkin':
+                // Lấy danh sách check-in links theo booking_id
                 $checkinLinks = $this->checkinModel->getCheckinLinksByBookingId($id);
+                
+                // Chuẩn bị dữ liệu chi tiết cho mỗi link
+                $checkinData = [];
+                foreach ($checkinLinks as $link) {
+                    // Lấy thông tin người tạo
+                    $userModel = new UserModel();
+                    $creator = $userModel->getById($link['created_by']);
+                    
+                    // Lấy danh sách khách hàng với trạng thái check-in
+                    $customers = $this->bookingModel->getCustomers($id);
+                    $customersWithStatus = [];
+                    
+                    foreach ($customers as $customer) {
+                        // Kiểm tra xem khách hàng đã check-in chưa
+                        $sql = "SELECT id, checkin_time 
+                                FROM customer_checkins 
+                                WHERE tour_checkin_link_id = ? AND customer_id = ?";
+                        $stmt = $this->checkinModel->conn->prepare($sql);
+                        $stmt->execute([$link['id'], $customer['id']]);
+                        $checkinRecord = $stmt->fetch(PDO::FETCH_ASSOC);
+                        
+                        $customersWithStatus[] = [
+                            'id' => $customer['id'],
+                            'name' => $customer['name'],
+                            'phone' => $customer['phone'],
+                            'email' => $customer['email'],
+                            'room_number' => $customer['room_number'],
+                            'checkin_id' => $checkinRecord ? $checkinRecord['id'] : null,
+                            'checkin_time' => $checkinRecord ? $checkinRecord['checkin_time'] : null
+                        ];
+                    }
+                    
+                    $checkinData[$link['id']] = [
+                        'link' => $link,
+                        'customers' => $customersWithStatus,
+                        'created_by_name' => $creator ? $creator['fullname'] : 'N/A'
+                    ];
+                }
                 break;
-            case 'journals':
-                $journals = $this->journalModel->getJournalsByBookingId($id);
-                break;
-            case 'assignments':
+            case 'journal':
+                // Lấy thông tin tour assignment
                 $tourAssignment = $this->journalModel->getAssignmentByBookingId($id);
+                // Lấy danh sách journals
+                $journals = $this->journalModel->getJournalsByBookingId($id);
                 break;
             default:
                 $customers = $this->bookingModel->getCustomers($id);
