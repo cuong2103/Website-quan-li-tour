@@ -42,7 +42,14 @@ $inactiveClass = 'text-gray-700 hover:bg-gray-100';
         <i class="mr-3 w-6 h-6" data-lucide="layout-dashboard"></i>
         Dashboard
       </a>
-
+      <!-- Quản lý tour -->
+      <?php $tourActs = ['tours', 'tour-detail', 'tour-create', 'tour-edit']; ?>
+      <a href="<?= BASE_URL ?>?act=tours" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($tourActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
+        <div class="flex items-center">
+          <i class="mr-3 w-6 h-6" data-lucide="calendar"></i>
+          Quản lý tour
+        </div>
+      </a>
       <!-- Quản lý và điều hành tour -->
       <?php $bookingActs = ['bookings', 'booking-detail', 'booking-create', 'booking-edit']; ?>
       <a href="<?= BASE_URL . '?act=bookings' ?>" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($bookingActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
@@ -52,14 +59,7 @@ $inactiveClass = 'text-gray-700 hover:bg-gray-100';
         </div>
       </a>
 
-      <!-- Quản lý tour -->
-      <?php $tourActs = ['tours', 'tour-detail', 'tour-create', 'tour-edit']; ?>
-      <a href="<?= BASE_URL ?>?act=tours" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($tourActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
-        <div class="flex items-center">
-          <i class="mr-3 w-6 h-6" data-lucide="calendar"></i>
-          Quản lý tour
-        </div>
-      </a>
+
 
       <!-- Dữ liệu -->
       <?php $dataActs = ['destination', 'destination-detail', 'destination-create', 'destination-edit', 'policies', 'policy-detail', 'policy-create', 'policy-edit', 'categories', 'category-detail', 'category-create', 'category-edit', 'service', 'service-detail', 'service-create', 'service-edit', 'service-type', 'service-type-detail', 'service-type-create', 'service-type-edit', 'itinerary', 'itinerary-detail', 'itinerary-create', 'itinerary-edit', 'suppliers', 'supplier-detail', 'supplier-create', 'supplier-edit']; ?>
