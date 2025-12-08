@@ -3,10 +3,14 @@
 class LeaveRequestController
 {
     public $userModel;
+    public $tourAssignmentModel;
+    public $notificationModel;
 
     public function __construct()
     {
         $this->userModel = new UserModel();
+        $this->tourAssignmentModel = new TourAssignmentModel();
+        $this->notificationModel = new NotificationModel();
     }
 
     // Xem trạng thái đơn xin nghỉ
@@ -70,8 +74,7 @@ class LeaveRequestController
 
         // Kiểm tra xem có tour nào trong khoảng thời gian xin nghỉ không
         if (empty($errors)) {
-            $tourAssignmentModel = new TourAssignmentModel();
-            $assignments = $tourAssignmentModel->getAssignmentsByGuide($userId);
+            $assignments = $this->tourAssignmentModel->getAssignmentsByGuide($userId);
             
             $conflictTours = [];
             foreach ($assignments as $assignment) {
@@ -96,19 +99,18 @@ class LeaveRequestController
         // Tạo đơn xin nghỉ
         if ($this->userModel->createLeaveRequest($userId, $data)) {
             // Tạo notification cho tất cả admin
-            $notificationModel = new NotificationModel();
             $user = $this->userModel->getById($userId);
             
             // Tạo notification
-            $notifId = $notificationModel->create([
+            $notifId = $this->notificationModel->create([
                 'title' => 'Đơn xin nghỉ phép mới',
                 'message' => $user['fullname'] . ' xin nghỉ từ ' . date('d/m/Y', strtotime($data['leave_start'])) . ' đến ' . date('d/m/Y', strtotime($data['leave_end'])),
-                'type' => 'urgent',
+                'type' => 'general',
                 'created_by' => $userId
             ]);
             
             // Lấy tất cả admin và gửi notification
-            $allUsers = $notificationModel->getAllUsers();
+            $allUsers = $this->notificationModel->getAllUsers();
             $adminIds = [];
             foreach ($allUsers as $u) {
                 if ($u['roles'] === 'admin') {
@@ -116,7 +118,7 @@ class LeaveRequestController
                 }
             }
             if (!empty($adminIds)) {
-                $notificationModel->addRecipients($notifId, $adminIds);
+                $this->notificationModel->addRecipients($notifId, $adminIds);
             }
             Message::set('success', 'Đã gửi đơn xin nghỉ phép! Vui lòng chờ admin duyệt.');
         } else {

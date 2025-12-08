@@ -17,7 +17,7 @@ unset($_SESSION['errors'], $_SESSION['old']);
         </a>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 max-w-2xl">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         
         <form action="<?= BASE_URL ?>?act=guide-leave-store" method="POST">
             

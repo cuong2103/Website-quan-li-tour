@@ -115,13 +115,13 @@ $inactiveClass = 'text-gray-700 hover:bg-gray-100';
 <div class="submenu pl-12 space-y-1 overflow-hidden transition-all duration-300 <?= isActiveMenu($userActs, $currentAct) ? 'max-h-96' : 'max-h-0' ?>">
           <?php $userListActs = ['user', 'user-detail', 'user-create', 'user-edit']; ?>
           <a href="<?= BASE_URL . '?act=user' ?>" class="block px-4 py-2 text-sm <?= isActiveMenu($userListActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded">Danh sách nhân viên</a>
-          <a href="<?= BASE_URL . '?act=user-on-leave' ?>" class="block px-4 py-2 text-sm <?= $currentAct === 'user-on-leave' ? $activeClass : $inactiveClass ?> rounded">Nhân viên nghỉ phép</a>
-          <a href="<?= BASE_URL . '?act=user-leave-requests' ?>" class="flex items-center justify-between px-4 py-2 text-sm <?= $currentAct === 'user-leave-requests' ? $activeClass : $inactiveClass ?> rounded">
+                    <a href="<?= BASE_URL . '?act=user-leave-requests' ?>" class="flex items-center justify-between px-4 py-2 text-sm <?= $currentAct === 'user-leave-requests' ? $activeClass : $inactiveClass ?> rounded">
             <span>Đơn xin nghỉ</span>
             <?php if ($pendingLeaveCount > 0): ?>
               <span class="ml-auto w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center"><?= $pendingLeaveCount ?></span>
             <?php endif; ?>
           </a>
+          <a href="<?= BASE_URL . '?act=user-on-leave' ?>" class="block px-4 py-2 text-sm <?= $currentAct === 'user-on-leave' ? $activeClass : $inactiveClass ?> rounded">Nhân viên nghỉ phép</a>
         </div>
       </div>
 
@@ -160,13 +160,13 @@ $inactiveClass = 'text-gray-700 hover:bg-gray-100';
           Viết nhật ký
         </div>
       </a>
-      <!-- Xin nghỉ phép -->
+      <!-- Đăng ký nghỉ phép -->
       <?php $leaveActs = ['guide-leave', 'guide-leave-create']; ?>
       <a href="<?= BASE_URL ?>?act=guide-leave"
         class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium <?= isActiveMenu($leaveActs, $currentAct) ? $activeClass : $inactiveClass ?> rounded-lg transition">
         <div class="flex items-center">
           <i data-lucide="calendar-off" class="mr-3 w-6 h-6"></i>
-          Xin nghỉ phép
+          Đăng ký nghỉ phép
         </div>
       </a>
 
