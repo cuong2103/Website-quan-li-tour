@@ -119,7 +119,7 @@ class JournalController
         if ($errors) {
             $_SESSION['errors'] = $errors;
             $_SESSION['old'] = $data;
-            header('Location: ' . BASE_URL . '?act=journal-edit&id=' . $id);
+            redirect('journal-edit&id=' . $id);
             exit;
         }
 
@@ -138,7 +138,7 @@ class JournalController
         }
 
         Message::set('success', 'Cập nhật nhật ký thành công!');
-        header('Location: ' . BASE_URL . '?act=guide-tour-assignments-detail&id=' . $_POST['tour_assignment_id'] . '&tab=journals');
+        redirect('guide-tour-assignments-detail&id=' . $_POST['tour_assignment_id'] . '&tab=journals');
         exit;
     }
 
