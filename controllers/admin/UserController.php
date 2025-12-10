@@ -55,9 +55,9 @@ class UserController
     public function store()
     {
         $data = [
-            'fullname'    => $_POST['fullname'] ?? '',
-            'email'       => $_POST['email'] ?? '',
-            'phone'       => $_POST['phone'] ?? '',
+            'fullname'    => trim($_POST['fullname'] ?? ''),
+            'email'       => trim($_POST['email'] ?? ''),
+            'phone'       => trim($_POST['phone'] ?? ''),
             'roles'       => $_POST['roles'] ?? 'guide',
             'status'      => isset($_POST['status']) ? (int)$_POST['status'] : 1,
             'password'    => !empty($_POST['password'])
@@ -66,6 +66,29 @@ class UserController
             'created_by'  => $_SESSION['currentUser']['id'] ?? null,
             'updated_by'  => $_SESSION['currentUser']['id'] ?? null,
         ];
+
+        // Validate dữ liệu
+        $rules = [
+            'fullname' => 'required|min:2|max:100',
+            'email'    => 'required|email|max:100',
+            'phone'    => 'required|phone',
+            'roles'    => 'required',
+        ];
+
+        $errors = validate($data, $rules);
+
+        // Check email tồn tại
+        if ($this->userModel->emailExists($data['email'])) {
+            $errors['email'] = 'Email đã tồn tại trong hệ thống';
+        }
+
+        if (!empty($errors)) {
+            $_SESSION['validate_errors'] = $errors;
+            $_SESSION['old'] = $data;
+            redirect('user-create');
+            exit;
+        }
+
         // --- Upload avatar trước khi lưu ---
         if (!empty($_FILES['avatar']['name']) && $_FILES['avatar']['error'] == 0) {
             $avatar = $_FILES['avatar'];
@@ -328,7 +351,7 @@ class UserController
         redirect("user-on-leave");
     }
 
-     public function leaveRequests()
+    public function leaveRequests()
     {
         $requests = $this->userModel->getPendingLeaveRequests();
         require './views/admin/users/leave_requests.php';
@@ -337,7 +360,7 @@ class UserController
     public function approveLeave()
     {
         $id = $_GET['id'] ?? null;
-        
+
         if (!$id) {
             Message::set('error', 'ID không hợp lệ');
             redirect('user-leave-requests');
@@ -370,7 +393,7 @@ class UserController
     public function rejectLeave()
     {
         $id = $_GET['id'] ?? null;
-        
+
         if (!$id) {
             Message::set('error', 'ID không hợp lệ');
             redirect('user-leave-requests');

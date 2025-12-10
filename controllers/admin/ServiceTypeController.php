@@ -19,8 +19,7 @@ class ServiceTypeController
 
         $data = $_POST ?? [];
         $errors = $_SESSION['errors'] ?? [];
-        $formError = $_SESSION['formError'] ?? '';
-        unset($_SESSION['errors'], $_SESSION['formError']);
+        unset($_SESSION['errors']);
 
         require_once './views/admin/service-type/index.php';
     }
@@ -67,7 +66,7 @@ class ServiceTypeController
         }
 
         // Điều hướng
-        header("Location:" . BASE_URL . "?act=service-type");
+        redirect('service-type');
         exit;
     }
 
@@ -77,20 +76,20 @@ class ServiceTypeController
     {
         $id = $_GET['id'] ?? null;
         if (!$id) {
-            header("Location:" . BASE_URL . "?act=service-type");
+            redirect('service-type');
             exit;
         }
 
         $serviceType = $this->serviceTypeModel->getDetail($id);
         if (!$serviceType) {
-            header("Location:" . BASE_URL . "?act=service-type");
+            redirect('service-type');
             exit;
         }
 
         $serviceTypes = $this->serviceTypeModel->getAll();
         $data = $_POST ?? ['name' => $serviceType['name'], 'description' => $serviceType['description']];
-        $errors = $_SESSION['errors'] ?? [];
-        unset($_SESSION['errors']);
+        $errors = $_SESSION['validate_errors'] ?? [];
+        unset($_SESSION['validate_errors']);
 
         require_once './views/admin/service-type/edit.php';
     }
@@ -101,7 +100,7 @@ class ServiceTypeController
         $id = $_POST['id'] ?? null;
 
         if (!$id) {
-            header("Location:" . BASE_URL . "?act=service-type");
+            redirect('service-type');
             exit;
         }
 

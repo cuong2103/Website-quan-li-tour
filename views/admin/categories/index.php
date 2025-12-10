@@ -72,7 +72,7 @@ require_once './views/components/sidebar.php';
     <div class="xl:col-span-1 ">
       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-lg font-medium text-gray-900">Cấu trúc Danh mục (<?= $totalCategories ?>)</h2>
+          <h2 class="text-lg font-medium text-gray-900">Cấu trúc Danh mục (<?= count($categories) ?>)</h2>
 
         </div>
 

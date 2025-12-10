@@ -29,7 +29,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="col-span-2">
               <label class="block text-sm font-medium text-gray-700 mb-2">Tên tour</label>
-              <input type="text" name="name" value="<?= htmlspecialchars($tourData['name'] ?? '') ?>" placeholder="VD: Tour Hà Nội - Sapa 3N2Đ" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <input type="text" name="name" value="<?= htmlspecialchars($tourData['name'] ?? '') ?>" placeholder="VD: Tour Hà Nội - Sapa 3N2Đ" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <?php if (!empty($errors['name'])): ?>
                 <div class="text-red-500 text-sm mt-1"><?= $errors['name'][0] ?></div>
               <?php endif; ?>
@@ -37,7 +37,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
             <div class="col-span-2">
               <label class="block text-sm font-medium text-gray-700 mb-2">Giới thiệu</label>
-              <textarea rows="3" name="introduction" placeholder="Mô tả ngắn về tour..." required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"><?= htmlspecialchars($tourData['introduction'] ?? '') ?></textarea>
+              <textarea rows="3" name="introduction" placeholder="Mô tả ngắn về tour..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"><?= htmlspecialchars($tourData['introduction'] ?? '') ?></textarea>
               <?php if (!empty($errors['introduction'])): ?>
                 <div class="text-red-500 text-sm mt-1"><?= $errors['introduction'][0] ?></div>
               <?php endif; ?>
@@ -45,7 +45,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
-              <select name="category_id" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <select name="category_id" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 <option value="">Chọn danh mục</option>
                 <?php renderOption($tree, "", $tourData["category_id"] ?? null); ?>
               </select>
@@ -56,7 +56,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Số ngày</label>
-              <input type="number" name="duration_days" value="<?= htmlspecialchars($tourData['duration_days'] ?? '') ?>" placeholder="4" min="1" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <input type="number" name="duration_days" value="<?= htmlspecialchars($tourData['duration_days'] ?? '') ?>" placeholder="4" min="1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <?php if (!empty($errors['duration_days'])): ?>
                 <div class="text-red-500 text-sm mt-1"><?= $errors['duration_days'][0] ?></div>
               <?php endif; ?>
@@ -64,7 +64,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Giá người lớn (VND)</label>
-              <input type="text" name="adult_price" value="<?= htmlspecialchars($tourData['adult_price'] ?? '') ?>" placeholder="4500000" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <input type="text" name="adult_price" value="<?= htmlspecialchars($tourData['adult_price'] ?? '') ?>" placeholder="4500000" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <?php if (!empty($errors['adult_price'])): ?>
                 <div class="text-red-500 text-sm mt-1"><?= $errors['adult_price'][0] ?></div>
               <?php endif; ?>
@@ -72,7 +72,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Giá trẻ em (VND)</label>
-              <input type="text" name="child_price" value="<?= htmlspecialchars($tourData['child_price'] ?? '') ?>" placeholder="4000000" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <input type="text" name="child_price" value="<?= htmlspecialchars($tourData['child_price'] ?? '') ?>" placeholder="4000000" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <?php if (!empty($errors['child_price'])): ?>
                 <div class="text-red-500 text-sm mt-1"><?= $errors['child_price'][0] ?></div>
               <?php endif; ?>
@@ -80,7 +80,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
-              <select name="status" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <select name="status" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 <option value="active" <?= ($tourData['status'] ?? 'active') == 'active' ? 'selected' : '' ?>>Hoạt động</option>
                 <option value="inactive" <?= ($tourData['status'] ?? '') == 'inactive' ? 'selected' : '' ?>>Tạm dừng</option>
               </select>
@@ -156,7 +156,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div class="col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Điểm đến</label>
-                    <select name="destination_id[]" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <select name="destination_id[]" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                       <option value="">Chọn điểm đến</option>
                       <?php foreach ($destinations as $destination): ?>
                         <option value="<?= $destination['id'] ?>"
@@ -166,32 +166,32 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
                       <?php endforeach; ?>
                     </select>
                     <?php if (!empty($errors['destination_id'][$i])): ?>
-                      <div class="text-red-500 text-sm mt-1"><?= $errors['destination_id'][$i] ?></div>
+                      <div class="text-red-500 text-sm mt-1"><?= $errors['destination_id'][$i][0] ?></div>
                     <?php endif; ?>
                   </div>
 
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đến</label>
-                    <input type="time" name="arrival_time[]" value="<?= htmlspecialchars($_POST['arrival_time'][$i] ?? '') ?>" required class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                    <input type="time" name="arrival_time[]" value="<?= htmlspecialchars($_POST['arrival_time'][$i] ?? '') ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
                     <?php if (!empty($errors['arrival_time'][$i])): ?>
-                      <div class="text-red-500 text-sm mt-1"><?= $errors['arrival_time'][$i] ?></div>
+                      <div class="text-red-500 text-sm mt-1"><?= $errors['arrival_time'][$i][0] ?></div>
                     <?php endif; ?>
                   </div>
 
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đi</label>
-                    <input type="time" name="departure_time[]" value="<?= htmlspecialchars($_POST['departure_time'][$i] ?? '') ?>" required class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                    <input type="time" name="departure_time[]" value="<?= htmlspecialchars($_POST['departure_time'][$i] ?? '') ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
                     <?php if (!empty($errors['departure_time'][$i])): ?>
-                      <div class="text-red-500 text-sm mt-1"><?= $errors['departure_time'][$i] ?></div>
+                      <div class="text-red-500 text-sm mt-1"><?= $errors['departure_time'][$i][0] ?></div>
                     <?php endif; ?>
                   </div>
                 </div>
 
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả hoạt động</label>
-                  <textarea rows="3" name="description[]" required placeholder="Mô tả các hoạt động trong ngày..." class="w-full px-4 py-3 border border-gray-300 rounded-lg"><?= htmlspecialchars($_POST['description'][$i] ?? '') ?></textarea>
+                  <textarea rows="3" name="description[]" placeholder="Mô tả các hoạt động trong ngày..." class="w-full px-4 py-3 border border-gray-300 rounded-lg"><?= htmlspecialchars($_POST['description'][$i] ?? '') ?></textarea>
                   <?php if (!empty($errors['description'][$i])): ?>
-                    <div class="text-red-500 text-sm mt-1"><?= $errors['description'][$i] ?></div>
+                    <div class="text-red-500 text-sm mt-1"><?= $errors['description'][$i][0] ?></div>
                   <?php endif; ?>
                 </div>
               </div>
@@ -215,7 +215,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div class="col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Điểm đến</label>
-                    <select name="destination_id[]" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <select name="destination_id[]" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                       <option value="">Chọn điểm đến</option>
                       <?php foreach ($destinations as $destination): ?>
                         <option value="<?= $destination['id'] ?>"
@@ -228,18 +228,18 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đến</label>
-                    <input type="time" name="arrival_time[]" value="<?= htmlspecialchars($itinerary['arrival_time'] ?? '') ?>" required class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                    <input type="time" name="arrival_time[]" value="<?= htmlspecialchars($itinerary['arrival_time'] ?? '') ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
                   </div>
 
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đi</label>
-                    <input type="time" name="departure_time[]" value="<?= htmlspecialchars($itinerary['departure_time'] ?? '') ?>" required class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                    <input type="time" name="departure_time[]" value="<?= htmlspecialchars($itinerary['departure_time'] ?? '') ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
                   </div>
                 </div>
 
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả hoạt động</label>
-                  <textarea rows="3" name="description[]" required placeholder="Mô tả các hoạt động trong ngày..." class="w-full px-4 py-3 border border-gray-300 rounded-lg"><?= htmlspecialchars($itinerary['description'] ?? '') ?></textarea>
+                  <textarea rows="3" name="description[]" placeholder="Mô tả các hoạt động trong ngày..." class="w-full px-4 py-3 border border-gray-300 rounded-lg"><?= htmlspecialchars($itinerary['description'] ?? '') ?></textarea>
                 </div>
               </div>
           <?php
@@ -318,25 +318,25 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div class="col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-2">Điểm đến</label>
-            <select name="destination_id[]" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <select name="destination_id[]"  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               ${destinationOptions}
             </select>
           </div>
           
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đến</label>
-            <input type="time" name="arrival_time[]" required class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+            <input type="time" name="arrival_time[]"  class="w-full px-4 py-3 border border-gray-300 rounded-lg">
           </div>
           
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đi</label>
-            <input type="time" name="departure_time[]" required class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+            <input type="time" name="departure_time[]"  class="w-full px-4 py-3 border border-gray-300 rounded-lg">
           </div>
         </div>
         
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả hoạt động</label>
-          <textarea rows="3" name="description[]" required placeholder="Mô tả các hoạt động trong ngày..." class="w-full px-4 py-3 border border-gray-300 rounded-lg"></textarea>
+          <textarea rows="3" name="description[]"  placeholder="Mô tả các hoạt động trong ngày..." class="w-full px-4 py-3 border border-gray-300 rounded-lg"></textarea>
         </div>
       </div>`;
 

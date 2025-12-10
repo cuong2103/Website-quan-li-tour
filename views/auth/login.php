@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +15,7 @@
         <p class="text-center text-gray-500 mb-6">Chào mừng trở lại! Vui lòng đăng nhập.</p>
 
         <!-- Hiển thị lỗi -->
-        <?php if(isset($_SESSION['error'])): ?>
+        <?php if (isset($_SESSION['error'])): ?>
             <p class="text-red-500 text-center mb-4">
                 <?= htmlspecialchars($_SESSION['error']) ?>
             </p>
@@ -25,13 +26,13 @@
             <div>
                 <label class="block text-gray-700 font-medium mb-1">Email</label>
                 <input type="email" name="email"
-                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none">
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none">
             </div>
 
             <div>
                 <label class="block text-gray-700 font-medium mb-1">Mật khẩu</label>
                 <input type="password" name="password"
-                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none">
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-400 focus:outline-none">
             </div>
 
             <button class="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition">
@@ -45,4 +46,5 @@
     </div>
 
 </body>
+
 </html>

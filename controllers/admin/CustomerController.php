@@ -54,27 +54,51 @@ class CustomerController
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') { // Kiểm tra xem có submit form không
             // Lấy dữ liệu từ form
-            $name = trim($_POST['name']);
-            $email = trim($_POST['email']);
-            $phone = trim($_POST['phone']);
-            $address = trim($_POST['address']);
+            $data = [
+                'name' => trim($_POST['name'] ?? ''),
+                'email' => trim($_POST['email'] ?? ''),
+                'phone' => trim($_POST['phone'] ?? ''),
+                'address' => trim($_POST['address'] ?? ''),
+                'passport' => trim($_POST['passport'] ?? ''),
+                'gender' => trim($_POST['gender'] ?? 'other'),
+                'citizen_id' => trim($_POST['citizen_id'] ?? ''),
+            ];
             $created_by = $_SESSION['currentUser']['id'] ?? 1; // Lấy ID người tạo
-            $passport = trim($_POST['passport']);
-            $gender = trim($_POST['gender']);
-            $citizen_id = trim($_POST['citizen_id']); // Lấy CCCD
 
-            // Kiểm tra dữ liệu bắt buộc
-            if (empty($name) || empty($email) || empty($phone) || empty($address)) {
-                $err = "Vui lòng nhập đầy đủ thông tin bắt buộc.";
-                require_once "./views/admin/customers/create.php";
+            // Rules validate dữ liệu
+            $rules = [
+                'name' => 'required|min:2|max:100',
+                'email' => 'required|email|max:100',
+                'phone' => 'required|phone',
+                'address' => 'required|min:5|max:255',
+                'gender' => 'required',
+            ];
+
+            // Thực hiện validate
+            $errors = validate($data, $rules);
+
+            // Nếu có lỗi → giữ lại dữ liệu + hiện lại form
+            if (!empty($errors)) {
+                $_SESSION['validate_errors'] = $errors;
+                $_SESSION['old'] = $data;
+                redirect("customer-create");
                 return;
-            } else {
-                // Gọi model để thêm khách hàng
-                $this->model->create($name, $email, $phone, $address, $created_by, $passport, $gender, $citizen_id);
-                Message::set("success", "Thêm khách hàng thành công!");
-                redirect("customers");
-                die();
             }
+
+            // Kiểm tra trùng email hoặc số điện thoại
+            $existingCustomer = $this->model->findByEmailOrPhone($data['email'], $data['phone']);
+            if ($existingCustomer) {
+                Message::set('error', 'Email hoặc số điện thoại đã tồn tại!');
+                $_SESSION['old'] = $data;
+                redirect("customer-create");
+                return;
+            }
+
+            // Gọi model để thêm khách hàng
+            $this->model->create($data['name'], $data['email'], $data['phone'], $data['address'], $created_by, $data['passport'], $data['gender'], $data['citizen_id']);
+            Message::set("success", "Thêm khách hàng thành công!");
+            redirect("customers");
+            die();
         } else {
             // Hiện form thêm mới
             require_once "./views/admin/customers/create.php";
@@ -87,31 +111,53 @@ class CustomerController
         if ($_SERVER['REQUEST_METHOD'] == 'POST') { // Kiểm tra submit form
             // Lấy dữ liệu
             $id = $_GET['id'];
-            $name = trim($_POST['name']);
-            $email = trim($_POST['email']);
-            $phone = trim($_POST['phone']);
-            $address = trim($_POST['address']);
-            $address = trim($_POST['address']); // Lặp lại nhưng không ảnh hưởng
+            $data = [
+                'name' => trim($_POST['name'] ?? ''),
+                'email' => trim($_POST['email'] ?? ''),
+                'phone' => trim($_POST['phone'] ?? ''),
+                'address' => trim($_POST['address'] ?? ''),
+                'passport' => trim($_POST['passport'] ?? ''),
+                'gender' => trim($_POST['gender'] ?? 'other'),
+                'citizen_id' => trim($_POST['citizen_id'] ?? ''),
+            ];
             $updated_by = $_SESSION['currentUser']['id'] ?? 1; // ID người cập nhật
-            $gender = trim($_POST['gender']);
-            $passport = trim($_POST['passport']);
-            $citizen_id = trim($_POST['citizen_id']); // Lấy CCCD
 
-            // Validate dữ liệu
-            if (empty($name) || empty($email) || empty($phone) || empty($address)) {
-                $err = "Vui lòng nhập đầy đủ thông tin bắt buộc.";
+            // Rules validate dữ liệu
+            $rules = [
+                'name' => 'required|min:2|max:100',
+                'email' => 'required|email|max:100',
+                'phone' => 'required|phone',
+                'address' => 'required|min:5|max:255',
+                'gender' => 'required',
+            ];
 
-                // Lấy lại dữ liệu khách hàng để load form
-                $customer = $this->model->getByID($id);
+            // Thực hiện validate
+            $errors = validate($data, $rules);
+
+            // Nếu có lỗi → giữ lại dữ liệu + hiện lại form
+            if (!empty($errors)) {
+                $_SESSION['validate_errors'] = $errors;
+                $_SESSION['old'] = $data;
+                $customer = array_merge($this->model->getByID($id), $data); // Merge để giữ giá trị mới nhập
                 require_once "./views/admin/customers/edit.php";
                 return;
-            } else {
-                // Gọi model update
-                $this->model->update($id, $name, $email, $phone, $address, $updated_by, $gender, $passport, $citizen_id);
-                Message::set("success", "Cập nhật khách hàng thành công!");
-                redirect("customers");
-                die();
             }
+
+            // Kiểm tra trùng email hoặc số điện thoại (loại trừ khách hàng hiện tại)
+            $existingCustomer = $this->model->findByEmailOrPhone($data['email'], $data['phone']);
+            if ($existingCustomer && $existingCustomer['id'] != $id) {
+                Message::set('error', 'Email hoặc số điện thoại đã tồn tại!');
+                $_SESSION['old'] = $data;
+                $customer = array_merge($this->model->getByID($id), $data);
+                require_once "./views/admin/customers/edit.php";
+                return;
+            }
+
+            // Gọi model update
+            $this->model->update($id, $data['name'], $data['email'], $data['phone'], $data['address'], $updated_by, $data['gender'], $data['passport'], $data['citizen_id']);
+            Message::set("success", "Cập nhật khách hàng thành công!");
+            redirect("customers");
+            die();
         }
     }
 
@@ -250,7 +296,7 @@ class CustomerController
         }
 
         // Quay về danh sách
-        header("Location:" . BASE_URL . '?act=customers');
+        redirect('customers');
         exit;
     }
 }

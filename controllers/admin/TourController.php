@@ -90,6 +90,8 @@ class TourController
     $errors = validate($data, $rules);
 
     if (!empty($errors)) {
+      $_SESSION['validate_errors'] = $errors;
+      $_SESSION['old'] = $data;
       $policies = $this->policyModel->getAll();
       $categories = $this->categoryModel->getAll();
       $destinations = $this->destinationModel->getAll();
@@ -210,6 +212,8 @@ class TourController
     $errors = validate($data, $rules);
 
     if (!empty($errors)) {
+      $_SESSION['validate_errors'] = $errors;
+      $_SESSION['old'] = $data;
       $tour = $this->tourModel->getById($id);
       $itineraries = $this->tourModel->getItineraries($id);
       $tourPolicies = $this->tourModel->getTourPolicies($id);

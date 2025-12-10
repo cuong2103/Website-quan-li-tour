@@ -18,7 +18,7 @@ class LeaveRequestController
     {
         $userId = $_SESSION['currentUser']['id'];
         $leaveRequest = $this->userModel->getMyLeaveRequest($userId);
-        
+
         require_once './views/guide/leave/index.php';
     }
 
@@ -27,14 +27,14 @@ class LeaveRequestController
     {
         $userId = $_SESSION['currentUser']['id'];
         $currentRequest = $this->userModel->getMyLeaveRequest($userId);
-        
+
         // Kiểm tra đã có đơn pending hoặc approved chưa
         if ($currentRequest && in_array($currentRequest['leave_status'], ['pending', 'approved'])) {
             Message::set('error', 'Bạn đã có đơn xin nghỉ đang chờ duyệt hoặc đã được duyệt!');
             redirect('guide-leave');
             exit;
         }
-        
+
         require_once './views/guide/leave/create.php';
     }
 
@@ -47,7 +47,7 @@ class LeaveRequestController
         }
 
         $userId = $_SESSION['currentUser']['id'];
-        
+
         $data = [
             'leave_start' => $_POST['leave_start'],
             'leave_end' => $_POST['leave_end'],
@@ -75,7 +75,7 @@ class LeaveRequestController
         // Kiểm tra xem có tour nào trong khoảng thời gian xin nghỉ không
         if (empty($errors)) {
             $assignments = $this->tourAssignmentModel->getAssignmentsByGuide($userId);
-            
+
             $conflictTours = [];
             foreach ($assignments as $assignment) {
                 // Kiểm tra trùng lặp: (leave_start <= tour_end) AND (leave_end >= tour_start)
@@ -83,14 +83,14 @@ class LeaveRequestController
                     $conflictTours[] = $assignment['tour_name'] . ' (' . date('d/m/Y', strtotime($assignment['start_date'])) . ' - ' . date('d/m/Y', strtotime($assignment['end_date'])) . ')';
                 }
             }
-            
+
             if (!empty($conflictTours)) {
                 $errors['leave_start'] = 'Bạn đã được phân công tour trong khoảng thời gian này: ' . implode(', ', $conflictTours);
             }
         }
 
         if (!empty($errors)) {
-            $_SESSION['errors'] = $errors;
+            $_SESSION['validate_errors'] = $errors;
             $_SESSION['old'] = $_POST;
             redirect('guide-leave-create');
             exit;
@@ -100,7 +100,7 @@ class LeaveRequestController
         if ($this->userModel->createLeaveRequest($userId, $data)) {
             // Tạo notification cho tất cả admin
             $user = $this->userModel->getById($userId);
-            
+
             // Tạo notification
             $notifId = $this->notificationModel->create([
                 'title' => 'Đơn xin nghỉ phép mới',
@@ -108,7 +108,7 @@ class LeaveRequestController
                 'type' => 'general',
                 'created_by' => $userId
             ]);
-            
+
             // Lấy tất cả admin và gửi notification
             $allUsers = $this->notificationModel->getAllUsers();
             $adminIds = [];
@@ -124,7 +124,7 @@ class LeaveRequestController
         } else {
             Message::set('error', 'Gửi đơn xin nghỉ thất bại!');
         }
-        
+
         redirect('guide-leave');
         exit;
     }

@@ -42,9 +42,18 @@ class CheckinController
     $title = trim($_POST['title'] ?? '');
     $note = trim($_POST['note'] ?? '');
 
-    if (!$assignmentId || empty($title)) {
-      Message::set('error', 'Vui lòng nhập đầy đủ thông tin');
-      redirect('my-schedule');
+    $data = [
+      'title' => $title,
+    ];
+
+    $rules = [
+      'title' => 'required',
+    ];
+
+    $errors = validate($data, $rules);
+    if ($errors) {
+      Message::set('error', "Bắt buộc phải nhập tiêu đề đợt check-in");
+      redirect('guide-tour-assignments-detail&id=' . $assignmentId . '&tab=checkin');
       exit;
     }
     // dd($assignmentId);
@@ -52,7 +61,7 @@ class CheckinController
     $canCheckin = $this->checkinModel->canCheckin($assignmentId);
     if (!$canCheckin['allowed']) {
       Message::set('error', $canCheckin['message']);
-      redirect('my-schedule');
+      redirect('guide-tour-assignments-detail&id=' . $assignmentId . '&tab=checkin');
       exit;
     }
 
@@ -61,11 +70,10 @@ class CheckinController
 
     if ($linkId) {
       Message::set('success', 'Tạo đợt check-in thành công');
-      // Chuyển đến trang chi tiết để check-in khách
       redirect('guide-checkin-detail&link_id=' . $linkId . '&assignment_id=' . $assignmentId);
     } else {
       Message::set('error', 'Có lỗi xảy ra khi tạo đợt check-in');
-      redirect('my-schedule');
+      redirect('guide-tour-assignments-detail&id=' . $assignmentId . '&tab=checkin');
     }
     exit;
   }
@@ -84,7 +92,7 @@ class CheckinController
     $checkedCustomers = $_POST['checked_customers'] ?? [];
     if (!$linkId || !$assignmentId) {
       Message::set('error', 'Thiếu thông tin');
-      redirect('my-schedule');
+      redirect('guide-tour-assignments-detail&id=' . $assignmentId . '&tab=checkin');
       exit;
     }
 
@@ -92,7 +100,7 @@ class CheckinController
     $canCheckin = $this->checkinModel->canCheckin($assignmentId);
     if (!$canCheckin['allowed']) {
       Message::set('error', $canCheckin['message']);
-      redirect('guide-checkin-detail&link_id=' . $linkId . '&assignment_id=' . $assignmentId);
+      redirect('guide-tour-assignments&id=' . $assignmentId . '&tab=checkin');
       exit;
     }
 
@@ -106,7 +114,6 @@ class CheckinController
       $customerId = $customer['id'];
       $isCurrentlyCheckedIn = !empty($customer['checkin_id']);
       $shouldBeCheckedIn = in_array($customerId, $checkedCustomers);
-
       if ($shouldBeCheckedIn && !$isCurrentlyCheckedIn) {
         // Check-in khách hàng
         if ($this->checkinModel->checkinCustomer($linkId, $customerId)) {

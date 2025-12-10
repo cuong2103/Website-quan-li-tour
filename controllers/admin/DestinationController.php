@@ -72,15 +72,15 @@ class DestinationController
         if ($this->modelDestination->isDuplicateNameInCategory($data['name'], $data['category_id'])) {
             Message::set("error", "Địa điểm này đã tồn tại trong danh mục đã chọn!");
             $_SESSION['old'] = $data;
-            header('Location: ' . BASE_URL . '?act=destination-create');
+            redirect('destination-create');
             exit();
         }
 
         if (!empty($errors)) {
             // Lưu lỗi và dữ liệu cũ vào session để hiển thị lại form
-            $_SESSION['errors'] = $errors;
+            $_SESSION['validate_errors'] = $errors;
             $_SESSION['old'] = $data;
-            header('Location: ' . BASE_URL . '?act=destination-create');
+            redirect('destination-create');
             exit;
         }
 
@@ -159,7 +159,7 @@ class DestinationController
         }
 
         if (!empty($errors)) {
-            $_SESSION['errors'] = $errors;
+            $_SESSION['validate_errors'] = $errors;
             $_SESSION['old'] = $data;
             header('Location: ' . BASE_URL . '?act=destination-edit&id=' . $id);
             exit;

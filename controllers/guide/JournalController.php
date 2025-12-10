@@ -39,7 +39,7 @@ class JournalController
         $errors = validate($data, $rules);
 
         if ($errors) {
-            $_SESSION['errors'] = $errors;
+            $_SESSION['validate_errors'] = $errors;
             $_SESSION['old'] = $data;
             redirect('journal-create&tour_assignment_id=' . $data['tour_assignment_id']);
             exit;
@@ -117,7 +117,7 @@ class JournalController
         $rules = ['content' => 'required|min:5'];
         $errors = validate($data, $rules);
         if ($errors) {
-            $_SESSION['errors'] = $errors;
+            $_SESSION['validate_errors'] = $errors;
             $_SESSION['old'] = $data;
             redirect('journal-edit&id=' . $id);
             exit;

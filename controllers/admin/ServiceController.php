@@ -98,7 +98,7 @@ class ServiceController
         $errors = validate($data, $rules); // Hàm validate chung
 
         if (!empty($errors)) { // Nếu lỗi → lưu và quay lại form
-            $_SESSION['errors'] = $errors;
+            $_SESSION['validate_errors'] = $errors;
             $_SESSION['old'] = $data;
 
             redirect("service-create");
@@ -168,7 +168,7 @@ class ServiceController
         $errors = validate($data, $rules);
 
         if (!empty($errors)) { // Trả lỗi về form edit
-            $_SESSION['errors'] = $errors;
+            $_SESSION['validate_errors'] = $errors;
             $_SESSION['old'] = $data;
 
             redirect("service-edit&id=" . $id);

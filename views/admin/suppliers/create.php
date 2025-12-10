@@ -34,27 +34,36 @@ require_once "./views/components/sidebar.php";
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Tên nhà cung cấp <span class="text-red-500">*</span></label>
                     <input type="text" name="name" value="<?= $_POST['name'] ?? '' ?>" placeholder="Nhập tên nhà cung cấp..."
-                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" required>
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" <?= isset($_SESSION['validate_errors']['name']) ? 'border-red-500' : '' ?>>
+                    <?php if (!empty($_SESSION['validate_errors']['name'])): ?>
+                        <p class="text-red-500 text-sm mt-1"><?= implode(', ', $_SESSION['validate_errors']['name']) ?></p>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Email -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Email liên hệ <span class="text-red-500">*</span></label>
                     <input type="email" name="email" value="<?= $_POST['email'] ?? '' ?>" placeholder="example@domain.com"
-                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" required>
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" <?= isset($_SESSION['validate_errors']['email']) ? 'border-red-500' : '' ?>>
+                    <?php if (!empty($_SESSION['validate_errors']['email'])): ?>
+                        <p class="text-red-500 text-sm mt-1"><?= implode(', ', $_SESSION['validate_errors']['email']) ?></p>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Phone -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Số điện thoại <span class="text-red-500">*</span></label>
                     <input type="text" name="phone" value="<?= $_POST['phone'] ?? '' ?>" placeholder="0123 456 789"
-                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" required>
+                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" <?= isset($_SESSION['validate_errors']['phone']) ? 'border-red-500' : '' ?>>
+                    <?php if (!empty($_SESSION['validate_errors']['phone'])): ?>
+                        <p class="text-red-500 text-sm mt-1"><?= implode(', ', $_SESSION['validate_errors']['phone']) ?></p>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Destination -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Địa điểm hoạt động <span class="text-red-500">*</span></label>
-                    <select name="destination_id" required
+                    <select name="destination_id" <?= isset($_SESSION['validate_errors']['destination_id']) ? 'border-red-500' : '' ?> required
                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white">
                         <option value="">-- Chọn địa điểm --</option>
                         <?php foreach ($destinations as $dest): ?>
@@ -63,16 +72,22 @@ require_once "./views/components/sidebar.php";
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <?php if (!empty($_SESSION['validate_errors']['destination_id'])): ?>
+                        <p class="text-red-500 text-sm mt-1"><?= implode(', ', $_SESSION['validate_errors']['destination_id']) ?></p>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Status -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Trạng thái</label>
-                    <select name="status"
+                    <select name="status" <?= isset($_SESSION['validate_errors']['status']) ? 'border-red-500' : '' ?>
                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white">
                         <option value="1" selected>Hoạt động</option>
                         <option value="0">Tạm dừng</option>
                     </select>
+                    <?php if (!empty($_SESSION['validate_errors']['status'])): ?>
+                        <p class="text-red-500 text-sm mt-1"><?= implode(', ', $_SESSION['validate_errors']['status']) ?></p>
+                    <?php endif; ?>
                 </div>
             </div>
 

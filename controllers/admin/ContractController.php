@@ -50,20 +50,54 @@ class ContractController
     public function store()
     {
         $bookingId = $_POST['booking_id'];
-        $fileUrl = uploadFile($_FILES['file_upload'], '/uploads/contracts/');
 
         $data = [
             'booking_id'     => $bookingId,
-            'contract_name'  => $_POST['contract_name'],
-            'effective_date' => $_POST['effective_date'],
-            'expiry_date'    => $_POST['expiry_date'],
-            'signer_id'      => $_SESSION['currentUser']['id'], // người ký admin
-            'customer_id'    => $_POST['customer_id'],   // chọn từ booking
-            'status'         => $_POST['status'],
-            'file_name'      => $_FILES['file_upload']['name'],
-            'file_url'       => $fileUrl,
-            'created_by'     => $_SESSION['currentUser']['id']
+            'contract_name'  => trim($_POST['contract_name'] ?? ''),
+            'effective_date' => $_POST['effective_date'] ?? '',
+            'expiry_date'    => $_POST['expiry_date'] ?? '',
+            'customer_id'    => $_POST['customer_id'] ?? '',
+            'status'         => $_POST['status'] ?? 'active',
         ];
+
+        // Validate dữ liệu
+        $rules = [
+            'contract_name'  => 'required|min:5|max:255',
+            'effective_date' => 'required',
+            'expiry_date'    => 'required',
+            'customer_id'    => 'required',
+        ];
+
+        $errors = validate($data, $rules);
+
+        // Validate: ngày hết hạn phải sau ngày hiệu lực
+        if (!empty($data['effective_date']) && !empty($data['expiry_date'])) {
+            if (strtotime($data['expiry_date']) <= strtotime($data['effective_date'])) {
+                $errors['expiry_date'] = 'Ngày hết hạn phải sau ngày hiệu lực';
+            }
+        }
+
+        // Kiểm tra file upload
+        if (empty($_FILES['file_upload']['name'])) {
+            $errors['file_upload'] = 'Vui lòng chọn file hợp đồng';
+        }
+
+        if (!empty($errors)) {
+            $_SESSION['validate_errors'] = $errors;
+            $_SESSION['old'] = $data;
+            $bookingCustomers = $this->bookingModel->getCustomers($bookingId);
+            $booking = $this->bookingModel->getById($bookingId);
+            require_once './views/admin/contracts/create.php';
+            exit;
+        }
+
+        // Upload file
+        $fileUrl = uploadFile($_FILES['file_upload'], '/uploads/contracts/');
+
+        $data['signer_id']   = $_SESSION['currentUser']['id'];
+        $data['file_name']   = $_FILES['file_upload']['name'];
+        $data['file_url']    = $fileUrl;
+        $data['created_by']  = $_SESSION['currentUser']['id'];
 
         $this->contractModel->create($data);
         Message::set('success', 'Tạo hợp đồng thành công!');

@@ -3,19 +3,6 @@ require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 ?>
 <main class="w-full flex-1 pt-28 overflow-y-auto p-6 bg-gray-50 ">
-    <?php if (!empty($_SESSION['error'])): ?>
-        <div class="px-4 py-2 mb-4 text-red-700 bg-red-100 rounded-lg">
-            <?= $_SESSION['error'];
-            unset($_SESSION['error']); ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if (!empty($_SESSION['success'])): ?>
-        <div class="px-4 py-2 mb-4 text-green-700 bg-green-100 rounded-lg">
-            <?= $_SESSION['success'];
-            unset($_SESSION['success']); ?>
-        </div>
-    <?php endif; ?>
 
     <div class="w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
 
@@ -35,9 +22,7 @@ require_once './views/components/sidebar.php';
                     placeholder="Ví dụ: Khách sạn, Vận chuyển..." />
 
                 <?php if (!empty($errors['name'])): ?>
-                    <?php foreach ($errors['name'] as $err): ?>
-                        <p class="text-red-500 text-sm mb-1"><?= $err ?></p>
-                    <?php endforeach; ?>
+                    <p class="text-red-500 text-sm mt-1"><?= $errors['name'][0] ?></p>
                 <?php endif; ?>
 
 
@@ -50,9 +35,7 @@ require_once './views/components/sidebar.php';
                     placeholder="Mô tả chi tiết về loại dịch vụ này..."><?= htmlspecialchars($data['description'] ?? '') ?></textarea>
 
                 <?php if (!empty($errors['description'])): ?>
-                    <?php foreach ($errors['description'] as $err): ?>
-                        <p class="text-red-500 text-sm"><?= $err ?></p>
-                    <?php endforeach; ?>
+                    <p class="text-red-500 text-sm mt-1"><?= $errors['description'][0] ?></p>
                 <?php endif; ?>
 
                 <button

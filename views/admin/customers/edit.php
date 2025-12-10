@@ -39,17 +39,23 @@ require_once "./views/components/sidebar.php";
                         <!-- Tên -->
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Họ và tên <span class="text-red-500">*</span></label>
-                            <input type="text" name="name" value="<?= htmlspecialchars($customer['name']) ?>" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" required>
+                            <input type="text" name="name" value="<?= htmlspecialchars($customer['name']) ?>" class="w-full px-4 py-2.5 border <?= isset($_SESSION['validate_errors']['name']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                            <?php if (isset($_SESSION['validate_errors']['name'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['name']) ? $_SESSION['validate_errors']['name'][0] : $_SESSION['validate_errors']['name'] ?></p>
+                            <?php endif; ?>
                         </div>
 
                         <!-- Giới tính -->
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Giới tính</label>
-                            <select name="gender" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
+                            <select name="gender" class="w-full px-4 py-2.5 border <?= isset($_SESSION['validate_errors']['gender']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
                                 <option value="male" <?= $customer['gender'] == 'male' ? 'selected' : '' ?>>Nam</option>
                                 <option value="female" <?= $customer['gender'] == 'female' ? 'selected' : '' ?>>Nữ</option>
                                 <option value="other" <?= $customer['gender'] == 'other' ? 'selected' : '' ?>>Khác</option>
                             </select>
+                            <?php if (isset($_SESSION['validate_errors']['gender'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['gender']) ? $_SESSION['validate_errors']['gender'][0] : $_SESSION['validate_errors']['gender'] ?></p>
+                            <?php endif; ?>
                         </div>
 
                         <!-- Email -->
@@ -59,8 +65,11 @@ require_once "./views/components/sidebar.php";
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="w-4 h-4 text-gray-400" data-lucide="mail"></i>
                                 </div>
-                                <input type="email" name="email" value="<?= htmlspecialchars($customer['email']) ?>" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" required>
+                                <input type="email" name="email" value="<?= htmlspecialchars($customer['email']) ?>" class="w-full pl-10 pr-4 py-2.5 border <?= isset($_SESSION['validate_errors']['email']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
                             </div>
+                            <?php if (isset($_SESSION['validate_errors']['email'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['email']) ? $_SESSION['validate_errors']['email'][0] : $_SESSION['validate_errors']['email'] ?></p>
+                            <?php endif; ?>
                         </div>
 
                         <!-- Số điện thoại -->
@@ -70,8 +79,11 @@ require_once "./views/components/sidebar.php";
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="w-4 h-4 text-gray-400" data-lucide="phone"></i>
                                 </div>
-                                <input type="text" name="phone" value="<?= htmlspecialchars($customer['phone']) ?>" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" required>
+                                <input type="text" name="phone" value="<?= htmlspecialchars($customer['phone']) ?>" class="w-full pl-10 pr-4 py-2.5 border <?= isset($_SESSION['validate_errors']['phone']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
                             </div>
+                            <?php if (isset($_SESSION['validate_errors']['phone'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['phone']) ? $_SESSION['validate_errors']['phone'][0] : $_SESSION['validate_errors']['phone'] ?></p>
+                            <?php endif; ?>
                         </div>
 
                         <!-- Địa chỉ -->
@@ -81,8 +93,11 @@ require_once "./views/components/sidebar.php";
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="w-4 h-4 text-gray-400" data-lucide="map-pin"></i>
                                 </div>
-                                <input type="text" name="address" value="<?= htmlspecialchars($customer['address']) ?>" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" required>
+                                <input type="text" name="address" value="<?= htmlspecialchars($customer['address']) ?>" class="w-full pl-10 pr-4 py-2.5 border <?= isset($_SESSION['validate_errors']['address']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
                             </div>
+                            <?php if (isset($_SESSION['validate_errors']['address'])): ?>
+                                <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['address']) ? $_SESSION['validate_errors']['address'][0] : $_SESSION['validate_errors']['address'] ?></p>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -120,4 +135,8 @@ require_once "./views/components/sidebar.php";
     </div>
 
 </main>
-<?php require_once "./views/components/footer.php"; ?>
+<?php
+unset($_SESSION['validate_errors']);
+unset($_SESSION['old']);
+require_once "./views/components/footer.php";
+?>
