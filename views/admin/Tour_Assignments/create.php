@@ -28,15 +28,6 @@ require_once './views/components/sidebar.php';
                 </select>
             </div>
 
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
-                <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="assigned">Đã phân công</option>
-                    <option value="in_progress">Đang thực hiện</option>
-                    <option value="completefixd">Đã hoàn thành</option>
-                    <option value="cancelled">Đã hủy</option>
-                </select>
-            </div>
 
             <div class="flex items-center justify-end gap-3">
                 <a href="<?= BASE_URL ?>?act=bookings" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-sm font-medium">Hủy</a>
