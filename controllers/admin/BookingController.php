@@ -287,22 +287,11 @@ class BookingController
             'total_amount' => $_POST['total_amount'],
             'status' => $_POST['status'],
             'special_requests' => $_POST['special_requests'] ?? null,
-            'customers' => $_POST['customers'] ?? [],
-            'is_representative' => $_POST['is_representative'] ?? null,
             'services' => $_POST['services'] ?? [],
             'updated_by' => $_SESSION['currentUser']['id']
         ];
         // Cập nhật booking chính vào db
         $this->bookingModel->update($id, $data);
-
-        // Xóa khách cũ
-        $this->bookingModel->deleteCustomers($id);
-
-        // Thêm khách mới + đánh dấu đại diện
-        foreach ($data['customers'] as $customerId) {
-            $isRep = ($data['is_representative'] == $customerId) ? 1 : 0;
-            $this->bookingModel->addCustomer($id, $customerId, $isRep);
-        }
 
         // Xóa dịch vụ cũ
         $this->bookingModel->deleteServices($id);

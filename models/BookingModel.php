@@ -144,7 +144,7 @@ class BookingModel
                 SET tour_id=?, start_date=?, end_date=?, adult_count=?, child_count=?, service_amount=?, total_amount=?, deposit_amount=?, remaining_amount=?, status=?, special_requests=?, updated_by=?, updated_at=NOW()
                 WHERE id=?";
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([
+            return $stmt->execute([
                 $data['tour_id'],
                 $data['start_date'],
                 $data['end_date'],
@@ -159,18 +159,6 @@ class BookingModel
                 $data['updated_by'] ?? null,
                 $id
             ]);
-
-            // Xóa khách cũ
-            $this->deleteCustomers($id);
-
-            // Thêm lại khách mới + đại diện
-            foreach ($data['customers'] as $custId) {
-
-                $isRep = ($data['is_representative'] == $custId) ? 1 : 0;
-
-                $this->addCustomer($id, $custId, $isRep);
-            }
-            return true;
         } catch (PDOException $e) {
             die("Lỗi update():" . $e->getMessage());
         }
