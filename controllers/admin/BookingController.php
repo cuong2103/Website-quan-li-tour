@@ -158,7 +158,7 @@ class BookingController
             'start_date' => $_POST['start_date'],
             'end_date' => $_POST['end_date'],
             'adult_count' => $_POST['adult_count'],
-            'child_count' => $_POST['child_count'] ?? 0,
+            'child_count' => $_POST['child_count'] === "" ? 0 : $_POST['child_count'],
             'service_amount' => $serviceAmount,
             'total_amount' => $_POST['total_amount'],
             'special_requests' => $_POST['special_requests'] ?? null,
@@ -412,18 +412,18 @@ class BookingController
             case 'checkin':
                 // Lấy danh sách check-in links theo booking_id
                 $checkinLinks = $this->checkinModel->getCheckinLinksByBookingId($id);
-                
+
                 // Chuẩn bị dữ liệu chi tiết cho mỗi link
                 $checkinData = [];
                 foreach ($checkinLinks as $link) {
                     // Lấy thông tin người tạo
                     $userModel = new UserModel();
                     $creator = $userModel->getById($link['created_by']);
-                    
+
                     // Lấy danh sách khách hàng với trạng thái check-in
                     $customers = $this->bookingModel->getCustomers($id);
                     $customersWithStatus = [];
-                    
+
                     foreach ($customers as $customer) {
                         // Kiểm tra xem khách hàng đã check-in chưa
                         $sql = "SELECT id, checkin_time 
@@ -432,7 +432,7 @@ class BookingController
                         $stmt = $this->checkinModel->conn->prepare($sql);
                         $stmt->execute([$link['id'], $customer['id']]);
                         $checkinRecord = $stmt->fetch(PDO::FETCH_ASSOC);
-                        
+
                         $customersWithStatus[] = [
                             'id' => $customer['id'],
                             'name' => $customer['name'],
@@ -443,7 +443,7 @@ class BookingController
                             'checkin_time' => $checkinRecord ? $checkinRecord['checkin_time'] : null
                         ];
                     }
-                    
+
                     $checkinData[$link['id']] = [
                         'link' => $link,
                         'customers' => $customersWithStatus,

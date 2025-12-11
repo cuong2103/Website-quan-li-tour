@@ -140,21 +140,23 @@ class UserModel
     }
 
     // KIỂM TRA MẬT KHẨU CŨ
-    public function verifyPassword($userId, $currentPassword){
+    public function verifyPassword($userId, $currentPassword)
+    {
         $sql = "SELECT password FROM users WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$userId]);
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if(!$user) return false;
+        if (!$user) return false;
 
         // So sánh trực tiếp
         return $currentPassword === $user['password'];
     }
 
     // ĐỔI MẬT KHẨU
-    public function changePassword($userId, $newPassword){
+    public function changePassword($userId, $newPassword)
+    {
         $sql = "UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([$newPassword, $userId]);
@@ -178,7 +180,8 @@ class UserModel
     {
         $sql = "SELECT * FROM users 
                 WHERE leave_start IS NOT NULL 
-                AND leave_end IS NOT NULL 
+                AND leave_end IS NOT NULL
+                AND leave_status = 'approved' 
                 ORDER BY leave_start DESC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
@@ -218,7 +221,7 @@ class UserModel
                         updated_by = :updated_by,
                         updated_at = NOW()
                     WHERE id = :id";
-            
+
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([
                 ':id' => $userId,
@@ -243,7 +246,7 @@ class UserModel
                         updated_by = :updated_by,
                         updated_at = NOW()
                     WHERE id = :id";
-            
+
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([
                 ':id' => $id,
@@ -264,7 +267,7 @@ class UserModel
                         updated_by = :updated_by,
                         updated_at = NOW()
                     WHERE id = :id";
-            
+
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([
                 ':id' => $id,
@@ -288,7 +291,7 @@ class UserModel
                         updated_by = :updated_by,
                         updated_at = NOW()
                     WHERE id = :id AND leave_status = 'pending'";
-            
+
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([
                 ':id' => $userId,

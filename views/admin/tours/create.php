@@ -55,7 +55,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Số ngày</label>
-              <input type="number" name="duration_days" value="<?= htmlspecialchars($_POST['duration_days'] ?? '') ?>" placeholder="4" min="1" class="w-full px-4 py-3 border <?= !empty($errors['duration_days']) ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent' ?> rounded-lg focus:ring-2 outline-none">
+              <input type="number" name="duration_days" value="<?= htmlspecialchars($_POST['duration_days'] ?? '1') ?>" placeholder="4" min="1" class="w-full px-4 py-3 border <?= !empty($errors['duration_days']) ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent' ?> rounded-lg focus:ring-2 outline-none">
               <?php if (!empty($errors['duration_days'])): ?>
                 <div class="text-red-500 text-sm mt-1"><?= $errors['duration_days'][0] ?></div>
               <?php endif; ?>
@@ -231,9 +231,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
   document.addEventListener('DOMContentLoaded', () => {
     const addDayBtn = document.getElementById('add-day');
     const itinerarySection = document.getElementById('itinerary-section');
-
-    // Đếm số ngày hiện có
-    let dayCount = document.querySelectorAll('[id^="day-"]').length;
+    const durationInput = document.querySelector('input[name="duration_days"]');
 
     // Tạo option HTML cho destinations
     const destinationOptions = `
@@ -243,18 +241,17 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
       <?php endforeach; ?>
     `;
 
-    // Thêm ngày mới
-    addDayBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      dayCount++;
-
-      const newDayHTML = `
-      <div id="day-${dayCount}" class="border border-gray-200 rounded-xl mt-6 p-6 space-y-5">
+    // Hàm tạo HTML cho một ngày
+    function createDayHTML(dayNum, showRemoveBtn = true) {
+      return `
+      <div id="day-${dayNum}" class="border border-gray-200 rounded-xl ${dayNum > 1 ? 'mt-6' : ''} p-6 space-y-5">
         <div class="flex items-center justify-between">
-          <h4 class="font-medium text-gray-900">Ngày ${dayCount}</h4>
-          <button type="button" class="remove-day-btn p-2 text-red-600 hover:text-red-700 text-sm font-medium" data-day="${dayCount}">
+          <h4 class="font-medium text-gray-900">Ngày ${dayNum}</h4>
+          ${showRemoveBtn ? `
+          <button type="button" class="remove-day-btn p-2 text-red-600 hover:text-red-700 text-sm font-medium" data-day="${dayNum}">
             <i data-lucide="x" class="w-5 h-5"></i>
           </button>
+          ` : ''}
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -278,22 +275,98 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
         
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả hoạt động</label>
-          <textarea rows="3" name="description[]" placeholder="Mô tả các hoạt động trong ngày..." class="w-full px-4 py-3 border border-gray-300 rounded-lg"></textarea>
+          <textarea rows="3" name="description[]" placeholder="Mô tả các hoạt động trong ngày..." class="w-full h-48 px-4 py-3 border border-gray-300 rounded-lg"></textarea>
         </div>
       </div>`;
+    }
 
-      itinerarySection.insertAdjacentHTML('beforeend', newDayHTML);
+    // Hàm cập nhật các ngày theo số lượng
+    function updateDays(targetCount) {
+      if (targetCount < 1) targetCount = 1;
+      if (targetCount > 30) targetCount = 30; // Giới hạn tối đa 30 ngày
+
+      const existingDays = document.querySelectorAll('[id^="day-"]');
+      const currentCount = existingDays.length;
+
+      if (targetCount > currentCount) {
+        // Thêm ngày mới
+        for (let i = currentCount + 1; i <= targetCount; i++) {
+          itinerarySection.insertAdjacentHTML('beforeend', createDayHTML(i, i > 1));
+          lucide.createIcons(); // Render Lucide icons cho ngày mới
+        }
+      } else if (targetCount < currentCount) {
+        // Xóa các ngày thừa (từ cuối lên)
+        for (let i = currentCount; i > targetCount; i--) {
+          const dayDiv = document.getElementById(`day-${i}`);
+          if (dayDiv) dayDiv.remove();
+        }
+      }
+    }
+
+    // Lắng nghe sự kiện thay đổi số ngày
+    if (durationInput) {
+      durationInput.addEventListener('input', (e) => {
+        const value = parseInt(e.target.value) || 0;
+        updateDays(value);
+      });
+
+      // Khởi tạo khi load trang nếu đã có giá trị
+      const initialValue = parseInt(durationInput.value) || 0;
+      if (initialValue > 0) {
+        updateDays(initialValue);
+      }
+    }
+
+    // Thêm ngày mới (nút thủ công)
+    addDayBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const currentCount = document.querySelectorAll('[id^="day-"]').length;
+      const newCount = currentCount + 1;
+
+      // Cập nhật input số ngày
+      if (durationInput) {
+        durationInput.value = newCount;
+      }
+
+      itinerarySection.insertAdjacentHTML('beforeend', createDayHTML(newCount, newCount > 1));
+      lucide.createIcons();
     });
 
     // Xóa ngày với event delegation
     itinerarySection.addEventListener('click', (e) => {
       const removeBtn = e.target.closest('.remove-day-btn');
       if (removeBtn) {
-        const dayNum = removeBtn.dataset.day;
-        const dayDiv = document.getElementById(`day-${dayNum}`);
-        if (dayDiv && dayCount > 1) {
-          dayDiv.remove();
-          dayCount--;
+        const dayNum = parseInt(removeBtn.dataset.day);
+        const allDays = document.querySelectorAll('[id^="day-"]');
+
+        if (allDays.length > 1) {
+          // Xóa ngày được click
+          const dayDiv = document.getElementById(`day-${dayNum}`);
+          if (dayDiv) dayDiv.remove();
+
+          // Đánh lại số thứ tự cho các ngày còn lại
+          const remainingDays = document.querySelectorAll('[id^="day-"]');
+          remainingDays.forEach((day, index) => {
+            const newNum = index + 1;
+            day.id = `day-${newNum}`;
+            day.querySelector('h4').textContent = `Ngày ${newNum}`;
+
+            // Cập nhật data-day cho nút xóa
+            const removeBtn = day.querySelector('.remove-day-btn');
+            if (removeBtn) {
+              removeBtn.dataset.day = newNum;
+            }
+
+            // Ẩn nút xóa cho ngày đầu tiên
+            if (newNum === 1 && removeBtn) {
+              removeBtn.remove();
+            }
+          });
+
+          // Cập nhật input số ngày
+          if (durationInput) {
+            durationInput.value = remainingDays.length;
+          }
         }
       }
     });
