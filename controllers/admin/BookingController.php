@@ -285,7 +285,6 @@ class BookingController
             'child_count' => $_POST['child_count'] ?? 0,
             'service_amount' => $serviceAmount,
             'total_amount' => $_POST['total_amount'],
-            'status' => $_POST['status'],
             'special_requests' => $_POST['special_requests'] ?? null,
             'services' => $_POST['services'] ?? [],
             'updated_by' => $_SESSION['currentUser']['id']

@@ -43,6 +43,12 @@ class TourAssignmentController
             exit;
         }
 
+        if ($booking['status'] === 'cancelled') {
+            Message::set('error', 'Không thể phân công cho booking đã hủy');
+            redirect('bookings');
+            exit;
+        }
+
         // --- KIỂM TRA THANH TOÁN ---
         // Chỉ cho phép phân công nếu Status = 3 (Đã thanh toán đủ) VÀ Remaining Amount <= 0
         if ($booking['status'] != 'paid' || $booking['remaining_amount'] > 0) {

@@ -141,7 +141,7 @@ class BookingModel
     {
         try {
             $sql = "UPDATE bookings
-                SET tour_id=?, start_date=?, end_date=?, adult_count=?, child_count=?, service_amount=?, total_amount=?, deposit_amount=?, remaining_amount=?, status=?, special_requests=?, updated_by=?, updated_at=NOW()
+                SET tour_id=?, start_date=?, end_date=?, adult_count=?, child_count=?, service_amount=?, total_amount=?, deposit_amount=?, remaining_amount=?, special_requests=?, updated_by=?, updated_at=NOW()
                 WHERE id=?";
             $stmt = $this->conn->prepare($sql);
             return $stmt->execute([
@@ -154,7 +154,6 @@ class BookingModel
                 $data['total_amount'],
                 $data['deposit_amount'] ?? 0,
                 $data['remaining_amount'] ?? 0,
-                $data['status'],
                 $data['special_requests'] ?? null,
                 $data['updated_by'] ?? null,
                 $id
