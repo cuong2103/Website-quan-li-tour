@@ -135,7 +135,7 @@ require_once './views/components/sidebar.php';
               <label class="block text-sm font-semibold text-gray-700 mb-2">
                 Họ và tên <span class="text-red-500">*</span>
               </label>
-              <input type="text" name="fullname" value="<?= htmlspecialchars($user['fullname']) ?>" required
+              <input type="text" name="fullname" value="<?= htmlspecialchars($user['fullname'] ?? '') ?>" required
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
             </div>
 
@@ -143,7 +143,7 @@ require_once './views/components/sidebar.php';
               <label class="block text-sm font-semibold text-gray-700 mb-2">
                 Email <span class="text-red-500">*</span>
               </label>
-              <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required
+              <input type="email" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
             </div>
 
@@ -151,7 +151,7 @@ require_once './views/components/sidebar.php';
               <label class="block text-sm font-semibold text-gray-700 mb-2">
                 Số điện thoại <span class="text-red-500">*</span>
               </label>
-              <input type="text" name="phone" value="<?= htmlspecialchars($user['phone']) ?>" required
+              <input type="text" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" required
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
             </div>
 

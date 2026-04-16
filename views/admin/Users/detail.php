@@ -33,7 +33,7 @@ require_once './views/components/sidebar.php';
 
         <!-- Info bên cạnh avatar -->
         <div class="flex-1">
-          <h2 class="text-2xl font-bold text-gray-900 mb-2"><?= htmlspecialchars($user["fullname"]) ?></h2>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2"><?= htmlspecialchars($user["fullname"] ?? '') ?></h2>
 
           <!-- Role Badge -->
           <div class="mb-3">
@@ -79,7 +79,7 @@ require_once './views/components/sidebar.php';
             <i data-lucide="user" class="w-5 h-5 text-gray-400"></i>
             <div class="flex-1">
               <label class="block text-sm font-medium text-gray-500">Họ và tên</label>
-              <p class="text-gray-900 font-semibold"><?= htmlspecialchars($user["fullname"]) ?></p>
+              <p class="text-gray-900 font-semibold"><?= htmlspecialchars($user["fullname"] ?? '') ?></p>
             </div>
           </div>
 
@@ -87,7 +87,7 @@ require_once './views/components/sidebar.php';
             <i data-lucide="mail" class="w-5 h-5 text-gray-400"></i>
             <div class="flex-1">
               <label class="block text-sm font-medium text-gray-500">Email</label>
-              <p class="text-gray-900 font-semibold"><?= htmlspecialchars($user["email"]) ?></p>
+              <p class="text-gray-900 font-semibold"><?= htmlspecialchars($user["email"] ?? '') ?></p>
             </div>
           </div>
 
@@ -95,7 +95,7 @@ require_once './views/components/sidebar.php';
             <i data-lucide="phone" class="w-5 h-5 text-gray-400"></i>
             <div class="flex-1">
               <label class="block text-sm font-medium text-gray-500">Số điện thoại</label>
-              <p class="text-gray-900 font-semibold"><?= htmlspecialchars($user["phone"]) ?></p>
+              <p class="text-gray-900 font-semibold"><?= htmlspecialchars($user["phone"] ?? '') ?></p>
             </div>
           </div>
         </div>

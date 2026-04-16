@@ -40,7 +40,7 @@
                             <i data-lucide="building" class="w-10 h-10 text-purple-600"></i>
                         </div>
                         <div>
-                            <h3 class="text-2xl font-bold text-gray-900"><?= htmlspecialchars($supplier['name']) ?></h3>
+                            <h3 class="text-2xl font-bold text-gray-900"><?= htmlspecialchars($supplier['name'] ?? '') ?></h3>
                             <div class="flex items-center gap-3 mt-2">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?= $supplier['status'] == 1 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' ?>">
                                     <?= $supplier['status'] == 1 ? 'Đang hoạt động' : 'Ngừng hoạt động' ?>
@@ -54,7 +54,7 @@
                             <label class="text-sm font-medium text-gray-500">Email liên hệ</label>
                             <div class="mt-1 text-gray-900 flex items-center gap-2">
                                 <i data-lucide="mail" class="w-4 h-4 text-gray-400"></i>
-                                <?= htmlspecialchars($supplier['email']) ?>
+                                <?= htmlspecialchars($supplier['email'] ?? '') ?>
                             </div>
                         </div>
 
@@ -62,7 +62,7 @@
                             <label class="text-sm font-medium text-gray-500">Số điện thoại</label>
                             <div class="mt-1 text-gray-900 flex items-center gap-2">
                                 <i data-lucide="phone" class="w-4 h-4 text-gray-400"></i>
-                                <?= htmlspecialchars($supplier['phone']) ?>
+                                <?= htmlspecialchars($supplier['phone'] ?? '') ?>
                             </div>
                         </div>
 

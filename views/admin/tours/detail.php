@@ -13,7 +13,7 @@ require_once './views/components/sidebar.php';
         </button>
         <div>
           <h2 class="text-3xl font-bold text-gray-900">Chi tiết tour</h2>
-          <p class="text-sm text-gray-600">Xem toàn bộ thông tin tour • Mã tour: <?= htmlspecialchars($tour['tour_code']) ?></p>
+          <p class="text-sm text-gray-600">Xem toàn bộ thông tin tour • Mã tour: <?= htmlspecialchars($tour['tour_code'] ?? '') ?></p>
         </div>
       </div>
       <div class="flex gap-3">
@@ -35,22 +35,22 @@ require_once './views/components/sidebar.php';
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-2">Tên tour</label>
-            <p class="text-lg font-medium text-gray-900"><?= htmlspecialchars($tour['name']) ?></p>
+            <p class="text-lg font-medium text-gray-900"><?= htmlspecialchars($tour['name'] ?? '') ?></p>
           </div>
 
           <div class="col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-2">Giới thiệu ngắn</label>
-            <p class="text-gray-700 leading-relaxed"><?= nl2br(htmlspecialchars($tour['introduction'])) ?></p>
+            <p class="text-gray-700 leading-relaxed"><?= nl2br(htmlspecialchars($tour['introduction'] ?? '')) ?></p>
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Mã tour</label>
-            <p class="text-gray-900 font-mono font-semibold"><?= htmlspecialchars($tour['tour_code']) ?></p>
+            <p class="text-gray-900 font-mono font-semibold"><?= htmlspecialchars($tour['tour_code'] ?? '') ?></p>
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
-            <p class="text-gray-900"><?= htmlspecialchars($tour['category_name']) ?></p>
+            <p class="text-gray-900"><?= htmlspecialchars($tour['category_name'] ?? '') ?></p>
           </div>
 
           <div>
@@ -116,7 +116,7 @@ require_once './views/components/sidebar.php';
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <?php foreach ($services as $service): ?>
               <div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
-                <h4 class="font-medium text-gray-900"><?= htmlspecialchars($service['name']) ?></h4>
+                <h4 class="font-medium text-gray-900"><?= htmlspecialchars($service['name'] ?? '') ?></h4>
                 <p class="text-sm text-gray-500 mt-1"><?= number_format($service['estimated_price']) ?> VND</p>
               </div>
             <?php endforeach; ?>

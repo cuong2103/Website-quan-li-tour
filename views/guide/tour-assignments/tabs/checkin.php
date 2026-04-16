@@ -56,7 +56,7 @@ $canCheckinNow = ($today >= $assignment['start_date'] && $today <= $assignment['
         <?php foreach ($checkinLinks as $i => $link): ?>
           <tr class="border-t hover:bg-gray-50">
             <td class="p-3"><?= $i + 1 ?></td>
-            <td class="p-3 font-medium"><?= htmlspecialchars($link['title']) ?></td>
+            <td class="p-3 font-medium"><?= htmlspecialchars($link['title'] ?? '') ?></td>
             <td class="p-3 text-gray-600"><?= htmlspecialchars($link['note'] ?? '-') ?></td>
             <td class="p-3 text-gray-600"><?= date('H:i d/m/Y', strtotime($link['created_at'])) ?></td>
             <td class="p-3">

@@ -25,14 +25,14 @@
             </div>
             <div class="flex flex-col">
               <p class="font-medium text-gray-800 mb-1">
-                <?= htmlspecialchars($c['name']) ?>
+                <?= htmlspecialchars($c['name'] ?? '') ?>
                 <?php if ($c['is_representative']): ?>
                   <span class="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">Người đại diện</span>
                 <?php endif; ?>
               </p>
               <div class="flex items-center gap-3 text-sm text-gray-500">
-                <span class="flex items-center gap-1"><i class="w-3 h-3" data-lucide="phone"></i> <?= htmlspecialchars($c['phone']) ?></span>
-                <span class="flex items-center gap-1"><i class="w-3 h-3" data-lucide="mail"></i> <?= htmlspecialchars($c['email']) ?></span>
+                <span class="flex items-center gap-1"><i class="w-3 h-3" data-lucide="phone"></i> <?= htmlspecialchars($c['phone'] ?? '') ?></span>
+                <span class="flex items-center gap-1"><i class="w-3 h-3" data-lucide="mail"></i> <?= htmlspecialchars($c['email'] ?? '') ?></span>
               </div>
             </div>
           </div>

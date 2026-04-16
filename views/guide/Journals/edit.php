@@ -46,7 +46,7 @@ unset($_SESSION['errors'], $_SESSION['old']);
                             <?php foreach ($tourAssignments as $ta): ?>
                                 <option value="<?= $ta['id'] ?>"
                                     <?= isset($old['tour_assignment_id']) && $old['tour_assignment_id'] == $ta['id'] ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($ta['tour_name']) ?> - <?= $ta['booking_code'] ?>
+                                    <?= htmlspecialchars($ta['tour_name'] ?? '') ?> - <?= $ta['booking_code'] ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -119,7 +119,7 @@ unset($_SESSION['errors'], $_SESSION['old']);
                 <label class="block text-sm font-semibold text-gray-700 mb-2">Nội dung chi tiết <span class="text-red-500">*</span></label>
                 <textarea name="content" rows="6"
                     placeholder="Mô tả chi tiết về hoạt động hoặc sự cố..."
-                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-y <?= isset($errors['content']) ? 'border-red-500 ring-1 ring-red-500' : '' ?>"><?= htmlspecialchars($old['content'] ?? $journal['content']) ?></textarea>
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-y <?= isset($errors['content']) ? 'border-red-500 ring-1 ring-red-500' : '' ?>"><?= htmlspecialchars($old['content'] ?? $journal['content'] ?? '') ?></textarea>
                 <?php if (!empty($errors['content'])): ?>
                     <p class="text-red-500 text-sm mt-1 flex items-center gap-1">
                         <i data-lucide="alert-circle" class="w-3 h-3"></i>

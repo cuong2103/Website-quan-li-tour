@@ -84,8 +84,8 @@ require_once './views/components/sidebar.php';
                                             <?php endif; ?>
                                         </div>
                                         <div>
-                                            <p class="font-medium text-gray-900"><?= htmlspecialchars($user['fullname']) ?></p>
-                                            <p class="text-sm text-gray-500"><?= htmlspecialchars($user['email']) ?></p>
+                                            <p class="font-medium text-gray-900"><?= htmlspecialchars($user['fullname'] ?? '') ?></p>
+                                            <p class="text-sm text-gray-500"><?= htmlspecialchars($user['email'] ?? '') ?></p>
                                         </div>
                                     </div>
                                 </td>
@@ -127,7 +127,7 @@ require_once './views/components/sidebar.php';
                                             <i data-lucide="eye" class="w-5 h-5"></i>
                                         </a>
                                         <a href="?act=user-end-leave&id=<?= $user['id'] ?>"
-                                            onclick="return confirm('Bạn có chắc muốn kết thúc nghỉ phép cho <?= htmlspecialchars($user['fullname']) ?>?')"
+                                            onclick="return confirm('Bạn có chắc muốn kết thúc nghỉ phép cho <?= htmlspecialchars($user['fullname'] ?? '') ?>?')"
                                             class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                             title="Kết thúc nghỉ phép">
                                             <i data-lucide="x" class="w-5 h-5"></i>

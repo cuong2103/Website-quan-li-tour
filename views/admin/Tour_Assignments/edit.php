@@ -23,7 +23,7 @@ require_once './views/components/sidebar.php';
                     <option value="">-- Chọn HDV --</option>
                     <?php foreach ($guides as $g): ?>
                         <option value="<?= $g['id'] ?>" <?= !empty($assignment) && $assignment['guide_id'] == $g['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($g['fullname']) ?> - <?= htmlspecialchars($g['phone']) ?>
+                            <?= htmlspecialchars($g['fullname'] ?? '') ?> - <?= htmlspecialchars($g['phone'] ?? '') ?>
                         </option>
                     <?php endforeach; ?>
                 </select>

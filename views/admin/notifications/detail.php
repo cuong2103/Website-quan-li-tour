@@ -39,7 +39,7 @@ require_once './views/components/sidebar.php';
         <div class="px-8 pt-8 pb-6 border-b border-gray-100">
           <div class="flex items-start justify-between gap-4 mb-6">
             <h1 class="text-3xl font-bold text-gray-900 leading-tight flex-1">
-              <?= htmlspecialchars($notification['title']) ?>
+              <?= htmlspecialchars($notification['title'] ?? '') ?>
             </h1>
 
             <?php
@@ -76,7 +76,7 @@ require_once './views/components/sidebar.php';
         <!-- Nội dung -->
         <div class="px-8 py-8">
           <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed">
-            <?= nl2br(htmlspecialchars($notification['message'])) ?>
+            <?= nl2br(htmlspecialchars($notification['message'] ?? '')) ?>
           </div>
         </div>
 
@@ -92,7 +92,7 @@ require_once './views/components/sidebar.php';
                 <div class="text-xs font-semibold text-gray-500 uppercase mb-1">Người tạo</div>
                 <div class="font-semibold text-gray-900"><?= htmlspecialchars($notification['creator_name'] ?? 'Hệ thống') ?></div>
                 <?php if (!empty($notification['creator_email'])): ?>
-                  <div class="text-sm text-gray-600 truncate"><?= htmlspecialchars($notification['creator_email']) ?></div>
+                  <div class="text-sm text-gray-600 truncate"><?= htmlspecialchars($notification['creator_email'] ?? '') ?></div>
                 <?php endif; ?>
               </div>
             </div>
@@ -105,9 +105,9 @@ require_once './views/components/sidebar.php';
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="text-xs font-semibold text-gray-500 uppercase mb-1">Cập nhật cuối</div>
-                  <div class="font-semibold text-gray-900"><?= htmlspecialchars($notification['updater_name']) ?></div>
+                  <div class="font-semibold text-gray-900"><?= htmlspecialchars($notification['updater_name'] ?? '') ?></div>
                   <?php if (!empty($notification['updater_email'])): ?>
-                    <div class="text-sm text-gray-600 truncate"><?= htmlspecialchars($notification['updater_email']) ?></div>
+                    <div class="text-sm text-gray-600 truncate"><?= htmlspecialchars($notification['updater_email'] ?? '') ?></div>
                   <?php endif; ?>
                 </div>
               </div>
@@ -181,8 +181,8 @@ require_once './views/components/sidebar.php';
                   <?= strtoupper(mb_substr($r['fullname'], 0, 2)) ?>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="font-medium text-gray-900 text-sm truncate"><?= htmlspecialchars($r['fullname']) ?></p>
-                  <p class="text-xs text-gray-500 truncate"><?= htmlspecialchars($r['email']) ?></p>
+                  <p class="font-medium text-gray-900 text-sm truncate"><?= htmlspecialchars($r['fullname'] ?? '') ?></p>
+                  <p class="text-xs text-gray-500 truncate"><?= htmlspecialchars($r['email'] ?? '') ?></p>
                 </div>
                 <div class="text-right flex-shrink-0">
                   <?php if ($r['is_read']): ?>

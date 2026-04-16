@@ -26,7 +26,7 @@ require_once "./views/components/sidebar.php";
                 <!-- Tên -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Tên nhà cung cấp <span class="text-red-500">*</span></label>
-                    <input type="text" name="name" value="<?= htmlspecialchars($supplier['name']) ?>"
+                    <input type="text" name="name" value="<?= htmlspecialchars($supplier['name'] ?? '') ?>"
                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" required>
                     <?php if (!empty($errors['name'])): ?>
                         <p class="text-red-500 text-xs mt-1"><?= $errors['name'][0] ?></p>
@@ -36,7 +36,7 @@ require_once "./views/components/sidebar.php";
                 <!-- Email -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Email liên hệ <span class="text-red-500">*</span></label>
-                    <input type="email" name="email" value="<?= htmlspecialchars($supplier['email']) ?>"
+                    <input type="email" name="email" value="<?= htmlspecialchars($supplier['email'] ?? '') ?>"
                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" required>
                     <?php if (!empty($errors['email'])): ?>
                         <p class="text-red-500 text-xs mt-1"><?= $errors['email'][0] ?></p>
@@ -46,7 +46,7 @@ require_once "./views/components/sidebar.php";
                 <!-- Phone -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Số điện thoại <span class="text-red-500">*</span></label>
-                    <input type="text" name="phone" value="<?= htmlspecialchars($supplier['phone']) ?>"
+                    <input type="text" name="phone" value="<?= htmlspecialchars($supplier['phone'] ?? '') ?>"
                         class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" required>
                     <?php if (!empty($errors['phone'])): ?>
                         <p class="text-red-500 text-xs mt-1"><?= $errors['phone'][0] ?></p>
@@ -61,7 +61,7 @@ require_once "./views/components/sidebar.php";
                         <option value="">-- Chọn địa điểm --</option>
                         <?php foreach ($destinations as $dest): ?>
                             <option value="<?= $dest['id'] ?>" <?= ($supplier['destination_id'] == $dest['id']) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($dest['name']) ?>
+                                <?= htmlspecialchars($dest['name'] ?? '') ?>
                             </option>
                         <?php endforeach; ?>
                     </select>

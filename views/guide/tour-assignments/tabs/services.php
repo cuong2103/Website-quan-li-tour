@@ -13,7 +13,7 @@
           <?php foreach ($services as $i => $s): ?>
             <tr class="border-t hover:bg-gray-50">
               <td class="p-3"><?= $i + 1 ?></td>
-              <td class="p-3 font-medium"><?= htmlspecialchars($s['name']) ?></td>
+              <td class="p-3 font-medium"><?= htmlspecialchars($s['name'] ?? '') ?></td>
               <td class="p-3"><?= $s['quantity'] ?? 1 ?></td>
             </tr>
           <?php endforeach; ?>

@@ -11,8 +11,8 @@ $canCheckinNow = ($today >= $checkinLink['start_date'] && $today <= $checkinLink
 
   <div class="flex justify-between items-center mb-6">
     <div>
-      <h1 class="text-2xl font-bold">Chi tiết Check-in: <?= htmlspecialchars($checkinLink['title']) ?></h1>
-      <p class="text-sm text-gray-600 mt-1">Tour: <?= htmlspecialchars($checkinLink['tour_name']) ?></p>
+      <h1 class="text-2xl font-bold">Chi tiết Check-in: <?= htmlspecialchars($checkinLink['title'] ?? '') ?></h1>
+      <p class="text-sm text-gray-600 mt-1">Tour: <?= htmlspecialchars($checkinLink['tour_name'] ?? '') ?></p>
     </div>
     <a href="<?= BASE_URL . '?act=guide-tour-assignments-detail&id=' . $assignmentId . '&tab=checkin' ?>"
       class="flex items-center gap-2 bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-black text-sm">
@@ -70,8 +70,8 @@ $canCheckinNow = ($today >= $checkinLink['start_date'] && $today <= $checkinLink
               <?php $isCheckedIn = !empty($customer['checkin_id']); ?>
               <tr class="border-t hover:bg-gray-50">
                 <td class="p-3"><?= $i + 1 ?></td>
-                <td class="p-3 font-medium"><?= htmlspecialchars($customer['name']) ?></td>
-                <td class="p-3"><?= htmlspecialchars($customer['phone']) ?></td>
+                <td class="p-3 font-medium"><?= htmlspecialchars($customer['name'] ?? '') ?></td>
+                <td class="p-3"><?= htmlspecialchars($customer['phone'] ?? '') ?></td>
                 <td class="p-3 text-gray-600"><?= htmlspecialchars($customer['email'] ?? '-') ?></td>
                 <td class="p-3 text-gray-600"><?= htmlspecialchars($customer['room_number'] ?? '-') ?></td>
                 <td class="p-3">

@@ -37,9 +37,8 @@ class CustomerController
     {
         $id = $_GET['id']; // Lấy id từ URL
         $this->model->delete($id); // Xóa khách hàng
-        redirect("customers"); // Quay về danh sách
-        Message::set("success", "Xóa thành công!"); // Gửi thông báo
-        die();
+        Message::set("success", "Xóa thành công!"); // Gửi thông báo trước
+        redirect("customers"); // Quay về danh sách (gọi exit bên trong)
     }
 
     public function edit()

@@ -29,12 +29,12 @@
                 <?= $i + 1 ?>
               </td>
               <td class="px-4 py-3 font-medium text-gray-900">
-                <?= htmlspecialchars($c['name']) ?>
+                <?= htmlspecialchars($c['name'] ?? '') ?>
               </td>
               <td class="px-4 py-3">
                 <?php if (!empty($c['room_number'])): ?>
                   <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold">
-                    <?= htmlspecialchars($c['room_number']) ?>
+                    <?= htmlspecialchars($c['room_number'] ?? '') ?>
                   </span>
                 <?php else: ?>
                   <span class="text-gray-400 italic">Chưa xếp</span>

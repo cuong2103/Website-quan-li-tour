@@ -63,7 +63,7 @@
                 </span>
               <?php endif; ?>
             </td>
-            <td class="p-3 max-w-md truncate"><?= htmlspecialchars($j['content']) ?></td>
+            <td class="p-3 max-w-md truncate"><?= htmlspecialchars($j['content'] ?? '') ?></td>
             <td class="p-3">
               <div class="flex gap-2">
                 <a href="<?= BASE_URL . '?act=journal-detail&id=' . $j['id'] ?>"

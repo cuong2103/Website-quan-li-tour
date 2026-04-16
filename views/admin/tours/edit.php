@@ -114,7 +114,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
                   <input type="checkbox" name="service_ids[]" value="<?= $service['id'] ?>"
                     <?= in_array($service['id'], $selectedServices) ? 'checked' : '' ?>
                     class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
-                  <span class="text-sm font-medium text-gray-700"><?= htmlspecialchars($service['name']) ?></span>
+                  <span class="text-sm font-medium text-gray-700"><?= htmlspecialchars($service['name'] ?? '') ?></span>
                 </label>
               </div>
             <?php endforeach; ?>
@@ -161,7 +161,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
                       <?php foreach ($destinations as $destination): ?>
                         <option value="<?= $destination['id'] ?>"
                           <?= (isset($_POST['destination_id'][$i]) && $_POST['destination_id'][$i] == $destination['id']) ? 'selected' : '' ?>>
-                          <?= htmlspecialchars($destination['name']) ?>
+                          <?= htmlspecialchars($destination['name'] ?? '') ?>
                         </option>
                       <?php endforeach; ?>
                     </select>
@@ -220,7 +220,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
                       <?php foreach ($destinations as $destination): ?>
                         <option value="<?= $destination['id'] ?>"
                           <?= ($itinerary['destination_id'] == $destination['id']) ? 'selected' : '' ?>>
-                          <?= htmlspecialchars($destination['name']) ?>
+                          <?= htmlspecialchars($destination['name'] ?? '') ?>
                         </option>
                       <?php endforeach; ?>
                     </select>
@@ -261,8 +261,8 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
                   <?= in_array($policy['id'], $selectedPolicyIds) ? 'checked' : '' ?>
                   class="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                 <div>
-                  <p class="font-medium text-gray-900"><?= htmlspecialchars($policy['title']) ?></p>
-                  <p class="text-sm text-gray-600"><?= htmlspecialchars($policy['content']) ?></p>
+                  <p class="font-medium text-gray-900"><?= htmlspecialchars($policy['title'] ?? '') ?></p>
+                  <p class="text-sm text-gray-600"><?= htmlspecialchars($policy['content'] ?? '') ?></p>
                 </div>
               </label>
             <?php endforeach; ?>
@@ -297,7 +297,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
     const destinationOptions = `
       <option value="">Chọn điểm đến</option>
       <?php foreach ($destinations as $destination): ?>
-        <option value="<?= $destination['id'] ?>"><?= htmlspecialchars($destination['name']) ?></option>
+        <option value="<?= $destination['id'] ?>"><?= htmlspecialchars($destination['name'] ?? '') ?></option>
       <?php endforeach; ?>
     `;
 

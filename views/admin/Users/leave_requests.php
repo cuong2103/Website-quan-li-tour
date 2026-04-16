@@ -41,8 +41,8 @@ require_once './views/components/sidebar.php';
                                             </div>
                                         <?php endif; ?>
                                         <div>
-                                            <p class="font-medium text-gray-900"><?= htmlspecialchars($req['fullname']) ?></p>
-                                            <p class="text-sm text-gray-500"><?= htmlspecialchars($req['email']) ?></p>
+                                            <p class="font-medium text-gray-900"><?= htmlspecialchars($req['fullname'] ?? '') ?></p>
+                                            <p class="text-sm text-gray-500"><?= htmlspecialchars($req['email'] ?? '') ?></p>
                                         </div>
                                     </div>
                                 </td>
@@ -55,21 +55,21 @@ require_once './views/components/sidebar.php';
                                     <?= date('d/m/Y', strtotime($req['leave_end'])) ?>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <p class="text-sm text-gray-700 max-w-xs truncate" title="<?= htmlspecialchars($req['leave_reason']) ?>">
-                                        <?= htmlspecialchars($req['leave_reason']) ?>
+                                    <p class="text-sm text-gray-700 max-w-xs truncate" title="<?= htmlspecialchars($req['leave_reason'] ?? '') ?>">
+                                        <?= htmlspecialchars($req['leave_reason'] ?? '') ?>
                                     </p>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex gap-2">
                                         <a href="<?= BASE_URL ?>?act=user-approve-leave&id=<?= $req['id'] ?>"
-                                            onclick="return confirm('Duyệt đơn xin nghỉ của <?= htmlspecialchars($req['fullname']) ?>?');"
+                                            onclick="return confirm('Duyệt đơn xin nghỉ của <?= htmlspecialchars($req['fullname'] ?? '') ?>?');"
                                             class="inline-flex items-center gap-1 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium"
                                             title="Duyệt">
                                             <i class="w-4 h-4" data-lucide="check"></i>
                                             Duyệt
                                         </a>
                                         <a href="<?= BASE_URL ?>?act=user-reject-leave&id=<?= $req['id'] ?>"
-                                            onclick="return confirm('Từ chối đơn xin nghỉ của <?= htmlspecialchars($req['fullname']) ?>?');"
+                                            onclick="return confirm('Từ chối đơn xin nghỉ của <?= htmlspecialchars($req['fullname'] ?? '') ?>?');"
                                             class="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium"
                                             title="Từ chối">
                                             <i class="w-4 h-4" data-lucide="x"></i>

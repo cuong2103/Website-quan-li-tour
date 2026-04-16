@@ -39,7 +39,7 @@ require_once "./views/components/sidebar.php";
                         <!-- Tên -->
                         <div class="col-span-2 md:col-span-1">
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Họ và tên <span class="text-red-500">*</span></label>
-                            <input type="text" name="name" value="<?= htmlspecialchars($customer['name']) ?>" class="w-full px-4 py-2.5 border <?= isset($_SESSION['validate_errors']['name']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                            <input type="text" name="name" value="<?= htmlspecialchars($customer['name'] ?? '') ?>" class="w-full px-4 py-2.5 border <?= isset($_SESSION['validate_errors']['name']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
                             <?php if (isset($_SESSION['validate_errors']['name'])): ?>
                                 <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['name']) ? $_SESSION['validate_errors']['name'][0] : $_SESSION['validate_errors']['name'] ?></p>
                             <?php endif; ?>
@@ -65,7 +65,7 @@ require_once "./views/components/sidebar.php";
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="w-4 h-4 text-gray-400" data-lucide="mail"></i>
                                 </div>
-                                <input type="email" name="email" value="<?= htmlspecialchars($customer['email']) ?>" class="w-full pl-10 pr-4 py-2.5 border <?= isset($_SESSION['validate_errors']['email']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                                <input type="email" name="email" value="<?= htmlspecialchars($customer['email'] ?? '') ?>" class="w-full pl-10 pr-4 py-2.5 border <?= isset($_SESSION['validate_errors']['email']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
                             </div>
                             <?php if (isset($_SESSION['validate_errors']['email'])): ?>
                                 <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['email']) ? $_SESSION['validate_errors']['email'][0] : $_SESSION['validate_errors']['email'] ?></p>
@@ -79,7 +79,7 @@ require_once "./views/components/sidebar.php";
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="w-4 h-4 text-gray-400" data-lucide="phone"></i>
                                 </div>
-                                <input type="text" name="phone" value="<?= htmlspecialchars($customer['phone']) ?>" class="w-full pl-10 pr-4 py-2.5 border <?= isset($_SESSION['validate_errors']['phone']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                                <input type="text" name="phone" value="<?= htmlspecialchars($customer['phone'] ?? '') ?>" class="w-full pl-10 pr-4 py-2.5 border <?= isset($_SESSION['validate_errors']['phone']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
                             </div>
                             <?php if (isset($_SESSION['validate_errors']['phone'])): ?>
                                 <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['phone']) ? $_SESSION['validate_errors']['phone'][0] : $_SESSION['validate_errors']['phone'] ?></p>
@@ -93,7 +93,7 @@ require_once "./views/components/sidebar.php";
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="w-4 h-4 text-gray-400" data-lucide="map-pin"></i>
                                 </div>
-                                <input type="text" name="address" value="<?= htmlspecialchars($customer['address']) ?>" class="w-full pl-10 pr-4 py-2.5 border <?= isset($_SESSION['validate_errors']['address']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                                <input type="text" name="address" value="<?= htmlspecialchars($customer['address'] ?? '') ?>" class="w-full pl-10 pr-4 py-2.5 border <?= isset($_SESSION['validate_errors']['address']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
                             </div>
                             <?php if (isset($_SESSION['validate_errors']['address'])): ?>
                                 <p class="text-sm text-red-500 mt-1"><?= is_array($_SESSION['validate_errors']['address']) ? $_SESSION['validate_errors']['address'][0] : $_SESSION['validate_errors']['address'] ?></p>
@@ -119,7 +119,7 @@ require_once "./views/components/sidebar.php";
                         <!-- Hộ chiếu -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1.5">Hộ chiếu (Passport)</label>
-                            <input type="text" name="passport" value="<?= htmlspecialchars($customer['passport']) ?>" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                            <input type="text" name="passport" value="<?= htmlspecialchars($customer['passport'] ?? '') ?>" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
                         </div>
                     </div>
                 </div>

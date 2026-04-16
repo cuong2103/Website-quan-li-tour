@@ -65,7 +65,7 @@ require_once './views/components/sidebar.php';
                         <div class="border rounded-lg p-4 bg-gray-50">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <h4 class="font-semibold"><?= htmlspecialchars($serviceType["name"]) ?></h4>
+                                    <h4 class="font-semibold"><?= htmlspecialchars($serviceType["name"] ?? '') ?></h4>
                                     <p class="text-gray-500 text-sm"><?= htmlspecialchars($serviceType["description"] ?? '') ?></p>
                                 </div>
 

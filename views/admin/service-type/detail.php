@@ -26,7 +26,7 @@
             <div class="p-4 border rounded-xl hover:shadow transition">
                 <h3 class="text-gray-500 font-medium">Tên Loại Dịch vụ</h3>
                 <p class="text-gray-900 text-lg font-semibold">
-                    <?= htmlspecialchars($serviceType['name']) ?>
+                    <?= htmlspecialchars($serviceType['name'] ?? '') ?>
                 </p>
             </div>
 
@@ -34,7 +34,7 @@
             <div class="p-4 border rounded-xl hover:shadow transition">
                 <h3 class="text-gray-500 font-medium">Mô tả</h3>
                 <p class="text-gray-900 leading-relaxed">
-                    <?= nl2br(htmlspecialchars($serviceType['description'])) ?>
+                    <?= nl2br(htmlspecialchars($serviceType['description'] ?? '')) ?>
                 </p>
             </div>
 

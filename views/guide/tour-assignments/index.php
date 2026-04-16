@@ -50,10 +50,10 @@ $tabs = [
                 <tbody>
                     <?php foreach ($assignments as $a): ?>
                         <tr class="border-t hover:bg-gray-50">
-                            <td class="p-3"><?= htmlspecialchars($a['tour_name']) ?></td>
-                            <td class="p-3"><?= htmlspecialchars($a['start_date']) ?></td>
-                            <td class="p-3"><?= htmlspecialchars($a['end_date']) ?></td>
-                            <td class="p-3"><?= htmlspecialchars($a['total_customers']) ?></td>
+                            <td class="p-3"><?= htmlspecialchars($a['tour_name'] ?? '') ?></td>
+                            <td class="p-3"><?= htmlspecialchars($a['start_date'] ?? '') ?></td>
+                            <td class="p-3"><?= htmlspecialchars($a['end_date'] ?? '') ?></td>
+                            <td class="p-3"><?= htmlspecialchars($a['total_customers'] ?? '') ?></td>
                             <td class="p-3">
                                 <?php
                                 $statusLabel = [
