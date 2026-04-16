@@ -33,15 +33,13 @@ require_once "./views/components/sidebar.php";
                         <input
                             type="text"
                             name="title"
-
                             placeholder="Nhập tiêu đề chính sách..."
-
-                            value="<?= htmlspecialchars($policy['title'] ?? $_POST['title'] ?? '') ?>"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md 
+                            value="<?= htmlspecialchars($old['title'] ?? $policy['title'] ?? '') ?>"
+                            class="w-full px-3 py-2 border <?= !empty($errors['title']) ? 'border-red-500 bg-red-50' : 'border-gray-300' ?> rounded-md 
                            focus:outline-none focus:ring-2 focus:ring-blue-500">
 
                         <?php if (!empty($errors['title'])): ?>
-                            <div class="text-red-500 text-sm mt-1"><?= $errors['title'][0] ?></div>
+                            <div class="text-red-500 text-sm mt-1"><?= is_array($errors['title']) ? $errors['title'][0] : $errors['title'] ?></div>
                         <?php endif; ?>
                     </div>
 
@@ -54,11 +52,11 @@ require_once "./views/components/sidebar.php";
                         <textarea
                             name="content"
                             rows="6"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md 
-                           focus:outline-none focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($policy['content'] ?? $_POST['content'] ?? '') ?></textarea>
+                            class="w-full px-3 py-2 border <?= !empty($errors['content']) ? 'border-red-500 bg-red-50' : 'border-gray-300' ?> rounded-md 
+                           focus:outline-none focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($old['content'] ?? $policy['content'] ?? '') ?></textarea>
 
                         <?php if (!empty($errors['content'])): ?>
-                            <div class="text-red-500 text-sm mt-1"><?= $errors['content'][0] ?></div>
+                            <div class="text-red-500 text-sm mt-1"><?= is_array($errors['content']) ? $errors['content'][0] : $errors['content'] ?></div>
                         <?php endif; ?>
                     </div>
 

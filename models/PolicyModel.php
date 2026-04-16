@@ -61,10 +61,17 @@ class PolicyModel
     }
     public function delete($id)
     {
-        $sql = "DELETE FROM policies WHERE id = :id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam("id", $id);
-        return $stmt->execute();
+        try {
+            $sql = "DELETE FROM policies WHERE id = :id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam("id", $id);
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            if ($e->getCode() == '23000') {
+                return 'FOREIGN_KEY_CONSTRAINT';
+            }
+            throw $e;
+        }
     }
 
     // Kiểm tra xem policy có đang được sử dụng không
@@ -77,5 +84,19 @@ class PolicyModel
         $stmt->execute([':policy_id' => $policyId]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['count'] > 0;
+    }
+
+    // Kiểm tra xem Tiêu đề chính sách đã trùng lặp trong DB hay chưa
+    public function isDuplicateTitle($title, $excludeId = null)
+    {
+        $sql = "SELECT COUNT(*) FROM policies WHERE title = :title";
+        $params = [':title' => $title];
+        if ($excludeId) {
+            $sql .= " AND id != :id";
+            $params[':id'] = $excludeId;
+        }
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchColumn() > 0;
     }
 }
