@@ -29,6 +29,11 @@ class CategoryController
         'name' => 'required|min:3|max:50',
       ];
       $errors = validate($data, $rules);
+
+      if ($this->categoryModel->isDuplicate($data['name'], $data['parent_id'])) {
+          $errors['name'] = 'Tên danh mục đã tồn tại ở cấp độ này!';
+      }
+
       if (!empty($errors)) {
         $categories = $this->categoryModel->getAll();
         $tree = buildTree($categories);
@@ -70,6 +75,11 @@ class CategoryController
       ];
 
       $errors = validate($data, $rules);
+
+      if ($this->categoryModel->isDuplicate($name, $parent_id, $id)) {
+          $errors['name'] = 'Tên danh mục đã tồn tại ở cấp độ này!';
+      }
+
       if (!empty($errors)) {
         // Keep submitted values in $category so edit view shows them
         $category = [
@@ -79,6 +89,7 @@ class CategoryController
         ];
         $categories = $this->categoryModel->getAll();
         $tree = buildTree($categories);
+        $totalCategories = $this->categoryModel->getTotalCategories();
         require_once './views/admin/categories/edit.php';
         exit;
       } else {

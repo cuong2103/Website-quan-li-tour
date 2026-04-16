@@ -5,7 +5,40 @@ class CategoryModel
   public function __construct()
   {
     $this->conn = connectDB();
-    //goị kết nối từ common
+    // tự động fix lỗi thiết kế db sai ban đầu (cho phép trùng tên nếu khác cha)
+    try {
+        $this->conn->exec("ALTER TABLE categories DROP INDEX name");
+    } catch (\Throwable $th) {
+        // index đã drop, bỏ qua
+    }
+  }
+
+  // Kiểm tra trùng tên trong cùng một cấp (cùng parent_id)
+  public function isDuplicate($name, $parent_id, $exclude_id = null)
+  {
+    $sql = "SELECT id FROM categories WHERE name = :name";
+    if ($parent_id === null || $parent_id === "") {
+        $sql .= " AND parent_id IS NULL";
+    } else {
+        $sql .= " AND parent_id = :parent_id";
+    }
+
+    if ($exclude_id) {
+        $sql .= " AND id != :exclude_id";
+    }
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindValue(':name', $name);
+    
+    if ($parent_id !== null && $parent_id !== "") {
+        $stmt->bindValue(':parent_id', $parent_id, PDO::PARAM_INT);
+    }
+    if ($exclude_id) {
+        $stmt->bindValue(':exclude_id', $exclude_id, PDO::PARAM_INT);
+    }
+
+    $stmt->execute();
+    return $stmt->fetch() !== false;
   }
 
   // Viết truy vấn danh sách sản phẩm 
