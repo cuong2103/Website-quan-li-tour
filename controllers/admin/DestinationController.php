@@ -68,12 +68,8 @@ class DestinationController
 
         $errors = validate($data, $rules);
 
-
         if ($this->modelDestination->isDuplicateNameInCategory($data['name'], $data['category_id'])) {
-            Message::set("error", "Địa điểm này đã tồn tại trong danh mục đã chọn!");
-            $_SESSION['old'] = $data;
-            redirect('destination-create');
-            exit();
+            $errors['name'] = ["Địa điểm này đã tồn tại trong danh mục đã chọn!"];
         }
 
         if (!empty($errors)) {
@@ -143,19 +139,7 @@ class DestinationController
         $errors = validate($data, $rules);
 
         if ($this->modelDestination->isDuplicateNameInCategory($data['name'], $data['category_id'], $id)) {
-            Message::set("error", "Địa điểm này đã tồn tại trong danh mục đã chọn!");
-            $_SESSION['old'] = $data;
-            header('Location: ' . BASE_URL . '?act=destination-edit&id=' . $id);
-            exit();
-        }
-
-
-        $success = $this->modelDestination->update($id, $data);
-
-        if ($success) {
-            Message::set('success', 'Cập nhật địa điểm thành công!');
-        } else {
-            Message::set('error', 'Cập nhật địa điểm thất bại!');
+            $errors['name'] = ["Địa điểm này đã tồn tại trong danh mục đã chọn!"];
         }
 
         if (!empty($errors)) {
@@ -163,6 +147,14 @@ class DestinationController
             $_SESSION['old'] = $data;
             header('Location: ' . BASE_URL . '?act=destination-edit&id=' . $id);
             exit;
+        }
+
+        $success = $this->modelDestination->update($id, $data);
+
+        if ($success) {
+            Message::set('success', 'Cập nhật địa điểm thành công!');
+        } else {
+            Message::set('error', 'Cập nhật địa điểm thất bại!');
         }
 
         // Upload ảnh mới
@@ -189,22 +181,20 @@ class DestinationController
         if (!isset($_GET['id'])) die('ID không tồn tại');
         $id = $_GET['id'];
 
-        // Xóa ảnh trong DB + trên ổ đĩa
-        $images = $this->modelDestination->getImagesByDestination($id);
-        $uploadDir = __DIR__ . '/../../uploads/destinations_image/';
-
-        foreach ($images as $img) {
-            $filePath = $uploadDir . $img['image_url'];
-            if (file_exists($filePath)) unlink($filePath);
+        try {
+            if ($this->modelDestination->delete($id)) {
+                Message::set('success', 'Xóa địa điểm thành công!');
+            } else {
+                Message::set('error', 'Xóa địa điểm thất bại!');
+            }
+        } catch (PDOException $e) {
+            if ($e->getCode() == '23000') {
+                Message::set('error', 'Không thể xóa địa điểm này vì đã có dữ liệu liên quan (lịch trình/tour).');
+            } else {
+                Message::set('error', 'Lỗi hệ thống: ' . $e->getMessage());
+            }
         }
-
-        // Xóa destination
-
-        if ($this->modelDestination->delete($id)) {
-            Message::set('success', 'Xóa địa điểm thành công!');
-        } else {
-            Message::set('error', 'Xóa địa điểm thất bại!');
-        }
+        
         header('Location: ' . BASE_URL . '?act=destination');
         exit();
     }

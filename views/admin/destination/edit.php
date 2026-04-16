@@ -18,12 +18,12 @@ require_once './views/components/sidebar.php';
         <div class="mb-4">
             <label class="block font-medium mb-1">Danh mục</label>
             <select name="category_id"
-                class="border rounded-lg w-full p-2 <?= isset($_SESSION['errors']['category_id']) ? 'border-red-500' : '' ?>">
+                class="border rounded-lg w-full p-2 <?= isset($_SESSION['validate_errors']['category_id']) ? 'border-red-500 border-2 focus:border-red-500 focus:ring-red-500' : '' ?>">
                 <option value="">-- Chọn danh mục --</option>
-                <?php renderOption($tree, '', $destination['category_id']); ?>
+                <?php renderOption($tree, '', $_SESSION['old']['category_id'] ?? $destination['category_id']); ?>
             </select>
-            <?php if (!empty($_SESSION['errors']['category_id'])): ?>
-                <p class="text-red-500 text-sm mt-1"><?= implode(', ', $_SESSION['errors']['category_id']) ?></p>
+            <?php if (!empty($_SESSION['validate_errors']['category_id'])): ?>
+                <p class="text-red-500 text-sm mt-1"><?= is_array($_SESSION['validate_errors']['category_id']) ? implode(', ', $_SESSION['validate_errors']['category_id']) : $_SESSION['validate_errors']['category_id'] ?></p>
             <?php endif; ?>
         </div>
 
@@ -31,10 +31,10 @@ require_once './views/components/sidebar.php';
         <div class="mb-4">
             <label class="block font-medium mb-1">Tên địa điểm</label>
             <input type="text" name="name"
-                class="border w-full p-2 rounded-lg <?= isset($_SESSION['errors']['name']) ? 'border-red-500' : '' ?>"
+                class="border w-full p-2 rounded-lg <?= isset($_SESSION['validate_errors']['name']) ? 'border-red-500 border-2 focus:border-red-500 focus:ring-red-500' : '' ?>"
                 value="<?= htmlspecialchars($_SESSION['old']['name'] ?? $destination['name']) ?>">
-            <?php if (!empty($_SESSION['errors']['name'])): ?>
-                <p class="text-red-500 text-sm mt-1"><?= implode(', ', $_SESSION['errors']['name']) ?></p>
+            <?php if (!empty($_SESSION['validate_errors']['name'])): ?>
+                <p class="text-red-500 text-sm mt-1"><?= is_array($_SESSION['validate_errors']['name']) ? implode(', ', $_SESSION['validate_errors']['name']) : $_SESSION['validate_errors']['name'] ?></p>
             <?php endif; ?>
         </div>
 
@@ -131,7 +131,7 @@ require_once './views/components/sidebar.php';
 </script>
 
 <?php
-unset($_SESSION['errors']);
+unset($_SESSION['validate_errors']);
 unset($_SESSION['old']);
 require_once './views/components/footer.php';
 ?>
