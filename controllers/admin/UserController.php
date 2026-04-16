@@ -121,17 +121,41 @@ class UserController
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') redirect("user");
 
         $id = $_POST['id'];
-        $fullname = trim($_POST['fullname']);
-        $email = trim($_POST['email']);
-        $phone = trim($_POST['phone']);
-        $roles = $_POST['roles'] ?? 'guide';
-        $status = ($_POST['status']);
+        $data = [
+            'id' => $id,
+            'fullname' => trim($_POST['fullname'] ?? ''),
+            'email' => trim($_POST['email'] ?? ''),
+            'phone' => trim($_POST['phone'] ?? ''),
+            'roles' => $_POST['roles'] ?? 'guide',
+            'status' => $_POST['status'] ?? 0,
+        ];
+
+        $rules = [
+            'fullname' => 'required|min:2|max:100',
+            'email'    => 'required|email|max:100',
+            'phone'    => 'required|phone',
+            'roles'    => 'required',
+        ];
+
+        $errors = validate($data, $rules);
 
         // Check email tồn tại
-        if ($this->userModel->emailExists($email, $id)) {
-            Message::set('error', 'Email đã tồn tại');
-            redirect("user-edit&id=$id");
+        if ($this->userModel->emailExists($data['email'], $id)) {
+            $errors['email'] = 'Email đã tồn tại trong hệ thống';
         }
+
+        if (!empty($errors)) {
+            $_SESSION['validate_errors'] = $errors;
+            $_SESSION['old'] = $data;
+            redirect("user-edit&id=$id");
+            exit;
+        }
+
+        $fullname = $data['fullname'];
+        $email = $data['email'];
+        $phone = $data['phone'];
+        $roles = $data['roles'];
+        $status = $data['status'];
 
         // Lấy thông tin hiện tại để check nghỉ phép
         $currentUser = $this->userModel->getById($id);
