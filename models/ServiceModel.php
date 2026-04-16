@@ -111,8 +111,15 @@ class ServiceModel
     // Xóa dịch vụ theo id
     public function delete($id)
     {
-        $stmt = $this->conn->prepare("DELETE FROM services WHERE id = :id");
-        return $stmt->execute([':id' => $id]);
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM services WHERE id = :id");
+            return $stmt->execute([':id' => $id]);
+        } catch (PDOException $e) {
+            if ($e->getCode() == '23000') {
+                return 'FOREIGN_KEY_CONSTRAINT';
+            }
+            throw $e;
+        }
     }
 
     // Tạo mới dịch vụ

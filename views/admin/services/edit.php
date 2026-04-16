@@ -2,9 +2,9 @@
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 
-$errors = $_SESSION['errors'] ?? [];
+$errors = $_SESSION['validate_errors'] ?? [];
 $old = $_SESSION['old'] ?? $service; // Nếu không có old, lấy dữ liệu service cũ
-unset($_SESSION['errors'], $_SESSION['old']);
+unset($_SESSION['validate_errors'], $_SESSION['old']);
 ?>
 
 <div class="ml-54 pt-28 p-6">
