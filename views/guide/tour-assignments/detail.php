@@ -16,7 +16,7 @@ $tabs = [
 <main class="pt-28 px-6 pb-20 text-gray-700">
 
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Chi tiết Tour: <?= htmlspecialchars($assignment['tour_name']) ?></h1>
+        <h1 class="text-2xl font-bold">Chi tiết Tour: <?= htmlspecialchars($assignment['tour_name'] ?? '') ?></h1>
         <button onclick="history.back()"
             class="flex items-center gap-2 bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-black text-sm">
             <i data-lucide="arrow-left"></i> Quay lại
@@ -43,12 +43,12 @@ $tabs = [
             <div>
                 <div class="text-gray-500 text-sm">Trạng thái</div>
                 <span class="px-3 py-1 text-xs rounded-full <?= $assignment['status_color'] ?>">
-                    <?= htmlspecialchars($assignment['status_text']) ?>
+                    <?= htmlspecialchars($assignment['status_text'] ?? '') ?>
                 </span>
             </div>
             <div>
                 <div class="text-gray-500 text-sm">Mã Booking</div>
-                <div class="font-semibold text-lg"><?= htmlspecialchars($assignment['booking_code']) ?></div>
+                <div class="font-semibold text-lg"><?= htmlspecialchars($assignment['booking_code'] ?? '') ?></div>
             </div>
         </div>
     </div>

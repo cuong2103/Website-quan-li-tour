@@ -346,13 +346,13 @@ class BookingModel
     }
 
 
-    // Hàm lấy tổng tiền đã thanh toán
+    // Hàm lấy tổng tiền đã thanh toán (refund bị trừ ra)
     public function getTotalPaid($bookingId)
     {
         try {
-            $sql = "SELECT SUM(amount) AS total
+            $sql = "SELECT SUM(CASE WHEN type = 'refund' THEN -amount ELSE amount END) AS total
                 FROM payments
-                WHERE booking_id = ? ";
+                WHERE booking_id = ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$bookingId]);
             return $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
@@ -403,14 +403,15 @@ class BookingModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Lấy booking theo guide_id (dành cho guide)
+    // Lấy booking theo guide_id (dành cho guide) - dùng tour_assignments
     public function getByGuideId($guideId)
     {
         $sql = "SELECT b.*, t.name AS tour_name
                   FROM bookings b
                   LEFT JOIN tours t ON t.id = b.tour_id
-                  WHERE b.guide_id = :guide_id
-                  ORDER BY b.date ASC";
+                  JOIN tour_assignments ta ON ta.booking_id = b.id
+                  WHERE ta.guide_id = :guide_id
+                  ORDER BY b.start_date ASC";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':guide_id', $guideId, PDO::PARAM_INT);

@@ -13,9 +13,9 @@
       <?php foreach ($customers as $i => $c): ?>
         <tr class="border-t">
           <td class="p-3"><?= $i + 1 ?></td>
-          <td class="p-3"><?= htmlspecialchars($c['name']) ?></td>
-          <td class="p-3"><?= htmlspecialchars($c['phone']) ?></td>
-          <td class="p-3"><?= htmlspecialchars($c['email']) ?></td>
+          <td class="p-3"><?= htmlspecialchars($c['name'] ?? '') ?></td>
+          <td class="p-3"><?= htmlspecialchars($c['phone'] ?? '') ?></td>
+          <td class="p-3"><?= htmlspecialchars($c['email'] ?? '') ?></td>
           <td class="p-3"><?= htmlspecialchars($c['notes'] ?? '-') ?></td>
         </tr>
       <?php endforeach; ?>

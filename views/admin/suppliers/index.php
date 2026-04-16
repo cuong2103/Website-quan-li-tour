@@ -40,7 +40,7 @@ require_once "./views/components/sidebar.php";
                                     <i data-lucide="building-2" class="w-5 h-5"></i>
                                 </div>
                                 <div>
-                                    <div class="font-medium text-gray-900"><?= htmlspecialchars($supplier['name']) ?></div>
+                                    <div class="font-medium text-gray-900"><?= htmlspecialchars($supplier['name'] ?? '') ?></div>
                                 </div>
                             </div>
                         </td>
@@ -50,11 +50,11 @@ require_once "./views/components/sidebar.php";
                             <div class="space-y-1">
                                 <div class="flex items-center gap-2 text-gray-600">
                                     <i data-lucide="mail" class="w-3.5 h-3.5"></i>
-                                    <?= htmlspecialchars($supplier['email']) ?>
+                                    <?= htmlspecialchars($supplier['email'] ?? '') ?>
                                 </div>
                                 <div class="flex items-center gap-2 text-gray-600">
                                     <i data-lucide="phone" class="w-3.5 h-3.5"></i>
-                                    <?= htmlspecialchars($supplier['phone']) ?>
+                                    <?= htmlspecialchars($supplier['phone'] ?? '') ?>
                                 </div>
                             </div>
                         </td>

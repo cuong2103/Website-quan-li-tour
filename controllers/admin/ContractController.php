@@ -95,7 +95,8 @@ class ContractController
         $fileUrl = uploadFile($_FILES['file_upload'], '/uploads/contracts/');
 
         $data['signer_id']   = $_SESSION['currentUser']['id'];
-        $data['file_name']   = $_FILES['file_upload']['name'];
+        // Lưu tên file thực trên server (basename của path) để có thể xóa đúng khi update
+        $data['file_name']   = basename($fileUrl);
         $data['file_url']    = $fileUrl;
         $data['created_by']  = $_SESSION['currentUser']['id'];
 

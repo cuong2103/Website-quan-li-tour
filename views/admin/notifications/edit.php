@@ -145,8 +145,8 @@
                       <input type="checkbox" name="selected_users[]" value="<?= $user['id'] ?>"
                         class="w-4 h-4 text-indigo-600 rounded"
                         <?= in_array($user['id'], $recipientIds) ? 'checked' : '' ?>>
-                      <span class="ml-3 text-sm text-gray-700"><?= htmlspecialchars($user['fullname']) ?></span>
-                      <span class="ml-2 text-xs text-gray-500">(<?= htmlspecialchars($user['email']) ?>)</span>
+                      <span class="ml-3 text-sm text-gray-700"><?= htmlspecialchars($user['fullname'] ?? '') ?></span>
+                      <span class="ml-2 text-xs text-gray-500">(<?= htmlspecialchars($user['email'] ?? '') ?>)</span>
                     </label>
                   <?php endforeach; ?>
                 </div>

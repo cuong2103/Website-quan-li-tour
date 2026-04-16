@@ -68,7 +68,7 @@ require_once "./views/components/sidebar.php";
                         <option value="">-- Chọn địa điểm --</option>
                         <?php foreach ($destinations as $dest): ?>
                             <option value="<?= $dest['id'] ?>" <?= (isset($_POST['destination_id']) && $_POST['destination_id'] == $dest['id']) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($dest['name']) ?>
+                                <?= htmlspecialchars($dest['name'] ?? '') ?>
                             </option>
                         <?php endforeach; ?>
                     </select>

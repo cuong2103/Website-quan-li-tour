@@ -24,7 +24,7 @@ require_once "./views/components/sidebar.php";
                         <div class="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg mb-4">
                             <?= strtoupper(substr($customer['name'], 0, 1)) ?>
                         </div>
-                        <h2 class="text-xl font-bold text-gray-800"><?= htmlspecialchars($customer['name']) ?></h2>
+                        <h2 class="text-xl font-bold text-gray-800"><?= htmlspecialchars($customer['name'] ?? '') ?></h2>
                         <p class="text-gray-500 text-sm mt-1">Khách hàng</p>
 
                         <div class="mt-4 flex justify-center">
@@ -52,21 +52,21 @@ require_once "./views/components/sidebar.php";
                                 <i class="w-5 h-5 text-gray-400 mr-3 mt-0.5" data-lucide="mail"></i>
                                 <div>
                                     <span class="block text-xs text-gray-500">Email</span>
-                                    <span class="text-sm text-gray-800 font-medium break-all"><?= htmlspecialchars($customer['email']) ?></span>
+                                    <span class="text-sm text-gray-800 font-medium break-all"><?= htmlspecialchars($customer['email'] ?? '') ?></span>
                                 </div>
                             </li>
                             <li class="flex items-start">
                                 <i class="w-5 h-5 text-gray-400 mr-3 mt-0.5" data-lucide="phone"></i>
                                 <div>
                                     <span class="block text-xs text-gray-500">Số điện thoại</span>
-                                    <span class="text-sm text-gray-800 font-medium"><?= htmlspecialchars($customer['phone']) ?></span>
+                                    <span class="text-sm text-gray-800 font-medium"><?= htmlspecialchars($customer['phone'] ?? '') ?></span>
                                 </div>
                             </li>
                             <li class="flex items-start">
                                 <i class="w-5 h-5 text-gray-400 mr-3 mt-0.5" data-lucide="map-pin"></i>
                                 <div>
                                     <span class="block text-xs text-gray-500">Địa chỉ</span>
-                                    <span class="text-sm text-gray-800 font-medium"><?= htmlspecialchars($customer['address']) ?></span>
+                                    <span class="text-sm text-gray-800 font-medium"><?= htmlspecialchars($customer['address'] ?? '') ?></span>
                                 </div>
                             </li>
                         </ul>

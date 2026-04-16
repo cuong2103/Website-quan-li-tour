@@ -19,7 +19,9 @@ function connectDB()
 
         return $conn;
     } catch (PDOException $e) {
-        echo ("Connection failed: " . $e->getMessage());
+        // Ghi lỗi ra log, không hiển thị thông tin nhạy cảm ra màn hình
+        error_log("DB Connection failed: " . $e->getMessage());
+        die("Lỗi kết nối cơ sở dữ liệu. Vui lòng thử lại sau.");
     }
 }
 
@@ -151,6 +153,14 @@ function validate($data, $rules)
                         if ($subRule === 'numeric' && !is_numeric($value)) {
                             $errors[$field][$i][] = "Phần tử $i của này phải là số.";
                         }
+                    }
+                }
+            } elseif ($rule === 'phone') {
+                // Kiểm tra định dạng số điện thoại Việt Nam: 9-11 chữ số, bắt đầu bằng 0 hoặc +84
+                if (isset($data[$field]) && $data[$field] !== '') {
+                    $phone = preg_replace('/\s+/', '', $data[$field]);
+                    if (!preg_match('/^(\+84|0)[0-9]{8,10}$/', $phone)) {
+                        $errors[$field][] = "Số điện thoại không hợp lệ (ví dụ: 0901234567).";
                     }
                 }
             } elseif ($rule === 'time') {

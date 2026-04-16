@@ -36,10 +36,17 @@ class CustomerController
     public function delete()
     {
         $id = $_GET['id']; // Lấy id từ URL
-        $this->model->delete($id); // Xóa khách hàng
-        redirect("customers"); // Quay về danh sách
-        Message::set("success", "Xóa thành công!"); // Gửi thông báo
-        die();
+        try {
+            $this->model->delete($id); // Xóa khách hàng
+            Message::set("success", "Xóa thành công!"); // Gửi thông báo trước
+        } catch (PDOException $e) {
+            if ($e->getCode() == '23000') {
+                Message::set("error", "Không thể xóa khách hàng này vì đã có dữ liệu liên quan (từng tham gia booking/tour).");
+            } else {
+                Message::set("error", "Lỗi xóa dữ liệu: " . $e->getMessage());
+            }
+        }
+        redirect("customers"); // Quay về danh sách (gọi exit bên trong)
     }
 
     public function edit()
@@ -77,18 +84,20 @@ class CustomerController
             // Thực hiện validate
             $errors = validate($data, $rules);
 
-            // Nếu có lỗi → giữ lại dữ liệu + hiện lại form
-            if (!empty($errors)) {
-                $_SESSION['validate_errors'] = $errors;
-                $_SESSION['old'] = $data;
-                redirect("customer-create");
-                return;
-            }
-
             // Kiểm tra trùng email hoặc số điện thoại
             $existingCustomer = $this->model->findByEmailOrPhone($data['email'], $data['phone']);
             if ($existingCustomer) {
-                Message::set('error', 'Email hoặc số điện thoại đã tồn tại!');
+                if ($existingCustomer['email'] === $data['email']) {
+                    $errors['email'] = 'Email đã tồn tại trong hệ thống';
+                }
+                if ($existingCustomer['phone'] === $data['phone']) {
+                    $errors['phone'] = 'Số điện thoại đã tồn tại trong hệ thống';
+                }
+            }
+
+            // Nếu có lỗi → giữ lại dữ liệu + hiện lại form
+            if (!empty($errors)) {
+                $_SESSION['validate_errors'] = $errors;
                 $_SESSION['old'] = $data;
                 redirect("customer-create");
                 return;
@@ -134,21 +143,22 @@ class CustomerController
             // Thực hiện validate
             $errors = validate($data, $rules);
 
+            // Kiểm tra trùng email hoặc số điện thoại (loại trừ khách hàng hiện tại)
+            $existingCustomer = $this->model->findByEmailOrPhone($data['email'], $data['phone']);
+            if ($existingCustomer && $existingCustomer['id'] != $id) {
+                if ($existingCustomer['email'] === $data['email']) {
+                    $errors['email'] = 'Email đã tồn tại trong hệ thống';
+                }
+                if ($existingCustomer['phone'] === $data['phone']) {
+                    $errors['phone'] = 'Số điện thoại đã tồn tại trong hệ thống';
+                }
+            }
+
             // Nếu có lỗi → giữ lại dữ liệu + hiện lại form
             if (!empty($errors)) {
                 $_SESSION['validate_errors'] = $errors;
                 $_SESSION['old'] = $data;
                 $customer = array_merge($this->model->getByID($id), $data); // Merge để giữ giá trị mới nhập
-                require_once "./views/admin/customers/edit.php";
-                return;
-            }
-
-            // Kiểm tra trùng email hoặc số điện thoại (loại trừ khách hàng hiện tại)
-            $existingCustomer = $this->model->findByEmailOrPhone($data['email'], $data['phone']);
-            if ($existingCustomer && $existingCustomer['id'] != $id) {
-                Message::set('error', 'Email hoặc số điện thoại đã tồn tại!');
-                $_SESSION['old'] = $data;
-                $customer = array_merge($this->model->getByID($id), $data);
                 require_once "./views/admin/customers/edit.php";
                 return;
             }

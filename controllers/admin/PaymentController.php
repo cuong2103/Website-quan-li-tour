@@ -15,10 +15,20 @@ class PaymentController
     // Hiển thị danh sách thanh toán của 1 booking
     public function index()
     {
-        $booking_id = $_GET['booking_id']; // Lấy booking_id từ URL
-        $payments = $this->paymentModel->getAllByBooking($booking_id); // Lấy tất cả payment của booking
-
-        require_once './views/admin/payments/list.php'; // Load view
+        $booking_id = $_GET['booking_id'] ?? null;
+        if (!$booking_id || !is_numeric($booking_id)) {
+            Message::set('error', 'Booking ID không hợp lệ.');
+            header('Location: ' . BASE_URL . '?act=bookings');
+            exit();
+        }
+        $booking = $this->bookingModel->getById($booking_id);
+        if (!$booking) {
+            Message::set('error', 'Booking không tồn tại.');
+            header('Location: ' . BASE_URL . '?act=bookings');
+            exit();
+        }
+        $payments = $this->paymentModel->getAllByBooking($booking_id);
+        require_once './views/admin/payments/list.php';
     }
 
     // Hiển thị form tạo thanh toán
@@ -65,7 +75,10 @@ class PaymentController
             }
 
             $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-            $fileType = $_FILES['receipt_file']['type'];
+            // Dùng finfo để kiểm tra MIME type thực sự (không tin vào client)
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $fileType = finfo_file($finfo, $_FILES['receipt_file']['tmp_name']);
+            finfo_close($finfo);
 
             if (!in_array($fileType, $allowedTypes)) {
                 $errors[] = 'Chỉ chấp nhận file JPG, PNG hoặc PDF';
@@ -180,7 +193,10 @@ class PaymentController
             }
 
             $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-            $fileType = $_FILES['receipt_file']['type'];
+            // Dùng finfo để kiểm tra MIME type thực sự (không tin vào client)
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $fileType = finfo_file($finfo, $_FILES['receipt_file']['tmp_name']);
+            finfo_close($finfo);
 
             if (!in_array($fileType, $allowedTypes)) {
                 $errors[] = 'Chỉ chấp nhận file JPG, PNG hoặc PDF';

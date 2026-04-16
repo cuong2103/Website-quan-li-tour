@@ -142,14 +142,14 @@ require_once './views/components/sidebar.php';
                       <?php endif; ?>
                     </div>
                     <div>
-                      <p class="font-semibold text-gray-900"><?= htmlspecialchars($user["fullname"]) ?></p>
+                      <p class="font-semibold text-gray-900"><?= htmlspecialchars($user["fullname"] ?? '') ?></p>
                     </div>
                   </div>
                 </td>
                 <td class="px-6 py-4">
                   <div class="space-y-1">
-                    <p class="text-gray-900 text-sm"><?= htmlspecialchars($user["email"]) ?></p>
-                    <p class="text-gray-600 text-sm"><?= htmlspecialchars($user["phone"]) ?></p>
+                    <p class="text-gray-900 text-sm"><?= htmlspecialchars($user["email"] ?? '') ?></p>
+                    <p class="text-gray-600 text-sm"><?= htmlspecialchars($user["phone"] ?? '') ?></p>
                   </div>
                 </td>
                 <td class="px-6 py-4">
@@ -193,7 +193,7 @@ require_once './views/components/sidebar.php';
                     </a>
                     <a href="?act=user-delete&id=<?= $user['id'] ?>"
                       class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      onclick="return confirm('Bạn có chắc muốn xóa <?= htmlspecialchars($user['fullname']) ?>?')"
+                      onclick="return confirm('Bạn có chắc muốn xóa <?= htmlspecialchars($user['fullname'] ?? '') ?>?')"
                       title="Xóa">
                       <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </a>

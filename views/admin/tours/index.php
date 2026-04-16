@@ -43,7 +43,7 @@ require_once './views/components/sidebar.php';
           <option value="">Tất cả danh mục</option>
           <?php foreach ($categories as $category): ?>
             <option value="<?= $category['id'] ?>" <?= ($_GET['category_id'] ?? '') == $category['id'] ? 'selected' : '' ?>>
-              <?= htmlspecialchars($category['name']) ?>
+              <?= htmlspecialchars($category['name'] ?? '') ?>
             </option>
           <?php endforeach; ?>
         </select>
@@ -99,7 +99,7 @@ require_once './views/components/sidebar.php';
           <option value="">Tất cả điểm đến</option>
           <?php foreach ($destinations as $destination): ?>
             <option value="<?= $destination['id'] ?>" <?= ($_GET['destination_id'] ?? '') == $destination['id'] ? 'selected' : '' ?>>
-              <?= htmlspecialchars($destination['name']) ?>
+              <?= htmlspecialchars($destination['name'] ?? '') ?>
             </option>
           <?php endforeach; ?>
         </select>

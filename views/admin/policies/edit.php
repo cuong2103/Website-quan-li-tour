@@ -108,11 +108,11 @@ require_once "./views/components/sidebar.php";
 
                                 <div class="flex-1 min-w-0">
                                     <h4 class="font-medium text-gray-900">
-                                        <?= htmlspecialchars($poli['title']) ?>
+                                        <?= htmlspecialchars($poli['title'] ?? '') ?>
                                     </h4>
 
                                     <div class="text-gray-700 text-sm mt-1 leading-relaxed">
-                                        <?= nl2br(htmlspecialchars($poli['content'])) ?>
+                                        <?= nl2br(htmlspecialchars($poli['content'] ?? '')) ?>
                                     </div>
 
                                     <p class="text-xs text-gray-400 mt-2">

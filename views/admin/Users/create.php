@@ -1,6 +1,10 @@
 <?php
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
+
+$errors = $_SESSION['validate_errors'] ?? [];
+$old = $_SESSION['old'] ?? [];
+unset($_SESSION['validate_errors'], $_SESSION['old']);
 ?>
 
 <main class="mt-24 p-6 min-h-screen bg-gray-50 font-sans">
@@ -56,7 +60,7 @@ require_once './views/components/sidebar.php';
 
           <div class="space-y-3">
             <label class="flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-pink-300 has-[:checked]:border-pink-500 has-[:checked]:bg-pink-50">
-              <input type="radio" name="roles" value="admin" class="w-4 h-4 text-pink-600">
+              <input type="radio" name="roles" value="admin" <?= (isset($old['roles']) && $old['roles'] == 'admin') ? 'checked' : '' ?> class="w-4 h-4 text-pink-600">
               <span class="ml-3 flex items-center gap-2">
                 <i data-lucide="shield-check" class="w-4 h-4"></i>
                 <span class="font-medium">Admin</span>
@@ -64,19 +68,22 @@ require_once './views/components/sidebar.php';
             </label>
 
             <label class="flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
-              <input type="radio" name="roles" value="guide" checked class="w-4 h-4 text-blue-600">
+              <input type="radio" name="roles" value="guide" <?= (!isset($old['roles']) || $old['roles'] == 'guide') ? 'checked' : '' ?> class="w-4 h-4 text-blue-600">
               <span class="ml-3 flex items-center gap-2">
                 <i data-lucide="user" class="w-4 h-4"></i>
                 <span class="font-medium">Hướng dẫn viên</span>
               </span>
             </label>
+            <?php if (isset($errors['roles'])): ?>
+                <p class="text-sm text-red-500 mt-1"><?= $errors['roles'] ?></p>
+            <?php endif; ?>
           </div>
 
           <div class="mt-4">
             <label class="block text-sm font-semibold text-gray-700 mb-2">Trạng thái</label>
             <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-              <option value="1">Hoạt động</option>
-              <option value="0">Tạm ngừng</option>
+              <option value="1" <?= (isset($old['status']) && $old['status'] == 1) ? 'selected' : '' ?>>Hoạt động</option>
+              <option value="0" <?= (isset($old['status']) && $old['status'] == 0) ? 'selected' : '' ?>>Tạm ngừng</option>
             </select>
           </div>
         </div>
@@ -96,8 +103,12 @@ require_once './views/components/sidebar.php';
                 Họ và tên <span class="text-red-500">*</span>
               </label>
               <input type="text" name="fullname" required
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                value="<?= htmlspecialchars($old['fullname'] ?? '') ?>"
+                class="w-full px-4 py-2 border <?= isset($errors['fullname']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 placeholder="Nguyễn Văn A">
+              <?php if (isset($errors['fullname'])): ?>
+                <p class="text-sm text-red-500 mt-1"><?= $errors['fullname'] ?></p>
+              <?php endif; ?>
             </div>
 
             <div>
@@ -105,8 +116,12 @@ require_once './views/components/sidebar.php';
                 Email <span class="text-red-500">*</span>
               </label>
               <input type="email" name="email" required
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                value="<?= htmlspecialchars($old['email'] ?? '') ?>"
+                class="w-full px-4 py-2 border <?= isset($errors['email']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 placeholder="email@example.com">
+              <?php if (isset($errors['email'])): ?>
+                <p class="text-sm text-red-500 mt-1"><?= $errors['email'] ?></p>
+              <?php endif; ?>
             </div>
 
             <div>
@@ -114,8 +129,12 @@ require_once './views/components/sidebar.php';
                 Số điện thoại <span class="text-red-500">*</span>
               </label>
               <input type="text" name="phone" required
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                value="<?= htmlspecialchars($old['phone'] ?? '') ?>"
+                class="w-full px-4 py-2 border <?= isset($errors['phone']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 placeholder="0123456789">
+              <?php if (isset($errors['phone'])): ?>
+                <p class="text-sm text-red-500 mt-1"><?= $errors['phone'] ?></p>
+              <?php endif; ?>
             </div>
 
             <div>
@@ -123,8 +142,11 @@ require_once './views/components/sidebar.php';
                 Mật khẩu <span class="text-red-500">*</span>
               </label>
               <input type="password" name="password" required
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                class="w-full px-4 py-2 border <?= isset($errors['password']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                 placeholder="••••••••">
+              <?php if (isset($errors['password'])): ?>
+                <p class="text-sm text-red-500 mt-1"><?= $errors['password'] ?></p>
+              <?php endif; ?>
             </div>
           </div>
 

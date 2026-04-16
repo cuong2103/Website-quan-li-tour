@@ -40,7 +40,7 @@ require_once './views/components/sidebar.php';
             <?php foreach ($notifications as $notification): ?>
               <tr class="hover:bg-gray-50">
                 <td class="px-6 py-4">
-                  <div class="font-medium text-gray-900"><?= htmlspecialchars($notification['title']) ?></div>
+                  <div class="font-medium text-gray-900"><?= htmlspecialchars($notification['title'] ?? '') ?></div>
                   <div class="text-sm text-gray-500 truncate max-w-md">
                     <?= htmlspecialchars(substr($notification['message'], 0, 100)) ?>...
                   </div>

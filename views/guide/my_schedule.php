@@ -76,7 +76,7 @@ require_once './views/components/sidebar.php';
                 <?php foreach ($upcomingTours as $u): ?>
                     <div class="bg-white border rounded-xl p-4 shadow-sm flex justify-between items-center">
                         <div>
-                            <p class="font-medium text-gray-700"><?= htmlspecialchars($u['tour_name']) ?></p>
+                            <p class="font-medium text-gray-700"><?= htmlspecialchars($u['tour_name'] ?? '') ?></p>
                             <p class="text-xs text-gray-500">Booking ID: <?= $u['booking_code'] ?></p>
                             <p class="text-xs text-gray-500 mt-1 flex items-center gap-1">
                                 <i data-lucide="calendar"></i>

@@ -1,6 +1,14 @@
 <?php
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
+
+$errors = $_SESSION['validate_errors'] ?? [];
+$old = $_SESSION['old'] ?? [];
+unset($_SESSION['validate_errors'], $_SESSION['old']);
+
+if (!empty($old)) {
+    $user = array_merge($user, $old);
+}
 ?>
 
 <main class="mt-24 p-6 min-h-screen bg-gray-50 font-sans">
@@ -107,6 +115,9 @@ require_once './views/components/sidebar.php';
                 <span class="font-medium">Hướng dẫn viên</span>
               </span>
             </label>
+            <?php if (isset($errors['roles'])): ?>
+                <p class="text-sm text-red-500 mt-1"><?= $errors['roles'] ?></p>
+            <?php endif; ?>
           </div>
 
           <div class="mt-4">
@@ -135,24 +146,33 @@ require_once './views/components/sidebar.php';
               <label class="block text-sm font-semibold text-gray-700 mb-2">
                 Họ và tên <span class="text-red-500">*</span>
               </label>
-              <input type="text" name="fullname" value="<?= htmlspecialchars($user['fullname']) ?>" required
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+              <input type="text" name="fullname" value="<?= htmlspecialchars($user['fullname'] ?? '') ?>" required
+                class="w-full px-4 py-2 border <?= isset($errors['fullname']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-orange-500">
+              <?php if (isset($errors['fullname'])): ?>
+                <p class="text-sm text-red-500 mt-1"><?= $errors['fullname'] ?></p>
+              <?php endif; ?>
             </div>
 
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-2">
                 Email <span class="text-red-500">*</span>
               </label>
-              <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+              <input type="email" name="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" required
+                class="w-full px-4 py-2 border <?= isset($errors['email']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-orange-500">
+              <?php if (isset($errors['email'])): ?>
+                <p class="text-sm text-red-500 mt-1"><?= $errors['email'] ?></p>
+              <?php endif; ?>
             </div>
 
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-2">
                 Số điện thoại <span class="text-red-500">*</span>
               </label>
-              <input type="text" name="phone" value="<?= htmlspecialchars($user['phone']) ?>" required
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+              <input type="text" name="phone" value="<?= htmlspecialchars($user['phone'] ?? '') ?>" required
+                class="w-full px-4 py-2 border <?= isset($errors['phone']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-orange-500">
+              <?php if (isset($errors['phone'])): ?>
+                <p class="text-sm text-red-500 mt-1"><?= $errors['phone'] ?></p>
+              <?php endif; ?>
             </div>
 
             <div>
@@ -160,8 +180,11 @@ require_once './views/components/sidebar.php';
                 Mật khẩu mới <small class="text-gray-500 font-normal">(để trống nếu không đổi)</small>
               </label>
               <input type="password" name="password"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                class="w-full px-4 py-2 border <?= isset($errors['password']) ? 'border-red-500' : 'border-gray-300' ?> rounded-lg focus:ring-2 focus:ring-orange-500"
                 placeholder="••••••••">
+              <?php if (isset($errors['password'])): ?>
+                <p class="text-sm text-red-500 mt-1"><?= $errors['password'] ?></p>
+              <?php endif; ?>
             </div>
           </div>
 

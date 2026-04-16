@@ -5,9 +5,9 @@
       <div class="border-l ml-2 pl-4 space-y-4">
         <?php foreach ($items as $row): ?>
           <div>
-            <div class="font-medium"><?= htmlspecialchars($row['destination_name']) ?></div>
+            <div class="font-medium"><?= htmlspecialchars($row['destination_name'] ?? '') ?></div>
             <div class="text-xs text-gray-500"><?= $row['arrival_time'] ?> → <?= $row['departure_time'] ?></div>
-            <div class="text-sm mt-1"><?= htmlspecialchars($row['description']) ?></div>
+            <div class="text-sm mt-1"><?= htmlspecialchars($row['description'] ?? '') ?></div>
           </div>
         <?php endforeach; ?>
       </div>

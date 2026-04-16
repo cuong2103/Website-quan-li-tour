@@ -43,7 +43,7 @@ unset($_SESSION['errors'], $_SESSION['old']);
                             <option value="">-- Chọn tour --</option>
                             <?php foreach ($tourAssignments as $ta): ?>
                                 <option value="<?= $ta['id'] ?>" <?= (isset($selected_tour_id) && $selected_tour_id == $ta['id']) ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($ta['tour_name']) ?> - <?= $ta['booking_code'] ?>
+                                    <?= htmlspecialchars($ta['tour_name'] ?? '') ?> - <?= $ta['booking_code'] ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>

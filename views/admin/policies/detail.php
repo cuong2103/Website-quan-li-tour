@@ -34,7 +34,7 @@
                                 <i data-lucide="file-text" class="w-10 h-10 text-blue-600"></i>
                             </div>
                             <div class="flex-1">
-                                <h3 class="text-2xl font-bold text-gray-900"><?= htmlspecialchars($policy['title']) ?></h3>
+                                <h3 class="text-2xl font-bold text-gray-900"><?= htmlspecialchars($policy['title'] ?? '') ?></h3>
                                 <div class="flex items-center gap-3 mt-2">
                                     <span class="text-sm text-gray-500">ID: #<?= $policy['id'] ?></span>
                                 </div>
@@ -60,7 +60,7 @@
                     <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                         <div>
                             <span class="text-gray-500">Người tạo:</span>
-                            <span class="ml-2 font-medium text-gray-900"><?= htmlspecialchars($policy['created_by']) ?></span>
+                            <span class="ml-2 font-medium text-gray-900"><?= htmlspecialchars($policy['created_by'] ?? '') ?></span>
                         </div>
                         <div>
                             <span class="text-gray-500">Ngày tạo:</span>

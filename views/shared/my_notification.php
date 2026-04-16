@@ -50,10 +50,10 @@ $typeLabels = [
                   <div class="w-2 h-2 rounded-full bg-blue-600 mt-1.5 flex-shrink-0"></div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between">
-                      <h3 class="text-sm font-semibold text-gray-900"><?= htmlspecialchars($notification['title']) ?></h3>
+                      <h3 class="text-sm font-semibold text-gray-900"><?= htmlspecialchars($notification['title'] ?? '') ?></h3>
                       <span class="text-xs text-gray-500"><?= timeAgo($notification['created_at']) ?></span>
                     </div>
-                    <p class="mt-1 text-sm text-gray-700"><?= htmlspecialchars($notification['message']) ?></p>
+                    <p class="mt-1 text-sm text-gray-700"><?= htmlspecialchars($notification['message'] ?? '') ?></p>
                     <?php if ($notification['type'] !== 'general'): ?>
                       <span class="inline-block mt-2 px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
                         <?= $typeLabels[$notification['type']] ?? ucfirst($notification['type']) ?>
@@ -69,8 +69,8 @@ $typeLabels = [
                 <div class="flex items-start gap-4">
                   <div class="w-2 h-2 rounded-full bg-gray-300 mt-1.5 flex-shrink-0"></div>
                   <div class="flex-1 min-w-0">
-                    <h3 class="text-sm font-medium text-gray-600"><?= htmlspecialchars($notification['title']) ?></h3>
-                    <p class="mt-1 text-sm text-gray-500"><?= htmlspecialchars($notification['message']) ?></p>
+                    <h3 class="text-sm font-medium text-gray-600"><?= htmlspecialchars($notification['title'] ?? '') ?></h3>
+                    <p class="mt-1 text-sm text-gray-500"><?= htmlspecialchars($notification['message'] ?? '') ?></p>
                     <?php if ($notification['type'] !== 'general'): ?>
                       <span class="inline-block mt-2 px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600">
                         <?= $typeLabels[$notification['type']] ?? ucfirst($notification['type']) ?>

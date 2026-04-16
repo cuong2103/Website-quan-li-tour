@@ -78,8 +78,8 @@ $units = [
                     <tr class="hover:bg-gray-50 transition">
                         <!-- Tên + mô tả -->
                         <td class="px-6 py-5">
-                            <div class="font-semibold text-gray-900"><?= htmlspecialchars($service["name"]) ?></div>
-                            <div class="text-sm text-gray-500 mt-1"><?= htmlspecialchars($service["description"]) ?></div>
+                            <div class="font-semibold text-gray-900"><?= htmlspecialchars($service["name"] ?? '') ?></div>
+                            <div class="text-sm text-gray-500 mt-1"><?= htmlspecialchars($service["description"] ?? '') ?></div>
                         </td>
 
                         <!-- Loại dịch vụ -->

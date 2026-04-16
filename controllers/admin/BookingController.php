@@ -29,21 +29,22 @@ class BookingController
     {
         $filters = [
             'keyword' => $_GET['keyword'] ?? '',
-            'status' => $_GET['status'] ?? '',
+            'status'  => $_GET['status'] ?? '',
             'date_from' => $_GET['date_from'] ?? '',
-            'date_to' => $_GET['date_to'] ?? ''
+            'date_to'   => $_GET['date_to'] ?? ''
         ];
         // Lấy danh sách booking từ model với bộ lọc
         $bookings = $this->bookingModel->getAll($filters);
+        // Auto-cập nhật trạng thái booking đã hết hạn
         foreach ($bookings as $booking) {
             if (
                 $booking['end_date'] < date('Y-m-d') &&
                 in_array($booking['status'], ['paid', 'in_progress', 'deposited'])
             ) {
                 $this->bookingModel->updateStatus($booking['id'], 'completed');
-                $booking['status'] = 'completed';
             }
         }
+        // Lấy lại sau khi đã cập nhật trạng thái
         $bookings = $this->bookingModel->getAll($filters);
         require_once './views/admin/bookings/index.php';
     }
@@ -335,6 +336,12 @@ class BookingController
         }
 
         // Kiểm tra trạng thái booking
+        if ($booking['status'] === 'completed') {
+            Message::set('error', 'Không thể xóa booking đã hoàn thành.');
+            header("Location:" . BASE_URL . '?act=bookings');
+            exit;
+        }
+
         if ($booking['status'] === 'paid') {
             Message::set('error', 'Không thể xóa booking đã thanh toán đủ.');
             header("Location:" . BASE_URL . '?act=bookings');

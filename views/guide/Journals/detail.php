@@ -63,7 +63,7 @@ require_once './views/components/sidebar.php';
     <div class="mb-8">
       <h3 class="text-lg font-semibold text-gray-900 mb-4">Nội dung</h3>
       <div class="prose max-w-none text-gray-700 leading-relaxed whitespace-pre-line bg-gray-50 p-6 rounded-lg border border-gray-100">
-        <?= htmlspecialchars($journal['content']) ?>
+        <?= htmlspecialchars($journal['content'] ?? '') ?>
       </div>
     </div>
 

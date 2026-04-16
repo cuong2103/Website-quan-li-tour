@@ -62,7 +62,7 @@ $canRequest = !$hasRequest || $status === 'rejected';
 
             <div class="mb-4">
                 <p class="text-sm text-gray-500 mb-1">Lý do</p>
-                <p class="text-gray-700"><?= nl2br(htmlspecialchars($leaveRequest['leave_reason'])) ?></p>
+                <p class="text-gray-700"><?= nl2br(htmlspecialchars($leaveRequest['leave_reason'] ?? '')) ?></p>
             </div>
 
             <!-- Actions -->
