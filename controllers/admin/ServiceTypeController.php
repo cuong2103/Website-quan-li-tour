@@ -17,9 +17,10 @@ class ServiceTypeController
         $search = $_GET['search'] ?? null;
         $serviceTypes = $search ? $this->serviceTypeModel->search($search) : $this->serviceTypeModel->getAll();
 
-        $data = $_POST ?? [];
-        $errors = $_SESSION['errors'] ?? [];
-        unset($_SESSION['errors']);
+        $data = $_SESSION['old'] ?? [];
+        $errors = $_SESSION['validate_errors'] ?? [];
+        unset($_SESSION['validate_errors']);
+        unset($_SESSION['old']);
 
         require_once './views/admin/service-type/index.php';
     }
@@ -44,8 +45,9 @@ class ServiceTypeController
 
         // Nếu lỗi → quay lại form + hiện lỗi
         if (!empty($errors)) {
-            $serviceTypes = $this->serviceTypeModel->getAll();
-            require_once './views/admin/service-type/index.php';
+            $_SESSION['validate_errors'] = $errors;
+            $_SESSION['old'] = $_POST;
+            redirect('service-type');
             return;
         }
 
@@ -87,9 +89,10 @@ class ServiceTypeController
         }
 
         $serviceTypes = $this->serviceTypeModel->getAll();
-        $data = $_POST ?? ['name' => $serviceType['name'], 'description' => $serviceType['description']];
+        $data = $_SESSION['old'] ?? ['name' => $serviceType['name'], 'description' => $serviceType['description']];
         $errors = $_SESSION['validate_errors'] ?? [];
         unset($_SESSION['validate_errors']);
+        unset($_SESSION['old']);
 
         require_once './views/admin/service-type/edit.php';
     }
@@ -122,12 +125,9 @@ class ServiceTypeController
 
         // Nếu lỗi → giữ lại dữ liệu nhập và trả về form edit
         if (!empty($errors)) {
-            $serviceType = [
-                'id' => $id,
-                'name' => $data['name'],
-                'description' => $data['description']
-            ];
-            require_once './views/admin/service-type/edit.php';
+            $_SESSION['validate_errors'] = $errors;
+            $_SESSION['old'] = $_POST;
+            header("Location:" . BASE_URL . "?act=service-type-edit&id=" . $id);
             return;
         }
 
@@ -162,7 +162,7 @@ class ServiceTypeController
             $result = $this->serviceTypeModel->delete($id);
 
             if ($result === "FOREIGN_KEY_CONSTRAINT") {
-                $_SESSION['error'] = "Không thể xoá loại dịch vụ vì đang được sử dụng!";
+                Message::set('error', 'Không thể xoá loại dịch vụ vì đang được sử dụng!');
                 header("Location: " . BASE_URL . "?act=service-type");
                 exit();
             }

@@ -19,13 +19,19 @@
 
         <input type="hidden" name="id" value="<?= $serviceType['id'] ?>">
 
-        <label class="block mb-2 font-medium">Tên loại dịch vụ</label>
-        <input type="text" name="name" value="<?= $serviceType['name'] ?>"
-            class="w-full border rounded-lg p-2 mb-4" />
+        <label class="block mb-2 font-medium">Tên loại dịch vụ <span class="text-red-500">*</span></label>
+        <input type="text" name="name" value="<?= htmlspecialchars($data['name'] ?? '') ?>"
+            class="w-full border rounded-lg p-2 mb-1 <?= !empty($errors['name']) ? 'border-red-500' : '' ?>" />
+        <?php if (!empty($errors['name'])): ?>
+            <p class="text-red-500 text-sm mt-1 mb-3"><?= is_array($errors['name']) ? $errors['name'][0] : $errors['name'] ?></p>
+        <?php endif; ?>
 
-        <label class="block mb-2 font-medium">Mô tả</label>
+        <label class="block mb-2 mt-4 font-medium">Mô tả</label>
         <textarea name="description" rows="3"
-            class="w-full border rounded-lg p-2 mb-4"><?= $serviceType['description'] ?></textarea>
+            class="w-full border rounded-lg p-2 mb-1 <?= !empty($errors['description']) ? 'border-red-500' : '' ?>"><?= htmlspecialchars($data['description'] ?? '') ?></textarea>
+        <?php if (!empty($errors['description'])): ?>
+            <p class="text-red-500 text-sm mt-1 mb-3"><?= is_array($errors['description']) ? $errors['description'][0] : $errors['description'] ?></p>
+        <?php endif; ?>
         <br> <br>
         <!-- submit -->
         <button type="submit"
