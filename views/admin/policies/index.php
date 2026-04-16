@@ -32,11 +32,11 @@ require_once "./views/components/sidebar.php";
                             <label class="block text-sm font-medium text-gray-700 mb-1">
                                 Tiêu đề <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" name="title" value="<?= $_POST['title'] ?? '' ?>"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            <input type="text" name="title" value="<?= htmlspecialchars($old['title'] ?? '') ?>"
+                                class="w-full px-3 py-2 border <?= !empty($errors['title']) ? 'border-red-500 bg-red-50' : 'border-gray-300' ?> rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="Ví dụ: Chính sách huỷ tour, Chính sách trẻ em...">
                             <?php if (!empty($errors['title'])): ?>
-                                <div class="text-red-500"><?= $errors['title'][0] ?></div>
+                                <div class="text-red-500 text-sm mt-1"><?= is_array($errors['title']) ? $errors['title'][0] : $errors['title'] ?></div>
                             <?php endif; ?>
                         </div>
 
@@ -46,10 +46,10 @@ require_once "./views/components/sidebar.php";
                                 Nội dung <span class="text-red-500">*</span>
                             </label>
                             <textarea name="content" rows="5"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Nhập nội dung chi tiết của chính sách..."><?= $_POST['content'] ?? '' ?></textarea>
+                                class="w-full px-3 py-2 border <?= !empty($errors['content']) ? 'border-red-500 bg-red-50' : 'border-gray-300' ?> rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Nhập nội dung chi tiết của chính sách..."><?= htmlspecialchars($old['content'] ?? '') ?></textarea>
                             <?php if (!empty($errors['content'])): ?>
-                                <div class="text-red-500"><?= $errors['content'][0] ?></div>
+                                <div class="text-red-500 text-sm mt-1"><?= is_array($errors['content']) ? $errors['content'][0] : $errors['content'] ?></div>
                             <?php endif; ?>
 
                         </div>

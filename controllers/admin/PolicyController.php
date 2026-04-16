@@ -11,6 +11,10 @@ class PolicyController
     public function index()
     {
         $policies = $this->model->getAll();
+        $errors = $_SESSION['validate_errors'] ?? [];
+        $old = $_SESSION['old'] ?? [];
+        unset($_SESSION['validate_errors'], $_SESSION['old']);
+
         require_once "./views/admin/policies/index.php";
     }
     // chi tiết chính sách
@@ -34,8 +38,14 @@ class PolicyController
             die();
         }
 
-        $this->model->delete($id);
-        Message::set("success", "Xóa thành công!");
+        $result = $this->model->delete($id);
+        
+        if ($result === 'FOREIGN_KEY_CONSTRAINT') {
+            Message::set("error", "Không thể xóa chính sách này vì đã bị ràng buộc hệ thống!");
+        } else {
+            Message::set("success", "Xóa thành công!");
+        }
+
         redirect("policies");
         die();
     }
@@ -45,6 +55,11 @@ class PolicyController
         $id = $_GET['id'];
         $policy = $this->model->getByID($id);
         $policies = $this->model->getAll();
+
+        $errors = $_SESSION['validate_errors'] ?? [];
+        $old = $_SESSION['old'] ?? [];
+        unset($_SESSION['validate_errors'], $_SESSION['old']);
+
         require_once "./views/admin/policies/edit.php";
     }
 
@@ -73,9 +88,16 @@ class PolicyController
             'content' => 'required|min:10',
         ];
         $errors = validate($data, $rules);
+
+        // Chặn trùng lặp tiêu đề
+        if (empty($errors['title']) && $this->model->isDuplicateTitle($data['title'])) {
+            $errors['title'] = ['Tiêu đề chính sách đã tồn tại!'];
+        }
+
         if (!empty($errors)) {
-            $policies = $this->model->getAll();
-            require_once './views/admin/policies/index.php';
+            $_SESSION['validate_errors'] = $errors;
+            $_SESSION['old'] = $_POST;
+            redirect('policies');
             exit;
         } else {
             $this->model->create($data);
@@ -110,10 +132,15 @@ class PolicyController
 
         $errors = validate($data, $rules);
 
+        // Chặn trùng lặp tiêu đề
+        if (empty($errors['title']) && $this->model->isDuplicateTitle($data['title'], $id)) {
+            $errors['title'] = ['Tiêu đề chính sách đã tồn tại!'];
+        }
+
         if (!empty($errors)) {
-            $policy = $this->model->getByID($id);
-            $policies = $this->model->getAll();
-            require_once './views/admin/policies/edit.php';
+            $_SESSION['validate_errors'] = $errors;
+            $_SESSION['old'] = $_POST;
+            redirect('policy-edit&id=' . $id);
             exit;
         }
 

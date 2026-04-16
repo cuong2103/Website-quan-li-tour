@@ -58,7 +58,10 @@ class ServiceController
             exit;
         }
 
-        if ($this->serviceModel->delete($id)) { // Xóa trong DB
+        $result = $this->serviceModel->delete($id);
+        if ($result === "FOREIGN_KEY_CONSTRAINT") {
+            Message::set("error", "Không thể xóa dịch vụ này vì đang được dùng trong Tour!");
+        } elseif ($result) { // Xóa trong DB
             Message::set("success", "Xóa dịch vụ thành công!");
         } else {
             Message::set("error", "Xóa dịch vụ thất bại!");
@@ -97,19 +100,17 @@ class ServiceController
 
         $errors = validate($data, $rules); // Hàm validate chung
 
+        // Kiểm tra trùng dịch vụ theo 3 thuộc tính (tên + loại + nhà cung cấp)
+        if ($this->serviceModel->isDuplicate($data['name'], $data['service_type_id'], $data['supplier_id'])) {
+            $errors['name'] = ['Dịch vụ này đã tồn tại trong cùng Nhà cung cấp & Loại dịch vụ!'];
+        }
+
         if (!empty($errors)) { // Nếu lỗi → lưu và quay lại form
             $_SESSION['validate_errors'] = $errors;
             $_SESSION['old'] = $data;
 
             redirect("service-create");
             exit;
-        }
-
-        // Kiểm tra trùng dịch vụ theo 3 thuộc tính (tên + loại + nhà cung cấp)
-        if ($this->serviceModel->isDuplicate($data['name'], $data['service_type_id'], $data['supplier_id'])) {
-            Message::set("error", "Dịch vụ này đã tồn tại!");
-            header('Location: ' . BASE_URL . '?act=service-create');
-            exit();
         }
 
         if ($this->serviceModel->create($data)) {
@@ -167,19 +168,17 @@ class ServiceController
 
         $errors = validate($data, $rules);
 
+        // Kiểm tra trùng nhưng bỏ qua id hiện tại
+        if (empty($errors['name']) && $this->serviceModel->isDuplicate($data['name'], $data['service_type_id'], $data['supplier_id'], $id)) {
+            $errors['name'] = ['Dịch vụ này đã tồn tại trong cùng Nhà cung cấp & Loại dịch vụ!'];
+        }
+
         if (!empty($errors)) { // Trả lỗi về form edit
             $_SESSION['validate_errors'] = $errors;
             $_SESSION['old'] = $data;
 
             redirect("service-edit&id=" . $id);
             exit;
-        }
-
-        // Kiểm tra trùng nhưng bỏ qua id hiện tại
-        if ($this->serviceModel->isDuplicate($data['name'], $data['service_type_id'], $data['supplier_id'], $id)) {
-            Message::set("error", "Dịch vụ này đã tồn tại!");
-            header('Location: ' . BASE_URL . '?act=service-edit&id=' . $id);
-            exit();
         }
 
         if ($this->serviceModel->update($id, $data)) {

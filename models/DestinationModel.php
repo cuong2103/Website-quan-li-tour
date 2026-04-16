@@ -6,6 +6,14 @@ class DestinationModel
     public function __construct()
     {
         $this->conn = connectDB();
+        try {
+            $this->conn->exec("ALTER TABLE destinations DROP INDEX name");
+        } catch (\Throwable $th) {
+        }
+        try {
+            $this->conn->exec("ALTER TABLE destinations ADD COLUMN status VARCHAR(20) DEFAULT 'active'");
+        } catch (\Throwable $th) {
+        }
     }
 
     // Lấy danh sách địa điểm
@@ -24,6 +32,7 @@ class DestinationModel
                 ) AS thumbnail
             FROM destinations d
             LEFT JOIN categories cg ON d.category_id = cg.id
+            WHERE d.status = 'active'
             ORDER BY d.id DESC
         ";
 
@@ -35,8 +44,9 @@ class DestinationModel
     // kiểm tra tên địa điểm trong cùng danh mục
     public function isDuplicateNameInCategory($name, $category_id, $excludeId = null)
     {
-        $sql = "SELECT id FROM destinations WHERE LOWER(TRIM(name)) = LOWER(TRIM(?)) AND category_id = ?";
-        $params = [$name, $category_id];
+        // Quét lấy name trong cùng category để check tại PHP cho chắc ký tự tiếng Việt
+        $sql = "SELECT id, name FROM destinations WHERE category_id = ? AND status = 'active'";
+        $params = [$category_id];
 
         if ($excludeId) {
             $sql .= " AND id != ?";
@@ -45,7 +55,17 @@ class DestinationModel
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute($params);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Double check với mb_strtolower của PHP để bắt triệt để Tiếng Việt có dấu hoa/thường
+        $inputName = mb_strtolower(trim($name), 'UTF-8');
+        foreach ($results as $row) {
+            if (mb_strtolower(trim($row['name']), 'UTF-8') === $inputName) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     // tạo mới
@@ -134,26 +154,10 @@ class DestinationModel
         return $stmt->execute([$id]);
     }
 
-    // xóa địa điểm
+    // xóa địa điểm (Xóa mềm - Soft Delete)
     public function delete($id)
     {
-        // Xóa file ảnh trên máy
-        $images = $this->getImagesByDestination($id);
-
-        foreach ($images as $img) {
-            $filePath = __DIR__ . '/../../uploads/destinations_image/' . ltrim($img['image_url'], '/');
-
-            if (file_exists($filePath)) {
-                unlink($filePath);
-            }
-        }
-
-        // Xóa bản ghi ảnh
-        $this->conn->prepare("DELETE FROM destination_images WHERE destination_id = ?")
-            ->execute([$id]);
-
-        // Xóa địa điểm
-        $stmt = $this->conn->prepare("DELETE FROM destinations WHERE id = ?");
+        $stmt = $this->conn->prepare("UPDATE destinations SET status = 'deleted' WHERE id = ?");
         return $stmt->execute([$id]);
     }
 
@@ -227,7 +231,7 @@ class DestinationModel
                 ) AS thumbnail
             FROM destinations d
             LEFT JOIN categories cg ON d.category_id = cg.id
-            WHERE 1
+            WHERE d.status = 'active'
         ";
 
         $params = [];
