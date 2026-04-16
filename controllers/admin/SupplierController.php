@@ -72,11 +72,18 @@ class SupplierController
             // Thực hiện validate
             $errors = validate($data, $rules);
 
+            // Kiểm tra trùng Email/Phone
+            $existing = $this->supplierModel->findByEmailOrPhone($data['email'], $data['phone']);
+            if ($existing) {
+                if ($existing['email'] === $data['email']) $errors['email'] = ['Email đã tồn tại trong hệ thống!'];
+                if ($existing['phone'] === $data['phone']) $errors['phone'] = ['Số điện thoại đã tồn tại trong hệ thống!'];
+            }
+
             // Nếu có lỗi → giữ lại dữ liệu + hiện lại form
             if (!empty($errors)) {
-                $suppliers    = $this->supplierModel->getALL();
-                $destinations = $this->destinationModel->getALL();
-                require_once './views/admin/suppliers/create.php';
+                $_SESSION['validate_errors'] = $errors;
+                $_SESSION['old'] = $_POST;
+                redirect('supplier-create');
                 exit;
             }
 
@@ -144,12 +151,18 @@ class SupplierController
             // Validate
             $errors = validate($data, $rules);
 
+            // Kiểm tra trùng Email/Phone (trừ id hiện tại)
+            $existing = $this->supplierModel->findByEmailOrPhone($data['email'], $data['phone'], $id);
+            if ($existing) {
+                if ($existing['email'] === $data['email']) $errors['email'] = ['Email đã tồn tại trong hệ thống!'];
+                if ($existing['phone'] === $data['phone']) $errors['phone'] = ['Số điện thoại đã tồn tại trong hệ thống!'];
+            }
+
             // Nếu lỗi → load lại form sửa + giữ thông tin cũ
             if (!empty($errors)) {
-                $suppliers = $this->supplierModel->getALL();
-                $destinations = $this->destinationModel->getALL();
-                $supplier = $this->supplierModel->getByID($id);
-                require_once "./views/admin/suppliers/edit.php";
+                $_SESSION['validate_errors'] = $errors;
+                $_SESSION['old'] = $_POST;
+                header('Location: ' . BASE_URL . '?act=supplier-edit&id=' . $id);
                 exit;
             }
 

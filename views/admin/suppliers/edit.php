@@ -26,30 +26,30 @@ require_once "./views/components/sidebar.php";
                 <!-- Tên -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Tên nhà cung cấp <span class="text-red-500">*</span></label>
-                    <input type="text" name="name" value="<?= htmlspecialchars($supplier['name'] ?? '') ?>"
-                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" required>
-                    <?php if (!empty($errors['name'])): ?>
-                        <p class="text-red-500 text-xs mt-1"><?= $errors['name'][0] ?></p>
+                    <input type="text" name="name" value="<?= htmlspecialchars($_SESSION['old']['name'] ?? $supplier['name'] ?? '') ?>"
+                        class="w-full px-4 py-2.5 rounded-lg border <?= isset($_SESSION['validate_errors']['name']) ? 'border-red-500 bg-red-50' : 'border-gray-300' ?> focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" required>
+                    <?php if (!empty($_SESSION['validate_errors']['name'])): ?>
+                        <p class="text-red-500 text-sm mt-1"><?= is_array($_SESSION['validate_errors']['name']) ? implode(', ', $_SESSION['validate_errors']['name']) : $_SESSION['validate_errors']['name'] ?></p>
                     <?php endif; ?>
                 </div>
 
                 <!-- Email -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Email liên hệ <span class="text-red-500">*</span></label>
-                    <input type="email" name="email" value="<?= htmlspecialchars($supplier['email'] ?? '') ?>"
-                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" required>
-                    <?php if (!empty($errors['email'])): ?>
-                        <p class="text-red-500 text-xs mt-1"><?= $errors['email'][0] ?></p>
+                    <input type="email" name="email" value="<?= htmlspecialchars($_SESSION['old']['email'] ?? $supplier['email'] ?? '') ?>"
+                        class="w-full px-4 py-2.5 rounded-lg border <?= isset($_SESSION['validate_errors']['email']) ? 'border-red-500 bg-red-50' : 'border-gray-300' ?> focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" required>
+                    <?php if (!empty($_SESSION['validate_errors']['email'])): ?>
+                        <p class="text-red-500 text-sm mt-1"><?= is_array($_SESSION['validate_errors']['email']) ? implode(', ', $_SESSION['validate_errors']['email']) : $_SESSION['validate_errors']['email'] ?></p>
                     <?php endif; ?>
                 </div>
 
                 <!-- Phone -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Số điện thoại <span class="text-red-500">*</span></label>
-                    <input type="text" name="phone" value="<?= htmlspecialchars($supplier['phone'] ?? '') ?>"
-                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" required>
-                    <?php if (!empty($errors['phone'])): ?>
-                        <p class="text-red-500 text-xs mt-1"><?= $errors['phone'][0] ?></p>
+                    <input type="text" name="phone" value="<?= htmlspecialchars($_SESSION['old']['phone'] ?? $supplier['phone'] ?? '') ?>"
+                        class="w-full px-4 py-2.5 rounded-lg border <?= isset($_SESSION['validate_errors']['phone']) ? 'border-red-500 bg-red-50' : 'border-gray-300' ?> focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition" required>
+                    <?php if (!empty($_SESSION['validate_errors']['phone'])): ?>
+                        <p class="text-red-500 text-sm mt-1"><?= is_array($_SESSION['validate_errors']['phone']) ? implode(', ', $_SESSION['validate_errors']['phone']) : $_SESSION['validate_errors']['phone'] ?></p>
                     <?php endif; ?>
                 </div>
 
@@ -57,16 +57,19 @@ require_once "./views/components/sidebar.php";
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Địa điểm hoạt động <span class="text-red-500">*</span></label>
                     <select name="destination_id" required
-                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white">
+                        class="w-full px-4 py-2.5 rounded-lg border <?= isset($_SESSION['validate_errors']['destination_id']) ? 'border-red-500 bg-red-50' : 'border-gray-300' ?> focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white">
                         <option value="">-- Chọn địa điểm --</option>
-                        <?php foreach ($destinations as $dest): ?>
-                            <option value="<?= $dest['id'] ?>" <?= ($supplier['destination_id'] == $dest['id']) ? 'selected' : '' ?>>
+                        <?php 
+                        $selectedDest = $_SESSION['old']['destination_id'] ?? $supplier['destination_id'];
+                        foreach ($destinations as $dest): 
+                        ?>
+                            <option value="<?= $dest['id'] ?>" <?= ($selectedDest == $dest['id']) ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($dest['name'] ?? '') ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    <?php if (!empty($errors['destination_id'])): ?>
-                        <p class="text-red-500 text-xs mt-1"><?= $errors['destination_id'][0] ?></p>
+                    <?php if (!empty($_SESSION['validate_errors']['destination_id'])): ?>
+                        <p class="text-red-500 text-sm mt-1"><?= is_array($_SESSION['validate_errors']['destination_id']) ? implode(', ', $_SESSION['validate_errors']['destination_id']) : $_SESSION['validate_errors']['destination_id'] ?></p>
                     <?php endif; ?>
                 </div>
 
@@ -74,10 +77,14 @@ require_once "./views/components/sidebar.php";
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700">Trạng thái</label>
                     <select name="status"
-                        class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white">
-                        <option value="1" <?= ($supplier['status'] == 1) ? 'selected' : '' ?>>Hoạt động</option>
-                        <option value="0" <?= ($supplier['status'] == 0) ? 'selected' : '' ?>>Ngừng hoạt động</option>
+                        class="w-full px-4 py-2.5 rounded-lg border <?= isset($_SESSION['validate_errors']['status']) ? 'border-red-500 bg-red-50' : 'border-gray-300' ?> focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none bg-white">
+                        <?php $selectedStatus = $_SESSION['old']['status'] ?? $supplier['status'] ?? 1; ?>
+                        <option value="1" <?= ($selectedStatus == 1) ? 'selected' : '' ?>>Hoạt động</option>
+                        <option value="0" <?= ($selectedStatus == 0) ? 'selected' : '' ?>>Ngừng hoạt động</option>
                     </select>
+                    <?php if (!empty($_SESSION['validate_errors']['status'])): ?>
+                        <p class="text-red-500 text-sm mt-1"><?= is_array($_SESSION['validate_errors']['status']) ? implode(', ', $_SESSION['validate_errors']['status']) : $_SESSION['validate_errors']['status'] ?></p>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -98,4 +105,8 @@ require_once "./views/components/sidebar.php";
     </div>
 </div>
 
-<?php require_once "./views/components/footer.php"; ?>
+<?php 
+unset($_SESSION['validate_errors']);
+unset($_SESSION['old']);
+require_once "./views/components/footer.php"; 
+?>

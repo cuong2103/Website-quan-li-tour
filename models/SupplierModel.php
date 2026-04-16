@@ -143,4 +143,17 @@ class SupplierModel
         // Trả về kết quả execute (true/false) – không trả dữ liệu (theo code gốc)
         return $data;
     }
+
+    public function findByEmailOrPhone($email, $phone, $excludeId = null)
+    {
+        $sql = "SELECT id, email, phone FROM suppliers WHERE email = :email OR phone = :phone LIMIT 1";
+        $params = ['email' => $email, 'phone' => $phone];
+        if ($excludeId) {
+            $sql = "SELECT id, email, phone FROM suppliers WHERE (email = :email OR phone = :phone) AND id != :id LIMIT 1";
+            $params['id'] = $excludeId;
+        }
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
