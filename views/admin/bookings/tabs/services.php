@@ -18,13 +18,13 @@
             <i class="w-5 h-5 text-blue-600" data-lucide="check-circle"></i>
             <div>
               <p class="font-medium"><?= htmlspecialchars($s['name']) ?></p>
-              <span class="font-semibold text-gray-700">
-                <?= number_format(($s['current_price'] ?? 0) * $s['quantity'], 0, ',', '.') ?>đ
+              <span class="text-xs text-gray-500">
+                <?= $s['quantity'] ?> x <?= number_format($s['current_price'] ?? 0, 0, ',', '.') ?>đ
               </span>
             </div>
           </div>
           <span class="font-semibold text-gray-700">
-            <?= number_format($s['current_price'] * $s['quantity'], 0, ',', '.') ?>đ
+            <?= number_format(($s['current_price'] ?? 0) * $s['quantity'], 0, ',', '.') ?>đ
           </span>
         </li>
       <?php endforeach; ?>

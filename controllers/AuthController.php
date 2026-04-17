@@ -17,26 +17,43 @@ class AuthController
     public function login()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $email = $_POST['email'] ?? '';
+            $email = trim($_POST['email'] ?? '');
             $password = $_POST['password'] ?? '';
+
+            // Validate dữ liệu đầu vào
+            if (empty($email)) {
+                $_SESSION['login_errors']['email'] = 'Vui lòng nhập email.';
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $_SESSION['login_errors']['email'] = 'Email không đúng định dạng.';
+            }
+
+            if (!empty($_SESSION['login_errors'])) {
+                $_SESSION['old_email'] = $email;
+                header('Location:' . BASE_URL . '?act=login');
+                exit();
+            }
+
             // Kiểm tra đăng nhập
             $currentUser = $this->userModel->checkLogin($email, $password);
 
             if (is_array($currentUser)) {
                 // Login thành công
+                unset($_SESSION['login_errors'], $_SESSION['old_email'], $_SESSION['error']);
+                $_SESSION["currentUser"] = $currentUser;
+                Message::set('success', 'Đăng nhập thành công! Chào mừng ' . htmlspecialchars($currentUser['fullname'] ?? $email) . '.');
                 if ($currentUser['roles'] != 'admin') {
-                    $_SESSION["currentUser"] = $currentUser;
                     header("Location: " . BASE_URL . '?act=my-schedule');
-                    exit;
                 } else {
-                    $_SESSION["currentUser"] = $currentUser; // Lưu toàn bộ user
                     header("Location: " . BASE_URL);
-                    exit;
                 }
+                exit;
             } else {
-                // Đăng nhập thất bại
-                $_SESSION['error'] = $currentUser;
-                $_SESSION['flash'] = true;
+                // Đăng nhập thất bại — luôn hiển thị thông báo rõ ràng
+                $errorMsg = (is_string($currentUser) && !empty($currentUser))
+                    ? $currentUser
+                    : 'Email hoặc mật khẩu không chính xác.';
+                $_SESSION['error'] = $errorMsg;
+                $_SESSION['old_email'] = $email;
                 header('Location:' . BASE_URL . '?act=login');
                 exit();
             }
