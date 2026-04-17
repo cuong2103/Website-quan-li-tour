@@ -458,105 +458,142 @@ class BookingModel
         }
     }
 
-    // Thống kê booking và doanh thu tháng này vs tháng trước
-    public function getMonthlyStats()
+    // ===== Dashboard =====
+    // Doanh thu theo ngày của một tháng/năm (để vẽ biểu đồ dạng 01/01...31/01)
+    public function getRevenueByDay($month, $year)
     {
-        $currentMonth = date('m');
-        $currentYear = date('Y');
-        $lastMonth = date('m', strtotime('-1 month'));
-        $lastMonthYear = date('Y', strtotime('-1 month'));
+        $month = (int)$month;
+        $year = (int)$year;
+        if ($month < 1 || $month > 12) {
+            $month = (int)date('n');
+        }
+        if ($year < 1970 || $year > 2100) {
+            $year = (int)date('Y');
+        }
 
-        // Booking mới
-        $sqlBooking = "SELECT 
-            SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as current_month_count,
-            SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as last_month_count
-            FROM bookings";
-        $stmtBooking = $this->conn->prepare($sqlBooking);
-        $stmtBooking->execute([$currentMonth, $currentYear, $lastMonth, $lastMonthYear]);
-        $bookingStats = $stmtBooking->fetch(PDO::FETCH_ASSOC);
+        $daysInMonth = (int)cal_days_in_month(CAL_GREGORIAN, $month, $year);
 
-        // Doanh thu (tính tất cả các khoản thanh toán đã ghi nhận)
-        $sqlRevenue = "SELECT 
-            SUM(CASE WHEN MONTH(payment_date) = ? AND YEAR(payment_date) = ? THEN amount ELSE 0 END) as current_month_revenue,
-            SUM(CASE WHEN MONTH(payment_date) = ? AND YEAR(payment_date) = ? THEN amount ELSE 0 END) as last_month_revenue
-            FROM payments";
-        $stmtRevenue = $this->conn->prepare($sqlRevenue);
-        $stmtRevenue->execute([$currentMonth, $currentYear, $lastMonth, $lastMonthYear]);
-        $revenueStats = $stmtRevenue->fetch(PDO::FETCH_ASSOC);
+        $dataByDay = [];
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+            $dataByDay[$d] = 0;
+        }
+
+        $sql = "SELECT 
+                    DAY(payment_date) as day_num,
+                    SUM(CASE WHEN type = 'refund' THEN -amount ELSE amount END) as total
+                FROM payments
+                WHERE MONTH(payment_date) = ? AND YEAR(payment_date) = ?
+                GROUP BY DAY(payment_date)
+                ORDER BY DAY(payment_date) ASC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$month, $year]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($rows as $row) {
+            $day = (int)($row['day_num'] ?? 0);
+            if ($day >= 1 && $day <= $daysInMonth) {
+                $dataByDay[$day] = (float)($row['total'] ?? 0);
+            }
+        }
+
+        $labels = [];
+        $data = [];
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+            $labels[] = str_pad((string)$d, 2, '0', STR_PAD_LEFT) . '/' . str_pad((string)$month, 2, '0', STR_PAD_LEFT);
+            $data[] = $dataByDay[$d];
+        }
 
         return [
-            'bookings' => $bookingStats,
-            'revenue' => $revenueStats
+            'labels' => $labels,
+            'data' => $data,
+            'month' => $month,
+            'year' => $year
         ];
     }
 
-    // Doanh thu 6 tháng gần nhất (đảm bảo đủ 6 tháng)
-    public function getRecentRevenue()
+    // Doanh thu theo tháng của một năm (để vẽ biểu đồ 12 tháng)
+    public function getRevenueByMonth($year)
     {
-        // 1. Tạo mảng 6 tháng gần nhất với giá trị 0
-        $months = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $month = date('Y-m', strtotime("-$i months"));
-            $months[$month] = [
-                'month' => $month,
-                'total' => 0
-            ];
+        $year = (int)$year;
+        if ($year < 1970 || $year > 2100) {
+            $year = (int)date('Y');
         }
 
-        // 2. Lấy dữ liệu thực tế từ DB
-        // Tính doanh thu: cộng deposit/full_payment/remaining, trừ refund
+        $dataByMonth = array_fill(1, 12, 0);
+
         $sql = "SELECT 
-                    DATE_FORMAT(payment_date, '%Y-%m') as month,
-                    SUM(CASE 
-                        WHEN type = 'refund' THEN -amount 
-                        ELSE amount 
-                    END) as total
-                FROM payments 
-                WHERE payment_date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-                GROUP BY DATE_FORMAT(payment_date, '%Y-%m')";
+                    MONTH(payment_date) as month_num,
+                    SUM(CASE WHEN type = 'refund' THEN -amount ELSE amount END) as total
+                FROM payments
+                WHERE YEAR(payment_date) = ?
+                GROUP BY MONTH(payment_date)
+                ORDER BY MONTH(payment_date) ASC";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute([$year]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // 3. Merge dữ liệu DB vào mảng tháng
-        foreach ($results as $row) {
-            if (isset($months[$row['month']])) {
-                $months[$row['month']]['total'] = (float)$row['total'];
+        foreach ($rows as $row) {
+            $m = (int)($row['month_num'] ?? 0);
+            if ($m >= 1 && $m <= 12) {
+                $dataByMonth[$m] = (float)($row['total'] ?? 0);
             }
         }
 
-        // 4. Trả về mảng tuần tự (bỏ keys)
-        return array_values($months);
+        $labels = [];
+        $data = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $labels[] = 'T' . $m;
+            $data[] = $dataByMonth[$m];
+        }
+
+        return [
+            'labels' => $labels,
+            'data' => $data,
+            'month' => 0, // 0 = tất cả tháng
+            'year' => $year
+        ];
     }
 
-    // Thống kê trạng thái booking
-    public function getBookingStatusStats()
+    public function getRevenueSummary($year = null)
     {
-        // Khởi tạo mảng 5 trạng thái mặc định = 0
-        // pending, deposited, paid, cancelled, completed
-        $stats = [
-            'pending' => 0,
-            'deposited' => 0,
-            'paid' => 0,
-            'cancelled' => 0,
-            'completed' => 0
-        ];
-
-        // Lấy dữ liệu từ DB
-        $sql = "SELECT status, COUNT(*) as count FROM bookings GROUP BY status";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        $results = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // Trả về dạng [status => count]
-
-        // Merge dữ liệu DB vào mảng mặc định
-        foreach ($results as $status => $count) {
-            if (isset($stats[$status])) {
-                $stats[$status] = (int)$count;
-            }
+        $year = $year ? (int)$year : (int)date('Y');
+        if ($year < 1970 || $year > 2100) {
+            $year = (int)date('Y');
         }
 
-        return $stats;
+        $sql = "SELECT
+                    SUM(CASE WHEN DATE(payment_date) = CURDATE()
+                        THEN (CASE WHEN type = 'refund' THEN -amount ELSE amount END)
+                        ELSE 0 END) as revenue_today,
+                    SUM(CASE WHEN YEAR(payment_date) = :year AND MONTH(payment_date) = MONTH(CURDATE())
+                        THEN (CASE WHEN type = 'refund' THEN -amount ELSE amount END)
+                        ELSE 0 END) as revenue_month,
+                    SUM(CASE WHEN YEAR(payment_date) = :year
+                        THEN (CASE WHEN type = 'refund' THEN -amount ELSE amount END)
+                        ELSE 0 END) as revenue_year
+                FROM payments";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['year' => $year]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+
+        return [
+            'today' => (float)($row['revenue_today'] ?? 0),
+            'month' => (float)($row['revenue_month'] ?? 0),
+            'year' => (float)($row['revenue_year'] ?? 0),
+            'year_value' => $year,
+        ];
+    }
+
+    public function getBookingsToday()
+    {
+        $sql = "SELECT COUNT(*) as total FROM bookings WHERE DATE(created_at) = CURDATE()";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+        return (int)($row['total'] ?? 0);
     }
 
     // Lấy booking chờ xử lý mới nhất

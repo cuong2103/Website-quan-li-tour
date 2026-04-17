@@ -9,6 +9,7 @@ if ($act !== 'login'  && $act !== 'check-login' && $act !== 'logout') {
 match ($act) {
   // Admin Dashboard
   '/' => (new DashboardController())->Dashboard(),
+  'dashboard-revenue-data' => (new DashboardController())->RevenueData(),
 
   'tours' => (new TourController())->index(),
   'tours-create' => (new TourController())->create(),
