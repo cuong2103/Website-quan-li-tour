@@ -1,3 +1,17 @@
-env.php
+config/env.php
 doc.md
 .agent
+
+# ⚠️ CẢNH BÁO: setup.php dùng để khởi tạo tài khoản admin lần đầu.
+# Hãy XÓA file này sau khi chạy xong, không để trên production server!
+# setup.php
+
+# Bỏ qua toàn bộ ảnh upload của người dùng
+uploads/avatar/*
+uploads/destinations_image/*
+uploads/journals/*
+uploads/receipts/*
+uploads/contracts/*
+
+# Giữ lại cấu trúc thư mục (không ignore file .gitkeep)
+!uploads/**/.gitkeep
