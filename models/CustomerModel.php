@@ -6,6 +6,14 @@ class CustomerModel
     {
         $this->conn = connectDB();
     }
+    public function getTotalCustomers()
+    {
+        $sql = "SELECT COUNT(*) as total FROM customers";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)($result['total'] ?? 0);
+    }
     // lấy toàn bộ roles
     public function getAll()
     {
@@ -125,21 +133,13 @@ class CustomerModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Thống kê khách hàng mới
-    public function getNewCustomerStats()
+    // ===== Dashboard =====
+    public function getNewCustomersToday()
     {
-        $currentMonth = date('m');
-        $currentYear = date('Y');
-        $lastMonth = date('m', strtotime('-1 month'));
-        $lastMonthYear = date('Y', strtotime('-1 month'));
-
-        $sql = "SELECT 
-            SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as current_month_count,
-            SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as last_month_count
-            FROM customers";
-
+        $sql = "SELECT COUNT(*) as total FROM customers WHERE DATE(created_at) = CURDATE()";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$currentMonth, $currentYear, $lastMonth, $lastMonthYear]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+        return (int)($row['total'] ?? 0);
     }
 }

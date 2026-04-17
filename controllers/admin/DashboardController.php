@@ -17,46 +17,49 @@ class DashboardController
 
   public function Dashboard()
   {
-    // 1. Thống kê Booking & Doanh thu
-    $monthlyStats = $this->bookingModel->getMonthlyStats();
+    // 5 chỉ số theo yêu cầu
+    $revenueSummary = $this->bookingModel->getRevenueSummary((int)date('Y'));
+    $revenueToday = (float)($revenueSummary['today'] ?? 0);
+    $revenueMonth = (float)($revenueSummary['month'] ?? 0);
+    $revenueYear = (float)($revenueSummary['year'] ?? 0);
 
-    // Tính % tăng trưởng Booking
-    $currentBookings = $monthlyStats['bookings']['current_month_count'];
-    $lastBookings = $monthlyStats['bookings']['last_month_count'];
-    $bookingGrowth = $lastBookings > 0 ? (($currentBookings - $lastBookings) / $lastBookings) * 100 : 100;
+    $bookingsToday = (int)$this->bookingModel->getBookingsToday();
+    $newCustomersToday = (int)$this->customerModel->getNewCustomersToday();
 
-    // Tính % tăng trưởng Doanh thu
-    $currentRevenue = $monthlyStats['revenue']['current_month_revenue'];
-    $lastRevenue = $monthlyStats['revenue']['last_month_revenue'];
-    $revenueGrowth = $lastRevenue > 0 ? (($currentRevenue - $lastRevenue) / $lastRevenue) * 100 : 100;
+    // Booking đang chờ xử lí
+    $pendingBookings = $this->bookingModel->getPendingBookings(8);
 
-
-
-    // 4. Dữ liệu biểu đồ
-    $recentRevenue = $this->bookingModel->getRecentRevenue();
-    $bookingStatusStats = $this->bookingModel->getBookingStatusStats();
-
-    // 5. Danh sách booking chờ xử lý
-    $pendingBookings = $this->bookingModel->getPendingBookings(5);
-
-    // Xử lý dữ liệu cho biểu đồ
-    // Biểu đồ doanh thu: lấy mảng total và labels từ $recentRevenue
-    $revenueChartData = array_column($recentRevenue, 'total');
-    // Tạo labels động theo tháng thực tế
-    $revenueChartLabels = array_map(function ($item) {
-      $monthNum = (int) date('n', strtotime($item['month'] . '-01'));
-      return 'T' . $monthNum;
-    }, $recentRevenue);
-
-    $bookingStatusChartData = [
-      $bookingStatusStats['pending'] ?? 0,
-      $bookingStatusStats['deposited'] ?? 0,
-      $bookingStatusStats['paid'] ?? 0,
-      $bookingStatusStats['cancelled'] ?? 0,
-      $bookingStatusStats['completed'] ?? 0
-    ];
+    // Biểu đồ doanh thu theo ngày (mặc định tháng/năm hiện tại; thay đổi bằng AJAX)
+    $selectedMonth = (int)date('n');
+    $selectedYear = (int)date('Y');
+    $dailyRevenue = $this->bookingModel->getRevenueByDay($selectedMonth, $selectedYear);
+    $revenueChartData = $dailyRevenue['data'] ?? [];
+    $revenueChartLabels = $dailyRevenue['labels'] ?? [];
+    $selectedMonth = (int)($dailyRevenue['month'] ?? $selectedMonth);
+    $selectedYear = (int)($dailyRevenue['year'] ?? $selectedYear);
 
 
     require_once './views/admin/dashboard.php';
+  }
+
+  public function RevenueData()
+  {
+    header('Content-Type: application/json; charset=utf-8');
+
+    $month = isset($_POST['month']) ? (int)$_POST['month'] : 0;
+    $year = isset($_POST['year']) ? (int)$_POST['year'] : 0;
+
+    $data = $month === 0
+      ? $this->bookingModel->getRevenueByMonth($year)
+      : $this->bookingModel->getRevenueByDay($month, $year);
+
+    echo json_encode([
+      'ok' => true,
+      'labels' => $data['labels'] ?? [],
+      'data' => $data['data'] ?? [],
+      'month' => $data['month'] ?? null,
+      'year' => $data['year'] ?? null,
+    ], JSON_UNESCAPED_UNICODE);
+    exit();
   }
 }
