@@ -35,17 +35,25 @@ class BookingController
         ];
         // Lấy danh sách booking từ model với bộ lọc
         $bookings = $this->bookingModel->getAll($filters);
-        // Auto-cập nhật trạng thái booking đã hết hạn
-        foreach ($bookings as $booking) {
+        // Auto-cập nhật trạng thái booking (chỉ 1 lần, tái sử dụng mảng)
+        foreach ($bookings as &$booking) {
+            $today = date('Y-m-d');
             if (
-                $booking['end_date'] < date('Y-m-d') &&
+                $booking['end_date'] < $today &&
                 in_array($booking['status'], ['paid', 'in_progress', 'deposited'])
             ) {
                 $this->bookingModel->updateStatus($booking['id'], 'completed');
+                $booking['status'] = 'completed';
+            } elseif (
+                $booking['start_date'] <= $today &&
+                $booking['end_date'] >= $today &&
+                $booking['status'] === 'paid'
+            ) {
+                $this->bookingModel->updateStatus($booking['id'], 'in_progress');
+                $booking['status'] = 'in_progress';
             }
         }
-        // Lấy lại sau khi đã cập nhật trạng thái
-        $bookings = $this->bookingModel->getAll($filters);
+        unset($booking);
         require_once './views/admin/bookings/index.php';
     }
 
@@ -93,6 +101,22 @@ class BookingController
         ];
 
         $errors = validate($_POST, $rules);
+
+        // Validate thêm: ngày đi phải trước ngày về
+        if (!empty($_POST['start_date']) && !empty($_POST['end_date'])) {
+            if ($_POST['start_date'] >= $_POST['end_date']) {
+                $errors['end_date'] = 'Ngày về phải sau ngày đi.';
+            }
+        }
+        // Validate: số người lớn >= 1
+        if (isset($_POST['adult_count']) && (int)$_POST['adult_count'] < 1) {
+            $errors['adult_count'] = 'Cần ít nhất 1 người lớn.';
+        }
+        // Validate: tổng tiền > 0
+        if (isset($_POST['total_amount']) && (float)$_POST['total_amount'] <= 0) {
+            $errors['total_amount'] = 'Tổng tiền phải lớn hơn 0.';
+        }
+
         if (!empty($errors)) {
             // Lưu lỗi và dữ liệu cũ vào session
             $_SESSION['old'] = $_POST;
@@ -225,9 +249,12 @@ class BookingController
         // Lấy thông tin booking hiện tại
         $booking = $this->bookingModel->getById($id);
 
-        // Ngăn update booking đã completed
-        if ($booking['status'] === 'completed') {
-            Message::set('error', 'Không thể sửa booking đã hoàn thành');
+        // Ngăn update booking đã completed hoặc đang in_progress
+        if (in_array($booking['status'], ['completed', 'in_progress'])) {
+            $msg = $booking['status'] === 'in_progress'
+                ? 'Không thể sửa booking đang trong quá trình thực hiện tour.'
+                : 'Không thể sửa booking đã hoàn thành.';
+            Message::set('error', $msg);
             redirect('bookings');
             exit;
         }
@@ -242,6 +269,21 @@ class BookingController
         ];
 
         $errors = validate($_POST, $rules);
+
+        // Validate thêm: ngày đi phải trước ngày về
+        if (!empty($_POST['start_date']) && !empty($_POST['end_date'])) {
+            if ($_POST['start_date'] >= $_POST['end_date']) {
+                $errors['end_date'] = 'Ngày về phải sau ngày đi.';
+            }
+        }
+        // Validate: số người lớn >= 1
+        if (isset($_POST['adult_count']) && (int)$_POST['adult_count'] < 1) {
+            $errors['adult_count'] = 'Cần ít nhất 1 người lớn.';
+        }
+        // Validate: tổng tiền > 0
+        if (isset($_POST['total_amount']) && (float)$_POST['total_amount'] <= 0) {
+            $errors['total_amount'] = 'Tổng tiền phải lớn hơn 0.';
+        }
 
         if (!empty($errors)) {
             // Lưu lỗi và dữ liệu cũ vào session
@@ -350,6 +392,12 @@ class BookingController
 
         if ($booking['status'] === 'deposited') {
             Message::set('error', 'Không thể xóa booking đã cọc. Vui lòng xóa các thanh toán trước.');
+            header("Location:" . BASE_URL . '?act=bookings');
+            exit;
+        }
+
+        if ($booking['status'] === 'in_progress') {
+            Message::set('error', 'Không thể xóa booking đang trong quá trình thực hiện tour.');
             header("Location:" . BASE_URL . '?act=bookings');
             exit;
         }
@@ -474,12 +522,18 @@ class BookingController
         $this->bookingModel->updateFinancials($bookingId, $totalPaid, $remainingAmount);
 
         // Cập nhật status dựa trên số tiền đã thanh toán
+        // Không thay đổi nếu booking đã completed hoặc cancelled
+        $currentBooking = $this->bookingModel->getById($bookingId);
+        if ($currentBooking && in_array($currentBooking['status'], ['completed', 'cancelled'])) {
+            return;
+        }
+
         if ($totalPaid >= $totalAmount) {
-            $this->bookingModel->updateStatus($bookingId, 'paid'); // Đã thanh toán đủ
+            $this->bookingModel->updateStatus($bookingId, 'paid');
         } elseif ($totalPaid > 0) {
-            $this->bookingModel->updateStatus($bookingId, 'deposited'); // Đã cọc
+            $this->bookingModel->updateStatus($bookingId, 'deposited');
         } else {
-            $this->bookingModel->updateStatus($bookingId, 'pending'); // Chưa thanh toán
+            $this->bookingModel->updateStatus($bookingId, 'pending');
         }
     }
 

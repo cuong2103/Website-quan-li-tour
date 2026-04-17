@@ -3,6 +3,11 @@
     <h2 class="text-base font-semibold text-gray-800">Danh sách khách hàng</h2>
 
     <div class="flex items-center gap-2">
+      <!-- Nút thêm khách hàng trực tiếp -->
+      <a href="<?= BASE_URL ?>?act=booking-add-customer&booking_id=<?= $booking['id'] ?>"
+        class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md flex items-center gap-2">
+        <i class="w-4 h-4" data-lucide="user-plus"></i> Thêm khách hàng
+      </a>
       <!-- Form Upload Excel -->
       <button onclick="document.getElementById('importModal').classList.remove('hidden')" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md flex items-center gap-2">
         <i class="w-4 h-4" data-lucide="upload"></i> Tải lên Excel
@@ -72,16 +77,17 @@
         <p class="text-xs text-gray-500 mt-1">Định dạng: .xlsx hoặc .xls</p>
       </div>
 
-      <div class="mb-4 p-3 bg-blue-50 rounded-lg">
+        <div class="mb-4 p-3 bg-blue-50 rounded-lg">
         <p class="text-sm text-gray-700 mb-2"><strong>Định dạng file Excel:</strong></p>
         <p class="text-xs text-gray-600">Cột 1: STT</p>
         <p class="text-xs text-gray-600">Cột 2: Họ tên</p>
         <p class="text-xs text-gray-600">Cột 3: Số điện thoại</p>
         <p class="text-xs text-gray-600">Cột 4: Email</p>
-        <p class="text-xs text-gray-600">Cột 5: Địa chỉ</p>
-        <p class="text-xs text-gray-600">Cột 6: Giới tính (Nam/Nữ/Khác)</p>
-        <p class="text-xs text-gray-600">Cột 7: Hộ chiếu</p>
-        <p class="text-xs text-gray-600">Cột 8: Căn cước công dân (CCCD)</p>
+        <p class="text-xs text-gray-600">Cột 5: Giới tính (Nam/Nữ/Khác)</p>
+        <p class="text-xs text-gray-600">Cột 6: Địa chỉ</p>
+        <p class="text-xs text-gray-600">Cột 7: Căn cước công dân (CCCD)</p>
+        <p class="text-xs text-gray-600">Cột 8: Hộ chiếu</p>
+        <p class="text-xs text-gray-600">Cột 9: Ghi chú xếp phòng</p>
       </div>
 
       <div class="mb-4">

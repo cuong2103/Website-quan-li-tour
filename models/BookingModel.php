@@ -277,22 +277,13 @@ class BookingModel
     public function getServices($bookingId)
     {
         try {
-            // Lấy tour_id trước
-            $sqlTour = "SELECT tour_id FROM bookings WHERE id = ?";
-            $stmtTour = $this->conn->prepare($sqlTour);
-            $stmtTour->execute([$bookingId]);
-            $tour = $stmtTour->fetch(PDO::FETCH_ASSOC);
-            if (!$tour) return [];
-
-            $tourId = $tour['tour_id'];
-
-            // Lấy dịch vụ theo tour_id
+            // Lấy dịch vụ theo booking_id (sửa lỗi: trước đây lọc theo tour_id)
             $sql = "SELECT bs.*, s.name AS service_name
                 FROM booking_services bs
                 JOIN services s ON s.id = bs.service_id
-                WHERE bs.tour_id = ?";
+                WHERE bs.booking_id = ?";
             $stmt = $this->conn->prepare($sql);
-            $stmt->execute([$tourId]);
+            $stmt->execute([$bookingId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             die("Lỗi getServices(): " . $e->getMessage());

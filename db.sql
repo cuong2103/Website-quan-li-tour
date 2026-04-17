@@ -184,7 +184,7 @@ CREATE TABLE `bookings` (
   `remaining_amount` DECIMAL(12,0) DEFAULT 0, 
   `start_date` DATE NOT NULL, 
   `end_date` DATE NOT NULL, 
-  `status` ENUM('pending', 'deposited', 'paid', 'cancelled', 'completed') DEFAULT 'pending', 
+  `status` ENUM('pending', 'deposited', 'paid', 'in_progress', 'cancelled', 'completed') DEFAULT 'pending', 
   `special_requests` TEXT, 
   `created_by` INT,
   `updated_by` INT,

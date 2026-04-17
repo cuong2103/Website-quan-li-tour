@@ -41,6 +41,7 @@ require_once './views/components/sidebar.php';
                         <option value="pending" <?= ($filters['status'] ?? '') === 'pending' ? 'selected' : '' ?>>Chờ thanh toán</option>
                         <option value="deposited" <?= ($filters['status'] ?? '') === 'deposited' ? 'selected' : '' ?>>Đã cọc</option>
                         <option value="paid" <?= ($filters['status'] ?? '') === 'paid' ? 'selected' : '' ?>>Đã thanh toán đủ</option>
+                        <option value="in_progress" <?= ($filters['status'] ?? '') === 'in_progress' ? 'selected' : '' ?>>Đang thực hiện</option>
                         <option value="completed" <?= ($filters['status'] ?? '') === 'completed' ? 'selected' : '' ?>>Hoàn thành Tour</option>
                         <option value="cancelled" <?= ($filters['status'] ?? '') === 'cancelled' ? 'selected' : '' ?>>Đã hủy</option>
                     </select>
@@ -84,7 +85,7 @@ require_once './views/components/sidebar.php';
                 <?php if (!empty($bookings)): ?>
                     <?php foreach ($bookings as $b): ?>
                         <tr class="hover:bg-gray-50 transition-colors text-sm text-gray-700">
-                            <td class="py-4 px-4 font-medium text-gray-900"><?= $b['tour_name'] ?></td>
+                            <td class="py-4 px-4 font-medium text-gray-900"><?= htmlspecialchars($b['tour_name'] ?? '') ?></td>
                             <td class="py-4 px-4">
                                 <?php if (!empty($b['representative_name'])): ?>
                                     <div class="flex items-center gap-1.5">

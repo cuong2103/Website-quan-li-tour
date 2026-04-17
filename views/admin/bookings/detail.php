@@ -27,12 +27,12 @@ require_once './views/components/sidebar.php';
 
             <div>
                 <p class="text-gray-500">Ngày đi</p>
-                <p class="font-medium"><?= $booking['start_date'] ?></p>
+                <p class="font-medium"><?= date('d/m/Y', strtotime($booking['start_date'])) ?></p>
             </div>
 
             <div>
                 <p class="text-gray-500">Ngày về</p>
-                <p class="font-medium"><?= $booking['end_date'] ?></p>
+                <p class="font-medium"><?= date('d/m/Y', strtotime($booking['end_date'])) ?></p>
             </div>
 
             <div>
@@ -51,6 +51,13 @@ require_once './views/components/sidebar.php';
                 <p class="text-gray-500">Tổng tiền</p>
                 <p class="font-medium text-green-600">
                     <?= number_format($booking['total_amount'], 0, ',', '.') ?>đ
+                </p>
+            </div>
+
+            <div>
+                <p class="text-gray-500">Đã thanh toán</p>
+                <p class="font-medium text-blue-600">
+                    <?= number_format($booking['deposit_amount'] ?? 0, 0, ',', '.') ?>đ
                 </p>
             </div>
 
