@@ -77,19 +77,25 @@ require_once "./views/components/sidebar.php";
 
                         <!-- Hành động -->
                         <td class="px-6 py-4 text-center">
-                            <div class="flex justify-center gap-3">
+                            <div class="flex items-center justify-center gap-2">
                                 <a href="?act=supplier-edit&id=<?= $supplier['id'] ?>"
-                                    class="text-white-500 hover:text-blue-600 transition" title="Sửa">
-                                    <i data-lucide="square-pen" class="w-5 h-4.5 mr-2"></i>
+                                    class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                                    title="Sửa">
+                                    <i class="w-4 h-4" data-lucide="square-pen"></i>
+                                    <span class="text-xs font-semibold">Sửa</span>
                                 </a>
                                 <a href="?act=supplier-detail&id=<?= $supplier['id'] ?>"
-                                    class="text-white-500 hover:text-orange-600 transition" title="Chi tiết">
-                                    <i data-lucide="eye" class="w-5 h4.5 mr-2"></i>
+                                    class="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                                    title="Chi tiết">
+                                    <i class="w-4 h-4" data-lucide="eye"></i>
+                                    <span class="text-xs font-semibold">Chi tiết</span>
                                 </a>
                                 <a href="?act=supplier-delete&id=<?= $supplier['id'] ?>"
                                     onclick="return confirm('Bạn có chắc muốn xoá nhà cung cấp này không?')"
-                                    class="text-red-500 hover:text-red-600 transition" title="Xóa">
-                                    <i data-lucide="trash-2" class="w-5 h4.5"></i>
+                                    class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                                    title="Xóa">
+                                    <i class="w-4 h-4" data-lucide="trash-2"></i>
+                                    <span class="text-xs font-semibold">Xóa</span>
                                 </a>
                             </div>
                         </td>

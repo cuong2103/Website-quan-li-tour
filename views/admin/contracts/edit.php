@@ -6,10 +6,7 @@
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-xl font-semibold">Cập nhật hợp đồng</h1>
 
-        <a href="<?= BASE_URL ?>?act=booking-detail&id=<?= $contract['booking_id'] ?>&tab=contracts"
-            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm">
-            Quay lại
-        </a>
+        <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
     </div>
 
 

@@ -10,10 +10,7 @@ require_once './views/components/sidebar.php';
             <h1 class="text-2xl font-bold text-gray-900">Nhân viên đang nghỉ phép</h1>
             <p class="text-gray-600 mt-1">Danh sách các nhân viên hiện đang trong thời gian nghỉ phép</p>
         </div>
-        <a href="?act=user" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors flex items-center gap-2">
-            <i data-lucide="arrow-left" class="w-5 h-5"></i>
-            Quay lại
-        </a>
+        <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
     </div>
 
     <?php if (empty($users)): ?>

@@ -180,22 +180,24 @@ require_once './views/components/sidebar.php';
                 </td>
                 <td class="px-6 py-4">
                   <div class="flex items-center justify-center gap-2">
-                    <a href="?act=user-detail&id=<?= $user['id'] ?>"
-                      class="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      title="Xem chi tiết">
-                      <i data-lucide="eye" class="w-4 h-4"></i>
+                    <a href="?act=user-edit&id=<?= $user['id'] ?>&from=index"
+                      class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                      title="Sửa">
+                      <i class="w-4 h-4" data-lucide="square-pen"></i>
+                      <span class="text-xs font-semibold">Sửa</span>
                     </a>
-                    <!-- Sửa -->
-                    <a href="?act=user-edit&id=<?= $user['id'] ?>&from=index" 
-                       class="text-gray-500 hover:text-yellow-600 transition-colors" 
-                       title="Chỉnh sửa">
-                      <i data-lucide="square-pen" class="w-5 h-5"></i>
+                    <a href="?act=user-detail&id=<?= $user['id'] ?>"
+                      class="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                      title="Chi tiết">
+                      <i class="w-4 h-4" data-lucide="eye"></i>
+                      <span class="text-xs font-semibold">Chi tiết</span>
                     </a>
                     <a href="?act=user-delete&id=<?= $user['id'] ?>"
-                      class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       onclick="return confirm('Bạn có chắc muốn xóa <?= htmlspecialchars($user['fullname'] ?? '') ?>?')"
+                      class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
                       title="Xóa">
-                      <i data-lucide="trash-2" class="w-4 h-4"></i>
+                      <i class="w-4 h-4" data-lucide="trash-2"></i>
+                      <span class="text-xs font-semibold">Xóa</span>
                     </a>
                   </div>
                 </td>

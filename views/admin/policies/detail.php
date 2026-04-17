@@ -1,24 +1,16 @@
 <?php require_once "./views/components/header.php"; ?>
 <?php require_once "./views/components/sidebar.php"; ?>
 
-<main class="flex-1 pt-28 overflow-y-auto p-6">
-    <div class="space-y-6 max-w-7xl mx-auto">
+<main class="flex-1 pt-28 overflow-y-auto p-6 w-full">
+    <div class="space-y-6 w-full">
 
         <!-- Header + Nút quay lại -->
         <div class="flex items-center justify-between mb-8">
-            <div class="flex items-center gap-4">
-                <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
-                    <i class="w-6 h-6" data-lucide="chevron-left"></i>
-                </button>
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-900">Chi tiết Chính sách</h2>
-                    <p class="text-sm text-gray-600">Thông tin chi tiết về chính sách</p>
-                </div>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">Chi tiết Chính sách</h2>
+                <p class="text-sm text-gray-600">Thông tin chi tiết về chính sách</p>
             </div>
-
-            <a href="?act=policies" class="flex items-center gap-2 text-gray-500 hover:text-gray-700 text-sm font-medium transition-colors">
-                Quay lại <i data-lucide="move-right"></i>
-            </a>
+            <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
         </div>
 
         <div class="grid grid-cols-4 gap-6">

@@ -48,15 +48,7 @@ if ($userId && $role === 'Admin') {
         class="fixed top-5 right-5 bg-red-500 text-white px-4 py-2 rounded shadow-lg opacity-0 transition-opacity duration-500">
       </div>
       <div class="px-6 py-7 flex items-center justify-between">
-        <div class="flex-1 max-w-2xl">
-          <div class="flex-1 max-w-2xl">
-            <div class="relative">
-              <input type="text" placeholder="Tìm kiếm booking, tour, khách hàng..."
-                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <i data-lucide="search" class="absolute left-3 top-2.5 w-5 h-5 text-gray-400"></i>
-            </div>
-          </div>
-        </div>
+        <div></div>
         <div class="flex items-center space-x-4">
           <button onclick="window.location.href='<?= BASE_URL ?>?act=my-notifications'" class="relative p-2 text-gray-600 hover:bg-gray-100 rounded-full">
             <i data-lucide="bell"></i>

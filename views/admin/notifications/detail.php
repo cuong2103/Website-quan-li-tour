@@ -16,6 +16,7 @@ require_once './views/components/sidebar.php';
 
     <!-- Action Buttons -->
     <div class="flex items-center gap-3">
+      <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
       <a href="<?= BASE_URL ?>?act=notification-edit&id=<?= $notification['id'] ?>"
         class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
         <i class="w-4 h-4" data-lucide="edit-3"></i>

@@ -8,10 +8,7 @@ require_once './views/components/sidebar.php';
     <!-- Tiêu đề + nút -->
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-xl font-semibold">Chi tiết Booking <?= $booking['booking_code'] ?></h1>
-        <a href="<?= BASE_URL . '?act=bookings' ?>"
-            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-sm">
-            Quay lại
-        </a>
+        <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
     </div>
 
 

@@ -207,28 +207,41 @@ class TourModel
     ]);
   }
 
-  // Xóa tour
+  // Kiểm tra tour có booking đang active không
+  public function hasActiveBookings($id)
+  {
+    $sql = "SELECT COUNT(*) FROM bookings 
+            WHERE tour_id = ? AND status IN ('pending', 'deposited', 'paid')";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$id]);
+    return $stmt->fetchColumn() > 0;
+  }
+
+  // Xóa tour (dùng Transaction để đảm bảo toàn vẹn dữ liệu)
   public function delete($id)
   {
-    // Xóa itineraries
-    $sql1 = "DELETE FROM itineraries WHERE tour_id = ?";
-    $stmt1 = $this->conn->prepare($sql1);
-    $stmt1->execute([$id]);
+    try {
+      $this->conn->beginTransaction();
 
-    // Xóa tour_policies
-    $sql2 = "DELETE FROM tour_policies WHERE tour_id = ?";
-    $stmt2 = $this->conn->prepare($sql2);
-    $stmt2->execute([$id]);
+      // Xóa itineraries
+      $this->conn->prepare("DELETE FROM itineraries WHERE tour_id = ?")->execute([$id]);
 
-    // Xóa tour_services (nếu có)
-    $sql3 = "DELETE FROM tour_services WHERE tour_id = ?";
-    $stmt3 = $this->conn->prepare($sql3);
-    $stmt3->execute([$id]);
+      // Xóa tour_policies
+      $this->conn->prepare("DELETE FROM tour_policies WHERE tour_id = ?")->execute([$id]);
 
-    // Xóa tour
-    $sql = "DELETE FROM tours WHERE id = ?";
-    $stmt = $this->conn->prepare($sql);
-    return $stmt->execute([$id]);
+      // Xóa tour_services
+      $this->conn->prepare("DELETE FROM tour_services WHERE tour_id = ?")->execute([$id]);
+
+      // Xóa tour chính
+      $this->conn->prepare("DELETE FROM tours WHERE id = ?")->execute([$id]);
+
+      $this->conn->commit();
+      return true;
+    } catch (PDOException $e) {
+      $this->conn->rollBack();
+      error_log("Tour delete error: " . $e->getMessage());
+      return false;
+    }
   }
 
   // Thêm itinerary

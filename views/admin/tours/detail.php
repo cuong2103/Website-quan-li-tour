@@ -4,23 +4,25 @@ require_once './views/components/sidebar.php';
 ?>
 
 <main class="pt-28 px-6 bg-gray-50 min-h-screen overflow-y-auto">
-  <div class="max-w-7xl mx-auto">
+  <div class="w-full">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
-      <div class="flex items-center gap-4">
-        <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
-          <i data-lucide="arrow-left" class="w-6 h-6"></i>
-        </button>
         <div>
           <h2 class="text-3xl font-bold text-gray-900">Chi tiết tour</h2>
           <p class="text-sm text-gray-600">Xem toàn bộ thông tin tour • Mã tour: <?= htmlspecialchars($tour['tour_code'] ?? '') ?></p>
         </div>
-      </div>
       <div class="flex gap-3">
-        <a href="<?= BASE_URL ?>?act=tours-edit&id=<?= $tour['id'] ?>" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
-          <i data-lucide="edit" class="w-4 h-4 inline-block mr-2"></i>
+        <a href="<?= BASE_URL ?>?act=tours-delete&id=<?= $tour['id'] ?>"
+          onclick="return confirm('Bạn có chắc chắn muốn xóa tour này?')"
+          class="flex items-center gap-2 px-5 py-2.5 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition font-medium">
+          <i data-lucide="trash-2" class="w-4 h-4"></i>
+          Xóa tour
+        </a>
+        <a href="<?= BASE_URL ?>?act=tours-edit&id=<?= $tour['id'] ?>" class="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+          <i data-lucide="edit" class="w-4 h-4"></i>
           Chỉnh sửa
         </a>
+        <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
       </div>
     </div>
 
@@ -191,27 +193,7 @@ require_once './views/components/sidebar.php';
 
     </div>
 
-    <!-- Action buttons -->
-    <div class="flex justify-between items-center mt-6 pb-8">
-      <button onclick="history.back()" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700">
-        <i data-lucide="arrow-left" class="w-5 h-5 inline-block mr-2"></i>
-        Quay lại
-      </button>
 
-      <div class="flex gap-3">
-        <a href="<?= BASE_URL ?>?act=tours-delete&id=<?= $tour['id'] ?>"
-          onclick="return confirm('Bạn có chắc chắn muốn xóa tour này?')"
-          class="px-6 py-3 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition font-medium">
-          <i data-lucide="trash-2" class="w-5 h-5 inline-block mr-2"></i>
-          Xóa tour
-        </a>
-        <a href="<?= BASE_URL ?>?act=tours-edit&id=<?= $tour['id'] ?>"
-          class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
-          <i data-lucide="square-pencil" class="w-5 h-5 inline-block mr-2"></i>
-          Chỉnh sửa
-        </a>
-      </div>
-    </div>
   </div>
 </main>
 

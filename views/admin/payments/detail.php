@@ -8,10 +8,7 @@ require_once './views/components/sidebar.php';
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-xl font-semibold">Chi tiết thanh toán #<?= $payment['id'] ?></h1>
 
-        <a href="<?= BASE_URL ?>?act=booking-detail&id=<?= $payment['booking_id'] ?>&tab=payments"
-            class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-sm">
-            Quay lại Booking
-        </a>
+        <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
     </div>
 
     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4">

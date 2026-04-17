@@ -93,24 +93,25 @@ require_once './views/components/sidebar.php';
                     </p>
 
                     <!-- Hành động -->
-                    <div class="flex justify-start items-center mt-5 gap-3 pt-3 border-t">
-                        <a href="<?= BASE_URL . '?act=destination-detail&id=' . $item['id'] ?>"
-                            class="flex flex-1 items-center justify-center gap-2 px-3 py-2 border rounded-lg hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition shadow-sm"
-                            title="Xem chi tiết">
-                            <i class="w-4 h-4" data-lucide="eye"></i>
-                            <span class="text-sm font-medium">Xem</span>
-                        </a>
+                    <div class="flex items-center mt-5 gap-2 pt-3 border-t border-gray-100">
                         <a href="<?= BASE_URL . '?act=destination-edit&id=' . $item['id'] ?>"
-                            class="flex items-center justify-center gap-2 px-3 py-2 border rounded-lg hover:bg-orange-50 text-orange-600 hover:text-orange-700 transition shadow-sm"
-                            title="Chỉnh sửa">
+                            class="flex-1 flex items-center justify-center gap-1.5 px-1 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                            title="Sửa">
                             <i class="w-4 h-4" data-lucide="square-pen"></i>
+                            <span class="text-xs font-semibold">Sửa</span>
                         </a>
-
+                        <a href="<?= BASE_URL . '?act=destination-detail&id=' . $item['id'] ?>"
+                            class="flex-1 flex items-center justify-center gap-1.5 px-1 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                            title="Chi tiết">
+                            <i class="w-4 h-4" data-lucide="eye"></i>
+                            <span class="text-xs font-semibold">Chi tiết</span>
+                        </a>
                         <a href="<?= BASE_URL ?>?act=destination-delete&id=<?= $item['id'] ?>"
                             onclick="return confirm('Bạn có chắc muốn xóa địa điểm này không?');"
-                            class="flex items-center justify-center gap-2 px-3 py-2 border rounded-lg hover:bg-red-50 text-red-600 hover:text-red-700 transition shadow-sm"
+                            class="flex-1 flex items-center justify-center gap-1.5 px-1 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
                             title="Xóa">
                             <i class="w-4 h-4" data-lucide="trash-2"></i>
+                            <span class="text-xs font-semibold">Xóa</span>
                         </a>
                     </div>
                 </div>

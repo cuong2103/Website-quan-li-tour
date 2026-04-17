@@ -23,12 +23,16 @@ function renderCategory($categories, $level = 0)
     echo '<div class=" flex items-center gap-2 py-2 px-3 hover:bg-gray-100 rounded-lg transition-colors group" style="padding-left:' . $padding . 'px;">';
     echo '<i class="w-4 h-4 text-blue-500 flex-shrink-0" data-lucide="folder"></i>';
     echo '<span class="flex-1 text-gray-900"> ' . $cat['name'] . '</span>';
-    echo isset($_GET['id']) ? "" : '<div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-    <a href="' . BASE_URL . '?act=categories-edit&id=' . $cat["id"] . '"><i class="w-4 h-4 text-black-500 flex-shrink-0" data-lucide="square-pen"></i></a>
-    <a href="' . BASE_URL . '?act=categories-delete&id=' . $cat["id"] . '" 
-        onclick="return confirm(\'Bạn có chắc muốn xóa danh mục này không?\');">
-        <i class="w-4 h-4 text-red-500 flex-shrink-0" data-lucide="trash-2"></i>
-      </a></div>';
+    echo isset($_GET['id']) ? "" : '<div class="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <a href="' . BASE_URL . '?act=categories-edit&id=' . $cat['id'] . '" class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors" title="Sửa">
+            <i class="w-4 h-4" data-lucide="square-pen"></i>
+            <span class="text-xs font-semibold">Sửa</span>
+        </a>
+        <a href="' . BASE_URL . '?act=categories-delete&id=' . $cat['id'] . '" onclick="return confirm(\'Bạn có chắc muốn xoá không?\')" class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors" title="Xóa">
+            <i class="w-4 h-4" data-lucide="trash-2"></i>
+            <span class="text-xs font-semibold">Xóa</span>
+        </a>
+    </div>';
     echo '</div>';
 
     // Nếu có con → vẽ tiếp

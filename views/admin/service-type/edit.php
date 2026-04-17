@@ -8,11 +8,7 @@
             Sửa loại dịch vụ
         </h2>
 
-        <a href="index.php?act=service-type"
-            class="bg-gray-200 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-medium transition flex items-center gap-2">
-            <i data-lucide="arrow-left" class="w-5 h-5"></i>
-            Quay lại
-        </a>
+        <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
     </div>
 
     <form action="index.php?act=service-type-update" method="POST" class="bg-white p-6 rounded-xl shadow-md">
