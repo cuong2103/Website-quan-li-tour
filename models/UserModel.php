@@ -162,8 +162,7 @@ class UserModel
         return $stmt->execute([$newPassword, $userId]);
     }
 
-    // CHECK LOGIN trực tiếp
-    // Check loggin
+    // Check login
     public function checkLogin($email, $password)
     {
         $sql = "SELECT * FROM users WHERE email = :email";
@@ -171,6 +170,18 @@ class UserModel
         $stmt->execute(['email' => $email]);
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user) {
+            return 'Email không tồn tại trong hệ thống.';
+        }
+
+        if (!$user['status']) {
+            return 'Tài khoản đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.';
+        }
+
+        if (!password_verify($password, $user['password'])) {
+            return 'Mật khẩu không chính xác.';
+        }
 
         return $user;
     }
