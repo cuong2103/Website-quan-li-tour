@@ -31,7 +31,7 @@ class JournalController
             'tour_assignment_id' => $_POST['tour_assignment_id'],
             'date' => $_POST['date'] ?? date('Y-m-d'),
             'content' => $_POST['content'],
-            'type' => $_POST['type'] ?? 'note',
+            'type' => in_array($_POST['type'] ?? '', ['daily', 'incident', 'other']) ? $_POST['type'] : 'daily',
             'created_by' => $_SESSION['currentUser']['id'],
         ];
 
@@ -110,7 +110,7 @@ class JournalController
         $data = [
             'date' => $_POST['date'] ?? date('Y-m-d'),
             'content' => $_POST['content'],
-            'type' => $_POST['type'] ?? 'note',
+            'type' => in_array($_POST['type'] ?? '', ['daily', 'incident', 'other']) ? $_POST['type'] : 'daily',
             'updated_by' => $_SESSION['currentUser']['id'],
         ];
 
@@ -120,6 +120,14 @@ class JournalController
             $_SESSION['validate_errors'] = $errors;
             $_SESSION['old'] = $data;
             redirect('journal-edit&id=' . $id);
+            exit;
+        }
+
+        // Kiểm tra quyền sở hữu
+        $journal = $this->modelJournal->getById($id);
+        if (!$journal || $journal['created_by'] != $_SESSION['currentUser']['id']) {
+            Message::set('error', 'Bạn không có quyền sửa nhật ký này!');
+            redirect('guide-tour-assignments');
             exit;
         }
 
@@ -138,17 +146,34 @@ class JournalController
         }
 
         Message::set('success', 'Cập nhật nhật ký thành công!');
-        redirect('guide-tour-assignments-detail&id=' . $_POST['tour_assignment_id'] . '&tab=journals');
+        $tourAssignmentId = $_POST['tour_assignment_id'] ?? $journal['tour_assignment_id'];
+        redirect('guide-tour-assignments-detail&id=' . $tourAssignmentId . '&tab=journals');
         exit;
     }
 
     // Xóa journal
     public function delete()
     {
-        $id = $_GET['id'];
+        $id = $_GET['id'] ?? null;
+        $tourAssignmentId = $_GET['tour_assignment_id'] ?? null;
+
+        if (!$id) {
+            Message::set('error', 'Thiếu thông tin!');
+            redirect('guide-tour-assignments');
+            exit;
+        }
+
+        $journal = $this->modelJournal->getById($id);
+
+        // Kiểm tra quyền sở hữu
+        if (!$journal || $journal['created_by'] != $_SESSION['currentUser']['id']) {
+            Message::set('error', 'Bạn không có quyền xóa nhật ký này!');
+            redirect('guide-tour-assignments');
+            exit;
+        }
+
         $images = $this->modelJournal->getImages($id);
         $uploadDir = __DIR__ . '/../../uploads/journals/';
-
         foreach ($images as $img) {
             $filePath = $uploadDir . $img['image_url'];
             if (file_exists($filePath)) unlink($filePath);
@@ -156,7 +181,7 @@ class JournalController
 
         $this->modelJournal->delete($id);
         Message::set('success', 'Xóa nhật ký thành công!');
-        redirect("guide-tour-assignments-detail&id=" . $_GET['tour_assignment_id'] . "&tab=journals");
+        redirect("guide-tour-assignments-detail&id=" . ($tourAssignmentId ?? $journal['tour_assignment_id']) . "&tab=journals");
         exit;
     }
 

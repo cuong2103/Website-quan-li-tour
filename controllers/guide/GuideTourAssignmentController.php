@@ -104,20 +104,18 @@ class GuideTourAssignmentController
 
             case 'journals':
                 $journals = $this->assignmentModel->getJournalsByAssignment($assignmentId);
-
                 break;
 
             case 'itinerary':
                 $itineraries = $this->tourModel->getItineraries($assignment['tour_id']);
-
                 if (!empty($itineraries)) {
                     foreach ($itineraries as $item) {
                         $day = $item['order_number'] ?? 1;
                         $itinerary_days[$day][] = [
                             'destination_name' => $item['destination_name'] ?? '',
-                            'arrival_time' => $item['arrival_time'] ?? '',
-                            'departure_time' => $item['departure_time'] ?? '',
-                            'description' => $item['description'] ?? ''
+                            'arrival_time'     => $item['arrival_time'] ?? '',
+                            'departure_time'   => $item['departure_time'] ?? '',
+                            'description'      => $item['description'] ?? ''
                         ];
                     }
                 }
@@ -127,23 +125,14 @@ class GuideTourAssignmentController
                 break;
 
             case 'checkin':
-                // Lấy danh sách các đợt check-in
                 $checkinLinks = $this->checkinModel->getCheckinLinks($assignmentId);
-
-                // Lấy link_id từ URL hoặc dùng link mới nhất
                 $currentLinkId = $_GET['link_id'] ?? null;
                 if (!$currentLinkId && !empty($checkinLinks)) {
                     $currentLinkId = $checkinLinks[0]['id'];
                 }
-
-                // Lấy danh sách khách hàng với trạng thái check-in cho link hiện tại
                 if ($currentLinkId) {
                     $customers = $this->checkinModel->getCustomersWithCheckinStatus($assignmentId, $currentLinkId);
                 }
-                break;
-
-            case 'journals':
-                $journals = $this->assignmentModel->getJournalsByAssignment($assignmentId);
                 break;
         }
 

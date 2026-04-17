@@ -59,12 +59,27 @@ class MyScheduleController
     {
         $assignmentId = $_GET['id'] ?? 0;
 
+        if (!$assignmentId) {
+            Message::set('error', 'Thiếu thông tin!');
+            redirect('my-schedule');
+            exit;
+        }
+
         // Lấy thông tin phân công
         $assignment = $this->tourAssignmentModel->getAssignmentById($assignmentId);
 
         if (!$assignment) {
-            echo "<p>Không tìm thấy tour được phân công!</p>";
-            exit();
+            Message::set('error', 'Không tìm thấy tour được phân công!');
+            redirect('my-schedule');
+            exit;
+        }
+
+        // Authorization: Chỉ cho phép xem tour của chính mình
+        $guideId = $_SESSION['currentUser']['id'];
+        if ($assignment['guide_id'] != $guideId) {
+            Message::set('error', 'Bạn không có quyền xem tour này!');
+            redirect('my-schedule');
+            exit;
         }
 
         // Lấy booking và danh sách khách hàng

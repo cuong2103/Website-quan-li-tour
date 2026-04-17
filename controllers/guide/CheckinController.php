@@ -15,18 +15,22 @@ class CheckinController
   {
     $linkId = $_GET['link_id'] ?? null;
     $assignmentId = $_GET['assignment_id'] ?? null;
-    $customers = $this->checkinModel->getCustomersWithCheckinStatus($assignmentId, $linkId);
-    $checkinLink = $this->checkinModel->getCheckinLink($linkId, $assignmentId);
+
+    // Validate trước khi query DB
     if (!$linkId || !$assignmentId) {
       Message::set('error', 'Thiếu thông tin');
       redirect('my-schedule');
       exit;
     }
+
+    $checkinLink = $this->checkinModel->getCheckinLink($linkId, $assignmentId);
     if (!$checkinLink) {
       Message::set('error', 'Không tìm thấy đợt check-in');
       redirect('my-schedule');
       exit;
     }
+
+    $customers = $this->checkinModel->getCustomersWithCheckinStatus($assignmentId, $linkId);
     require './views/guide/checkin/detail.php';
   }
 
@@ -52,11 +56,11 @@ class CheckinController
 
     $errors = validate($data, $rules);
     if ($errors) {
-      Message::set('error', "Bắt buộc phải nhập tiêu đề đợt check-in");
+      $_SESSION['validate_errors'] = $errors;
+      $_SESSION['old'] = $_POST;
       redirect('guide-tour-assignments-detail&id=' . $assignmentId . '&tab=checkin');
       exit;
     }
-    // dd($assignmentId);
     // Kiểm tra quyền check-in
     $canCheckin = $this->checkinModel->canCheckin($assignmentId);
     if (!$canCheckin['allowed']) {
@@ -100,7 +104,7 @@ class CheckinController
     $canCheckin = $this->checkinModel->canCheckin($assignmentId);
     if (!$canCheckin['allowed']) {
       Message::set('error', $canCheckin['message']);
-      redirect('guide-tour-assignments&id=' . $assignmentId . '&tab=checkin');
+      redirect('guide-checkin-detail&link_id=' . $linkId . '&assignment_id=' . $assignmentId);
       exit;
     }
 
