@@ -125,23 +125,26 @@ require_once './views/components/sidebar.php';
                                 <?php endif; ?>
                             </td>
 
-                            <td class="py-4 px-4">
-                                <div class="flex items-center justify-center gap-2">
+                            <td class="py-3 px-2">
+                                <div class="flex items-center justify-center gap-1.5">
                                     <a href="<?= BASE_URL . '?act=booking-edit&id=' . $b['id']  ?>"
-                                        class="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                                        class="flex items-center gap-1.5 px-2.5 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
                                         title="Sửa">
-                                        <i class="w-4 h-4" data-lucide="square-pen"></i>
+                                        <i class="w-3.5 h-3.5" data-lucide="square-pen"></i>
+                                        <span class="text-xs font-semibold">Sửa</span>
                                     </a>
                                     <a href="<?= BASE_URL . '?act=booking-detail&id=' . $b['id']  ?>"
-                                        class="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-md transition-colors"
+                                        class="flex items-center gap-1.5 px-2.5 py-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
                                         title="Chi tiết">
-                                        <i class="w-4 h-4" data-lucide="eye"></i>
+                                        <i class="w-3.5 h-3.5" data-lucide="eye"></i>
+                                        <span class="text-xs font-semibold">Chi tiết</span>
                                     </a>
                                     <a href="<?= BASE_URL . '?act=booking-delete&id=' . $b['id']  ?>"
                                         onclick="return confirm('Bạn có chắc muốn xoá không?')"
-                                        class="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                                        class="flex items-center gap-1.5 px-2.5 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
                                         title="Xóa">
-                                        <i class="w-4 h-4" data-lucide="trash-2"></i>
+                                        <i class="w-3.5 h-3.5" data-lucide="trash-2"></i>
+                                        <span class="text-xs font-semibold">Xóa</span>
                                     </a>
                                 </div>
                             </td>

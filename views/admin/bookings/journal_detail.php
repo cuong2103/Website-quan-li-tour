@@ -6,11 +6,7 @@ require_once './views/components/sidebar.php';
 <main class="pt-28 px-6 min-w-7xl mx-6">
   <!-- Header -->
   <div class="flex items-center justify-between mb-8">
-    <div class="flex items-center gap-4">
-      <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
-        <i data-lucide="chevron-left" class="w-6 h-6"></i>
-      </button>
-      <div>
+    <div>
         <h1 class="text-3xl font-bold text-gray-900">Chi tiết nhật ký</h1>
         <p class="text-gray-500 mt-1">
           Tour: <?= htmlspecialchars($tour['tour_name'] ?? 'N/A') ?>
@@ -18,13 +14,8 @@ require_once './views/components/sidebar.php';
           Mã: <?= htmlspecialchars($tour['booking_code'] ?? 'N/A') ?>
         </p>
       </div>
-    </div>
     <div class="flex gap-3">
-      <a href="<?= BASE_URL . '?act=booking-detail&id=' . $tour['booking_id'] . '&tab=journal' ?>"
-        class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50">
-        <i data-lucide="arrow-left" class="w-4 h-4"></i>
-        <span>Quay lại Booking</span>
-      </a>
+      <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
     </div>
   </div>
 

@@ -1,23 +1,18 @@
 <?php
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
-// Lấy số ngày từ POST hoặc mặc định là 1
-
-$dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) : 1;
+// $errors và $old được truyền vào từ Controller (qua session sau redirect)
+$dayCount = !empty($old['destination_id']) ? count($old['destination_id']) : 1;
 ?>
 <main class="pt-28 px-8 bg-gray-50 min-h-screen overflow-y-auto">
   <div class="max-w-12xl mx-auto">
     <!-- Header của form -->
     <div class="flex items-center justify-between mb-8">
-      <div class="flex items-center gap-4">
-        <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
-          <i data-lucide="arrow-left" class="w-6 h-6"></i>
-        </button>
-        <div>
-          <h2 class="text-2xl font-bold text-gray-900">Tạo Tour mới</h2>
-          <p class="text-sm text-gray-600">Nhập thông tin chi tiết về tour</p>
-        </div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900">Tạo Tour mới</h2>
+        <p class="text-sm text-gray-600">Nhập thông tin chi tiết về tour</p>
       </div>
+      <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
     </div>
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-10">
@@ -28,7 +23,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="col-span-2">
               <label class="block text-sm font-medium text-gray-700 mb-2">Tên tour</label>
-              <input type="text" name="name" value="<?= htmlspecialchars($_POST['name'] ?? '') ?>" placeholder="VD: Tour Hà Nội - Sapa 3N2Đ" class="w-full px-4 py-3 border <?= !empty($errors['name']) ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent' ?> rounded-lg focus:ring-2 outline-none">
+              <input type="text" name="name" value="<?= htmlspecialchars($old['name'] ?? '') ?>" placeholder="VD: Tour Hà Nội - Sapa 3N2Đ" class="w-full px-4 py-3 border <?= !empty($errors['name']) ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent' ?> rounded-lg focus:ring-2 outline-none">
               <?php if (!empty($errors['name'])): ?>
                 <div class="text-red-500 text-sm mt-1"><?= $errors['name'][0] ?></div>
               <?php endif; ?>
@@ -36,7 +31,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
             <div class="col-span-2">
               <label class="block text-sm font-medium text-gray-700 mb-2">Giới thiệu</label>
-              <textarea rows="3" name="introduction" placeholder="Mô tả ngắn về tour..." class="w-full px-4 py-3 border <?= !empty($errors['introduction']) ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent' ?> rounded-lg focus:ring-2 outline-none resize-none"><?= htmlspecialchars($_POST['introduction'] ?? '') ?></textarea>
+              <textarea rows="3" name="introduction" placeholder="Mô tả ngắn về tour..." class="w-full px-4 py-3 border <?= !empty($errors['introduction']) ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent' ?> rounded-lg focus:ring-2 outline-none resize-none"><?= htmlspecialchars($old['introduction'] ?? '') ?></textarea>
               <?php if (!empty($errors['introduction'])): ?>
                 <div class="text-red-500 text-sm mt-1"><?= $errors['introduction'][0] ?></div>
               <?php endif; ?>
@@ -46,7 +41,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
               <label class="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
               <select name="category_id" class="w-full px-4 py-3 border <?= !empty($errors['category_id']) ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent' ?> rounded-lg focus:ring-2 outline-none">
                 <option value="">Chọn danh mục</option>
-                <?php renderOption($tree, "", $_POST["category_id"] ?? null); ?>
+                <?php renderOption($tree, "", $old["category_id"] ?? null); ?>
               </select>
               <?php if (!empty($errors['category_id'])): ?>
                 <div class="text-red-500 text-sm mt-1"><?= $errors['category_id'][0] ?></div>
@@ -55,7 +50,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Số ngày</label>
-              <input type="number" name="duration_days" value="<?= htmlspecialchars($_POST['duration_days'] ?? '1') ?>" placeholder="4" min="1" class="w-full px-4 py-3 border <?= !empty($errors['duration_days']) ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent' ?> rounded-lg focus:ring-2 outline-none">
+              <input type="number" name="duration_days" value="<?= htmlspecialchars($old['duration_days'] ?? '1') ?>" placeholder="4" min="1" class="w-full px-4 py-3 border <?= !empty($errors['duration_days']) ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent' ?> rounded-lg focus:ring-2 outline-none">
               <?php if (!empty($errors['duration_days'])): ?>
                 <div class="text-red-500 text-sm mt-1"><?= $errors['duration_days'][0] ?></div>
               <?php endif; ?>
@@ -63,7 +58,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Giá người lớn (VND)</label>
-              <input type="text" name="adult_price" value="<?= htmlspecialchars($_POST['adult_price'] ?? '') ?>" placeholder="4500000" class="w-full px-4 py-3 border <?= !empty($errors['adult_price']) ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent' ?> rounded-lg focus:ring-2 outline-none">
+              <input type="text" name="adult_price" value="<?= htmlspecialchars($old['adult_price'] ?? '') ?>" placeholder="4500000" class="w-full px-4 py-3 border <?= !empty($errors['adult_price']) ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent' ?> rounded-lg focus:ring-2 outline-none">
               <?php if (!empty($errors['adult_price'])): ?>
                 <div class="text-red-500 text-sm mt-1"><?= $errors['adult_price'][0] ?></div>
               <?php endif; ?>
@@ -71,7 +66,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Giá trẻ em (VND)</label>
-              <input type="text" name="child_price" value="<?= htmlspecialchars($_POST['child_price'] ?? '') ?>" placeholder="4000000" class="w-full px-4 py-3 border <?= !empty($errors['child_price']) ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent' ?> rounded-lg focus:ring-2 outline-none">
+              <input type="text" name="child_price" value="<?= htmlspecialchars($old['child_price'] ?? '') ?>" placeholder="4000000" class="w-full px-4 py-3 border <?= !empty($errors['child_price']) ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-transparent' ?> rounded-lg focus:ring-2 outline-none">
               <?php if (!empty($errors['child_price'])): ?>
                 <div class="text-red-500 text-sm mt-1"><?= $errors['child_price'][0] ?></div>
               <?php endif; ?>
@@ -80,15 +75,15 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
               <select name="status" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <option value="active" <?= ($_POST['status'] ?? 'active') == 'active' ? 'selected' : '' ?>>Hoạt động</option>
-                <option value="inactive" <?= ($_POST['status'] ?? '') == 'inactive' ? 'selected' : '' ?>>Tạm dừng</option>
+                <option value="active" <?= ($old['status'] ?? 'active') == 'active' ? 'selected' : '' ?>>Hoạt động</option>
+                <option value="inactive" <?= ($old['status'] ?? '') == 'inactive' ? 'selected' : '' ?>>Tạm dừng</option>
               </select>
             </div>
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Loại tour</label>
               <div class="flex items-center gap-2 mt-3">
-                <input type="checkbox" id="is_fixed" name="is_fixed" value="1" <?= isset($_POST['is_fixed']) ? 'checked' : '' ?> class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                <input type="checkbox" id="is_fixed" name="is_fixed" value="1" <?= !empty($old['is_fixed']) ? 'checked' : '' ?> class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                 <label for="is_fixed" class="text-gray-700">Tour cố định (Có dịch vụ đi kèm)</label>
               </div>
             </div>
@@ -109,7 +104,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
                 <label class="flex justify-between items-center gap-3 cursor-pointer">
                   <div class="flex items-center gap-2">
                     <input type="checkbox" name="service_ids[]" value="<?= $service['id'] ?>"
-                      <?= in_array($service['id'], $_POST['service_ids'] ?? []) ? 'checked' : '' ?>
+                      <?= in_array($service['id'], $old['service_ids'] ?? []) ? 'checked' : '' ?>
                       class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                     <span class="text-sm font-medium text-gray-700"><?= htmlspecialchars($service['name']) ?></span>
                   </div>
@@ -155,7 +150,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
                     <option value="">Chọn điểm đến</option>
                     <?php foreach ($destinations as $destination): ?>
                       <option value="<?= $destination['id'] ?>"
-                        <?= (isset($_POST['destination_id'][$i]) && $_POST['destination_id'][$i] == $destination['id']) ? 'selected' : '' ?>>
+                        <?= (isset($old['destination_id'][$i]) && $old['destination_id'][$i] == $destination['id']) ? 'selected' : '' ?>>
                         <?= htmlspecialchars($destination['name']) ?>
                       </option>
                     <?php endforeach; ?>
@@ -167,7 +162,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đến</label>
-                  <input type="time" name="arrival_time[]" value="<?= htmlspecialchars($_POST['arrival_time'][$i] ??  '') ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                  <input type="time" name="arrival_time[]" value="<?= htmlspecialchars($old['arrival_time'][$i] ?? '') ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
                   <?php if (!empty($errors['arrival_time'][$i])): ?>
                     <div class="text-red-500 text-sm mt-1"><?= $errors['arrival_time'][$i][0] ?></div>
                   <?php endif; ?>
@@ -175,7 +170,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đi</label>
-                  <input type="time" name="departure_time[]" value="<?= htmlspecialchars($_POST['departure_time'][$i]   ?? '') ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                  <input type="time" name="departure_time[]" value="<?= htmlspecialchars($old['departure_time'][$i] ?? '') ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
                   <?php if (!empty($errors['departure_time'][$i])): ?>
                     <div class="text-red-500 text-sm mt-1"><?= $errors['departure_time'][$i][0] ?></div>
                   <?php endif; ?>
@@ -184,7 +179,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả hoạt động</label>
-                <textarea name="description[]" placeholder="Mô tả các hoạt động trong ngày..." class="w-full h-48 px-4 py-3 border border-gray-300 rounded-lg"><?= htmlspecialchars($_POST['description'][$i] ?? '') ?></textarea>
+                <textarea name="description[]" placeholder="Mô tả các hoạt động trong ngày..." class="w-full h-48 px-4 py-3 border border-gray-300 rounded-lg"><?= htmlspecialchars($old['description'][$i] ?? '') ?></textarea>
                 <?php if (!empty($errors['description'][$i])): ?>
                   <div class="text-red-500 text-sm mt-1"><?= $errors['description'][$i][0] ?></div>
                 <?php endif; ?>
@@ -200,7 +195,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
             <?php foreach ($policies as $policy): ?>
               <label class="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" name="policy_ids[]" value="<?= $policy['id'] ?>"
-                  <?= in_array($policy['id'], $_POST['policy_ids'] ?? []) ? 'checked' : '' ?>
+                  <?= in_array($policy['id'], $old['policy_ids'] ?? []) ? 'checked' : '' ?>
                   class="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                 <div>
                   <p class="font-medium text-gray-900"><?= htmlspecialchars($policy['title']) ?></p>
@@ -419,7 +414,5 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 </script>
 
 <?php
-unset($_SESSION['old']);
-unset($_SESSION['validate_errors']);
 require_once './views/components/footer.php';
 ?>

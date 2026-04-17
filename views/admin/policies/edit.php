@@ -7,14 +7,12 @@ require_once "./views/components/sidebar.php";
     <div class="space-y-6">
 
         <!-- TIÊU ĐỀ -->
-        <div class="flex items-center gap-4">
-            <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
-                <i data-lucide="chevron-left" class="w-6 h-6"></i>
-            </button>
+        <div class="flex justify-between items-center mb-6">
             <div>
                 <h2 class="text-2xl font-bold text-gray-900">Chỉnh sửa Chính sách</h2>
                 <p class="text-sm text-gray-600">Cập nhật thông tin của chính sách đang áp dụng cho tour.</p>
             </div>
+            <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
         </div>
 
         <div class="grid grid-cols-3 gap-8">
@@ -70,12 +68,8 @@ require_once "./views/components/sidebar.php";
                         </ul>
                     </div>
 
-                    <!-- Nút -->
                     <div class="flex items-center gap-3">
-                        <a href="<?= BASE_URL ?>?act=policies"
-                            class="px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md transition-colors">
-                            Quay lại
-                        </a>
+                        <button type="button" onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700 text-sm font-medium">Quay lại</button>
 
                         <button type="submit"
                             class="px-6 py-3 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition flex items-center gap-2">

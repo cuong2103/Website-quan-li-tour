@@ -22,16 +22,12 @@ $units = [
         </div>
 
         <div class="flex gap-3">
-            <a href="?act=service"
-                class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition flex items-center gap-2 text-sm font-medium">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                Quay lại
-            </a>
             <a href="?act=service-edit&id=<?= $service['id'] ?>"
-                class="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition flex items-center gap-2 text-sm font-medium shadow-sm">
+                class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition flex items-center gap-2 text-sm font-medium shadow-sm">
                 <i data-lucide="pencil" class="w-4 h-4"></i>
                 Chỉnh sửa
             </a>
+            <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
         </div>
     </div>
 
@@ -79,7 +75,7 @@ $units = [
                     <div>
                         <label class="block text-sm font-medium text-gray-500 mb-2">Mô tả chi tiết</label>
                         <div class="p-4 bg-gray-50 rounded-lg text-gray-700 leading-relaxed border border-gray-100">
-                            <?= nl2br($service['description']) ?>
+                            <?= nl2br($service['description'] ?? '') ?>
                         </div>
                     </div>
                 </div>

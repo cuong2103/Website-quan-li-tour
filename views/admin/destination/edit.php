@@ -5,7 +5,10 @@ require_once './views/components/sidebar.php';
 
 <main class="pt-28 px-6 pb-20">
 
-    <h1 class="text-2xl font-bold mb-6">Chỉnh sửa địa điểm</h1>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Chỉnh sửa địa điểm</h1>
+        <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
+    </div>
 
     <form action="<?= BASE_URL . '?act=destination-update' ?>"
         method="POST"

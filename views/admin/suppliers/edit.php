@@ -11,11 +11,7 @@ require_once "./views/components/sidebar.php";
             <h2 class="text-2xl font-semibold text-gray-800">Cập nhật nhà cung cấp</h2>
             <p class="text-gray-500 text-sm">Chỉnh sửa thông tin đối tác</p>
         </div>
-        <a href="?act=suppliers"
-            class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition flex items-center gap-2 text-sm font-medium">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i>
-            Quay lại
-        </a>
+        <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
     </div>
 
     <!-- Form Card -->

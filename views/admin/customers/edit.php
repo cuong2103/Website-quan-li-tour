@@ -11,9 +11,7 @@ require_once "./views/components/sidebar.php";
                 <h1 class="text-3xl font-bold text-gray-800 tracking-tight">Cập nhật khách hàng</h1>
                 <p class="text-sm text-gray-500 mt-1">Chỉnh sửa thông tin hồ sơ khách hàng</p>
             </div>
-            <a href="<?= BASE_URL . '?act=customers' ?>" class="text-gray-500 hover:text-gray-700 flex items-center text-sm font-medium transition-colors">
-                <i class="w-4 h-4 mr-1" data-lucide="arrow-left"></i> Quay lại danh sách
-            </a>
+            <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
         </div>
 
         <!-- Hiển thị lỗi -->

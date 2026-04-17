@@ -5,13 +5,11 @@ require_once './views/components/sidebar.php';
 
 <main class="pt-28 px-6 pb-20">
 
-    <!-- Nút quay lại -->
-    <div class="flex justify-end mt-4">
-        <a href="<?= BASE_URL . '?act=destination' ?>"
-            class="px-6 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Quay lại</a>
+    <!-- Header -->
+    <div class="flex items-center justify-between mt-4 mb-6">
+        <h1 class="text-2xl font-bold">Chi tiết địa điểm: <?= htmlspecialchars($destination['name'] ?? 'Chưa có') ?></h1>
+        <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
     </div>
-
-    <h1 class="text-2xl font-bold mb-6">Chi tiết địa điểm: <?= htmlspecialchars($destination['name'] ?? 'Chưa có') ?></h1>
 
     <div class="bg-white p-6 rounded-lg shadow mb-6 space-y-2">
         <p><strong>Danh mục:</strong> <?= htmlspecialchars($destination['category_name'] ?? 'Chưa có') ?></p>

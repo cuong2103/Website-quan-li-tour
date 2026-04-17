@@ -5,8 +5,13 @@ require_once './views/components/sidebar.php';
 <main class="p-6">
 
   <!-- Tiêu đề trang -->
-  <h1 class="text-2xl font-semibold text-gray-900 mb-2">Quản lý Danh mục Tour</h1>
-  <p class="text-sm text-gray-600 mb-8">Tổ chức các tour thành cấu trúc danh mục phân cấp</p>
+  <div class="flex items-center justify-between mb-8">
+      <div>
+          <h1 class="text-2xl font-semibold text-gray-900 mb-2">Quản lý Danh mục Tour</h1>
+          <p class="text-sm text-gray-600">Tổ chức các tour thành cấu trúc danh mục phân cấp</p>
+      </div>
+      <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
+  </div>
 
   <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
 

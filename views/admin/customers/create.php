@@ -12,9 +12,7 @@ require_once './views/components/sidebar.php';
                 <h1 class="text-3xl font-bold text-gray-800 tracking-tight">Thêm khách hàng mới</h1>
                 <p class="text-sm text-gray-500 mt-1">Nhập thông tin chi tiết để tạo hồ sơ khách hàng mới</p>
             </div>
-            <a href="<?= BASE_URL . '?act=customers' ?>" class="text-gray-500 hover:text-gray-700 flex items-center text-sm font-medium transition-colors">
-                <i class="w-4 h-4 mr-1" data-lucide="arrow-left"></i> Quay lại danh sách
-            </a>
+            <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
         </div>
 
         <form action="<?= BASE_URL . '?act=customer-create' ?>"

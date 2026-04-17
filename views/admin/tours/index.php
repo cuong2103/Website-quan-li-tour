@@ -177,18 +177,27 @@ require_once './views/components/sidebar.php';
               </div>
             </div>
 
-            <div class="mt-6 flex gap-2">
-              <a href="<?= BASE_URL ?>?act=tours-edit&id=<?= $tour['id'] ?>" class="flex items-center justify-center gap-2 flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium text-sm py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow">
-                <i data-lucide="square-pen" class="w-4 h-4"></i>
-                <span>Sửa</span>
-              </a>
-              <a href="<?= BASE_URL ?>?act=tours-detail&id=<?= $tour['id'] ?>" class="w-11 h-11 bg-gray-100 rounded-lg hover:bg-gray-200 transition flex items-center justify-center">
-                <i class="w-5 h-5" data-lucide="eye"></i>
-              </a>
-              <a href="<?= BASE_URL ?>?act=tours-delete&id=<?= $tour['id'] ?>" class="w-11 h-11 bg-gray-100 rounded-lg hover:bg-gray-200 transition flex items-center justify-center">
-                <i class="w-5 h-5" data-lucide="trash-2"></i>
-              </a>
-            </div>
+            <div class="mt-6 flex items-center gap-2 border-t pt-4">
+                                <a href="<?= BASE_URL ?>?act=tours-edit&id=<?= $tour['id'] ?>"
+                                    class="flex-1 flex items-center justify-center gap-1.5 px-1 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                                    title="Sửa">
+                                    <i class="w-4 h-4" data-lucide="square-pen"></i>
+                                    <span class="text-xs font-semibold">Sửa</span>
+                                </a>
+                                <a href="<?= BASE_URL ?>?act=tours-detail&id=<?= $tour['id'] ?>"
+                                    class="flex-1 flex items-center justify-center gap-1.5 px-1 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                                    title="Chi tiết">
+                                    <i class="w-4 h-4" data-lucide="eye"></i>
+                                    <span class="text-xs font-semibold">Chi tiết</span>
+                                </a>
+                                <a href="<?= BASE_URL ?>?act=tours-delete&id=<?= $tour['id'] ?>"
+                                    onclick="return confirm('Bạn có chắc muốn xoá không?')"
+                                    class="flex-1 flex items-center justify-center gap-1.5 px-1 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                                    title="Xóa">
+                                    <i class="w-4 h-4" data-lucide="trash-2"></i>
+                                    <span class="text-xs font-semibold">Xóa</span>
+                                </a>
+                            </div>
           </div>
         </div>
       <?php endforeach; ?>

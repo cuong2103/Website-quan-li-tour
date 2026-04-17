@@ -2,23 +2,20 @@
 require_once './views/components/header.php';
 require_once './views/components/sidebar.php';
 
-// Ưu tiên lấy data từ POST (khi có lỗi validation), nếu không thì từ database
-$tourData = !empty($_POST) ? $_POST : $tour;
-$dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) : count($itineraries);
+// $errors và $old được truyền vào từ Controller (qua session sau redirect)
+// Nếu không có $old (lần đầu vào trang), fallback về dữ liệu từ database
+$tourData = !empty($old) ? $old : $tour;
+$dayCount = !empty($old['destination_id']) ? count($old['destination_id']) : count($itineraries);
 ?>
 <main class="pt-28 px-8 bg-gray-50 min-h-screen overflow-y-auto">
   <div class="max-w-12xl mx-auto">
     <!-- Header của form -->
     <div class="flex items-center justify-between mb-8">
-      <div class="flex items-center gap-4">
-        <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
-          <i data-lucide="arrow-left" class="w-6 h-6"></i>
-        </button>
-        <div>
-          <h2 class="text-2xl font-bold text-gray-900">Chỉnh sửa Tour</h2>
-          <p class="text-sm text-gray-600">Cập nhật thông tin chi tiết về tour</p>
-        </div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-900">Chỉnh sửa Tour</h2>
+        <p class="text-sm text-gray-600">Cập nhật thông tin chi tiết về tour</p>
       </div>
+      <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
     </div>
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-10">
@@ -106,7 +103,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
           <div id="serviceList" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto">
             <?php
-            $selectedServices = $_POST['service_ids'] ?? $tourServiceIds ?? [];
+            $selectedServices = $old['service_ids'] ?? $tourServiceIds ?? [];
             foreach ($services as $service):
             ?>
               <div class="service-item p-3 border border-gray-200 rounded-lg hover:bg-blue-50 transition">
@@ -137,10 +134,10 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
           </div>
 
           <?php
-          // Nếu có POST data (lỗi validation), dùng POST data
+          // Nếu có $old (sau redirect validation error), dùng $old data
           // Nếu không, dùng itineraries từ database
-          if (!empty($_POST['destination_id'])) {
-            for ($i = 0; $i < count($_POST['destination_id']); $i++):
+          if (!empty($old['destination_id'])) {
+            for ($i = 0; $i < count($old['destination_id']); $i++):
               $dayNum = $i + 1;
           ?>
               <div id="day-<?= $dayNum ?>" class="border border-gray-200 rounded-xl <?= $i > 0 ? 'mt-6' : '' ?> p-6 space-y-5">
@@ -160,7 +157,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
                       <option value="">Chọn điểm đến</option>
                       <?php foreach ($destinations as $destination): ?>
                         <option value="<?= $destination['id'] ?>"
-                          <?= (isset($_POST['destination_id'][$i]) && $_POST['destination_id'][$i] == $destination['id']) ? 'selected' : '' ?>>
+                        <?= (isset($old['destination_id'][$i]) && $old['destination_id'][$i] == $destination['id']) ? 'selected' : '' ?>>
                           <?= htmlspecialchars($destination['name'] ?? '') ?>
                         </option>
                       <?php endforeach; ?>
@@ -172,7 +169,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đến</label>
-                    <input type="time" name="arrival_time[]" value="<?= htmlspecialchars($_POST['arrival_time'][$i] ?? '') ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                    <input type="time" name="arrival_time[]" value="<?= htmlspecialchars($old['arrival_time'][$i] ?? '') ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
                     <?php if (!empty($errors['arrival_time'][$i])): ?>
                       <div class="text-red-500 text-sm mt-1"><?= $errors['arrival_time'][$i][0] ?></div>
                     <?php endif; ?>
@@ -180,7 +177,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đi</label>
-                    <input type="time" name="departure_time[]" value="<?= htmlspecialchars($_POST['departure_time'][$i] ?? '') ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+                    <input type="time" name="departure_time[]" value="<?= htmlspecialchars($old['departure_time'][$i] ?? '') ?>" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
                     <?php if (!empty($errors['departure_time'][$i])): ?>
                       <div class="text-red-500 text-sm mt-1"><?= $errors['departure_time'][$i][0] ?></div>
                     <?php endif; ?>
@@ -189,7 +186,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả hoạt động</label>
-                  <textarea rows="3" name="description[]" placeholder="Mô tả các hoạt động trong ngày..." class="w-full px-4 py-3 border border-gray-300 rounded-lg"><?= htmlspecialchars($_POST['description'][$i] ?? '') ?></textarea>
+                  <textarea rows="3" name="description[]" placeholder="Mô tả các hoạt động trong ngày..." class="w-full px-4 py-3 border border-gray-300 rounded-lg"><?= htmlspecialchars($old['description'][$i] ?? '') ?></textarea>
                   <?php if (!empty($errors['description'][$i])): ?>
                     <div class="text-red-500 text-sm mt-1"><?= $errors['description'][$i][0] ?></div>
                   <?php endif; ?>
@@ -253,7 +250,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
           <h3 class="text-lg font-semibold text-gray-900 my-6">Chính sách</h3>
           <div class="space-y-4">
             <?php
-            $selectedPolicyIds = !empty($_POST['policy_ids']) ? $_POST['policy_ids'] : $tourPolicyIds;
+            $selectedPolicyIds = !empty($old['policy_ids']) ? $old['policy_ids'] : $tourPolicyIds;
             foreach ($policies as $policy):
             ?>
               <label class="flex items-start gap-3 cursor-pointer">
@@ -292,6 +289,7 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
 
     // Đếm số ngày hiện có
     let dayCount = document.querySelectorAll('[id^="day-"]').length;
+    const durationInput = document.querySelector('input[name="duration_days"]');
 
     // Tạo option HTML cho destinations
     const destinationOptions = `
@@ -301,47 +299,76 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
       <?php endforeach; ?>
     `;
 
+    // Hàm tạo HTML cho một ngày mới
+    function createDayHTML(dayNum) {
+      return `
+      <div id="day-${dayNum}" class="border border-gray-200 rounded-xl mt-6 p-6 space-y-5">
+        <div class="flex items-center justify-between">
+          <h4 class="font-medium text-gray-900">Ngày ${dayNum}</h4>
+          <button type="button" class="remove-day-btn p-2 text-red-600 hover:text-red-700 text-sm font-medium" data-day="${dayNum}">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Điểm đến</label>
+            <select name="destination_id[]" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              ${destinationOptions}
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đến</label>
+            <input type="time" name="arrival_time[]" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đi</label>
+            <input type="time" name="departure_time[]" class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả hoạt động</label>
+          <textarea rows="3" name="description[]" placeholder="Mô tả các hoạt động trong ngày..." class="w-full px-4 py-3 border border-gray-300 rounded-lg"></textarea>
+        </div>
+      </div>`;
+    }
+
+    // Hàm thêm/bớt ngày theo số lượng mục tiêu
+    function updateDays(targetCount) {
+      if (targetCount < 1) targetCount = 1;
+      if (targetCount > 30) targetCount = 30;
+      const existing = document.querySelectorAll('[id^="day-"]');
+      const current = existing.length;
+      if (targetCount > current) {
+        for (let i = current + 1; i <= targetCount; i++) {
+          itinerarySection.insertAdjacentHTML('beforeend', createDayHTML(i));
+          lucide.createIcons();
+        }
+      } else if (targetCount < current) {
+        for (let i = current; i > targetCount; i--) {
+          const d = document.getElementById(`day-${i}`);
+          if (d) d.remove();
+        }
+      }
+      dayCount = targetCount;
+    }
+
+    // Lắng nghe khi nhập thủ công vào ô Số ngày
+    if (durationInput) {
+      durationInput.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value) || 0;
+        updateDays(val);
+      });
+    }
+
     // Thêm ngày mới
     addDayBtn.addEventListener('click', (e) => {
       e.preventDefault();
       dayCount++;
-
-      const newDayHTML = `
-      <div id="day-${dayCount}" class="border border-gray-200 rounded-xl mt-6 p-6 space-y-5">
-        <div class="flex items-center justify-between">
-          <h4 class="font-medium text-gray-900">Ngày ${dayCount}</h4>
-          <button type="button" class="remove-day-btn p-2 text-red-600 hover:text-red-700 text-sm font-medium" data-day="${dayCount}">
-            <i data-lucide="x" class="w-5 h-5"></i>
-          </button>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Điểm đến</label>
-            <select name="destination_id[]"  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-              ${destinationOptions}
-            </select>
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đến</label>
-            <input type="time" name="arrival_time[]"  class="w-full px-4 py-3 border border-gray-300 rounded-lg">
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Thời gian đi</label>
-            <input type="time" name="departure_time[]"  class="w-full px-4 py-3 border border-gray-300 rounded-lg">
-          </div>
-        </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả hoạt động</label>
-          <textarea rows="3" name="description[]"  placeholder="Mô tả các hoạt động trong ngày..." class="w-full px-4 py-3 border border-gray-300 rounded-lg"></textarea>
-        </div>
-      </div>`;
-
-      itinerarySection.insertAdjacentHTML('beforeend', newDayHTML);
+      itinerarySection.insertAdjacentHTML('beforeend', createDayHTML(dayCount));
+      lucide.createIcons();
+      if (durationInput) durationInput.value = dayCount;
     });
+
 
     // Xóa ngày với event delegation
     itinerarySection.addEventListener('click', (e) => {
@@ -352,6 +379,8 @@ $dayCount = !empty($_POST['destination_id']) ? count($_POST['destination_id']) :
         if (dayDiv && dayCount > 1) {
           dayDiv.remove();
           dayCount--;
+          // Đồng bộ lại ô Số ngày
+          if (durationInput) durationInput.value = dayCount;
         }
       }
     });

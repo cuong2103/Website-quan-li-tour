@@ -5,7 +5,10 @@ require_once './views/components/sidebar.php';
 
 <main class="pt-28 px-6 pb-20 text-gray-700">
     <div class="w-full mx-auto bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <h2 class="text-xl font-semibold mb-6 text-gray-800">Phân công Hướng dẫn viên</h2>
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-semibold text-gray-800">Phân công Hướng dẫn viên</h2>
+            <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
+        </div>
 
         <div class="mb-6 p-4 bg-blue-50 rounded-lg">
             <p class="text-sm text-blue-800 font-medium">Booking: <?= $booking['booking_code'] ?></p>

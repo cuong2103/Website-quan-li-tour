@@ -95,17 +95,24 @@ require_once "./views/components/sidebar.php";
                             <td class="px-6 py-4"><?= $cus['citizen_id'] ?? '' ?></td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <!-- Sửa -->
-                                    <a href="?act=customer-edit&id=<?= $cus['id'] ?>" class="text-white-600 hover:text-indigo-900 mr-2">
-                                        <i class="w-5 h-4" data-lucide="square-pen"></i>
+                                    <a href="?act=customer-edit&id=<?= $cus['id'] ?>"
+                                        class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                                        title="Sửa">
+                                        <i class="w-4 h-4" data-lucide="square-pen"></i>
+                                        <span class="text-xs font-semibold">Sửa</span>
                                     </a>
-                                    <!-- Xem -->
-                                    <a href="?act=customer-detail&id=<?= $cus['id'] ?>" class="text-white-600 hover:text-indigo-900 mr-2">
-                                        <i class="w-5 h-4" data-lucide="eye"></i>
+                                    <a href="?act=customer-detail&id=<?= $cus['id'] ?>"
+                                        class="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                                        title="Chi tiết">
+                                        <i class="w-4 h-4" data-lucide="eye"></i>
+                                        <span class="text-xs font-semibold">Chi tiết</span>
                                     </a>
-                                    <!-- Xóa -->
-                                    <a href="?act=customer-delete&id=<?= $cus['id'] ?>" onclick="return confirm('Bạn có chắc muốn xóa khách hàng này?')" class="text-red-600 hover:text-red-900">
-                                        <i class="w-5 h-4" data-lucide="trash-2"></i>
+                                    <a href="?act=customer-delete&id=<?= $cus['id'] ?>"
+                                        onclick="return confirm('Bạn có chắc muốn xóa khách hàng này?')"
+                                        class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                                        title="Xóa">
+                                        <i class="w-4 h-4" data-lucide="trash-2"></i>
+                                        <span class="text-xs font-semibold">Xóa</span>
                                     </a>
                                 </div>
                             </td>

@@ -51,6 +51,12 @@ class TourController
     $destinations = $this->destinationModel->getAll();
     $services = $this->serviceModel->getAll();
     $tree = buildTree($categories);
+
+    // Lấy lỗi và dữ liệu cũ từ session (sau khi redirect)
+    $errors = $_SESSION['validate_errors'] ?? [];
+    $old = $_SESSION['old'] ?? [];
+    unset($_SESSION['validate_errors'], $_SESSION['old']);
+
     require_once './views/admin/tours/create.php';
   }
 
@@ -77,6 +83,7 @@ class TourController
     $rules = [
       'name' => 'required|min:3|max:255',
       'category_id' => 'required',
+      'introduction' => 'required|min:10',
       'duration_days' => 'required|numeric',
       'adult_price' => 'required|numeric',
       'child_price' => 'required|numeric',
@@ -91,13 +98,8 @@ class TourController
 
     if (!empty($errors)) {
       $_SESSION['validate_errors'] = $errors;
-      $_SESSION['old'] = $data;
-      $policies = $this->policyModel->getAll();
-      $categories = $this->categoryModel->getAll();
-      $destinations = $this->destinationModel->getAll();
-      $services = $this->serviceModel->getAll();
-      $tree = buildTree($categories);
-      require_once './views/admin/tours/create.php';
+      $_SESSION['old'] = $_POST; // Lưu raw POST để view khôi phục đúng
+      redirect('tours-create');
       exit;
     }
 
@@ -141,23 +143,25 @@ class TourController
 
   public function detail()
   {
-    $id = $_GET['id'];
+    $id = (int)($_GET['id'] ?? 0);
+    if (!$id) { Message::set('error', 'ID không hợp lệ!'); redirect('tours'); exit; }
+
     $tour = $this->tourModel->getById($id);
+    if (!$tour) { Message::set('error', 'Tour không tồn tại!'); redirect('tours'); exit; }
+
     $itineraries = $this->tourModel->getItinerariesByTourId($id);
     $policies = $this->tourModel->getPoliciesByTourId($id);
     $services = $this->tourModel->getTourServices($id);
-    // dd($tour, $itineraries, $policies);
     require_once './views/admin/tours/detail.php';
   }
 
   public function edit()
   {
-    $id = $_GET['id'];
+    $id = (int)($_GET['id'] ?? 0);
+    if (!$id) { Message::set('error', 'ID không hợp lệ!'); redirect('tours'); exit; }
+
     $tour = $this->tourModel->getById($id);
-    if (!$tour) {
-      Message::set("error", "Không tìm thấy tour!");
-      redirect("tours");
-    }
+    if (!$tour) { Message::set('error', 'Không tìm thấy tour!'); redirect('tours'); exit; }
 
     $itineraries = $this->tourModel->getItineraries($id);
     $tourPolicies = $this->tourModel->getTourPolicies($id);
@@ -172,12 +176,18 @@ class TourController
     $services = $this->serviceModel->getAll();
     $tree = buildTree($categories);
 
+    // Lấy lỗi và dữ liệu cũ từ session (sau khi redirect)
+    $errors = $_SESSION['validate_errors'] ?? [];
+    $old = $_SESSION['old'] ?? [];
+    unset($_SESSION['validate_errors'], $_SESSION['old']);
+
     require_once './views/admin/tours/edit.php';
   }
 
   public function update()
   {
-    $id = $_GET['id'];
+    $id = (int)($_GET['id'] ?? 0);
+    if (!$id) { Message::set('error', 'ID không hợp lệ!'); redirect('tours'); exit; }
 
     $data = [
       'name' => $_POST['name'],
@@ -199,6 +209,7 @@ class TourController
     $rules = [
       'name' => 'required|min:3|max:255',
       'category_id' => 'required',
+      'introduction' => 'required|min:10',
       'duration_days' => 'required|numeric',
       'adult_price' => 'required|numeric',
       'child_price' => 'required|numeric',
@@ -213,21 +224,8 @@ class TourController
 
     if (!empty($errors)) {
       $_SESSION['validate_errors'] = $errors;
-      $_SESSION['old'] = $data;
-      $tour = $this->tourModel->getById($id);
-      $itineraries = $this->tourModel->getItineraries($id);
-      $tourPolicies = $this->tourModel->getTourPolicies($id);
-      $tourPolicyIds = array_column($tourPolicies, 'id');
-
-      $tourServices = $this->tourModel->getTourServices($id);
-      $tourServiceIds = array_column($tourServices, 'id');
-
-      $policies = $this->policyModel->getAll();
-      $categories = $this->categoryModel->getAll();
-      $destinations = $this->destinationModel->getAll();
-      $services = $this->serviceModel->getAll();
-      $tree = buildTree($categories);
-      require_once './views/admin/tours/edit.php';
+      $_SESSION['old'] = $_POST; // Lưu raw POST để view khôi phục đúng
+      redirect('tours-edit&id=' . $id);
       exit;
     }
 
@@ -278,9 +276,21 @@ class TourController
 
   public function delete()
   {
-    $id = $_GET['id'];
-    $this->tourModel->delete($id);
-    Message::set("success", "Xóa tour thành công!");
-    redirect("tours");
+    $id = (int)($_GET['id'] ?? 0);
+    if (!$id) { Message::set('error', 'ID không hợp lệ!'); redirect('tours'); exit; }
+
+    // Kiểm tra tour có booking đang active không
+    if ($this->tourModel->hasActiveBookings($id)) {
+      Message::set('error', 'Không thể xóa tour này vì đang có booking chưa hoàn thành!');
+      redirect('tours');
+      exit;
+    }
+
+    if ($this->tourModel->delete($id)) {
+      Message::set('success', 'Xóa tour thành công!');
+    } else {
+      Message::set('error', 'Xóa tour thất bại, vui lòng thử lại!');
+    }
+    redirect('tours');
   }
 }

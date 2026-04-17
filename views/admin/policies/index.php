@@ -7,10 +7,7 @@ require_once "./views/components/sidebar.php";
     <div class="space-y-6">
 
         <!-- TIÊU ĐỀ CHÍNH -->
-        <div class="flex items-center gap-4">
-            <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition">
-                <i data-lucide="chevron-left" class="w-6 h-6"></i>
-            </button>
+        <div class="flex items-center justify-between mb-2">
             <div>
                 <h2 class="text-2xl font-bold text-gray-900">Quản lý Chính sách</h2>
                 <p class="text-sm text-gray-600">Tạo và quản lý các chính sách áp dụng cho tour (huỷ tour, trẻ em, thanh toán...)</p>
@@ -109,24 +106,25 @@ require_once "./views/components/sidebar.php";
                                     </div>
 
                                     <!-- ACTION BUTTONS -->
-                                    <div class="flex gap-2 flex-shrink-0">
+                                    <div class="flex items-center justify-center gap-2">
                                         <a href="?act=policy-edit&id=<?= $poli['id'] ?>"
-                                            class="p-2 hover:bg-blue-50 rounded-lg transition-colors"
-                                            title="Chỉnh sửa">
-                                            <i data-lucide="square-pen" class="w-4 h-4 text-blue-600"></i>
+                                            class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                                            title="Sửa">
+                                            <i class="w-4 h-4" data-lucide="square-pen"></i>
+                                            <span class="text-xs font-semibold">Sửa</span>
                                         </a>
-
                                         <a href="?act=policy-detail&id=<?= $poli['id'] ?>"
-                                            class="p-2 hover:bg-green-50 rounded-lg transition-colors"
-                                            title="Xem chi tiết">
-                                            <i data-lucide="eye" class="w-4 h-4 text-green-600"></i>
+                                            class="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                                            title="Chi tiết">
+                                            <i class="w-4 h-4" data-lucide="eye"></i>
+                                            <span class="text-xs font-semibold">Chi tiết</span>
                                         </a>
-
                                         <a href="?act=policy-delete&id=<?= $poli['id'] ?>"
                                             onclick="return confirm('Bạn có chắc muốn xoá không?')"
-                                            class="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                                            class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
                                             title="Xóa">
-                                            <i data-lucide="trash-2" class="w-4 h-4 text-red-600"></i>
+                                            <i class="w-4 h-4" data-lucide="trash-2"></i>
+                                            <span class="text-xs font-semibold">Xóa</span>
                                         </a>
                                     </div>
 

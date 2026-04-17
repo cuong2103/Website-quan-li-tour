@@ -11,10 +11,7 @@ require_once './views/components/sidebar.php';
             <h1 class="text-2xl font-bold text-gray-900">Cập nhật Booking</h1>
             <p class="text-sm text-gray-500 mt-1">Chỉnh sửa thông tin booking.</p>
         </div>
-        <a href="<?= BASE_URL . '?act=bookings' ?>"
-            class="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg text-sm font-medium transition shadow-sm">
-            Quay lại
-        </a>
+        <button onclick="history.back()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">Quay lại</button>
     </div>
 
     <!-- FORM -->

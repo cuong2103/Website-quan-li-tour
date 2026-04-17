@@ -70,27 +70,26 @@ require_once './views/components/sidebar.php';
                                 </div>
 
                                 <!-- ACTION BUTTONS -->
-                                <div class="flex gap-2">
-
-                                    <!-- Sửa -->
+                                <div class="flex items-center justify-center gap-2">
                                     <a href="<?= BASE_URL . '?act=service-type-edit&id=' . $serviceType['id'] ?>"
-                                        class="p-1 text-gray-600 hover:text-orange-500 transition">
-                                        <i class="w-5 h-4" data-lucide="square-pen"></i>
+                                        class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                                        title="Sửa">
+                                        <i class="w-4 h-4" data-lucide="square-pen"></i>
+                                        <span class="text-xs font-semibold">Sửa</span>
                                     </a>
-
-                                    <!-- Xem chi tiết -->
                                     <a href="<?= BASE_URL . '?act=service-type-detail&id=' . $serviceType['id'] ?>"
-                                        class="p-1 text-gray-600 hover:text-blue-500 transition">
-                                        <i class="w-5 h-4" data-lucide="eye"></i>
+                                        class="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                                        title="Chi tiết">
+                                        <i class="w-4 h-4" data-lucide="eye"></i>
+                                        <span class="text-xs font-semibold">Chi tiết</span>
                                     </a>
-
-                                    <!-- Xóa -->
                                     <a href="<?= BASE_URL . '?act=service-type-delete&id=' . $serviceType['id'] ?>"
                                         onclick="return confirm('Bạn có chắc muốn xóa không?')"
-                                        class="p-1 text-red-600 hover:text-red-700 transition">
-                                        <i class="w-5 h-4" data-lucide="trash-2"></i>
+                                        class="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                                        title="Xóa">
+                                        <i class="w-4 h-4" data-lucide="trash-2"></i>
+                                        <span class="text-xs font-semibold">Xóa</span>
                                     </a>
-
                                 </div>
                             </div>
                         </div>
